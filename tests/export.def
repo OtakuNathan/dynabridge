@@ -1,0 +1,24 @@
+// Export declarations generate export_<name>(ctx, module, callable).
+// BEGIN_CLASS(ns, clazz) exports dynamic class "clazz" and binds it to
+// native type ns::clazz.
+// DECL_CONSTRUCTOR whitelists class constructors exposed to the foreign
+// runtime; the backend still checks native_t constructibility.
+// Keep this file separate from import.def so importing a callable does not
+// implicitly generate an export API for it.
+
+BEGIN_CALLABLE_GROUP(calc)
+    DECL_CALLABLE(int, int)
+    DECL_CALLABLE(int, int, unsigned)
+END_CALLABLE_GROUP
+
+BEGIN_CLASS(native, counter)
+    DECL_CONSTRUCTOR(unsigned)
+
+    BEGIN_MEMBER_CALLABLE_GROUP(add)
+        DECL_MEMBER_FUNCTION(int, int)
+    END_MEMBER_CALLABLE_GROUP
+
+    BEGIN_MEMBER_CALLABLE_GROUP(value)
+        DECL_MEMBER_FUNCTION(int)
+    END_MEMBER_CALLABLE_GROUP
+END_CLASS

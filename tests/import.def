@@ -1,0 +1,34 @@
+// Import declarations generate static import_symbols metadata, call_<name>(ctx,
+// args...), and binders such as <name>(ctx). BEGIN_CLASS generates constructor
+// helpers, delegate types for imported objects, and nested member symbols such
+// as import_symbols::counter::add.
+// Use DECL_CALLABLE(R, Args...) for normal declarations. DECL_FUNCTION(sig) is
+// independent sugar for legacy C++ function-signature style. Use
+// DECL_CONSTRUCTOR(Args...) inside BEGIN_CLASS to whitelist constructor calls.
+
+BEGIN_CALLABLE_GROUP(foo)
+    DECL_CALLABLE(void, int, int)
+    DECL_CALLABLE(void, int)
+    DECL_FUNCTION(void (unsigned))
+END_CALLABLE_GROUP
+
+BEGIN_CALLABLE_GROUP(bar)
+    DECL_CALLABLE(void, int, int)
+    DECL_CALLABLE(void, int)
+END_CALLABLE_GROUP
+
+BEGIN_CALLABLE_GROUP(calc)
+    DECL_CALLABLE(int, int, unsigned)
+END_CALLABLE_GROUP
+
+BEGIN_CLASS(counter)
+    DECL_CONSTRUCTOR(unsigned)
+
+    BEGIN_MEMBER_CALLABLE_GROUP(add)
+        DECL_MEMBER_FUNCTION(int, int)
+    END_MEMBER_CALLABLE_GROUP
+
+    BEGIN_MEMBER_CALLABLE_GROUP(value)
+        DECL_MEMBER_FUNCTION(int)
+    END_MEMBER_CALLABLE_GROUP
+END_CLASS

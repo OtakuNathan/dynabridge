@@ -1,0 +1,18 @@
+#ifndef DYNABRIDGE_BACKENDS_PYTHON_API_H
+#define DYNABRIDGE_BACKENDS_PYTHON_API_H
+
+#if defined(_MSC_VER) && defined(_DEBUG) \
+        && !defined(Py_DEBUG) \
+        && !defined(DYNABRIDGE_PYTHON_KEEP_MSVC_DEBUG)
+#define DYNABRIDGE_PYTHON_RESTORE_MSVC_DEBUG
+#undef _DEBUG
+#endif
+
+#include <Python.h>
+
+#if defined(DYNABRIDGE_PYTHON_RESTORE_MSVC_DEBUG)
+#define _DEBUG
+#undef DYNABRIDGE_PYTHON_RESTORE_MSVC_DEBUG
+#endif
+
+#endif //DYNABRIDGE_BACKENDS_PYTHON_API_H

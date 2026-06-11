@@ -1,0 +1,3 @@
+BEGIN_CALLABLE_GROUP(custom_foo)
+    DECL_FUNCTION(int(int, unsigned))
+END_CALLABLE_GROUP

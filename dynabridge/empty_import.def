@@ -1,0 +1,3 @@
+// Empty default import table.
+// Define DYNABRIDGE_IMPORT_DEF before including dynabridge/bridge.h to
+// generate module-specific import declarations.
