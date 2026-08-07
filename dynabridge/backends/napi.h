@@ -682,7 +682,7 @@ namespace dynabridge {
 
         template <typename... Args>
         static napi_value call(context_t& ctx, napi_value callable, Args... args) {
-            napi_value argv[] = { args... };
+            napi_value argv[sizeof...(Args) == 0 ? 1 : sizeof...(Args)] = { args... };
             napi_value result = nullptr;
             check(napi_call_function(
                 ctx.env(), ctx.this_arg(), callable, sizeof...(Args),

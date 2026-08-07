@@ -1,4 +1,8 @@
 cmake-build-*/
 build/
+build-*/
 .idea/
 AGENTS.md
+CLAUDE.md
+compile_commands.json
+.DS_Store
