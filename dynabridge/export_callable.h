@@ -659,6 +659,26 @@ namespace dynabridge {
         Callable callable_;
     };
 
+#if DYNABRIDGE_CPP_AT_LEAST(17)
+    // C++17: flat inheritance + variadic using + fold expression noexcept.
+    // O(1) inheritance depth regardless of overload count.
+    template <typename... Slots>
+    struct export_bound_overload_set : Slots... {
+        using Slots::operator()...;
+
+        export_bound_overload_set(Slots... slots)
+            noexcept((is_nothrow_move_constructible_v<Slots> && ...))
+            : Slots(std::move(slots))... {
+        }
+    };
+
+    template <>
+    struct export_bound_overload_set<> {
+        export_bound_overload_set() noexcept = default;
+        void operator()() const = delete;
+    };
+#else
+    // C++14: recursive inheritance (no pack expansion in using/mem-init).
     template <typename... Slots>
     struct export_bound_overload_set;
 
@@ -684,6 +704,7 @@ namespace dynabridge {
               export_bound_overload_set<Tail...>(std::move(tail)...) {
         }
     };
+#endif
 
     template <typename Contract, typename... Slots>
     struct has_bound_export_overload_slot : std::false_type {

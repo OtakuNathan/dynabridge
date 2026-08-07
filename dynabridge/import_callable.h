@@ -171,6 +171,17 @@ namespace dynabridge {
         }
     };
 
+#if DYNABRIDGE_CPP_AT_LEAST(17)
+    // C++17: flat inheritance + variadic using-declaration pack expansion.
+    // O(1) inheritance depth regardless of overload count.
+    template <typename... Contracts>
+    struct import_callable_group : import_callable<Contracts>... {
+        static_assert(conjunction_v<is_callable<Contracts>...>,
+                      "all types must be callable<Receiver, Signature>");
+        using import_callable<Contracts>::invoke...;
+    };
+#else
+    // C++14: recursive inheritance (no pack expansion in using-declarations).
     template <typename... Contracts>
     struct import_callable_group;
 
@@ -187,6 +198,7 @@ namespace dynabridge {
     struct import_callable_group<> {
         static void invoke() noexcept = delete;
     };
+#endif
 
     template <typename Contract>
     struct import_constructor;
@@ -206,6 +218,16 @@ namespace dynabridge {
         }
     };
 
+#if DYNABRIDGE_CPP_AT_LEAST(17)
+    // C++17: flat inheritance + variadic using-declaration pack expansion.
+    template <typename... Contracts>
+    struct import_constructor_group : import_constructor<Contracts>... {
+        static_assert(conjunction_v<is_callable<Contracts>...>,
+                      "all types must be callable<Receiver, Signature>");
+        using import_constructor<Contracts>::construct...;
+    };
+#else
+    // C++14: recursive inheritance.
     template <typename... Contracts>
     struct import_constructor_group;
 
@@ -222,6 +244,7 @@ namespace dynabridge {
     struct import_constructor_group<> {
         static void construct() noexcept = delete;
     };
+#endif
 }
 
 #endif //DYNABRIDGE_IMPORT_CALLABLE_H
