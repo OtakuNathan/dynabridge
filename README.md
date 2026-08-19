@@ -93,11 +93,12 @@ files. The core defaults are empty, so real modules opt into their own tables.
 
 ## Included Backends
 
-The repository includes three backend implementations:
+The repository includes four backend implementations:
 
 - `tests/fake_backend.h` is a small in-memory backend for core tests.
 - `dynabridge/backends/python.h` is a minimal Python C API backend.
 - `dynabridge/backends/napi.h` is a minimal N-API backend.
+- `dynabridge/backends/rpc.h` is a transport-agnostic framed RPC backend.
 
 Backend headers declare their `converter<T>` primary template and include their
 default converter specializations at the end, for example
@@ -656,6 +657,129 @@ module/table. Exported wrappers may outlive the definition call, so the context
 passed to export helpers must stay alive as long as the target runtime can call
 those wrappers.
 
+## RPC Backend
+
+RPC is the same bridge contract with a serialized `dynamic_value_t`. The RPC
+backend hashes the generated static symbol name once, converts arguments to
+tagged wire values, and delegates I/O to a transport with one operation:
+
+```cpp
+rpc::bytes round_trip(const rpc::bytes& request);
+```
+
+The bundled `rpc::loopback_transport` still encodes and decodes complete frames,
+so it is useful for protocol tests without sockets. A TCP, shared-memory, QUIC,
+or application message-bus transport can implement the same operation without
+changing declarations or call sites. The current backend supports free calls,
+strict overload dispatch, `void`, integer, floating-point, boolean, and string
+values. Object identity and remote class lifetime policy remain transport/domain
+work rather than part of this minimal backend.
+
+The synchronous import path preserves argument reference categories until
+encoding: `const std::string&` is encoded through a non-owning view, while
+`std::string&&` transfers ownership into the wire value. Decoded values are
+moved into single-signature exports and return conversion; overload probing
+keeps a const view so a failed candidate cannot consume arguments needed by the
+next candidate.
+
+```cpp
+dynabridge::rpc_backend::export_context_t export_ctx;
+dynabridge::rpc::router server;
+dynabridge::export_rpc_add(export_ctx, server, &add);
+
+dynabridge::rpc::loopback_transport transport(server);
+using context_t = dynabridge::rpc_backend::import_context_t<
+    dynabridge::rpc::loopback_transport>;
+auto ctx = dynabridge::import_from<
+    dynabridge::import_symbols::rpc_add, context_t>(transport);
+
+int result = dynabridge::call_rpc_add(ctx, 3, 4u);
+```
+
+See `tests/rpc_import.def`, `tests/rpc_export.def`, and
+`tests/rpc_backend_test.cpp` for the complete declaration and binding example.
+
+## Dynabridge + Flux Foundry
+
+The RPC backend can remain a small typed wire layer while
+[Flux Foundry](https://github.com/OtakuNathan/flux_foundry) supplies orchestration. This is a
+composition of existing responsibilities rather than a second RPC framework:
+
+```text
+dynabridge callable contract
+    -> Flux Foundry encode flow
+    -> external async transport awaitable
+    -> Flux Foundry decode/error flow
+    -> typed dynabridge result
+```
+
+The RPC benchmark includes a concrete adapter with one external operation named
+`web_io`. That operation owns one encoded request, performs one complete
+request/response exchange, and returns the response frame. It deliberately does
+not split a single I/O behavior into separate send and receive awaitables:
+
+```cpp
+auto call = flux_foundry::make_blueprint<rpc_request, rpc_error>()
+    | flux_foundry::then(encode_request)
+    | flux_foundry::await_external_async<web_io>()
+    | flux_foundry::then(decode_response)
+    | flux_foundry::end();
+```
+
+The benchmark implementation uses `then` around the throwing codec operations
+so protocol and conversion failures become `result_t` errors. A blocking
+`web_io` adapter isolates flow-composition cost. The production-shaped Linux
+path uses a nonblocking `GSocket`, a persistent read `GSource`, and a temporary
+write source only when the socket would block. Its completion callback resumes
+decode and delivery inline on the owning `GMainContext` thread. Flux Foundry's
+`gsource_executor` supplies the MPSC plus `eventfd` ingress for work arriving
+from other threads; calls already in the GLib domain do not pay a redundant
+executor hop. No separate asynchronous RPC facade or user callback is needed
+because the entire call is already a blueprint and RPC I/O is its awaitable
+boundary.
+
+This composition matters because a Flux Foundry blueprint is a typed graph,
+not a runtime list of callbacks. Adjacent synchronous calculation nodes are
+zipped into fused callables, consecutive scheduling nodes are reduced, and
+policies live in `flat_storage` with empty-base optimization. Encode and
+validation can therefore fuse before the I/O boundary; decode and result
+mapping can fuse after it. Only the real asynchronous transport operation needs
+an awaitable continuation.
+
+The existing flow primitives cover most heavier RPC semantics:
+
+| RPC semantic | Flux Foundry mapping |
+| --- | --- |
+| Transport submission/completion | `external_async_awaitable` with `init_ctx`, `submit`, `collect`, and `destroy_ctx` |
+| Typed success and failure | `result_t<T, E>`, `then`, `on_error`, and `catch_exception` |
+| Resume scheduling | `via` or the executor supplied to `await` |
+| Cancellation | `flow_runner` plus `awaitable_base` |
+| Lowest-overhead calls | `flow_fast_runner` plus `fast_awaitable_base` |
+| Parallel replicas or shards | `await_when_all` / `await_when_any` and their fast variants |
+| Hedged request or timeout race | network and timer subflows combined with `when_any` |
+| Backpressure | the selected executor and its bounded queue policy |
+| Retry and recovery | an explicit recovery subflow, preserving retry state in its typed context |
+
+This also preserves pay-for-use behavior. A call that does not request
+cancellation can use the fast lane. A call without hedging has no aggregator.
+Authentication, tracing, version checks, compression, and schema adaptation can
+be ordinary typed flow nodes and are absent when they are not composed into the
+blueprint.
+
+Reference categories remain meaningful at the entrance: `const&` can be
+borrowed until synchronous encoding completes, while `&&` transfers ownership.
+After the boundary, frame and decoded values move through the flow. Fan-out is
+the point where ownership must become explicit because multiple branches may
+need shared or copied payloads.
+
+The benchmark below measures both the blocking adapter and the GLib reactor.
+Its GLib latency case drives the owning `GMainContext` and waits for each result
+before launching the next request, so it is not a concurrent-throughput result.
+A throughput comparison still requires matched cancellation, scheduling,
+concurrency, and allocation semantics. The expected advantage is not removal
+of network latency; it is that static dispatch, codec stages, and optional RPC
+policies compose without a per-call general-purpose RPC object model.
+
 ## Build and Test
 
 Configure and build:
@@ -671,7 +795,9 @@ Run tests:
 ctest --test-dir /tmp/dynabridge-cmake-debug --output-on-failure
 ```
 
-The current tests cover fake, Python, and N-API paths. The stub N-API test uses
+The current tests cover fake, RPC, Python, and N-API paths. The RPC test covers
+framing, ordinary functions, functors, lambdas, strict overload selection,
+`void`, unknown methods, and malformed requests. The stub N-API test uses
 `tests/napi_stub/node_api.h`, a tiny local ABI shim, so the bridge can exercise
 import/export behavior without embedding Node.js. When system `node_api.h` and
 `node` are available, CMake also builds a `.node` addon and runs
@@ -689,11 +815,51 @@ cmake -S . -B /tmp/dynabridge-cmake-bench \
     -DDYNABRIDGE_BUILD_BENCHMARKS=ON
 cmake --build /tmp/dynabridge-cmake-bench --target python_call_benchmark
 cmake --build /tmp/dynabridge-cmake-bench --target node_call_benchmark_addon
+cmake --build /tmp/dynabridge-cmake-bench --target rpc_call_benchmark
 ```
+
+The RPC target detects a sibling `../flux_foundry` checkout automatically. Use
+`-DFLUX_FOUNDRY_INCLUDE_DIR=/path/to/flux_foundry` when it lives elsewhere. On
+Linux, installing the `gio-2.0` development package (for example,
+`libglib2.0-dev` on Debian) also enables the nonblocking GLib transport.
 
 Multi-config generators place executables under a configuration subdirectory
 such as `build/Release`. Set `DYNABRIDGE_BENCH_ITERS` to control the timed loop
 length.
+
+Run the RPC benchmark with an optional local-iteration count:
+
+```sh
+/tmp/dynabridge-cmake-bench/rpc_call_benchmark 100000
+```
+
+It always measures direct C++ and the fully framed in-memory transport. On
+POSIX it also measures a persistent localhost TCP transport. If rpclib headers
+and `librpc` are found at configure time, the same executable adds an rpclib
+TCP case using one server worker and the same `int(int, unsigned)` operation.
+
+One Raspberry Pi 4 run (Cortex-A72 at 1.8 GHz, Debian aarch64, GCC 14.2,
+Release, 100,000 local and 10,000 scalar/small-payload TCP calls) produced
+these three-run median times:
+
+| TCP workload | dynabridge | FF blocking | FF GLib | rpclib | GLib vs rpclib |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| scalar `int(int, unsigned)` | 52,078 | 52,674 | 85,354 | 93,559 | 9% lower |
+| 16 B string | 53,934 | 54,146 | 85,880 | 93,977 | 9% lower |
+| 1 KiB string | 56,454 | 57,306 | 90,613 | 100,425 | 10% lower |
+| 64 KiB string | 279,486 | 425,656 | 473,154 | 622,266 | 24% lower |
+
+Times are ns/call. Blocking FF completion stays within about 2% of direct
+dynabridge through 1 KiB. The GLib path additionally includes main-context
+polling and GSource dispatch, then resumes the continuation inline; it remained
+9-24% below rpclib across these payloads. Large-payload ownership and allocation
+behavior remains an optimization target. The framed scalar loopback path
+measured about 523 ns/call without socket I/O in this run.
+
+This is a latency microbenchmark, not an RPC feature comparison. Dynabridge's
+demo protocol is deliberately narrow; rpclib provides a broader MsgPack RPC
+protocol. Network topology, payload size, concurrency, backpressure, timeouts,
+and production error handling can dominate real workloads.
 
 Run the Python call benchmark:
 

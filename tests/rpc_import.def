@@ -1,0 +1,28 @@
+BEGIN_CALLABLE_GROUP(rpc_add)
+    DECL_CALLABLE(int, int, unsigned)
+END_CALLABLE_GROUP
+
+BEGIN_CALLABLE_GROUP(rpc_select)
+    DECL_CALLABLE(int, int)
+    DECL_CALLABLE(int, unsigned)
+END_CALLABLE_GROUP
+
+BEGIN_CALLABLE_GROUP(rpc_echo)
+    DECL_CALLABLE(std::string, const std::string&)
+END_CALLABLE_GROUP
+
+BEGIN_CALLABLE_GROUP(rpc_notify)
+    DECL_CALLABLE(void, int)
+END_CALLABLE_GROUP
+
+BEGIN_CALLABLE_GROUP(rpc_scale)
+    DECL_CALLABLE(double, double)
+END_CALLABLE_GROUP
+
+BEGIN_CALLABLE_GROUP(rpc_not)
+    DECL_CALLABLE(bool, bool)
+END_CALLABLE_GROUP
+
+BEGIN_CALLABLE_GROUP(rpc_move)
+    DECL_CALLABLE(std::string, std::string&&)
+END_CALLABLE_GROUP

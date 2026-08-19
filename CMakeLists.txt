@@ -35,6 +35,14 @@ target_include_directories(optional_test PRIVATE
 )
 add_test(NAME optional COMMAND optional_test)
 
+add_executable(rpc_backend_test
+    tests/rpc_backend_test.cpp
+)
+target_include_directories(rpc_backend_test PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+add_test(NAME rpc_backend COMMAND rpc_backend_test)
+
 find_package(Python3 COMPONENTS Interpreter Development)
 if(Python3_Development_FOUND)
     add_executable(python_backend_test
@@ -79,6 +87,59 @@ if(Python3_Development_FOUND)
 endif()
 
 option(DYNABRIDGE_BUILD_BENCHMARKS "Build dynabridge benchmark executables" OFF)
+
+if(DYNABRIDGE_BUILD_BENCHMARKS)
+    find_package(Threads REQUIRED)
+    add_executable(rpc_call_benchmark
+        benchmarks/rpc_call_benchmark.cpp
+    )
+    target_include_directories(rpc_call_benchmark PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}"
+    )
+    target_link_libraries(rpc_call_benchmark PRIVATE Threads::Threads)
+
+    find_path(FLUX_FOUNDRY_INCLUDE_DIR flow/flow.h
+        HINTS
+            "${CMAKE_CURRENT_SOURCE_DIR}/../flux_foundry"
+    )
+    if(FLUX_FOUNDRY_INCLUDE_DIR)
+        target_compile_definitions(rpc_call_benchmark PRIVATE
+            DYNABRIDGE_HAS_FLUX_FOUNDRY=1
+        )
+        target_include_directories(rpc_call_benchmark SYSTEM PRIVATE
+            "${FLUX_FOUNDRY_INCLUDE_DIR}"
+        )
+
+        if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+            find_package(PkgConfig QUIET)
+            if(PkgConfig_FOUND)
+                pkg_check_modules(GIO2 QUIET IMPORTED_TARGET gio-2.0)
+            endif()
+            if(GIO2_FOUND)
+                target_compile_definitions(rpc_call_benchmark PRIVATE
+                    DYNABRIDGE_HAS_GLIB=1
+                )
+                target_link_libraries(rpc_call_benchmark PRIVATE
+                    PkgConfig::GIO2
+                )
+            endif()
+        endif()
+    endif()
+
+    find_path(RPCLIB_INCLUDE_DIR rpc/client.h)
+    find_library(RPCLIB_LIBRARY NAMES rpc rpclib)
+    if(RPCLIB_INCLUDE_DIR AND RPCLIB_LIBRARY)
+        target_compile_definitions(rpc_call_benchmark PRIVATE
+            DYNABRIDGE_HAS_RPCLIB=1
+        )
+        target_include_directories(rpc_call_benchmark SYSTEM PRIVATE
+            "${RPCLIB_INCLUDE_DIR}"
+        )
+        target_link_libraries(rpc_call_benchmark PRIVATE
+            "${RPCLIB_LIBRARY}"
+        )
+    endif()
+endif()
 
 if(DYNABRIDGE_BUILD_BENCHMARKS AND Python3_Development_FOUND)
     add_executable(python_call_benchmark
