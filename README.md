@@ -816,16 +816,49 @@ cmake -S . -B /tmp/dynabridge-cmake-bench \
 cmake --build /tmp/dynabridge-cmake-bench --target python_call_benchmark
 cmake --build /tmp/dynabridge-cmake-bench --target node_call_benchmark_addon
 cmake --build /tmp/dynabridge-cmake-bench --target rpc_call_benchmark
+cmake --build /tmp/dynabridge-cmake-bench --target flow_composition_benchmark
 ```
 
-The RPC target detects a sibling `../flux_foundry` checkout automatically. Use
-`-DFLUX_FOUNDRY_INCLUDE_DIR=/path/to/flux_foundry` when it lives elsewhere. On
-Linux, installing the `gio-2.0` development package (for example,
-`libglib2.0-dev` on Debian) also enables the nonblocking GLib transport.
+Flux Foundry-enabled targets detect a sibling `../flux_foundry` checkout
+automatically. Use `-DFLUX_FOUNDRY_INCLUDE_DIR=/path/to/flux_foundry` when it
+lives elsewhere. Multi-config generators place executables under a
+configuration subdirectory such as `build/Release`.
 
-Multi-config generators place executables under a configuration subdirectory
-such as `build/Release`. Set `DYNABRIDGE_BENCH_ITERS` to control the timed loop
-length.
+### Flux Foundry Tuning
+
+`flow_composition_benchmark` isolates composition from RPC and I/O. It compares
+the same 20-step integer pipeline as direct C++, a Flux Foundry `fast_runner`,
+the same runner with one `fast_awaitable` that resumes synchronously from
+`submit()` under owning and non-owning blueprint policies, and a C++20 coroutine
+with one reusable frame, twenty ready `co_await` expressions, and one real
+resume per call. Only this benchmark target requires C++20; dynabridge and Flux
+Foundry remain C++14 libraries.
+
+On the Raspberry Pi 4 environment described below, three-run medians were:
+
+| 20-step synchronous pipeline | ns/call |
+| --- | ---: |
+| Direct C++ (forced inline) | 22.36 |
+| Flux Foundry `fast_runner` | 22.44 |
+| Flux Foundry owning runner + synchronous resume | 171.22 |
+| Flux Foundry runner view + synchronous resume | 116.92 |
+| C++20 coroutine (reused frame) | 32.12 |
+
+Direct C++ and `fast_runner` are indistinguishable at this resolution, showing
+that the typed synchronous nodes fused away. The synchronous-resume row measures
+a real FF await boundary: pooled awaitable creation, continuation installation,
+reference counting, inline resume, and result delivery all occur on every call.
+The owning runner additionally keeps its blueprint alive through the
+continuation; the view removes that ownership bookkeeping when the caller can
+guarantee blueprint lifetime. The coroutine number is a strong best-case
+baseline with no per-call frame allocation, so these rows describe different
+execution contracts rather than claiming that every FF graph is faster than
+every coroutine.
+
+### RPC
+
+On Linux, installing the `gio-2.0` development package (for example,
+`libglib2.0-dev` on Debian) enables the nonblocking GLib transport.
 
 Run the RPC benchmark with an optional local-iteration count:
 
@@ -844,22 +877,43 @@ these three-run median times:
 
 | TCP workload | dynabridge | FF blocking | FF GLib | rpclib | GLib vs rpclib |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| scalar `int(int, unsigned)` | 52,078 | 52,674 | 85,354 | 93,559 | 9% lower |
-| 16 B string | 53,934 | 54,146 | 85,880 | 93,977 | 9% lower |
-| 1 KiB string | 56,454 | 57,306 | 90,613 | 100,425 | 10% lower |
-| 64 KiB string | 279,486 | 425,656 | 473,154 | 622,266 | 24% lower |
+| scalar `int(int, unsigned)` | 52,685 | 53,432 | 87,895 | 93,962 | 6% lower |
+| 16 B string | 54,022 | 55,207 | 87,919 | 96,507 | 9% lower |
+| 1 KiB string | 58,018 | 58,523 | 91,900 | 102,878 | 11% lower |
+| 64 KiB string | 267,717 | 429,819 | 479,373 | 629,619 | 24% lower |
 
-Times are ns/call. Blocking FF completion stays within about 2% of direct
-dynabridge through 1 KiB. The GLib path additionally includes main-context
-polling and GSource dispatch, then resumes the continuation inline; it remained
-9-24% below rpclib across these payloads. Large-payload ownership and allocation
-behavior remains an optimization target. The framed scalar loopback path
-measured about 523 ns/call without socket I/O in this run.
+Times are ns/call. Blocking FF completion stays close to direct dynabridge
+through 1 KiB. The GLib path additionally includes main-context polling and
+GSource dispatch, then resumes the continuation inline; it remained 6-24%
+below rpclib across these payloads. The framed scalar loopback path measured
+about 523 ns/call without socket I/O in this run.
+
+The benchmark also contains a handwritten asynchronous callback state machine
+using the exact same GLib transport, codec, heap-allocated operation state, and
+acquire/release completion signal. It is measured against the FF runner in
+alternating AB/BA order on one connection to reduce scheduling and frequency
+bias. Three-run medians isolate the composition overhead:
+
+| Workload | Handwritten GLib | FF GLib | FF delta |
+| --- | ---: | ---: | ---: |
+| scalar `int(int, unsigned)` | 86,633 | 87,895 | 1,262 (1.5%) |
+| 16 B string | 86,834 | 87,919 | 1,086 (1.3%) |
+| 1 KiB string | 90,472 | 91,900 | 1,428 (1.6%) |
+| 64 KiB string | 355,105 | 479,373 | 124,269 (35.0%) |
+
+The small-call result puts FF's measured orchestration cost near one
+microsecond on this machine. The 64 KiB delta is payload-sensitive rather than
+a fixed scheduler cost and remains a profiling target for the benchmark
+adapter's ownership and result-delivery path.
 
 This is a latency microbenchmark, not an RPC feature comparison. Dynabridge's
 demo protocol is deliberately narrow; rpclib provides a broader MsgPack RPC
 protocol. Network topology, payload size, concurrency, backpressure, timeouts,
 and production error handling can dominate real workloads.
+
+### Python and Node.js
+
+Set `DYNABRIDGE_BENCH_ITERS` to control the timed loop length.
 
 Run the Python call benchmark:
 
@@ -899,7 +953,7 @@ Reference runs from two local platforms are shown below. Compare rows within the
 same platform; absolute `ns/call` values depend on CPU, compiler, runtime, and
 library versions.
 
-### Windows x64
+#### Windows x64
 
 Environment:
 
@@ -941,7 +995,7 @@ the typed Python export and overload paths, and faster than node-addon-api for
 Node.js export wrappers. Raw N-API remains the lower bound for Node.js import
 calls, while Dyna Bridge stays close to node-addon-api.
 
-### Raspberry Pi aarch64 Linux
+#### Raspberry Pi aarch64 Linux
 
 Environment:
 
