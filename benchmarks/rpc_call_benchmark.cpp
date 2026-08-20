@@ -82,6 +82,37 @@ namespace {
             / static_cast<double>(iterations);
     }
 
+    template <typename First, typename Second>
+    std::pair<double, double> measure_pair(
+        std::size_t iterations,
+        First&& first,
+        Second&& second)
+    {
+        std::chrono::steady_clock::duration first_elapsed{};
+        std::chrono::steady_clock::duration second_elapsed{};
+        for (std::size_t i = 0; i < iterations; ++i) {
+            if ((i & 1u) == 0) {
+                const auto first_start = std::chrono::steady_clock::now();
+                first(i);
+                first_elapsed += std::chrono::steady_clock::now() - first_start;
+                const auto second_start = std::chrono::steady_clock::now();
+                second(i);
+                second_elapsed += std::chrono::steady_clock::now() - second_start;
+            } else {
+                const auto second_start = std::chrono::steady_clock::now();
+                second(i);
+                second_elapsed += std::chrono::steady_clock::now() - second_start;
+                const auto first_start = std::chrono::steady_clock::now();
+                first(i);
+                first_elapsed += std::chrono::steady_clock::now() - first_start;
+            }
+        }
+        const auto divisor = static_cast<double>(iterations);
+        return {
+            std::chrono::duration<double, std::nano>(first_elapsed).count() / divisor,
+            std::chrono::duration<double, std::nano>(second_elapsed).count() / divisor};
+    }
+
     void print_result(const char* name, double nanoseconds) {
         std::cout << std::left << std::setw(30) << name
                   << std::right << std::fixed << std::setprecision(1)
@@ -511,19 +542,26 @@ namespace {
     };
 
     struct glib_web_io_state {
+        glib_web_io_state(
+            glib_tcp_transport* transport_value,
+            dynabridge::rpc::bytes request_value)
+            : transport(transport_value),
+              request(std::move(request_value)) {
+        }
+
         glib_tcp_transport* transport;
         dynabridge::rpc::bytes request;
         dynabridge::rpc::bytes response;
         std::exception_ptr error;
         web_io_callback_t callback;
         web_io_callback_param_t user;
-        std::uint32_t request_size;
-        std::uint32_t response_size;
-        std::size_t request_header_offset;
-        std::size_t request_offset;
-        std::size_t response_header_offset;
-        std::size_t response_offset;
-        bool response_initialized;
+        std::uint32_t request_size = 0;
+        std::uint32_t response_size = 0;
+        std::size_t request_header_offset = 0;
+        std::size_t request_offset = 0;
+        std::size_t response_header_offset = 0;
+        std::size_t response_offset = 0;
+        bool response_initialized = false;
     };
 
     class glib_tcp_transport {
@@ -794,20 +832,8 @@ namespace {
             if (request->frame.size() > std::numeric_limits<std::uint32_t>::max()) {
                 return -1;
             }
-            ctx->state = new (std::nothrow) state_t{
-                request->transport,
-                std::move(request->frame),
-                {},
-                {},
-                nullptr,
-                nullptr,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                false};
+            ctx->state = new (std::nothrow) state_t(
+                request->transport, std::move(request->frame));
             return ctx->state == nullptr ? -1 : 0;
         }
 
@@ -837,6 +863,70 @@ namespace {
 
     using glib_web_io_awaitable_t = ff::extension::external_async_awaitable<glib_web_io>;
     using glib_web_io_result_t = typename glib_web_io_awaitable_t::async_result_type;
+
+    struct manual_glib_wait {
+        std::atomic<bool> done{false};
+    };
+
+    void complete_manual_glib_io(void* user) noexcept {
+        static_cast<manual_glib_wait*>(user)->done.store(
+            true, std::memory_order_release);
+    }
+
+    dynabridge::rpc::bytes run_manual_glib_io(
+        glib_runtime& runtime,
+        glib_tcp_transport& transport,
+        dynabridge::rpc::bytes request)
+    {
+        if (request.size() > std::numeric_limits<std::uint32_t>::max()) {
+            throw std::runtime_error("manual GLib RPC request is too large");
+        }
+        auto operation = std::unique_ptr<glib_web_io_state>(
+            new glib_web_io_state(&transport, std::move(request)));
+        manual_glib_wait wait;
+        if (transport.submit(operation.get(), complete_manual_glib_io, &wait) != 0) {
+            throw std::runtime_error("manual GLib RPC submission failed");
+        }
+        while (!wait.done.load(std::memory_order_acquire)) {
+            runtime.iterate();
+        }
+        if (operation->error) {
+            std::rethrow_exception(operation->error);
+        }
+        return std::move(operation->response);
+    }
+
+    template <typename Context>
+    int call_manual_glib_scalar(
+        glib_runtime& runtime,
+        Context& ctx,
+        int value)
+    {
+        auto response = run_manual_glib_io(
+            runtime,
+            *ctx.transport_,
+            dynabridge::rpc::detail::encode_request_values(
+                ctx.method_,
+                dynabridge::to_cast<int>(ctx, value),
+                dynabridge::to_cast<unsigned>(ctx, 7u)));
+        return dynabridge::from_cast<int>(
+            ctx, dynabridge::rpc::detail::decode_response(response));
+    }
+
+    template <typename Context>
+    std::string call_manual_glib_string(
+        glib_runtime& runtime,
+        Context& ctx,
+        const std::string& value)
+    {
+        auto response = run_manual_glib_io(
+            runtime,
+            *ctx.transport_,
+            dynabridge::rpc::detail::encode_request_values(
+                ctx.method_, dynabridge::to_cast<std::string>(ctx, value)));
+        return dynabridge::from_cast<std::string>(
+            ctx, dynabridge::rpc::detail::decode_response(response));
+    }
 
     template <typename Context>
     auto make_glib_scalar_rpc_flow(Context& ctx) {
@@ -1072,6 +1162,11 @@ int main(int argc, char** argv) {
         auto string_runner = ff::make_fast_runner(
             std::move(string_flow), flow_result_receiver<std::string>{&string_state});
 
+        if (call_manual_glib_string(runtime, glib_echo_ctx, payload_16) != payload_16
+                || call_manual_glib_string(runtime, glib_echo_ctx, payload_1k) != payload_1k
+                || call_manual_glib_string(runtime, glib_echo_ctx, payload_64k) != payload_64k) {
+            throw std::runtime_error("manual GLib RPC payload verification failed");
+        }
         if (run_glib_flow(runtime, string_runner, string_state,
                     string_input{&payload_16}) != payload_16
                 || run_glib_flow(runtime, string_runner, string_state,
@@ -1080,30 +1175,47 @@ int main(int argc, char** argv) {
                     string_input{&payload_64k}) != payload_64k) {
             throw std::runtime_error("dynabridge + Flux Foundry GLib payload verification failed");
         }
-        print_result("dynabridge + FF GLib TCP", measure(tcp_iterations,
-            [&runtime, &scalar_runner, &scalar_state](int value) {
-                return run_glib_flow(runtime, scalar_runner, scalar_state, value);
-            }, sink));
-        print_result("dynabridge + FF GLib 16 B", measure_payload(tcp_iterations,
-            payload_16,
-            [&runtime, &string_runner, &string_state](const std::string& value) {
-                return run_glib_flow(
-                    runtime, string_runner, string_state, string_input{&value});
-            }, payload_sink));
-        print_result("dynabridge + FF GLib 1 KiB", measure_payload(
-            tcp_iterations / 2 == 0 ? 1 : tcp_iterations / 2,
-            payload_1k,
-            [&runtime, &string_runner, &string_state](const std::string& value) {
-                return run_glib_flow(
-                    runtime, string_runner, string_state, string_input{&value});
-            }, payload_sink));
-        print_result("dynabridge + FF GLib 64 KiB", measure_payload(
-            tcp_iterations / 20 == 0 ? 1 : tcp_iterations / 20,
-            payload_64k,
-            [&runtime, &string_runner, &string_state](const std::string& value) {
-                return run_glib_flow(
-                    runtime, string_runner, string_state, string_input{&value});
-            }, payload_sink));
+        const auto scalar_times = measure_pair(tcp_iterations,
+            [&runtime, &glib_ctx, &sink](std::size_t i) {
+                sink = call_manual_glib_scalar(runtime, glib_ctx, static_cast<int>(i));
+            },
+            [&runtime, &scalar_runner, &scalar_state, &sink](std::size_t i) {
+                sink = run_glib_flow(
+                    runtime, scalar_runner, scalar_state, static_cast<int>(i));
+            });
+        print_result("dynabridge manual GLib TCP", scalar_times.first);
+        print_result("dynabridge + FF GLib TCP", scalar_times.second);
+
+        const auto measure_glib_payload = [
+            &runtime,
+            &glib_echo_ctx,
+            &string_runner,
+            &string_state,
+            &payload_sink](std::size_t iterations, const std::string& payload) {
+            return measure_pair(iterations,
+                [&runtime, &glib_echo_ctx, &payload, &payload_sink](std::size_t) {
+                    payload_sink = call_manual_glib_string(
+                        runtime, glib_echo_ctx, payload).size();
+                },
+                [&runtime, &string_runner, &string_state, &payload, &payload_sink](std::size_t) {
+                    payload_sink = run_glib_flow(
+                        runtime,
+                        string_runner,
+                        string_state,
+                        string_input{&payload}).size();
+                });
+        };
+        const auto payload_16_times = measure_glib_payload(tcp_iterations, payload_16);
+        const auto payload_1k_times = measure_glib_payload(
+            tcp_iterations / 2 == 0 ? 1 : tcp_iterations / 2, payload_1k);
+        const auto payload_64k_times = measure_glib_payload(
+            tcp_iterations / 20 == 0 ? 1 : tcp_iterations / 20, payload_64k);
+        print_result("dynabridge manual GLib 16 B", payload_16_times.first);
+        print_result("dynabridge + FF GLib 16 B", payload_16_times.second);
+        print_result("dynabridge manual GLib 1 KiB", payload_1k_times.first);
+        print_result("dynabridge + FF GLib 1 KiB", payload_1k_times.second);
+        print_result("dynabridge manual GLib 64 KiB", payload_64k_times.first);
+        print_result("dynabridge + FF GLib 64 KiB", payload_64k_times.second);
     }
 #else
     std::cout << "dynabridge + FF GLib          not built (GLib/GIO not found)\n";

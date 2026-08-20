@@ -110,6 +110,16 @@ if(DYNABRIDGE_BUILD_BENCHMARKS)
             "${FLUX_FOUNDRY_INCLUDE_DIR}"
         )
 
+        add_executable(flow_composition_benchmark
+            benchmarks/flow_composition_benchmark.cpp
+        )
+        set_property(TARGET flow_composition_benchmark PROPERTY
+            CXX_STANDARD 20
+        )
+        target_include_directories(flow_composition_benchmark SYSTEM PRIVATE
+            "${FLUX_FOUNDRY_INCLUDE_DIR}"
+        )
+
         if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
             find_package(PkgConfig QUIET)
             if(PkgConfig_FOUND)
