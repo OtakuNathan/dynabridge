@@ -68,6 +68,11 @@ namespace dynabridge {
 #define BEGIN_CALLABLE_GROUP(name) \
     template <typename Context> \
     auto name(Context& ctx) { \
+        /* CONTRACT (lifetime): the returned callable captures ctx by REFERENCE. \
+           It must not outlive ctx — storing it beyond ctx's scope, returning it \
+           up the stack, or passing it to another thread is undefined behavior. \
+           Use call_##name(ctx, args...) directly when the callable must escape \
+           ctx's lifetime. */ \
         return [&ctx](auto&&... args) -> decltype(auto) { \
             return call_##name(ctx, std::forward<decltype(args)>(args)...); \
         }; \

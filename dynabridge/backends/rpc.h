@@ -437,6 +437,11 @@ namespace dynabridge {
             };
         }
 
+        // CONTRACT (thread safety): the router is not synchronized.
+        // All define() calls must complete (single thread or externally
+        // synchronized) before dispatch() may be called from any thread —
+        // "define-then-serve". Concurrent define+dispatch is a data race.
+        // Once defined, dispatch() itself is safe to call concurrently.
         class router {
             class route {
             public:

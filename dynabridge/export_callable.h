@@ -442,6 +442,14 @@ namespace dynabridge {
         }
     };
 
+    // CONTRACT (dispatch semantics): overload resolution here is NOT C++
+    // overload resolution. Candidates are tried in DECLARATION order from the
+    // def file: first candidate whose arity matches and whose converters all
+    // accept the dynamic values wins. With strict-kinded backends (rpc: int
+    // only accepts signed_integer, etc.) same-arity overloads stay
+    // unambiguous. With lenient backends (e.g. implicit numeric conversions),
+    // same-arity overloads may depend on declaration order — declare the most
+    // specific signature first.
     template <
         typename ContractList,
         typename Context,

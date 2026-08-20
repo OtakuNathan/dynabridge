@@ -21,6 +21,11 @@ namespace dynabridge {
         return &key;
     }
 
+    // CONTRACT (thread safety): registration structures are not synchronized.
+    // define/store operations must complete on one thread (or under external
+    // synchronization) before any other thread can observe or invoke through
+    // the registered targets — "define-then-serve". Concurrent registration
+    // and dispatch is a data race.
     template <typename Target>
     class export_class_registry {
     public:
