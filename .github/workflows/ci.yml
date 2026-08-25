@@ -52,3 +52,53 @@ jobs:
 
       - name: Test
         run: ctest --test-dir build -C ${{ matrix.build-type }} --output-on-failure
+
+  valgrind:
+    name: ubuntu-latest / valgrind
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install valgrind
+        run: sudo apt-get update && sudo apt-get install -y valgrind
+
+      - name: Configure
+        run: >
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=Debug
+          -DPython3_ROOT_DIR="${{ env.pythonLocation }}"
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      # ctest has no built-in valgrind mode; discover native test executables
+      # from the ctest registry (test commands ending in _test) and run each
+      # under valgrind. Interpreter-driven smoke tests (python/node) are
+      # excluded automatically: their test command is the interpreter itself.
+      - name: Valgrind native tests
+        run: |
+          set -euo pipefail
+          mapfile -t tests < <(
+            ctest --test-dir build -N -V 2>/dev/null |
+              grep -oP 'Test command: \K\S+' |
+              grep -E '_test$' |
+              sort -u
+          )
+          if [ "${#tests[@]}" -eq 0 ]; then
+            echo "No native test executables found" >&2
+            exit 1
+          fi
+          echo "Valgrind targets: ${tests[*]}"
+          for t in "${tests[@]}"; do
+            echo "::group::valgrind $(basename "$t")"
+            valgrind --error-exitcode=99 --track-origins=yes --leak-check=full \
+              --show-leak-kinds=definite --errors-for-leak-kinds=definite "$t"
+            echo "::endgroup::"
+          done
