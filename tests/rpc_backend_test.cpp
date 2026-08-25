@@ -31,7 +31,26 @@ namespace {
     struct unknown_symbol {
         static const char* symbol_name() noexcept { return "missing"; }
     };
+
+    struct rpc_object_tag {
+    };
 }
+
+static_assert(
+    !dynabridge::is_import_object_convertible<
+        dynabridge::rpc_backend,
+        rpc_object_tag,
+        dynabridge::rpc_backend::export_context_t,
+        dynabridge::rpc::value>::value,
+    "RPC stays scalar until its backend explicitly implements object identity");
+
+static_assert(
+    !dynabridge::is_callable_importable<
+        dynabridge::rpc_backend,
+        unknown_symbol,
+        dynabridge::rpc_backend::export_context_t,
+        dynabridge::rpc::value>::value,
+    "RPC stays scalar until its backend explicitly implements callable identity");
 
 int main() {
     dynabridge::rpc_backend::export_context_t export_ctx;

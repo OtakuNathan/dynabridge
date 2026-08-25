@@ -7,6 +7,96 @@
 #include "callable.h"
 
 namespace dynabridge {
+    template <typename Contract, typename Context>
+    struct import_contract_selector;
+
+    template <typename Context, typename R, typename... Args>
+    struct import_contract_selector<free_callable<R(Args...)>, Context> {
+        static type_identity<free_callable<R(Args...)>> select(
+            import_parameter_t<Args, Context>...);
+    };
+
+    template <typename Context>
+    struct import_contract_selector<
+        free_callable<unmatched_callable_t(unmatched_callable_t)>, Context> {
+        static void select(unmatched_callable_t) = delete;
+    };
+
+    template <typename ContractList, typename Context>
+    struct import_contract_selector_group;
+
+#if DYNABRIDGE_CPP_AT_LEAST(17)
+    template <typename Context, typename... Contracts>
+    struct import_contract_selector_group<type_list<Contracts...>, Context>
+        : import_contract_selector<Contracts, Context>... {
+        using import_contract_selector<Contracts, Context>::select...;
+    };
+#else
+    template <typename Context>
+    struct import_contract_selector_group<type_list<>, Context> {
+        static void select(unmatched_callable_t, unmatched_callable_t) = delete;
+    };
+
+    template <typename Context, typename Head, typename... Tail>
+    struct import_contract_selector_group<type_list<Head, Tail...>, Context>
+        : import_contract_selector<Head, Context>,
+          import_contract_selector_group<type_list<Tail...>, Context> {
+        using import_contract_selector<Head, Context>::select;
+        using import_contract_selector_group<type_list<Tail...>, Context>::select;
+    };
+#endif
+
+    template <typename ContractList>
+    struct import_overload_dispatch {
+        template <typename Context, typename... Args>
+        static decltype(auto) invoke(Context& ctx, Args&&... args) {
+            using selector_t = import_contract_selector_group<ContractList, Context>;
+            using selected_t = typename decltype(selector_t::select(
+                std::declval<Args>()...))::type;
+            return Context::backend_t::template invoke_contract<selected_t>(
+                ctx, no_receiver_t{}, std::forward<Args>(args)...);
+        }
+
+        template <typename Context, typename Receiver, typename... Args>
+        static decltype(auto) invoke_member(Context& ctx, Receiver& receiver, Args&&... args) {
+            using selector_t = import_contract_selector_group<ContractList, Context>;
+            using selected_t = typename decltype(selector_t::select(
+                std::declval<Args>()...))::type;
+            return Context::backend_t::template invoke_contract<selected_t>(
+                ctx, receiver, std::forward<Args>(args)...);
+        }
+    };
+
+    template <typename Contract>
+    struct import_constructor_contract_invoker;
+
+    template <typename R, typename... Declared>
+    struct import_constructor_contract_invoker<free_callable<R(Declared...)>> {
+        template <typename Receiver, typename Context, typename... Actual>
+        static Receiver construct(Context& ctx, Actual&&... actual) {
+            static_assert(sizeof...(Declared) == sizeof...(Actual),
+                "The imported constructor argument count does not match its declaration.");
+            using object_t = typename Context::backend_t::template object_t<Receiver, import_t>;
+            return Receiver(ctx, object_t(
+                ctx,
+                construct_object,
+                import_argument<Declared, Context>::lower(
+                    ctx, std::forward<Actual>(actual))...));
+        }
+    };
+
+    template <typename ContractList>
+    struct import_constructor_overload_dispatch {
+        template <typename Receiver, typename Context, typename... Args>
+        static Receiver construct(Context& ctx, Args&&... args) {
+            using selector_t = import_contract_selector_group<ContractList, Context>;
+            using selected_t = typename decltype(selector_t::select(
+                std::declval<Args>()...))::type;
+            return import_constructor_contract_invoker<selected_t>::template construct<Receiver>(
+                ctx, std::forward<Args>(args)...);
+        }
+    };
+
     template <typename Context, typename U = void>
     struct is_context_legal : std::false_type {
     };

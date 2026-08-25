@@ -9,6 +9,26 @@
 #include <utility>
 #include <vector>
 
+namespace dynabridge {
+    namespace native {
+        class counter {
+        public:
+            explicit counter(unsigned value) noexcept : value_(value) {}
+
+            int add(int value) const noexcept {
+                return static_cast<int>(value_) + value;
+            }
+
+            int value() const noexcept {
+                return static_cast<int>(value_);
+            }
+
+        private:
+            unsigned value_;
+        };
+    }
+}
+
 #define DYNABRIDGE_IMPORT_DEF "tests/import.def"
 #define DYNABRIDGE_EXPORT_DEF "tests/export.def"
 #include "dynabridge/bridge.h"
@@ -44,6 +64,16 @@ namespace {
         long long ns = 0;
         long long checksum = 0;
         long long expected_checksum = 0;
+    };
+
+    struct transform_function {
+        int operator()(int value) const noexcept {
+            return value + 2;
+        }
+
+        int operator()(int value, unsigned extra) const noexcept {
+            return value + static_cast<int>(extra);
+        }
     };
 
     std::size_t iterations_from_env() {
@@ -113,6 +143,67 @@ namespace {
         return to_int(result);
     }
 
+    int call_object_int(PyObject* callable, PyObject* object, long value) {
+        PyObject* number = PyLong_FromLong(value);
+        if (number == nullptr) {
+            throw_python_error("Python argument allocation failed");
+        }
+
+#if PY_VERSION_HEX >= 0x03080000
+        PyObject* args[] = { object, number };
+        PyObject* result = PyObject_Vectorcall(callable, args, 2, nullptr);
+        Py_DECREF(number);
+#else
+        PyObject* result = PyObject_CallFunctionObjArgs(callable, object, number, nullptr);
+        Py_DECREF(number);
+#endif
+        return to_int(result);
+    }
+
+    int construct_counter(PyObject* callable, long value) {
+        PyObject* number = PyLong_FromLong(value);
+        if (number == nullptr) {
+            throw_python_error("Python constructor argument allocation failed");
+        }
+
+#if PY_VERSION_HEX >= 0x03080000
+        PyObject* args[] = { number };
+        PyObject* result = PyObject_Vectorcall(callable, args, 1, nullptr);
+#else
+        PyObject* result = PyObject_CallFunctionObjArgs(callable, number, nullptr);
+#endif
+        Py_DECREF(number);
+        if (result == nullptr) {
+            throw_python_error("Python constructor returned null");
+        }
+        Py_DECREF(result);
+        return 3;
+    }
+
+    PyObject* raw_transform_callback(PyObject*, PyObject* value) {
+        const long converted = PyLong_AsLong(value);
+        if (PyErr_Occurred()) {
+            return nullptr;
+        }
+        return PyLong_FromLong(converted + 2);
+    }
+
+    int raw_fresh_callback_call(PyObject* callable) {
+        static PyMethodDef definition = {
+            "raw_transform",
+            raw_transform_callback,
+            METH_O,
+            nullptr
+        };
+        PyObject* callback = PyCFunction_NewEx(&definition, nullptr, nullptr);
+        if (callback == nullptr) {
+            throw_python_error("raw callback allocation failed");
+        }
+        const int result = call_object_int(callable, callback, 1);
+        Py_DECREF(callback);
+        return result;
+    }
+
 #if PY_VERSION_HEX >= 0x03080000
     int raw_vectorcall(PyObject* callable) {
         PyObject* args[] = {
@@ -144,6 +235,14 @@ namespace {
         return to_int(result);
     }
 #endif
+
+    int call_int_argument(PyObject* callable, long value) {
+#if PY_VERSION_HEX >= 0x03080000
+        return raw_vectorcall1(callable, value);
+#else
+        return raw_tuple_call1(callable, value);
+#endif
+    }
 
 #if defined(DYNABRIDGE_HAS_PYBIND11) && PY_VERSION_HEX >= 0x03080000
     int pybind11_manual_vectorcall(pybind11::function& callable) {
@@ -227,7 +326,7 @@ namespace {
 #endif
         std::cout << '\n';
 
-        std::cout << std::left << std::setw(32) << "case"
+        std::cout << std::left << std::setw(40) << "case"
                   << std::right << std::setw(14) << "ns/call"
                   << std::setw(14) << "calls/sec"
                   << std::setw(14) << "checksum" << '\n';
@@ -235,7 +334,7 @@ namespace {
         for (const auto& result : results) {
             const double ns_per_call = static_cast<double>(result.ns) / iterations;
             const double calls_per_sec = 1000000000.0 / ns_per_call;
-            std::cout << std::left << std::setw(32) << result.name
+            std::cout << std::left << std::setw(40) << result.name
                       << std::right << std::setw(14) << std::fixed << std::setprecision(1)
                       << ns_per_call
                       << std::setw(14) << std::setprecision(0) << calls_per_sec
@@ -252,7 +351,19 @@ int main() {
 #endif
 
     try {
-        if (PyRun_SimpleString("def calc(a, b):\n    return a + b\n") != 0) {
+        if (PyRun_SimpleString(
+                "def calc(a, b):\n"
+                "    return a + b\n"
+                "class ForeignCounter:\n"
+                "    def __init__(self, value):\n"
+                "        self.value = value\n"
+                "def pass_counter(obj, value):\n"
+                "    return value + 2\n"
+                "def pass_transform(fn, value):\n"
+                "    return fn(value)\n"
+                "def callback(value):\n"
+                "    return value + 2\n"
+                "foreign_counter = ForeignCounter(2)\n") != 0) {
             throw_python_error("failed to define Python benchmark function");
         }
 
@@ -267,7 +378,32 @@ int main() {
             throw_python_error("missing Python calc callable");
         }
 
+        PyObject* foreign_counter = PyDict_GetItemString(globals, "foreign_counter");
+        PyObject* callback = PyDict_GetItemString(globals, "callback");
+        PyObject* pass_counter = PyDict_GetItemString(globals, "pass_counter");
+        PyObject* pass_transform = PyDict_GetItemString(globals, "pass_transform");
+        if (foreign_counter == nullptr
+                || callback == nullptr
+                || pass_counter == nullptr
+                || pass_transform == nullptr
+                || !PyCallable_Check(callback)
+                || !PyCallable_Check(pass_counter)
+                || !PyCallable_Check(pass_transform)) {
+            throw_python_error("missing Python channel benchmark values");
+        }
+
         dynabridge::py_backend::context_t ctx(calc, dynabridge::py_backend::ref_policy::borrowed);
+        dynabridge::py_backend::module_t import_module(main);
+        auto object_ctx = dynabridge::import_from<
+            dynabridge::import_symbols::pass_counter,
+            dynabridge::py_backend::import_context_t>(import_module);
+        auto imported_counter = dynabridge::bind_receiver<dynabridge::counter>(
+            object_ctx,
+            foreign_counter,
+            dynabridge::py_backend::ref_policy::borrowed);
+        auto callable_ctx = dynabridge::import_from<
+            dynabridge::import_symbols::pass_transform,
+            dynabridge::py_backend::import_context_t>(import_module);
         dynabridge::py_backend::export_context_t export_ctx;
         dynabridge::py_backend::module_t module(
             PyModule_New("dynabridge_python_call_benchmark"),
@@ -281,6 +417,31 @@ int main() {
                 return add_function(a, b);
             })
             .commit();
+        dynabridge::exports::counter::register_all(export_ctx, module);
+        auto exported_counter = dynabridge::make_exported<dynabridge::exports::counter>(
+            export_ctx, dynabridge::native::counter(2u));
+        using object_signature = int(
+            dynabridge::object_param<
+                dynabridge::export_classes::counter,
+                dynabridge::export_t>,
+            int);
+        dynabridge::export_consume_counter<object_signature>(
+            export_ctx,
+            module,
+            [](dynabridge::native::counter& counter, int value) {
+                return counter.add(value);
+            });
+        using callback_signature = int(
+            dynabridge::callable_param<
+                dynabridge::import_symbols::callback,
+                dynabridge::import_t>,
+            int);
+        dynabridge::export_use_callback<callback_signature>(
+            export_ctx,
+            module,
+            [](auto& callback_ctx, int value) {
+                return dynabridge::call_callback(callback_ctx, value);
+            });
 
         using select_overloads_t = dynabridge::type_list<
             dynabridge::free_callable<int(unsigned)>,
@@ -302,11 +463,26 @@ int main() {
         dynabridge::py_backend::object_ref dynabridge_select(
             PyObject_GetAttrString(module.get(), "select"),
             dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref consume_counter(
+            PyObject_GetAttrString(module.get(), "consume_counter"),
+            dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref use_callback(
+            PyObject_GetAttrString(module.get(), "use_callback"),
+            dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref counter_class(
+            PyObject_GetAttrString(module.get(), "counter"),
+            dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref counter_add(
+            PyObject_GetAttrString(exported_counter.get(), "add"),
+            dynabridge::py_backend::ref_policy::owned);
         if (!dynabridge_add) {
             throw_python_error("missing dynabridge exported add callable");
         }
         if (!dynabridge_calc || !dynabridge_select) {
             throw_python_error("missing dynabridge exported overload callable");
+        }
+        if (!consume_counter || !use_callback || !counter_class || !counter_add) {
+            throw_python_error("missing dynabridge channel benchmark callable");
         }
 
         const std::size_t iterations = iterations_from_env();
@@ -315,6 +491,23 @@ int main() {
         results.push_back(run_benchmark("dynabridge import", iterations, 3, [&ctx]() {
             return dynabridge::call_calc(ctx, 1, 2u);
         }));
+        results.push_back(run_benchmark("dynabridge import object", iterations, 3,
+            [&object_ctx, &imported_counter]() {
+                return dynabridge::call_pass_counter(object_ctx, imported_counter, 1);
+            }));
+        results.push_back(run_benchmark("dynabridge import callback", iterations, 3,
+            [&callable_ctx]() {
+                return dynabridge::call_pass_transform(
+                    callable_ctx, transform_function{}, 1);
+            }));
+        results.push_back(run_benchmark("raw C API import object", iterations, 3,
+            [pass_counter, foreign_counter]() {
+                return call_object_int(pass_counter, foreign_counter, 1);
+            }));
+        results.push_back(run_benchmark("raw C API import callback", iterations, 3,
+            [pass_transform]() {
+                return raw_fresh_callback_call(pass_transform);
+            }));
 
         results.push_back(run_benchmark("raw C API tuple", iterations, 3, [calc]() {
             return raw_tuple_call(calc);
@@ -329,6 +522,22 @@ int main() {
         results.push_back(run_benchmark("dynabridge export tuple", iterations, 3, [&dynabridge_add]() {
             return raw_tuple_call(dynabridge_add.get());
         }));
+        results.push_back(run_benchmark("dynabridge export class argument", iterations, 3,
+            [&consume_counter, &exported_counter]() {
+                return call_object_int(consume_counter.get(), exported_counter.get(), 1);
+            }));
+        results.push_back(run_benchmark("dynabridge export class member", iterations, 3,
+            [&counter_add]() {
+                return call_int_argument(counter_add.get(), 1);
+            }));
+        results.push_back(run_benchmark("dynabridge export callback", iterations, 3,
+            [&use_callback, callback]() {
+                return call_object_int(use_callback.get(), callback, 1);
+            }));
+        results.push_back(run_benchmark("dynabridge export construct", iterations, 3,
+            [&counter_class]() {
+                return construct_counter(counter_class.get(), 2);
+            }));
         results.push_back(run_benchmark("dynabridge overload tuple 1", iterations, 10, [&dynabridge_calc]() {
             return raw_tuple_call1(dynabridge_calc.get(), 1);
         }));
@@ -367,6 +576,12 @@ int main() {
             return add_function(a, b);
         });
         py::module_ main_module = py::module_::import("__main__");
+        py::class_<dynabridge::native::counter> py_counter_class(
+            main_module, "PybindCounter");
+        py_counter_class
+            .def(py::init<unsigned>())
+            .def("add", &dynabridge::native::counter::add)
+            .def("value", &dynabridge::native::counter::value);
         main_module.def("pybind11_calc_overload", [](int a) {
             return a * 10;
         });
@@ -375,6 +590,21 @@ int main() {
         });
         py::function pybind11_calc_overload =
             main_module.attr("pybind11_calc_overload").cast<py::function>();
+        main_module.def("pybind11_consume_counter",
+            [](dynabridge::native::counter& counter, int value) {
+                return counter.add(value);
+            });
+        main_module.def("pybind11_use_callback", [](py::function fn, int value) {
+            return fn(value).cast<int>();
+        });
+        py::object py_counter = py_counter_class(2u);
+        py::function py_counter_add = py_counter.attr("add").cast<py::function>();
+        py::function py_consume_counter =
+            main_module.attr("pybind11_consume_counter").cast<py::function>();
+        py::function py_use_callback =
+            main_module.attr("pybind11_use_callback").cast<py::function>();
+        py::function py_pass_counter = py::reinterpret_borrow<py::function>(pass_counter);
+        py::function py_pass_transform = py::reinterpret_borrow<py::function>(pass_transform);
 
         results.push_back(run_benchmark("pybind11 function call", iterations, 3, [&py_calc]() {
             return py_calc(1, 2u).cast<int>();
@@ -387,6 +617,31 @@ int main() {
         results.push_back(run_benchmark("pybind11 cpp_function tuple", iterations, 3, [&py_add]() {
             return raw_tuple_call(py_add.ptr());
         }));
+        results.push_back(run_benchmark("pybind11 import object", iterations, 3,
+            [&py_pass_counter, &py_counter]() {
+                return py_pass_counter(py_counter, 1).cast<int>();
+            }));
+        results.push_back(run_benchmark("pybind11 import callback", iterations, 3,
+            [&py_pass_transform]() {
+                py::cpp_function fn([](int value) { return value + 2; });
+                return py_pass_transform(fn, 1).cast<int>();
+            }));
+        results.push_back(run_benchmark("pybind11 export class argument", iterations, 3,
+            [&py_consume_counter, &py_counter]() {
+                return call_object_int(py_consume_counter.ptr(), py_counter.ptr(), 1);
+            }));
+        results.push_back(run_benchmark("pybind11 export class member", iterations, 3,
+            [&py_counter_add]() {
+                return call_int_argument(py_counter_add.ptr(), 1);
+            }));
+        results.push_back(run_benchmark("pybind11 export callback", iterations, 3,
+            [&py_use_callback, callback]() {
+                return call_object_int(py_use_callback.ptr(), callback, 1);
+            }));
+        results.push_back(run_benchmark("pybind11 export construct", iterations, 3,
+            [&py_counter_class]() {
+                return construct_counter(py_counter_class.ptr(), 2);
+            }));
         results.push_back(run_benchmark("pybind11 overload tuple 1", iterations, 10, [&pybind11_calc_overload]() {
             return raw_tuple_call1(pybind11_calc_overload.ptr(), 1);
         }));
@@ -417,6 +672,12 @@ int main() {
             return add_function(a, b);
         });
         nb::module_ nb_main_module = nb::module_::import_("__main__");
+        nb::class_<dynabridge::native::counter> nb_counter_class(
+            nb_main_module, "NanobindCounter");
+        nb_counter_class
+            .def(nb::init<unsigned>())
+            .def("add", &dynabridge::native::counter::add)
+            .def("value", &dynabridge::native::counter::value);
         nb_main_module.def("nanobind_calc_overload", [](int a) {
             return a * 10;
         });
@@ -424,6 +685,19 @@ int main() {
             return add_function(a, b);
         });
         nb::object nanobind_calc_overload = nb_main_module.attr("nanobind_calc_overload");
+        nb_main_module.def("nanobind_consume_counter",
+            [](dynabridge::native::counter& counter, int value) {
+                return counter.add(value);
+            });
+        nb_main_module.def("nanobind_use_callback", [](nb::callable fn, int value) {
+            return nb::cast<int>(fn(value));
+        });
+        nb::object nb_counter = nb_counter_class(2u);
+        nb::object nb_counter_add = nb_counter.attr("add");
+        nb::object nb_consume_counter = nb_main_module.attr("nanobind_consume_counter");
+        nb::object nb_use_callback = nb_main_module.attr("nanobind_use_callback");
+        nb::object nb_pass_counter = nb::borrow<nb::object>(pass_counter);
+        nb::object nb_pass_transform = nb::borrow<nb::object>(pass_transform);
 
         results.push_back(run_benchmark("nanobind function call", iterations, 3, [&nb_calc]() {
             return nb::cast<int>(nb_calc(1, 2u));
@@ -436,6 +710,31 @@ int main() {
         results.push_back(run_benchmark("nanobind cpp_function tuple", iterations, 3, [&nb_add]() {
             return raw_tuple_call(nb_add.ptr());
         }));
+        results.push_back(run_benchmark("nanobind import object", iterations, 3,
+            [&nb_pass_counter, &nb_counter]() {
+                return nb::cast<int>(nb_pass_counter(nb_counter, 1));
+            }));
+        results.push_back(run_benchmark("nanobind import callback", iterations, 3,
+            [&nb_pass_transform]() {
+                nb::object fn = nb::cpp_function([](int value) { return value + 2; });
+                return nb::cast<int>(nb_pass_transform(fn, 1));
+            }));
+        results.push_back(run_benchmark("nanobind export class argument", iterations, 3,
+            [&nb_consume_counter, &nb_counter]() {
+                return call_object_int(nb_consume_counter.ptr(), nb_counter.ptr(), 1);
+            }));
+        results.push_back(run_benchmark("nanobind export class member", iterations, 3,
+            [&nb_counter_add]() {
+                return call_int_argument(nb_counter_add.ptr(), 1);
+            }));
+        results.push_back(run_benchmark("nanobind export callback", iterations, 3,
+            [&nb_use_callback, callback]() {
+                return call_object_int(nb_use_callback.ptr(), callback, 1);
+            }));
+        results.push_back(run_benchmark("nanobind export construct", iterations, 3,
+            [&nb_counter_class]() {
+                return construct_counter(nb_counter_class.ptr(), 2);
+            }));
         results.push_back(run_benchmark("nanobind overload tuple 1", iterations, 10, [&nanobind_calc_overload]() {
             return raw_tuple_call1(nanobind_calc_overload.ptr(), 1);
         }));

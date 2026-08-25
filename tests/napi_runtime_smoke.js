@@ -21,6 +21,16 @@ async function main() {
     assert.strictEqual(addon.ownedCounterConstructed(), 1);
     assert.strictEqual(counter.add(29), 42);
     assert.strictEqual(counter.value(), 13);
+    assert.strictEqual(addon.consume_counter(counter, 11), 24);
+    assert.strictEqual(addon.use_callback((value) => value * 3, 7), 22);
+    assert.throws(() => addon.consume_counter(7, 1));
+    assert.throws(() => addon.use_callback(7, 1));
+
+    const consumer = new addon.consumer(counter, (value) => value * 3);
+    assert.strictEqual(consumer.combine(counter, 11), 63);
+    assert.strictEqual(consumer.apply((value) => value * 3, 7), 60);
+    assert.throws(() => addon.consume_counter(consumer, 1));
+    assert.throws(() => counter.add.call(consumer, 1));
 
     let calcArgs = null;
     assert.strictEqual(
@@ -53,6 +63,12 @@ async function main() {
     assert.strictEqual(addon.callImportedCounterAdd(counterDispatch, foreignCounter, 29), 42);
     assert.strictEqual(addon.callImportedCounterValue(counterDispatch, foreignCounter), 13);
     assert.strictEqual(addon.constructImportedCounterAdd(counterDispatch, 21, 21), 42);
+    assert.strictEqual(
+        addon.callImportedPassCounter((obj, value) => obj.handle + value, foreignCounter, 29),
+        42);
+    assert.strictEqual(
+        addon.callImportedPassTransform((fn, value) => fn(value), 4),
+        40);
 
     counter = null;
     for (let i = 0; i < 8; ++i) {

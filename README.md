@@ -43,35 +43,39 @@ converter means no boundary crossing, and no backend policy means no runtime
 effect. If another runtime should not touch something, do not put it in the
 bridge table; the core will not generate a path to discover or call it.
 
-Dyna Bridge separates the problem into five pieces:
+Dyna Bridge models call shape with `callable<Receiver, R(Args...)>`;
+`free_callable<R(Args...)>` is its `no_receiver_t` specialization. Arguments
+cross the boundary through three separate channels:
 
-- `callable<Receiver, R(Args...)>` describes the C++ call contract.
-- `free_callable<R(Args...)>` is `callable<no_receiver_t, R(Args...)>`.
-- `backend_t` owns the language-specific call mechanics.
-- `backend_t::converter<T>` owns value conversion with `to` and optional
-  `from` probes. Core code calls them through `to_cast<T>`, `from_optional<T>`,
-  and `from_cast<T>`.
-- `object_t<Class, Direction>` owns object identity, handles, and native
-  binding.
+- Plain types use `backend_t::converter<T>` for value conversion.
+- `OBJECT(clazz)` uses `object_t<Class, Direction>` for typed object identity.
+- `CALLABLE(group)` reuses an ordinary callable group and backend context for
+  function identity. A callback is not a separate abstraction.
 
 Forward call, C++ to dynamic language:
 
 ```text
-C++ receiver/args -> to_cast<T> -> backend call -> from_cast<R> -> C++
+C++ values -> to_cast<T>
+imported objects -> backend dynamic handle
+C++ callables -> generated export binder
+backend call -> from_cast<R> -> C++
 ```
 
 Export call, dynamic language to C++:
 
 ```text
-dynamic value args -> converter<T>::from optional probe -> C++ callable -> to_cast<R>
+dynamic values -> converter<T>::from optional probe
+dynamic objects -> checked object binding -> native_t&
+dynamic callables -> checked import context -> C++ callable
 dynamic self handle -> backend object_t -> generated export proxy -> native receiver
 ```
 
 This keeps runtime details such as `napi_value`, `PyObject*`, or Lua stack slots
 outside the bridge core.
 
-Value conversion and object binding are intentionally separate. `converter<T>`
-is the value channel for integers, strings, containers, and return values.
+Value conversion, object identity, and callable identity are intentionally
+separate. `converter<T>` is the value channel for integers, strings,
+containers, and return values.
 Class identity flows through `object_t`: export member calls bind the dynamic
 `self` handle to an export object and unwrap the generated C++ proxy from that
 object before invoking the method. The proxy owns or borrows the native C++
@@ -101,12 +105,9 @@ The repository includes four backend implementations:
 - `dynabridge/backends/rpc.h` is a transport-agnostic framed RPC backend.
 
 Backend headers declare their `converter<T>` primary template and include their
-default converter specializations at the end, for example
-`python.h` includes `python_converters.h`. Project-specific import proxy
-converters, such as `converter<counter<Context>>`, stay near the integration
-that owns the imported object contract. Exported classes do not use value
-converters; the backend binds a generated proxy object to the dynamic class
-instance.
+default value specializations at the end, for example `python.h` includes
+`python_converters.h`. Imported and exported classes do not need converter
+specializations: object identity always uses the object channel.
 
 Code that uses the Python C API should include
 `dynabridge/backends/python_api.h` instead of including `Python.h` directly.
@@ -131,6 +132,14 @@ BEGIN_CALLABLE_GROUP(calc)
     DECL_CALLABLE(int, int, unsigned)
 END_CALLABLE_GROUP
 
+BEGIN_CALLABLE_GROUP(pass_counter)
+    DECL_CALLABLE(int, OBJECT(counter), int)
+END_CALLABLE_GROUP
+
+BEGIN_CALLABLE_GROUP(pass_transform)
+    DECL_CALLABLE(int, CALLABLE(transform), int)
+END_CALLABLE_GROUP
+
 BEGIN_CLASS(counter)
     DECL_CONSTRUCTOR(unsigned)
 
@@ -152,6 +161,14 @@ C++ type `ns::clazz`:
 BEGIN_CALLABLE_GROUP(calc)
     DECL_CALLABLE(int, int)
     DECL_CALLABLE(int, int, unsigned)
+END_CALLABLE_GROUP
+
+BEGIN_CALLABLE_GROUP(use_callback)
+    DECL_CALLABLE(int, CALLABLE(callback), int)
+END_CALLABLE_GROUP
+
+BEGIN_CALLABLE_GROUP(consume_counter)
+    DECL_CALLABLE(int, OBJECT(counter), int)
 END_CALLABLE_GROUP
 
 BEGIN_CLASS(native, counter)
@@ -196,6 +213,26 @@ multiple domains are expanded together.
 Callable arguments may be values, `const T&`, or `T&&`. Non-const lvalue
 references such as `T&` are rejected because a bridge boundary cannot provide a
 meaningful writable C++ reference into another runtime.
+
+### Object and Callable Parameters
+
+Descriptors are interpreted by the direction of their def file:
+
+- Import `OBJECT(counter)` accepts `const counter<Context>&` and forwards its dynamic
+  handle without invoking a converter.
+- Export `OBJECT(counter)` validates the dynamic class and passes the bound
+  `native::counter&` to C++.
+- Import `CALLABLE(transform)` accepts a free function, lambda, functor, or
+  built overload set and exposes it as a temporary dynamic function.
+- Export `CALLABLE(callback)` validates a dynamic callable, creates the normal
+  import context, and passes that context by lvalue reference. C++ calls it with
+  `call_callback(callback_ctx, args...)`.
+
+`OBJECT` parameters are borrowed for the duration of the call. Callable context
+ownership and thread policy remain backend/caller responsibilities. Descriptor
+returns are intentionally unsupported; use normal value returns or an explicit
+backend object API. The included RPC backend remains scalar and rejects these
+descriptors until an RPC implementation supplies identity hooks.
 
 Each free group becomes an overload set, a same-name binder, and a direct import
 function with a `call_` prefix:
@@ -311,6 +348,18 @@ dynabridge::export_calc(ctx, module)
     .commit();
 ```
 
+The same slots can build a standalone callable argument without registering a
+module symbol:
+
+```cpp
+auto transform = dynabridge::bind_transform()
+    .bind<int(int)>(scale_by_ten)
+    .bind<int(int, unsigned)>(multiply)
+    .build();
+
+dynabridge::call_pass_transform(ctx, std::move(transform), 6);
+```
+
 The backend forwards `argc` and dynamic arguments to the binder. The core walks
 declared signatures in order, skips arity mismatches, uses `converter<T>::from`
 for recoverable conversion misses, and returns the first successful result.
@@ -325,14 +374,14 @@ forwards declared member functions:
 
 ```cpp
 dynabridge::py_backend::export_context_t export_ctx;
-dynabridge::exports::counter<native::counter>::register_all(export_ctx, module);
+dynabridge::exports::counter::register_all(export_ctx, module);
 ```
 
 `register_all` registers the whitelisted constructors and member functions from
 the selected export def, then stores the backend class target in the export
 context. During
 a member call, the backend receives the dynamic `self` handle, builds
-`object_t<exports::counter<T>, export_t>`, unwraps the generated proxy, and
+`object_t<exports::counter, export_t>`, unwraps the generated proxy, and
 invokes the proxy method. That proxy forwards to `T::add`, `T::value`, or any
 explicit callable you bind.
 
@@ -340,12 +389,12 @@ C++ can also create dynamic instances after the type is registered:
 
 ```cpp
 auto object = dynabridge::make_exported<
-    dynabridge::exports::counter<native::counter>>(
+    dynabridge::exports::counter>(
     export_ctx,
     native::counter{13});
 
 dynabridge::export_instance<
-    dynabridge::exports::counter<native::counter>>(
+    dynabridge::exports::counter>(
     export_ctx,
     module,
     "global_counter",
@@ -364,7 +413,7 @@ pointers. Native member pointers are invoked through the proxy's `native()`:
 
 ```cpp
 auto add = dynabridge::create_export_member_callable_binder<
-    dynabridge::exports::counter<native::counter>,
+    dynabridge::exports::counter,
     int(int)>(
     ctx,
     &native::counter::add);
@@ -397,7 +446,9 @@ object_t<Class, export_t>    // dynamic wrapper bound to a generated proxy
 The static type is the bridge identity; the actual handle remains a backend
 detail such as `PyObject*`, `napi_ref`, or a test handle. Import classes use the
 generated C++ projection, while export classes use generated
-`exports::<name><Native>` proxies.
+`exports::<name>` proxies. `BEGIN_CLASS(ns, clazz)` fixes the native type to
+`ns::clazz`; completeness is required only when the proxy is registered or
+instantiated.
 
 ## Extending With a Backend
 
@@ -444,7 +495,6 @@ struct my_backend::converter<int> {
     template <typename Context>
     static dynamic_value to(Context& ctx, int value);
 
-    template <typename Context>
     template <typename Context>
     static dynabridge::optional<int> from(Context& ctx, dynamic_value value);
 };
@@ -527,8 +577,11 @@ calls use `PyObject_Vectorcall` on CPython 3.8+ and fall back to tuple calls on
 older Python versions. Exported Python callables also implement the vectorcall
 protocol on CPython 3.8+, so Python-to-C++ calls can avoid tuple packing when
 the interpreter uses that fast path. Exported Python constructors are installed
-as `__init__`; native C++ state is stored in a hidden `PyCapsule` and destroyed
-by the capsule finalizer.
+as `__init__`; on CPython 3.8+, the class type also uses vectorcall to allocate
+the instance and enter the same typed constructor holder directly. Each exported
+class is a dedicated extension type whose instance layout stores the generated
+proxy inline plus its context and destroy thunk; `tp_dealloc` releases the proxy
+through the backend lifecycle hook.
 
 `dynabridge/backends/python_api.h` is the canonical include for `Python.h`.
 On MSVC Debug builds, Python's headers otherwise assume a debug Python ABI when
@@ -547,15 +600,27 @@ wrapper receives the JavaScript `this` value as the bridge receiver.
 
 Class exports own or borrow native C++ state through a generated proxy. The
 type name is declared in the selected export def through
-`BEGIN_CLASS(ns, clazz)`, and the native type is selected at the export call
-site:
-`dynabridge::exports::clazz<ns::clazz>::register_all(export_ctx, module)`.
+`BEGIN_CLASS(ns, clazz)`, which also fixes the native type. Registration is the
+non-template call
+`dynabridge::exports::clazz::register_all(export_ctx, module)`.
 Constructor signatures must be whitelisted with `DECL_CONSTRUCTOR(Args...)`;
 `register_all` enables them together with the declared member functions and
 stores the class target in `export_ctx`. The backend constructor callback builds
 `object_t<Class, export_t>(ctx, self, args...)`; the default core construction
 uses `new Class(args...)`, where `Class` is the generated proxy. Python binds
-the proxy with a hidden `PyCapsule`; N-API binds it with `napi_wrap`.
+the proxy in its extension-instance storage; N-API binds it with `napi_wrap`.
+On Node-API 8+, each exported object also receives a per-proxy `napi_type_tag`.
+Object arguments and member receivers validate that tag before unwrapping the
+native proxy; older Node-API headers fall back to constructor-based
+`napi_instanceof` validation.
+
+Member receiver validation is a compile-time backend policy. The default
+`napi_backend::export_context_t` is checked. An embedding that guarantees the
+receiver type at every call site can explicitly select
+`napi_backend::trusted_export_context_t`; member calls then perform only
+`napi_unwrap`, while ordinary exported-object arguments remain checked. Calling
+a trusted member with a forged JavaScript `this` value violates that policy and
+can cause undefined behavior.
 
 ```cpp
 namespace dynabridge {
@@ -568,15 +633,15 @@ namespace dynabridge {
 }
 
 dynabridge::py_backend::export_context_t export_ctx;
-dynabridge::exports::counter<native::counter>::register_all(export_ctx, module);
+dynabridge::exports::counter::register_all(export_ctx, module);
 
 native::counter existing_counter{13};
 auto object = dynabridge::make_exported<
-    dynabridge::exports::counter<native::counter>>(
+    dynabridge::exports::counter>(
     export_ctx,
     native::counter{21});
 dynabridge::export_instance<
-    dynabridge::exports::counter<native::counter>>(
+    dynabridge::exports::counter>(
     export_ctx,
     module,
     "global_counter",
@@ -589,13 +654,10 @@ non-`no_receiver_t` import receivers. If the backend exposes `dynamic_value_t`,
 the core also checks import return values with
 `from_cast<R>(ctx, dynamic_value_t{})`.
 
-The same dynamic value type improves export diagnostics. For exported free functions,
-the core checks every declared argument with
-`from_cast<T>(ctx, dynamic_value_t{})`. For exported member functions, it also
-checks that the backend can bind the dynamic `self` handle into
-`object_t<Class, export_t>` and recover the generated proxy. Without a backend
-dynamic value type, these diagnostics fall back to concrete wrapper
-instantiation and backend implementation errors.
+The same dynamic value type improves export diagnostics. Values probe
+`converter<T>::from`; objects probe checked class binding; callables probe
+dynamic callable import. Exported member functions additionally check that the
+backend can bind dynamic `self` and recover the generated proxy.
 
 Exports are also routed through the backend. The core creates a binder and calls
 `backend_t::define(ctx, target, name, binder)`, which is checked by
@@ -631,6 +693,25 @@ struct my_backend : dynabridge::backend_base<my_backend> {
     static object_t<Class, dynabridge::export_t> bind_export_object_impl(
         export_context_t& ctx,
         dynamic_value self);
+
+    template <typename ClassTag, typename ImportObject>
+    static dynamic_value to_dynamic_object_impl(
+        import_context_t& ctx,
+        const ImportObject& object);
+
+    template <typename ClassTag>
+    static dynabridge::optional<object_t<
+        typename ClassTag::proxy_t, dynabridge::export_t>>
+    try_bind_export_object_impl(export_context_t& ctx, dynamic_value value);
+
+    template <typename ImportGroup>
+    static dynabridge::optional<import_context_t>
+    try_import_callable_impl(export_context_t& ctx, dynamic_value value);
+
+    template <typename ExportGroup, typename Binder>
+    static dynamic_value make_export_callable_impl(
+        import_context_t& ctx,
+        Binder binder);
 
     template <typename Class, typename... Args>
     static object_t<Class, dynabridge::export_t> make_export_object_impl(
@@ -948,6 +1029,97 @@ backend policy choices such as callback argument extraction and receiver lookup.
 The dynabridge import case uses an `import_context_t`-owned persistent callable handle
 with current-scope caches, so the hot loop does not perform per-call
 `napi_get_reference_value` or `napi_get_undefined` lookups.
+
+#### Argument channels
+
+The benchmarks also compare value, object, member-receiver, and callable
+channels. One Raspberry Pi 4 run (Cortex-A72, Debian aarch64, GCC 14.2,
+Python 3.13.5, Node.js 24.19.0, Release) used three timed runs of 500,000 calls;
+the tables report medians. Relative cost uses the value call in the same
+direction as its baseline.
+
+| Python path | ns/call | Relative |
+| --- | ---: | ---: |
+| C++ -> Python value | 187.3 | 1.00x |
+| C++ -> Python borrowed object | 204.3 | 1.09x |
+| C++ -> Python fresh callback | 399.3 | 2.13x |
+| Python -> C++ value (vectorcall) | 98.5 | 1.00x |
+| Python -> C++ checked object argument | 104.0 | 1.06x |
+| Python -> C++ member receiver | 108.0 | 1.10x |
+| Python -> C++ existing callback | 302.7 | 3.07x |
+| Python -> C++ construct object | 368.5 | 3.74x |
+
+| Node.js path | ns/call | Relative |
+| --- | ---: | ---: |
+| C++ -> JavaScript value | 333.9 | 1.00x |
+| C++ -> JavaScript borrowed object | 323.1 | 0.97x |
+| C++ -> JavaScript fresh callback | 11,660.2 | 34.92x |
+| JavaScript -> C++ value | 138.2 | 1.00x |
+| JavaScript -> C++ checked object argument | 697.5 | 5.05x |
+| JavaScript -> C++ checked member receiver | 699.4 | 5.06x |
+| JavaScript -> C++ trusted member receiver | 411.0 | 2.97x |
+| JavaScript -> C++ existing callback | 513.2 | 3.71x |
+| JavaScript -> C++ construct object | 5,021.6 | 36.34x |
+
+Borrowed import objects are close to value calls because the backend forwards
+an existing handle without conversion or allocation. Exported object arguments
+and N-API member receivers pay strict runtime class validation plus native-proxy
+lookup. The Python extension layout makes both operations fixed-offset pointer
+access.
+
+The callback rows intentionally measure different lifecycle operations. An
+existing dynamic callback passed into C++ is borrowed and immediately invoked.
+A C++ callback passed into the dynamic runtime must create a fresh `PyObject`
+or `napi_value` function on every measured call, then cross the boundary again;
+N-API function creation dominates that result. Construction includes dynamic
+object allocation, proxy allocation/binding, and finalization setup, so it is a
+low-frequency lifecycle measurement rather than dispatch overhead.
+
+#### Object and callback framework comparison
+
+The same Raspberry Pi 4 setup was used to compare the new channels with raw
+runtime APIs and established C++ wrappers. These are three-run medians from
+500,000 calls with pybind11 2.13.6, nanobind 2.12.0, and node-addon-api 8.9.2.
+Lower is better; `--` means the benchmark does not provide an equivalent raw
+Python class implementation.
+
+| Python path (ns/call) | Raw C API | dynabridge | pybind11 | nanobind |
+| --- | ---: | ---: | ---: | ---: |
+| Export scalar callable (tuple) | -- | 156.6 | 614.0 | 181.1 |
+| Export scalar callable (vectorcall) | -- | 98.5 | -- | 116.9 |
+| Import borrowed object | 253.9 | 204.3 | 386.9 | 291.9 |
+| Import fresh callback | 482.5 | 399.3 | 3,056.4 | 801.6 |
+| Export class argument | -- | 104.0 | 660.3 | 113.5 |
+| Export class member | -- | 108.0 | 715.0 | 128.0 |
+| Export existing callback | -- | 302.7 | 1,138.4 | 432.2 |
+| Export construction | -- | 368.5 | 1,877.8 | 212.5 |
+
+| Node.js path (ns/call) | Raw N-API | dynabridge | node-addon-api |
+| --- | ---: | ---: | ---: |
+| Export value | 121.4 | 138.2 | 167.1 |
+| Export class argument | 426.7 | 697.5 | 440.3 |
+| Export checked class member | -- | 699.4 | -- |
+| Export trusted/direct class member | 359.6 | 411.0 | 473.0 |
+| Export existing callback | 410.8 | 513.2 | 427.5 |
+| Export construction | 3,344.0 | 5,021.6 | 3,785.1 |
+| Import value | 368.8 | 333.9 | 346.3 |
+| Import borrowed object | 321.8 | 323.1 | 318.6 |
+| Import fresh callback | 9,819.9 | 11,660.2 | 12,982.0 |
+
+The Python backend now uses the same broad object strategy as nanobind: a
+dedicated extension type with native state at a fixed offset. Dynabridge's
+class argument and member rows are slightly lower in this run. Construction is
+still about 1.7x higher even after both implementations enter through type-level
+vectorcall. Dynabridge reuses its generic constructor argument and object
+wrappers, while nanobind's constructor caster placement-constructs the native
+value directly. It is a lifecycle cost, not steady-state dispatch. On Node.js,
+dynabridge validates a per-proxy Node-API type tag before unwrapping both class
+arguments and member receivers. The handwritten N-API and node-addon-api rows
+directly unwrap and cast the benchmark object, so they do not provide the same
+wrong-receiver check. The explicit trusted policy removes that check and stays
+close to raw N-API while remaining faster than node-addon-api in this run. The
+typed callable channel requires neither a runtime registry nor a type-erased
+callback wrapper.
 
 Reference runs from two local platforms are shown below. Compare rows within the
 same platform; absolute `ns/call` values depend on CPU, compiler, runtime, and

@@ -2,8 +2,60 @@
 #include "export_core.h"
 
 namespace dynabridge {
+// Native export types are deliberately completed by user code after including
+// bridge.h. Forward declarations keep the generated proxy lazy until use.
+#define BEGIN_CALLABLE_GROUP(name)
+#define DECL_CALLABLE(result, ...)
+#define DECL_FUNCTION(sig)
+#define END_CALLABLE_GROUP
+#define BEGIN_CLASS(ns, clazz) namespace ns { class clazz; }
+#define DECL_CONSTRUCTOR(...)
+#define BEGIN_MEMBER_CALLABLE_GROUP(name)
+#define DECL_MEMBER_FUNCTION(result, ...)
+#define END_MEMBER_CALLABLE_GROUP
+#define END_CLASS
+#include DYNABRIDGE_EXPORT_DEF
+#undef END_CLASS
+#undef END_MEMBER_CALLABLE_GROUP
+#undef DECL_MEMBER_FUNCTION
+#undef BEGIN_MEMBER_CALLABLE_GROUP
+#undef DECL_CONSTRUCTOR
+#undef BEGIN_CLASS
+#undef END_CALLABLE_GROUP
+#undef DECL_FUNCTION
+#undef DECL_CALLABLE
+#undef BEGIN_CALLABLE_GROUP
+
+    namespace export_classes {
+#define BEGIN_CALLABLE_GROUP(name)
+#define DECL_CALLABLE(result, ...)
+#define DECL_FUNCTION(sig)
+#define END_CALLABLE_GROUP
+#define BEGIN_CLASS(ns, clazz) struct clazz;
+#define DECL_CONSTRUCTOR(...)
+#define BEGIN_MEMBER_CALLABLE_GROUP(name)
+#define DECL_MEMBER_FUNCTION(result, ...)
+#define END_MEMBER_CALLABLE_GROUP
+#define END_CLASS
+    #include DYNABRIDGE_EXPORT_DEF
+#undef END_CLASS
+#undef END_MEMBER_CALLABLE_GROUP
+#undef DECL_MEMBER_FUNCTION
+#undef BEGIN_MEMBER_CALLABLE_GROUP
+#undef DECL_CONSTRUCTOR
+#undef BEGIN_CLASS
+#undef END_CALLABLE_GROUP
+#undef DECL_FUNCTION
+#undef DECL_CALLABLE
+#undef BEGIN_CALLABLE_GROUP
+    }
+
+#define OBJECT(clazz) object_param<export_classes::clazz, export_t>
+#define CALLABLE(name) callable_param<import_symbols::name, import_t>
+
+    namespace export_groups {
 #define BEGIN_CALLABLE_GROUP(name) \
-    struct export_##name##_callable_group { \
+    struct name { \
         static const char* symbol_name() noexcept { return #name; } \
         using overloads_t = type_list<
 #define DECL_CALLABLE(result, ...) free_callable<result(__VA_ARGS__)>,
@@ -45,14 +97,40 @@ namespace dynabridge {
 #undef DECL_FUNCTION
 #undef DECL_CALLABLE
 #undef BEGIN_CALLABLE_GROUP
+    }
+
+#define BEGIN_CALLABLE_GROUP(name) \
+    inline export_callable_builder<export_groups::name> bind_##name() { \
+        return export_callable_builder<export_groups::name>(); \
+    }
+#define DECL_CALLABLE(result, ...)
+#define DECL_FUNCTION(sig)
+#define END_CALLABLE_GROUP
+#define BEGIN_CLASS(ns, clazz)
+#define DECL_CONSTRUCTOR(...)
+#define BEGIN_MEMBER_CALLABLE_GROUP(name)
+#define DECL_MEMBER_FUNCTION(result, ...)
+#define END_MEMBER_CALLABLE_GROUP
+#define END_CLASS
+    #include DYNABRIDGE_EXPORT_DEF
+#undef END_CLASS
+#undef END_MEMBER_CALLABLE_GROUP
+#undef DECL_MEMBER_FUNCTION
+#undef BEGIN_MEMBER_CALLABLE_GROUP
+#undef DECL_CONSTRUCTOR
+#undef BEGIN_CLASS
+#undef END_CALLABLE_GROUP
+#undef DECL_FUNCTION
+#undef DECL_CALLABLE
+#undef BEGIN_CALLABLE_GROUP
 
 #define BEGIN_CALLABLE_GROUP(name) \
     template <typename Context, typename Module> \
     auto export_##name(Context& ctx, Module& module) \
-        -> export_free_callable_group_builder<export_##name##_callable_group, Context, Module> \
+        -> export_free_callable_group_builder<export_groups::name, Context, Module> \
     { \
         return export_free_callable_group_builder< \
-            export_##name##_callable_group, Context, Module>(ctx, module); \
+            export_groups::name, Context, Module>(ctx, module); \
     }
 #define DECL_CALLABLE(result, ...)
 #define DECL_FUNCTION(sig)
@@ -78,10 +156,10 @@ namespace dynabridge {
 #define BEGIN_CALLABLE_GROUP(name) \
     template <typename Signature, typename Context, typename Module, typename Callable> \
     auto export_##name(Context& ctx, Module& module, Callable&& callable) \
-        -> decltype(export_##name##_callable_group::template bind<Signature>( \
+        -> decltype(export_groups::name::template bind<Signature>( \
             ctx, module, std::forward<Callable>(callable))) \
     { \
-        return export_##name##_callable_group::template bind<Signature>( \
+        return export_groups::name::template bind<Signature>( \
             ctx, module, std::forward<Callable>(callable)); \
     }
 #define DECL_CALLABLE(result, ...)
@@ -114,9 +192,9 @@ namespace dynabridge {
         std::enable_if_t<std::is_same<ExplicitSignature, void>::value>* = nullptr, \
         typename... Args> \
     auto export_##name(Context& ctx, Module& module, R (*function)(Args...)) \
-        -> decltype(export_##name##_callable_group::template bind<R(Args...)>(ctx, module, function)) \
+        -> decltype(export_groups::name::template bind<R(Args...)>(ctx, module, function)) \
     { \
-        return export_##name##_callable_group::template bind<R(Args...)>(ctx, module, function); \
+        return export_groups::name::template bind<R(Args...)>(ctx, module, function); \
     }
 #define DECL_CALLABLE(result, ...)
 #define DECL_FUNCTION(sig)
@@ -146,9 +224,12 @@ namespace dynabridge {
 #define END_CALLABLE_GROUP
 #define BEGIN_CLASS(ns, clazz) \
         template <typename Native> \
-        class clazz { \
+        class clazz##_proxy; \
+        using clazz = clazz##_proxy<ns::clazz>; \
+        template <typename Native> \
+        class clazz##_proxy { \
         public: \
-            using class_t = clazz<Native>; \
+            using class_t = clazz##_proxy<Native>; \
             using native_t = Native; \
             using bridge_direction = export_t; \
             static const char* symbol_name() noexcept { return #clazz; } \
@@ -165,7 +246,7 @@ namespace dynabridge {
                 typename... Args, \
                 typename = std::enable_if_t< \
                     std::is_constructible<export_native_storage<native_t>, Args&&...>::value>> \
-            explicit clazz(Args&&... args) \
+            explicit clazz##_proxy(Args&&... args) \
                 : native_(std::forward<Args>(args)...) { \
             } \
             native_t& native() noexcept { return native_.ref(); } \
@@ -218,7 +299,7 @@ namespace dynabridge {
 #define END_CALLABLE_GROUP
 #define BEGIN_CLASS(ns, clazz) \
     template <typename Native> \
-    struct export_constructor_group_for<exports::clazz<Native>> { \
+    struct export_constructor_group_for<exports::clazz##_proxy<Native>> { \
         using type = callable_group<
 #define DECL_CONSTRUCTOR(...) free_callable<void(__VA_ARGS__)>,
 #define BEGIN_MEMBER_CALLABLE_GROUP(name)
@@ -246,8 +327,8 @@ namespace dynabridge {
 #define END_CALLABLE_GROUP
 #define BEGIN_CLASS(ns, clazz) \
     template <typename Native> \
-    struct export_class_registrar<exports::clazz<Native>> { \
-        using class_t = exports::clazz<Native>; \
+    struct export_class_registrar<exports::clazz##_proxy<Native>> { \
+        using class_t = exports::clazz##_proxy<Native>; \
         template <typename RegisteredClass> \
         static void register_all(RegisteredClass& type) {
 #define DECL_CONSTRUCTOR(...) \
@@ -276,4 +357,36 @@ namespace dynabridge {
 #undef DECL_FUNCTION
 #undef DECL_CALLABLE
 #undef BEGIN_CALLABLE_GROUP
+
+    namespace export_classes {
+#define BEGIN_CALLABLE_GROUP(name)
+#define DECL_CALLABLE(result, ...)
+#define DECL_FUNCTION(sig)
+#define END_CALLABLE_GROUP
+#define BEGIN_CLASS(ns, clazz) \
+        struct clazz { \
+            using native_t = ns::clazz; \
+            using proxy_t = exports::clazz; \
+            static const char* symbol_name() noexcept { return #clazz; } \
+        };
+#define DECL_CONSTRUCTOR(...)
+#define BEGIN_MEMBER_CALLABLE_GROUP(name)
+#define DECL_MEMBER_FUNCTION(result, ...)
+#define END_MEMBER_CALLABLE_GROUP
+#define END_CLASS
+    #include DYNABRIDGE_EXPORT_DEF
+#undef END_CLASS
+#undef END_MEMBER_CALLABLE_GROUP
+#undef DECL_MEMBER_FUNCTION
+#undef BEGIN_MEMBER_CALLABLE_GROUP
+#undef DECL_CONSTRUCTOR
+#undef BEGIN_CLASS
+#undef END_CALLABLE_GROUP
+#undef DECL_FUNCTION
+#undef DECL_CALLABLE
+#undef BEGIN_CALLABLE_GROUP
+    }
+
+#undef CALLABLE
+#undef OBJECT
 }

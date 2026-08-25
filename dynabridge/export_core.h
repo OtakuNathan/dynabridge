@@ -7,6 +7,42 @@
 #include "export_callable.h"
 
 namespace dynabridge {
+    template <typename Class, typename Signature, typename Context>
+    struct export_constructor_invoker;
+
+    template <typename Class, typename Context, typename... Args>
+    struct export_constructor_invoker<Class, void(Args...), Context> {
+        template <typename Self, typename... DynamicArgs>
+        static void construct(Context& ctx, Self self, DynamicArgs... args) {
+            static_assert(sizeof...(Args) == sizeof...(DynamicArgs),
+                "The exported constructor argument count does not match its declaration.");
+            auto dynamic = std::make_tuple(args...);
+            construct_impl(ctx, self, dynamic, std::index_sequence_for<Args...>{});
+        }
+
+    private:
+        template <typename Self, typename Tuple, std::size_t... Indices>
+        static void construct_impl(
+            Context& ctx,
+            Self self,
+            Tuple& dynamic,
+            std::index_sequence<Indices...>)
+        {
+            auto converted = std::make_tuple(
+                export_argument<Args, Context>::try_make(
+                    ctx, std::get<Indices>(dynamic))...);
+            if (!all_optionals(converted)) {
+                throw bad_conversion("dynabridge export constructor argument conversion failed");
+            }
+            typename Context::backend_t::template object_t<Class, export_t> object(
+                ctx,
+                self,
+                export_argument<Args, Context>::get(
+                    ctx, std::get<Indices>(converted))...);
+            (void)object;
+        }
+    };
+
     template <typename Class>
     struct export_class_registrar;
 
@@ -20,8 +56,9 @@ namespace dynabridge {
 
     template <typename Member, typename R, typename... Args>
     struct export_member_forwarder<Member, R(Args...)> {
-        R operator()(typename Member::receiver_t& receiver, Args... args) const {
-            return Member::call(receiver, std::forward<Args>(args)...);
+        template <typename... Actual>
+        decltype(auto) operator()(typename Member::receiver_t& receiver, Actual&&... args) const {
+            return Member::call(receiver, std::forward<Actual>(args)...);
         }
     };
 
@@ -53,7 +90,9 @@ namespace dynabridge {
                 is_declared_free_callable<signature_t, group_t>::value,
                 "This class does not declare this constructor signature.");
             static_assert(
-                is_export_class_constructible<class_t, Context, type_list<Args...>>::value,
+                std::is_constructible<
+                    class_t,
+                    export_cpp_argument_t<Args, Context>...>::value,
                 "This exported constructor does not match the native class.");
             return backend_t::template define_constructor<class_t, signature_t>(
                 *ctx_, *target_);

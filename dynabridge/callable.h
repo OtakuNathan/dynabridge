@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <type_traits>
 
-#include "traits.h"
+#include "bridge_arg.h"
 
 namespace dynabridge {
     template <typename Receiver, typename Signature>

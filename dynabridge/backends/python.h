@@ -4,6 +4,8 @@
 #include "python_api.h"
 
 #include <cstddef>
+#include <cstdint>
+#include <new>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
@@ -66,6 +68,15 @@ namespace dynabridge {
         template <typename Receiver, typename Direction = typename bridge_direction<Receiver>::type>
         class object_t;
 
+    private:
+        struct export_instance_object {
+            PyObject_HEAD
+            void* native = nullptr;
+            void* ctx = nullptr;
+            void (*destroy)(export_instance_object*) = nullptr;
+        };
+
+    public:
         class module_t {
         public:
             module_t() noexcept = default;
@@ -154,9 +165,6 @@ namespace dynabridge {
             : public object_ref,
               public object_base_selector<
                   object_t<Receiver, Direction>, py_backend, Receiver, Direction>::type {
-            using export_base_t =
-                export_object_base<object_t<Receiver, Direction>, py_backend, Receiver>;
-
         public:
             using object_ref::object_ref;
 
@@ -175,6 +183,9 @@ namespace dynabridge {
             template <typename Context, typename R = Receiver>
             R* native(Context& ctx) const;
 
+            template <typename R = Receiver>
+            static R* native_from(PyObject* object);
+
             template <typename... Args>
             void construct_import_object_impl(context_t& ctx, Args&&... args);
 
@@ -182,32 +193,37 @@ namespace dynabridge {
             void construct_export_object_impl(context_t& ctx, PyObject* self, Args&&... args);
 
         private:
-            struct native_holder {
-                void* native = nullptr;
-                void* ctx = nullptr;
-                void (*destroy)(native_holder*) = nullptr;
-            };
-
-            static const char* native_attr_name() noexcept { return "__dynabridge_native__"; }
-
             template <typename Context, typename Exported>
-            static void destroy_native_holder(native_holder* holder) noexcept {
-                export_base_t::destroy_native(
-                    *static_cast<Context*>(holder->ctx),
-                    static_cast<Exported*>(holder->native));
-                delete holder;
+            static void destroy_export_instance(export_instance_object* instance) noexcept {
+                void* const native = instance->native;
+                instance->native = nullptr;
+                instance->ctx = nullptr;
+                instance->destroy = nullptr;
+                static_cast<Exported*>(native)->~Exported();
             }
 
-            static void native_capsule_destructor(PyObject* capsule) noexcept {
-                if (PyCapsule_IsValid(capsule, nullptr) == 0) {
-                    return;
-                }
-
-                auto* holder = static_cast<native_holder*>(PyCapsule_GetPointer(capsule, nullptr));
-                if (holder != nullptr && holder->destroy != nullptr) {
-                    holder->destroy(holder);
-                }
+            template <typename Exported>
+            static void* export_instance_storage(export_instance_object* instance) noexcept {
+                const std::uintptr_t begin = reinterpret_cast<std::uintptr_t>(instance + 1);
+                const std::uintptr_t alignment = alignof(Exported);
+                return reinterpret_cast<void*>((begin + alignment - 1) & ~(alignment - 1));
             }
+        };
+
+        template <typename Receiver>
+        class borrowed_export_object_t {
+        public:
+            explicit borrowed_export_object_t(PyObject* object) noexcept
+                : object_(object) {
+            }
+
+            template <typename Context, typename R = Receiver>
+            R* native(Context&) const {
+                return object_t<Receiver, export_t>::template native_from<R>(object_);
+            }
+
+        private:
+            PyObject* object_ = nullptr;
         };
 
         template <typename R, std::enable_if_t<!is_void_v<R>>* = nullptr, typename... Args>
@@ -255,21 +271,17 @@ namespace dynabridge {
             target.define(name, make_callable(std::move(binder)));
         }
 
+        template <typename Group, typename Context, typename Binder>
+        static PyObject* make_export_callable_impl(Context&, Binder binder) {
+            return make_callable(std::move(binder));
+        }
+
         template <typename Receiver, typename Context, typename Target>
         static class_target_t define_class_impl(Context&, Target& target, const char* name) {
-            object_ref type_name(PyUnicode_FromString(name), ref_policy::owned);
-            object_ref bases(PyTuple_Pack(1, reinterpret_cast<PyObject*>(&PyBaseObject_Type)),
-                ref_policy::owned);
-            object_ref dict(PyDict_New(), ref_policy::owned);
-            object_ref type(PyObject_CallFunctionObjArgs(
-                reinterpret_cast<PyObject*>(&PyType_Type),
-                type_name.get(),
-                bases.get(),
-                dict.get(),
-                nullptr), ref_policy::owned);
+            object_ref type(make_export_class_type<Receiver>(name), ref_policy::owned);
 
             if (!type) {
-                throw std::runtime_error("creating Python class failed");
+                throw std::runtime_error("creating Python export extension type failed");
             }
 
             Py_INCREF(type.get());
@@ -279,7 +291,11 @@ namespace dynabridge {
 
         template <typename Receiver, typename Signature, typename Context>
         static void define_constructor_impl(Context& ctx, class_target_t& target) {
-            target.define("__init__", make_constructor<Receiver, Signature>(ctx));
+            object_ref constructor(
+                make_constructor<Receiver, Signature>(ctx), ref_policy::owned);
+            Py_INCREF(constructor.get());
+            target.define("__init__", constructor.get());
+            target.define(constructor_attr_name(), constructor.release());
         }
 
         template <typename Class, typename Context>
@@ -287,9 +303,55 @@ namespace dynabridge {
             ctx.template store_export_class<Class>(std::move(target));
         }
 
-        template <typename Class>
-        static object_t<Class, export_t> bind_export_object_impl(context_t&, PyObject* self) {
-            return object_t<Class, export_t>(self, ref_policy::borrowed);
+        template <typename Class, typename Context>
+        static borrowed_export_object_t<Class> bind_export_object_impl(
+            Context& ctx,
+            PyObject* self)
+        {
+            class_target_t& target = ctx.template export_class<Class>();
+            if (self == nullptr || PyObject_TypeCheck(
+                    self, reinterpret_cast<PyTypeObject*>(target.get())) == 0) {
+                return borrowed_export_object_t<Class>(nullptr);
+            }
+            return borrowed_export_object_t<Class>(self);
+        }
+
+        template <typename Class, typename Context>
+        static optional<borrowed_export_object_t<typename Class::proxy_t>>
+        try_bind_export_object_impl(Context& ctx, PyObject* value) {
+            using proxy_t = typename Class::proxy_t;
+            using borrowed_t = borrowed_export_object_t<proxy_t>;
+            if (value == nullptr) {
+                return optional<borrowed_t>();
+            }
+            class_target_t& target = ctx.template export_class<proxy_t>();
+            if (PyObject_TypeCheck(
+                    value, reinterpret_cast<PyTypeObject*>(target.get())) == 0) {
+                return optional<borrowed_t>();
+            }
+            return optional<borrowed_t>(in_place, value);
+        }
+
+        template <typename Group, typename Context>
+        static optional<import_context_t> try_import_callable_impl(
+            Context&,
+            PyObject* value)
+        {
+            if (value == nullptr || PyCallable_Check(value) == 0) {
+                return optional<import_context_t>();
+            }
+            return optional<import_context_t>(
+                in_place, value, ref_policy::borrowed);
+        }
+
+        template <typename Class, typename Context, typename Receiver>
+        static PyObject* to_dynamic_object_impl(
+            Context&,
+            const object_t<Receiver, import_t>& object) noexcept
+        {
+            PyObject* value = object.get();
+            Py_XINCREF(value);
+            return value;
         }
 
         template <typename Class, typename Context, typename... Args>
@@ -342,6 +404,41 @@ namespace dynabridge {
         }
 
     private:
+        static void export_instance_dealloc(PyObject* self) noexcept {
+            auto* instance = reinterpret_cast<export_instance_object*>(self);
+            if (instance->destroy != nullptr) {
+                instance->destroy(instance);
+            }
+            Py_TYPE(self)->tp_free(self);
+        }
+
+        template <typename Receiver>
+        static PyObject* make_export_class_type(const char* name) {
+            PyType_Slot slots[] = {
+                {Py_tp_dealloc, reinterpret_cast<void*>(export_instance_dealloc)},
+                {Py_tp_new, reinterpret_cast<void*>(PyType_GenericNew)},
+#if PY_VERSION_HEX >= 0x030E0000
+                {Py_tp_vectorcall, reinterpret_cast<void*>(export_type_vectorcall)},
+#endif
+                {0, nullptr}
+            };
+            PyType_Spec spec = {
+                name,
+                static_cast<int>(
+                    sizeof(export_instance_object) + sizeof(Receiver) + alignof(Receiver) - 1),
+                0,
+                Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+                slots
+            };
+            PyObject* type = PyType_FromSpec(&spec);
+#if PY_VERSION_HEX >= 0x03080000 && PY_VERSION_HEX < 0x030E0000
+            if (type != nullptr) {
+                reinterpret_cast<PyTypeObject*>(type)->tp_vectorcall = export_type_vectorcall;
+            }
+#endif
+            return type;
+        }
+
         static PyObject* import_attr(PyObject* module, const char* name) {
             PyObject* result = PyObject_GetAttrString(module, name);
             if (result == nullptr) {
@@ -397,6 +494,91 @@ namespace dynabridge {
             vectorcallfunc vectorcall;
 #endif
         };
+
+#if PY_VERSION_HEX >= 0x03080000
+        static PyObject* export_type_vectorcall(
+            PyObject* type_object,
+            PyObject* const* args,
+            std::size_t nargsf,
+            PyObject* kwnames) noexcept
+        {
+            auto* type = reinterpret_cast<PyTypeObject*>(type_object);
+            PyObject* initializer = PyDict_GetItemString(
+                type->tp_dict, constructor_attr_name());
+            if (initializer == nullptr || Py_TYPE(initializer) != callable_type()) {
+                PyErr_SetString(PyExc_TypeError,
+                    "dynabridge Python export class has no bridge constructor");
+                return nullptr;
+            }
+
+            PyObject* self = nullptr;
+            if (PyType_HasFeature(type, Py_TPFLAGS_HAVE_GC)) {
+                self = type->tp_alloc(type, 0);
+            } else {
+                auto* instance = PyObject_New(export_instance_object, type);
+                if (instance != nullptr) {
+                    instance->native = nullptr;
+                    instance->ctx = nullptr;
+                    instance->destroy = nullptr;
+                    self = reinterpret_cast<PyObject*>(instance);
+                }
+            }
+            if (self == nullptr) {
+                return nullptr;
+            }
+
+            const std::size_t nargs = PyVectorcall_NARGS(nargsf);
+            PyObject* local_args[8];
+            PyObject** call_args = nullptr;
+            PyObject* saved_offset = nullptr;
+            bool owns_args = false;
+
+            if ((nargsf & PY_VECTORCALL_ARGUMENTS_OFFSET) != 0) {
+                call_args = const_cast<PyObject**>(args) - 1;
+                saved_offset = call_args[0];
+                call_args[0] = self;
+            } else if (nargs + 1 <= sizeof(local_args) / sizeof(local_args[0])) {
+                call_args = local_args;
+                call_args[0] = self;
+                for (std::size_t i = 0; i < nargs; ++i) {
+                    call_args[i + 1] = args[i];
+                }
+            } else {
+                call_args = static_cast<PyObject**>(
+                    PyMem_Malloc((nargs + 1) * sizeof(PyObject*)));
+                if (call_args == nullptr) {
+                    Py_DECREF(self);
+                    return PyErr_NoMemory();
+                }
+                owns_args = true;
+                call_args[0] = self;
+                for (std::size_t i = 0; i < nargs; ++i) {
+                    call_args[i + 1] = args[i];
+                }
+            }
+
+            auto* constructor = reinterpret_cast<callable_object*>(initializer);
+            PyObject* result = constructor->holder->invoke_vector(
+                call_args, nargs + 1, kwnames);
+
+            if ((nargsf & PY_VECTORCALL_ARGUMENTS_OFFSET) != 0) {
+                call_args[0] = saved_offset;
+            } else if (owns_args) {
+                PyMem_Free(call_args);
+            }
+
+            if (result == nullptr) {
+                Py_DECREF(self);
+                return nullptr;
+            }
+            Py_DECREF(result);
+            return self;
+        }
+#endif
+
+        static const char* constructor_attr_name() noexcept {
+            return "__dynabridge_constructor__";
+        }
 
         template <typename Binder>
         struct typed_callable_holder : callable_holder {
@@ -717,8 +899,8 @@ namespace dynabridge {
             template <typename... DynamicArgs>
             PyObject* construct(PyObject* self, DynamicArgs... args) {
                 try {
-                    object_t<Receiver, export_t> object(*ctx_, self, from_cast<Args>(*ctx_, args)...);
-                    (void)object;
+                    export_constructor_invoker<Receiver, void(Args...), Context>::construct(
+                        *ctx_, self, args...);
                     Py_RETURN_NONE;
                 } catch (const bad_conversion& error) {
                     PyErr_SetString(PyExc_TypeError, error.what());
@@ -930,27 +1112,17 @@ namespace dynabridge {
     template <typename Receiver, typename Direction>
     template <typename Context, typename R>
     R* py_backend::object_t<Receiver, Direction>::native(Context&) const {
-        if (get() == nullptr) {
-            return nullptr;
-        }
+        return native_from<R>(get());
+    }
 
-        object_ref capsule(PyObject_GetAttrString(get(), native_attr_name()), ref_policy::owned);
-        if (!capsule) {
-            PyErr_Clear();
+    template <typename Receiver, typename Direction>
+    template <typename R>
+    R* py_backend::object_t<Receiver, Direction>::native_from(PyObject* object) {
+        if (object == nullptr) {
             return nullptr;
         }
-
-        if (PyCapsule_IsValid(capsule.get(), nullptr) == 0) {
-            PyErr_Clear();
-            return nullptr;
-        }
-
-        auto* holder = static_cast<native_holder*>(PyCapsule_GetPointer(capsule.get(), nullptr));
-        if (holder == nullptr) {
-            PyErr_Clear();
-            return nullptr;
-        }
-        return static_cast<R*>(holder->native);
+        auto* instance = reinterpret_cast<export_instance_object*>(object);
+        return static_cast<R*>(instance->native);
     }
 
     template <typename Receiver, typename Direction>
@@ -960,7 +1132,7 @@ namespace dynabridge {
         Args&&... args) {
         object_ref::reset(py_backend::call(
                 ctx, ctx.callable(),
-                to_cast<typename std::decay<Args>::type>(ctx, std::forward<Args>(args))...),
+                std::forward<Args>(args)...),
             ref_policy::owned);
         if (!get()) {
             throw std::runtime_error("Python constructor returned null");
@@ -974,25 +1146,17 @@ namespace dynabridge {
         PyObject* self,
         Args&&... args) {
         using receiver_t = Receiver;
-        native_holder* holder = new native_holder;
-        holder->ctx = &ctx;
-        holder->destroy = destroy_native_holder<context_t, receiver_t>;
-        try {
-            holder->native = export_base_t::construct_native(ctx, std::forward<Args>(args)...);
-        } catch (...) {
-            delete holder;
-            throw;
+        auto* instance = reinterpret_cast<export_instance_object*>(self);
+        if (instance->destroy != nullptr) {
+            throw std::runtime_error("dynabridge Python export object is already initialized");
         }
 
-        object_ref capsule(PyCapsule_New(holder, nullptr, native_capsule_destructor), ref_policy::owned);
-        if (!capsule) {
-            holder->destroy(holder);
-            throw std::runtime_error("PyCapsule_New failed");
-        }
+        void* const storage = export_instance_storage<receiver_t>(instance);
+        receiver_t* receiver = new (storage) receiver_t(std::forward<Args>(args)...);
 
-        if (PyObject_SetAttrString(self, native_attr_name(), capsule.get()) != 0) {
-            throw std::runtime_error("PyObject_SetAttrString failed");
-        }
+        instance->native = receiver;
+        instance->ctx = &ctx;
+        instance->destroy = destroy_export_instance<context_t, receiver_t>;
 
         object_ref::reset(self, ref_policy::borrowed);
     }

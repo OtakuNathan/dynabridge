@@ -58,6 +58,32 @@ namespace {
         }
     };
 
+    struct transform_function {
+        int operator()(int value) const {
+            return value * 10;
+        }
+
+        int operator()(int value, unsigned extra) const {
+            return value + static_cast<int>(extra);
+        }
+    };
+
+    struct consumer_runtime {
+        unsigned operator()(unsigned object, int callback) const {
+            return object + static_cast<unsigned>(
+                dynabridge::fake_backend::invoke_dynamic_callable(callback, 1));
+        }
+
+        int operator()(unsigned receiver, unsigned object, int value) const {
+            return static_cast<int>(receiver + object) + value;
+        }
+
+        int operator()(unsigned receiver, int callback, int value) const {
+            return static_cast<int>(receiver)
+                + dynabridge::fake_backend::invoke_dynamic_callable(callback, value);
+        }
+    };
+
     struct select_overload_function {
         int operator()(unsigned value) const {
             return 1000 + static_cast<int>(value);
@@ -173,7 +199,7 @@ namespace {
         void def_impl(
             const char* name,
             Binder binder,
-            dynabridge::type_identity<int(dynabridge::exports::counter<native_counter>, int)>)
+            dynabridge::type_identity<int(dynabridge::exports::counter, int)>)
         {
             ++def_count;
 
@@ -186,7 +212,7 @@ namespace {
         void def_impl(
             const char* name,
             Binder binder,
-            dynabridge::type_identity<int(dynabridge::exports::counter<native_counter>)>)
+            dynabridge::type_identity<int(dynabridge::exports::counter)>)
         {
             ++def_count;
 
@@ -306,26 +332,67 @@ namespace {
             return {};
         }
     };
+
+    struct consume_counter_export {
+        int operator()(native_counter& counter, int value) const {
+            return counter.add(value);
+        }
+    };
+
+    struct use_callback_export {
+        template <typename Callback>
+        int operator()(Callback& callback, int value) const {
+            return dynabridge::call_callback(callback, value);
+        }
+    };
+
+    struct member_object_export {
+        int operator()(
+            dynabridge::exports::counter& receiver,
+            native_counter& other,
+            int value) const {
+            return receiver.native().add(other.add(value));
+        }
+    };
+
+    struct descriptor_return_export {
+        dynabridge::object_param<
+            dynabridge::export_classes::counter,
+            dynabridge::export_t> operator()(int) const {
+            return {};
+        }
+    };
 }
 
-template <typename Context>
-struct dynabridge::fake_backend::converter<dynabridge::counter<Context>> {
-    template <typename T>
-    static counter_handle to(context_t<T>& ctx, dynabridge::counter<Context>& counter) noexcept {
-        ++ctx.to_count;
-        return counter_handle{counter.object().get()};
-    }
-
-    template <typename T>
-    static dynabridge::optional<dynabridge::counter<Context>> from(context_t<T>& ctx, unsigned handle) {
-        ++ctx.from_count;
-        return dynabridge::optional<dynabridge::counter<Context>>(
-            dynabridge::counter<Context>(ctx, handle));
-    }
-};
-
 using export_context_t = dynabridge::fake_backend::export_context_t<recorded_call>;
-using export_counter_t = dynabridge::exports::counter<native_counter>;
+using export_counter_t = dynabridge::exports::counter;
+using export_object_arg_t = dynabridge::object_param<
+    dynabridge::export_classes::counter, dynabridge::export_t>;
+using import_callable_arg_t = dynabridge::callable_param<
+    dynabridge::import_symbols::callback, dynabridge::import_t>;
+
+static_assert(
+    dynabridge::is_export_callable_bindable<
+        int(export_object_arg_t, int), export_context_t, consume_counter_export>::value,
+    "export object descriptors should resolve to native references");
+
+static_assert(
+    dynabridge::is_export_callable_bindable<
+        int(import_callable_arg_t, int), export_context_t, use_callback_export>::value,
+    "export callable descriptors should resolve to imported contexts");
+
+static_assert(
+    dynabridge::is_export_member_callable_bindable<
+        export_counter_t,
+        int(export_object_arg_t, int),
+        export_context_t,
+        member_object_export>::value,
+    "export member probes should understand object descriptor arguments");
+
+static_assert(
+    !dynabridge::is_export_callable_bindable<
+        export_object_arg_t(int), export_context_t, descriptor_return_export>::value,
+    "object and callable return descriptors are intentionally unsupported");
 
 static_assert(
     std::is_same<
@@ -545,14 +612,13 @@ static_assert(
     "forward result probe should reject return values without converter<R>::from");
 
 static_assert(
-    dynabridge::is_forward_invocable<
-        export_context_t, dynabridge::counter<export_context_t>, int, int>::value,
-    "forward member argument probe should accept receiver and arguments with converters");
-
-static_assert(
-    !dynabridge::is_forward_invocable<
-        export_context_t, not_convertible, int, int>::value,
-    "forward member argument probe should reject receivers without converter<Receiver>::to");
+    dynabridge::is_import_object_convertible<
+        dynabridge::fake_backend,
+        dynabridge::import_symbols::counter,
+        export_context_t,
+        dynabridge::fake_backend::object_t<
+            dynabridge::counter<export_context_t>, dynabridge::import_t>&>::value,
+    "imported receivers should use the backend object channel without a converter");
 
 static_assert(
     dynabridge::is_forward_constructible<
@@ -638,8 +704,8 @@ int main() {
     const int member_result = counter_obj.add(29);
     if (member_result != 42 || ctx.callable_.argc != 2
             || ctx.callable_.first != 13 || ctx.callable_.second != 29
-            || ctx.callable_.overload != 6
-            || ctx.to_count != 2 || ctx.from_count != 1) {
+            || ctx.callable_.overload != 5
+            || ctx.to_count != 1 || ctx.from_count != 1) {
         return 10;
     }
 
@@ -647,8 +713,8 @@ int main() {
     const int member_value = counter_obj.value();
     if (member_value != 13 || ctx.callable_.argc != 1
             || ctx.callable_.first != 13 || ctx.callable_.second != 0
-            || ctx.callable_.overload != 7
-            || ctx.to_count != 1 || ctx.from_count != 1) {
+            || ctx.callable_.overload != 2
+            || ctx.to_count != 0 || ctx.from_count != 1) {
         return 11;
     }
 
@@ -670,8 +736,8 @@ int main() {
             || ctx.callable_.argc != 2
             || ctx.callable_.first != 34
             || ctx.callable_.second != 8
-            || ctx.callable_.overload != 6
-            || ctx.to_count != 3
+            || ctx.callable_.overload != 5
+            || ctx.to_count != 2
             || ctx.from_count != 1) {
         return 28;
     }
@@ -912,6 +978,90 @@ int main() {
     const int borrowed_instance_value = native_counter_value(borrowed_object.get());
     if (borrowed_instance_value != 31 || ctx.to_count != 1 || ctx.from_count != 0) {
         return 39;
+    }
+
+    auto object_runtime = [](unsigned handle, int value) {
+        return static_cast<int>(handle) + value;
+    };
+    dynabridge::fake_backend::context_t<decltype(object_runtime)> object_ctx(
+        std::move(object_runtime));
+    auto imported_object = dynabridge::bind<dynabridge::counter>(object_ctx, 13u);
+    const auto& const_imported_object = imported_object;
+    object_ctx.reset_conversions();
+    if (dynabridge::call_pass_counter(object_ctx, const_imported_object, 29) != 42
+            || object_ctx.to_count != 1 || object_ctx.from_count != 1) {
+        return 101;
+    }
+
+    auto callable_runtime = [](int callback, int value) {
+        return dynabridge::fake_backend::invoke_dynamic_callable(
+            static_cast<unsigned>(callback), value);
+    };
+    dynabridge::fake_backend::context_t<decltype(callable_runtime)> callable_ctx(
+        std::move(callable_runtime));
+    if (dynabridge::call_pass_transform(callable_ctx, transform_function{}, 4) != 40) {
+        return 102;
+    }
+
+    auto transform = dynabridge::bind_transform()
+        .bind<int(int)>(scale_by_ten_function)
+        .bind<int(int, unsigned)>([](int value, unsigned extra) {
+            return value * static_cast<int>(extra);
+        })
+        .build();
+    if (dynabridge::call_pass_transform(callable_ctx, std::move(transform), 6) != 60) {
+        return 103;
+    }
+
+    using consume_counter_sig = int(
+        dynabridge::object_param<dynabridge::export_classes::counter, dynabridge::export_t>,
+        int);
+    auto consume_counter = dynabridge::create_export_callable_binder<consume_counter_sig>(
+        ctx,
+        [](native_counter& counter, int value) {
+            return counter.add(value);
+        });
+    if (consume_counter(borrowed_object.get(), 11) != 42) {
+        return 104;
+    }
+    try {
+        (void)consume_counter(999999, 1);
+        return 105;
+    } catch (const dynabridge::bad_conversion&) {
+    }
+
+    const unsigned dynamic_callback = dynabridge::fake_backend::register_dynamic_callable(
+        [](int value) { return value * 3; });
+    using use_callback_sig = int(
+        dynabridge::callable_param<dynabridge::import_symbols::callback, dynabridge::import_t>,
+        int);
+    auto use_callback = dynabridge::create_export_callable_binder<use_callback_sig>(
+        ctx,
+        [](auto& callback, int value) {
+            return dynabridge::call_callback(callback, value) + 1;
+        });
+    if (use_callback(static_cast<int>(dynamic_callback), 7) != 22) {
+        return 106;
+    }
+    try {
+        (void)use_callback(-1, 7);
+        return 107;
+    } catch (const dynabridge::bad_conversion&) {
+    }
+
+    dynabridge::fake_backend::context_t<consumer_runtime> constructor_ctx(
+        consumer_runtime{});
+    auto constructor_counter = dynabridge::bind<dynabridge::counter>(constructor_ctx, 40u);
+    auto imported_consumer = dynabridge::construct<dynabridge::consumer>(
+        constructor_ctx, constructor_counter, transform_function{});
+    if (imported_consumer.object().get() != 50u) {
+        return 108;
+    }
+    if (imported_consumer.combine(constructor_counter, 2) != 92) {
+        return 109;
+    }
+    if (imported_consumer.apply(transform_function{}, 3) != 80) {
+        return 110;
     }
 
     return 0;

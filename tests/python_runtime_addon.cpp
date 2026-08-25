@@ -43,23 +43,6 @@ int dynabridge::native::counter::destroyed = 0;
 
 using owned_counter = dynabridge::native::counter;
 
-template <>
-struct dynabridge::py_backend::converter<dynabridge::counter<py_context_t>> {
-    static PyObject* to(context_t&, dynabridge::counter<py_context_t>& counter) {
-        PyObject* object = counter.object().get();
-        Py_INCREF(object);
-        return object;
-    }
-
-    static dynabridge::optional<dynabridge::counter<py_context_t>> from(context_t& ctx, PyObject* object) {
-        return dynabridge::optional<dynabridge::counter<py_context_t>>(dynabridge::counter<py_context_t>(
-            ctx,
-            object_t<dynabridge::counter<py_context_t>>(
-                object,
-                dynabridge::py_backend::ref_policy::borrowed)));
-    }
-};
-
 namespace {
     int stored_value = 0;
 
@@ -266,7 +249,7 @@ PyMODINIT_FUNC PyInit_dynabridge_python_runtime_addon() {
             .bind<int(int, unsigned)>(multiply_function{})
             .commit();
 
-        dynabridge::exports::counter<dynabridge::native::counter>::register_all(ctx, module);
+        dynabridge::exports::counter::register_all(ctx, module);
     } catch (const std::exception& error) {
         Py_DECREF(module_object);
         PyErr_SetString(PyExc_RuntimeError, error.what());

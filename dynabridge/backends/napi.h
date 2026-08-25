@@ -122,7 +122,7 @@ namespace dynabridge {
             template <typename Context, typename... Args>
             void construct_import_object_impl(Context& ctx, Args&&... args) {
                 napi_value argv[sizeof...(Args) == 0 ? 1 : sizeof...(Args)] = {
-                    to_cast<typename std::decay<Args>::type>(ctx, std::forward<Args>(args))...
+                    std::forward<Args>(args)...
                 };
                 napi_value value = nullptr;
                 check(napi_new_instance(
@@ -140,12 +140,29 @@ namespace dynabridge {
 
             template <typename Context>
             void construct_export_object_from_native(Context& ctx, napi_value self, Receiver* receiver) {
+#if NAPI_VERSION >= 8
+                if (napi_type_tag_object(ctx.env(), self, export_type_tag()) != napi_ok) {
+                    export_base_t::destroy_native(ctx, receiver);
+                    throw std::runtime_error("napi_type_tag_object failed");
+                }
+#endif
                 if (napi_wrap(ctx.env(), self, receiver, native_finalizer<Context, Receiver>, &ctx, nullptr) != napi_ok) {
                     export_base_t::destroy_native(ctx, receiver);
                     throw std::runtime_error("napi_wrap failed");
                 }
                 reset(ctx.env(), self);
             }
+
+#if NAPI_VERSION >= 8
+            static const napi_type_tag* export_type_tag() noexcept {
+                static const napi_type_tag tag = {
+                    static_cast<std::uint64_t>(0x44594e4142524944ull),
+                    static_cast<std::uint64_t>(
+                        reinterpret_cast<std::uintptr_t>(type_key<Receiver>()))
+                };
+                return &tag;
+            }
+#endif
 
         private:
             template <typename Context, typename Native>
@@ -155,6 +172,22 @@ namespace dynabridge {
 
             napi_env env_ = nullptr;
             napi_ref ref_ = nullptr;
+        };
+
+        template <typename Receiver>
+        class borrowed_export_object_t {
+        public:
+            explicit borrowed_export_object_t(void* receiver) noexcept
+                : receiver_(receiver) {
+            }
+
+            template <typename Context, typename R = Receiver>
+            R* native(Context&) const noexcept {
+                return static_cast<R*>(receiver_);
+            }
+
+        private:
+            void* receiver_ = nullptr;
         };
 
         struct module_t {
@@ -174,14 +207,56 @@ namespace dynabridge {
         struct class_state;
 
     public:
+        struct borrowed_context_t {
+        };
+
         struct class_target_t {
             napi_env env = nullptr;
-            napi_value constructor = nullptr;
+            napi_ref constructor_ref = nullptr;
             class_state_holder* state = nullptr;
+
+            class_target_t() noexcept = default;
+
+            class_target_t(napi_env env_, napi_value constructor, class_state_holder* state_)
+                : env(env_), state(state_) {
+                check(napi_create_reference(env, constructor, 1, &constructor_ref),
+                    "napi_create_reference failed for class constructor");
+            }
+
+            class_target_t(const class_target_t&) = delete;
+            class_target_t& operator=(const class_target_t&) = delete;
+
+            class_target_t(class_target_t&& other) noexcept
+                : env(other.env),
+                  constructor_ref(other.constructor_ref),
+                  state(other.state) {
+                other.env = nullptr;
+                other.constructor_ref = nullptr;
+                other.state = nullptr;
+            }
+
+            class_target_t& operator=(class_target_t&& other) noexcept {
+                if (this != &other) {
+                    env = other.env;
+                    constructor_ref = other.constructor_ref;
+                    state = other.state;
+                    other.env = nullptr;
+                    other.constructor_ref = nullptr;
+                    other.state = nullptr;
+                }
+                return *this;
+            }
+
+            napi_value constructor() const {
+                napi_value value = nullptr;
+                check(napi_get_reference_value(env, constructor_ref, &value),
+                    "napi_get_reference_value failed for class constructor");
+                return value;
+            }
 
             void define(napi_env, const char* name, napi_value export_value) {
                 napi_value prototype = nullptr;
-                check(napi_get_named_property(env, constructor, "prototype", &prototype),
+                check(napi_get_named_property(env, constructor(), "prototype", &prototype),
                     "napi class prototype lookup failed");
                 check(napi_set_named_property(env, prototype, name, export_value),
                     "napi class method definition failed");
@@ -199,6 +274,11 @@ namespace dynabridge {
             // N-API handle scope.
             context_t(napi_env env, napi_value callable = nullptr)
                 : env_(env), callable_(env, callable), callable_cache_(callable) {
+                refresh_this_arg();
+            }
+
+            context_t(napi_env env, napi_value callable, borrowed_context_t)
+                : env_(env), callable_cache_(callable) {
                 refresh_this_arg();
             }
 
@@ -275,13 +355,21 @@ namespace dynabridge {
 
         using import_context_t = context_t;
 
-        class export_context_t : public context_t {
+        struct checked_member_receiver_policy {
+        };
+
+        struct trusted_member_receiver_policy {
+        };
+
+        template <typename MemberReceiverPolicy = checked_member_receiver_policy>
+        class basic_export_context_t : public context_t {
         public:
             using context_t::context_t;
+            using member_receiver_policy_t = MemberReceiverPolicy;
 
-            export_context_t() noexcept = default;
-            export_context_t(export_context_t&&) noexcept = default;
-            export_context_t& operator=(export_context_t&&) noexcept = default;
+            basic_export_context_t() noexcept = default;
+            basic_export_context_t(basic_export_context_t&&) noexcept = default;
+            basic_export_context_t& operator=(basic_export_context_t&&) noexcept = default;
 
             template <typename Class>
             void store_export_class(class_target_t target) {
@@ -296,6 +384,10 @@ namespace dynabridge {
         private:
             export_class_registry<class_target_t> classes_;
         };
+
+        using export_context_t = basic_export_context_t<>;
+        using trusted_export_context_t =
+            basic_export_context_t<trusted_member_receiver_policy>;
 
         template <typename R, std::enable_if_t<!is_void_v<R>>* = nullptr, typename... Args>
         static R invoke_impl(context_t& ctx, no_receiver_t, Args... args) {
@@ -333,6 +425,11 @@ namespace dynabridge {
             target.define(ctx.env(), name, make_function(ctx.env(), name, std::move(binder)));
         }
 
+        template <typename Group, typename Context, typename Binder>
+        static napi_value make_export_callable_impl(Context& ctx, Binder binder) {
+            return make_function(ctx.env(), Group::symbol_name(), std::move(binder));
+        }
+
         template <typename Receiver, typename Context, typename Target>
         static class_target_t define_class_impl(Context& ctx, Target& target, const char* name) {
             auto* state = new class_state<Receiver, Context>(ctx);
@@ -350,7 +447,7 @@ namespace dynabridge {
             }
 
             target.define(ctx.env(), name, constructor);
-            return class_target_t{ctx.env(), constructor, state};
+            return class_target_t(ctx.env(), constructor, state);
         }
 
         template <typename Receiver, typename Signature, typename Context>
@@ -364,8 +461,47 @@ namespace dynabridge {
         }
 
         template <typename Class, typename Context>
-        static object_t<Class, export_t> bind_export_object_impl(Context& ctx, napi_value self) {
-            return object_t<Class, export_t>(ctx.env(), self);
+        static borrowed_export_object_t<Class> bind_export_object_impl(
+            Context& ctx,
+            napi_value self)
+        {
+            return bind_member_export_object<Class>(
+                ctx, self, typename Context::member_receiver_policy_t{});
+        }
+
+        template <typename Class, typename Context>
+        static optional<borrowed_export_object_t<typename Class::proxy_t>>
+        try_bind_export_object_impl(Context& ctx, napi_value value) {
+            using proxy_t = typename Class::proxy_t;
+            using borrowed_t = borrowed_export_object_t<proxy_t>;
+            void* receiver = checked_unwrap_export_object<proxy_t>(ctx, value);
+            if (receiver == nullptr) {
+                return optional<borrowed_t>();
+            }
+            return optional<borrowed_t>(in_place, receiver);
+        }
+
+        template <typename Group, typename Context>
+        static optional<import_context_t> try_import_callable_impl(
+            Context& ctx,
+            napi_value value)
+        {
+            napi_valuetype type = napi_undefined;
+            if (value == nullptr
+                    || napi_typeof(ctx.env(), value, &type) != napi_ok
+                    || type != napi_function) {
+                return optional<import_context_t>();
+            }
+            return optional<import_context_t>(
+                in_place, ctx.env(), value, borrowed_context_t{});
+        }
+
+        template <typename Class, typename Context, typename Receiver>
+        static napi_value to_dynamic_object_impl(
+            Context&,
+            const object_t<Receiver, import_t>& object)
+        {
+            return object.get();
         }
 
         template <typename Class, typename Context, typename... Args>
@@ -388,7 +524,7 @@ namespace dynabridge {
             }
 
             napi_value value = nullptr;
-            if (napi_new_instance(ctx.env(), target.constructor, 1, &external, &value) != napi_ok
+            if (napi_new_instance(ctx.env(), target.constructor(), 1, &external, &value) != napi_ok
                     || handoff.receiver != nullptr) {
                 if (handoff.receiver != nullptr) {
                     export_base_t::destroy_native(ctx, handoff.receiver);
@@ -426,6 +562,60 @@ namespace dynabridge {
         }
 
     private:
+        template <typename Class, typename Context>
+        static borrowed_export_object_t<Class> bind_member_export_object(
+            Context& ctx,
+            napi_value self,
+            checked_member_receiver_policy)
+        {
+            return borrowed_export_object_t<Class>(
+                checked_unwrap_export_object<Class>(ctx, self));
+        }
+
+        template <typename Class, typename Context>
+        static borrowed_export_object_t<Class> bind_member_export_object(
+            Context& ctx,
+            napi_value self,
+            trusted_member_receiver_policy)
+        {
+            void* receiver = nullptr;
+            if (self == nullptr || napi_unwrap(ctx.env(), self, &receiver) != napi_ok) {
+                receiver = nullptr;
+            }
+            return borrowed_export_object_t<Class>(receiver);
+        }
+
+        template <typename Class, typename Context>
+        static void* checked_unwrap_export_object(Context& ctx, napi_value value) {
+            if (value == nullptr) {
+                return nullptr;
+            }
+
+            bool matches = false;
+#if NAPI_VERSION >= 8
+            if (napi_check_object_type_tag(
+                    ctx.env(), value,
+                    object_t<Class, export_t>::export_type_tag(),
+                    &matches) != napi_ok
+                    || !matches) {
+                return nullptr;
+            }
+#else
+            class_target_t& target = ctx.template export_class<Class>();
+            if (napi_instanceof(
+                    ctx.env(), value, target.constructor(), &matches) != napi_ok
+                    || !matches) {
+                return nullptr;
+            }
+#endif
+
+            void* receiver = nullptr;
+            if (napi_unwrap(ctx.env(), value, &receiver) != napi_ok) {
+                return nullptr;
+            }
+            return receiver;
+        }
+
         static napi_value import_property(napi_env env, napi_value source, const char* name) {
             napi_value result = nullptr;
             check(napi_get_named_property(env, source, name, &result), "N-API import lookup failed");
@@ -495,9 +685,8 @@ namespace dynabridge {
 
             template <typename... Args, std::size_t... Indices>
             void construct_indices(napi_env, napi_value self, napi_value* argv, std::index_sequence<Indices...>) {
-                object_t<Receiver, export_t> object(
-                    *ctx_, self, from_cast<Args>(*ctx_, argv[Indices])...);
-                (void)object;
+                export_constructor_invoker<Receiver, void(Args...), Context>::construct(
+                    *ctx_, self, argv[Indices]...);
             }
 
             bool try_construct_external_proxy(napi_env env, napi_callback_info info, napi_value self) {

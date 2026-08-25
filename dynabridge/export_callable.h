@@ -11,6 +11,76 @@
 #include "callable.h"
 
 namespace dynabridge {
+    template <typename Declared, typename Context, typename = void>
+    struct export_argument;
+
+    template <typename Declared, typename Context>
+    struct export_argument<Declared, Context, void_t<decltype(from_optional<Declared>(
+        std::declval<Context&>(),
+        std::declval<typename Context::backend_t::dynamic_value_t>()))>> {
+        using cpp_type = Declared;
+        using optional_t = decltype(from_optional<Declared>(
+            std::declval<Context&>(),
+            std::declval<typename Context::backend_t::dynamic_value_t>()));
+
+        template <typename Dynamic>
+        static optional_t try_make(Context& ctx, Dynamic&& value) {
+            return from_optional<Declared>(ctx, std::forward<Dynamic>(value));
+        }
+
+        static auto get(Context&, optional_t& value)
+            -> decltype(std::forward<Declared>(*value))
+        {
+            return std::forward<Declared>(*value);
+        }
+    };
+
+    template <typename Class, typename Context>
+    struct export_argument<object_param<Class, export_t>, Context> {
+        using proxy_t = typename Class::proxy_t;
+        using native_t = typename Class::native_t;
+        using cpp_type = native_t&;
+        using optional_t = decltype(Context::backend_t::template try_bind_export_object<Class>(
+            std::declval<Context&>(),
+            std::declval<typename Context::backend_t::dynamic_value_t>()));
+
+        template <typename Dynamic>
+        static optional_t try_make(Context& ctx, Dynamic&& value) {
+            return Context::backend_t::template try_bind_export_object<Class>(
+                ctx, std::forward<Dynamic>(value));
+        }
+
+        static native_t& get(Context& ctx, optional_t& value) {
+            proxy_t* proxy = (*value).native(ctx);
+            if (proxy == nullptr) {
+                throw bad_conversion("dynabridge exported object has no bound native proxy");
+            }
+            return proxy->native();
+        }
+    };
+
+    template <typename Group, typename Context>
+    struct export_argument<callable_param<Group, import_t>, Context> {
+        using optional_t = decltype(Context::backend_t::template try_import_callable<Group>(
+            std::declval<Context&>(),
+            std::declval<typename Context::backend_t::dynamic_value_t>()));
+        using context_t = typename optional_t::value_type;
+        using cpp_type = context_t&;
+
+        template <typename Dynamic>
+        static optional_t try_make(Context& ctx, Dynamic&& value) {
+            return Context::backend_t::template try_import_callable<Group>(
+                ctx, std::forward<Dynamic>(value));
+        }
+
+        static context_t& get(Context&, optional_t& value) {
+            return *value;
+        }
+    };
+
+    template <typename Declared, typename Context>
+    using export_cpp_argument_t = typename export_argument<Declared, Context>::cpp_type;
+
     template <typename, typename T>
     struct dependent_type {
         using type = T;
@@ -33,7 +103,7 @@ namespace dynabridge {
         };
 
         template <typename T>
-        struct probe<T, void_t<decltype(from_cast<Args>(
+        struct probe<T, void_t<decltype(export_argument<Args, T>::try_make(
                                 std::declval<T&>(),
                                 std::declval<dynamic_t<T>>()))...>>
             : std::true_type {
@@ -65,7 +135,7 @@ namespace dynabridge {
                 std::declval<T&>(),
                 std::declval<dynamic_t<T>>()).native(
                     std::declval<T&>())),
-            decltype(from_cast<Args>(
+            decltype(export_argument<Args, T>::try_make(
                 std::declval<T&>(),
                 std::declval<dynamic_t<T>>()))...>>
             : std::true_type {
@@ -123,11 +193,13 @@ namespace dynabridge {
         struct probe<T, void_t<
             decltype(to_cast<R>(
                 std::declval<Context&>(),
-                std::declval<T&>()(std::declval<Args>()...)))
+                std::declval<T&>()(
+                    std::declval<export_cpp_argument_t<Args, Context>>()...)))
         >> : std::true_type { };
 
         constexpr static bool value =
             are_bridge_params_valid<Args...>::value
+            && !is_bridge_descriptor<R>::value
             && are_export_arguments_convertible<Context, type_list<Args...>>::value
             && probe<Callable>::value;
     };
@@ -139,7 +211,8 @@ namespace dynabridge {
 
         template <typename T>
         struct probe<T, void_t<
-            decltype(std::declval<T&>()(std::declval<Args>()...))
+            decltype(std::declval<T&>()(
+                std::declval<export_cpp_argument_t<Args, Context>>()...))
         >> : std::true_type { };
 
         constexpr static bool value =
@@ -150,6 +223,11 @@ namespace dynabridge {
 
     template <typename Class, typename Signature, typename Context, typename Callable>
     struct is_export_member_callable_bindable;
+
+    template <typename Context, typename DynamicArgList, typename ArgList,
+        bool SizesMatch =
+            (type_list_size<DynamicArgList>::value == type_list_size<ArgList>::value)>
+    struct are_export_dynamic_arguments_convertible;
 
     template <typename Class, typename Context, typename Callable, typename R, typename... Args>
     struct is_export_member_callable_bindable<Class, R(Args...), Context, Callable> {
@@ -162,7 +240,10 @@ namespace dynabridge {
         struct probe<T, void_t<
             decltype(to_cast<R>(
                 std::declval<Context&>(),
-                invoke_export_member_callable(std::declval<T&>(), std::declval<receiver_t&>(), std::declval<Args>()...)
+                invoke_export_member_callable(
+                    std::declval<T&>(),
+                    std::declval<receiver_t&>(),
+                    std::declval<export_cpp_argument_t<Args, Context>>()...)
             ))
         >> : std::true_type { };
 
@@ -181,7 +262,10 @@ namespace dynabridge {
 
         template <typename T>
         struct probe<T, void_t<
-            decltype(invoke_export_member_callable(std::declval<T&>(), std::declval<receiver_t&>(), std::declval<Args>()...))
+            decltype(invoke_export_member_callable(
+                std::declval<T&>(),
+                std::declval<receiver_t&>(),
+                std::declval<export_cpp_argument_t<Args, Context>>()...))
         >> : std::true_type { };
 
         constexpr static bool value =
@@ -208,9 +292,8 @@ namespace dynabridge {
                         std::declval<Context&>(),
                         std::declval<typename dependent_type<T, DynamicReceiver>::type>()).native(
                             std::declval<Context&>()),
-                    from_cast<element_at_t<Indices, ArgList>>(
-                        std::declval<Context&>(),
-                        std::declval<typename dependent_type<T, element_at_t<Indices, DynamicArgList>>::type>())...
+                    std::declval<export_cpp_argument_t<
+                        element_at_t<Indices, ArgList>, Context>>()...
                     )
             ),
             std::true_type{}
@@ -220,7 +303,9 @@ namespace dynabridge {
         static auto test(...) -> std::false_type;
 
         constexpr static bool value = decltype(test<Callable>(
-            std::make_index_sequence<type_list_size<ArgList>::value>{}))::value;
+            std::make_index_sequence<type_list_size<ArgList>::value>{}))::value
+            && are_export_dynamic_arguments_convertible<
+                Context, DynamicArgList, ArgList>::value;
     };
 
     template <typename Context, typename Class, typename Callable,
@@ -244,10 +329,8 @@ namespace dynabridge {
                     std::declval<Context&>(),
                     std::declval<typename dependent_type<T, DynamicReceiver>::type>()).native(
                         std::declval<Context&>()),
-                from_cast<element_at_t<Indices, ArgList>>(
-                    std::declval<Context&>(),
-                    std::declval<typename dependent_type<T, element_at_t<Indices, DynamicArgList>>::type>()
-                )...
+                std::declval<export_cpp_argument_t<
+                    element_at_t<Indices, ArgList>, Context>>()...
             ),
             std::true_type{}
         );
@@ -257,7 +340,8 @@ namespace dynabridge {
 
         constexpr static bool value = decltype(
             test<Callable>(std::make_index_sequence<type_list_size<ArgList>::value>{})
-        )::value;
+        )::value && are_export_dynamic_arguments_convertible<
+            Context, DynamicArgList, ArgList>::value;
     };
 
     template <typename Context, typename Class, typename Callable,
@@ -277,6 +361,28 @@ namespace dynabridge {
         : std::true_type {
     };
 
+    template <typename Context, typename DynamicArgList, typename ArgList, bool SizesMatch>
+    struct are_export_dynamic_arguments_convertible : std::false_type {
+    };
+
+    template <typename Context, typename DynamicArgList, typename ArgList>
+    struct are_export_dynamic_arguments_convertible<Context, DynamicArgList, ArgList, true> {
+        template <typename T, std::size_t... Indices>
+        static auto test(std::index_sequence<Indices...>) -> decltype(
+            std::make_tuple(
+                export_argument<element_at_t<Indices, ArgList>, Context>::try_make(
+                    std::declval<Context&>(),
+                    std::declval<typename dependent_type<
+                        T, element_at_t<Indices, DynamicArgList>>::type>())...),
+            std::true_type{});
+
+        template <typename>
+        static auto test(...) -> std::false_type;
+
+        constexpr static bool value = decltype(test<Context>(
+            std::make_index_sequence<type_list_size<ArgList>::value>{}))::value;
+    };
+
     template <
         typename Context,
         typename Callable,
@@ -291,10 +397,8 @@ namespace dynabridge {
             to_cast<R>(
                 std::declval<Context&>(),
                 std::declval<T&>()(
-                    from_cast<element_at_t<Indices, ArgList>>(
-                        std::declval<Context&>(),
-                        std::declval<typename dependent_type<T, element_at_t<Indices, DynamicArgList>>::type>()
-                    )...
+                    std::declval<export_cpp_argument_t<
+                        element_at_t<Indices, ArgList>, Context>>()...
                 )
             ),
             std::true_type{}
@@ -304,7 +408,9 @@ namespace dynabridge {
         static auto test(...) -> std::false_type;
 
         constexpr static bool value = decltype(test<Callable>(
-            std::make_index_sequence<type_list_size<ArgList>::value>{}))::value;
+            std::make_index_sequence<type_list_size<ArgList>::value>{}))::value
+            && are_export_dynamic_arguments_convertible<
+                Context, DynamicArgList, ArgList>::value;
     };
 
     template <typename Context, typename Callable, typename R, typename DynamicArgList, typename ArgList>
@@ -317,10 +423,8 @@ namespace dynabridge {
         template <typename T, std::size_t... Indices>
         static auto test(std::index_sequence<Indices...>) -> decltype(
             std::declval<T&>()(
-                from_cast<element_at_t<Indices, ArgList>>(
-                    std::declval<Context&>(),
-                    std::declval<typename dependent_type<T, element_at_t<Indices, DynamicArgList>>::type>()
-                )...
+                std::declval<export_cpp_argument_t<
+                    element_at_t<Indices, ArgList>, Context>>()...
             ),
             std::true_type{}
         );
@@ -329,7 +433,9 @@ namespace dynabridge {
         static auto test(...) -> std::false_type;
 
         constexpr static bool value = decltype(test<Callable>(
-            std::make_index_sequence<type_list_size<ArgList>::value>{}))::value;
+            std::make_index_sequence<type_list_size<ArgList>::value>{}))::value
+            && are_export_dynamic_arguments_convertible<
+                Context, DynamicArgList, ArgList>::value;
     };
 
     template <typename Context, typename Callable, typename DynamicArgList, typename ArgList>
@@ -406,8 +512,8 @@ namespace dynabridge {
         }
 
     private:
-        template <typename R_, typename Accessor, std::size_t... Indices,
-            std::enable_if_t<!is_void_v<R_>>* = nullptr>
+        template <typename R_, typename Accessor,
+            std::enable_if_t<!is_void_v<R_>>* = nullptr, std::size_t... Indices>
         static optional<dynamic_value_t> call_impl(
             Context& ctx,
             Callable& callable,
@@ -415,17 +521,19 @@ namespace dynabridge {
             std::index_sequence<Indices...>)
         {
             auto converted = std::make_tuple(
-                from_optional<Args>(ctx, accessor.template get<Indices>())...);
+                export_argument<Args, Context>::try_make(
+                    ctx, accessor.template get<Indices>())...);
             if (!all_optionals(converted)) {
                 return optional<dynamic_value_t>();
             }
             return optional<dynamic_value_t>(to_cast<R_>(
                 ctx,
-                callable(optional_arg<Args>(std::get<Indices>(converted))...)));
+                callable(export_argument<Args, Context>::get(
+                    ctx, std::get<Indices>(converted))...)));
         }
 
-        template <typename R_, typename Accessor, std::size_t... Indices,
-            std::enable_if_t<is_void_v<R_>>* = nullptr>
+        template <typename R_, typename Accessor,
+            std::enable_if_t<is_void_v<R_>>* = nullptr, std::size_t... Indices>
         static optional<dynamic_value_t> call_impl(
             Context& ctx,
             Callable& callable,
@@ -433,11 +541,13 @@ namespace dynabridge {
             std::index_sequence<Indices...>)
         {
             auto converted = std::make_tuple(
-                from_optional<Args>(ctx, accessor.template get<Indices>())...);
+                export_argument<Args, Context>::try_make(
+                    ctx, accessor.template get<Indices>())...);
             if (!all_optionals(converted)) {
                 return optional<dynamic_value_t>();
             }
-            callable(optional_arg<Args>(std::get<Indices>(converted))...);
+            callable(export_argument<Args, Context>::get(
+                ctx, std::get<Indices>(converted))...);
             return optional<dynamic_value_t>(Context::backend_t::undefined(ctx));
         }
     };
@@ -447,7 +557,6 @@ namespace dynabridge {
     // def file: first candidate whose arity matches and whose converters all
     // accept the dynamic values wins. With strict-kinded backends (rpc: int
     // only accepts signed_integer, etc.) same-arity overloads stay
-    // unambiguous. With lenient backends (e.g. implicit numeric conversions),
     // same-arity overloads may depend on declaration order — declare the most
     // specific signature first.
     template <
@@ -746,6 +855,49 @@ namespace dynabridge {
             && is_export_overload_builder_complete<type_list<Tail...>, Slots...>::value> {
     };
 
+    template <typename Group, typename... Slots>
+    class export_callable_builder {
+    public:
+        using overloads_t = typename Group::overloads_t;
+        using group_t = typename Group::group_t;
+        using slots_t = export_bound_overload_set<Slots...>;
+
+        export_callable_builder() = default;
+
+        template <std::size_t N = sizeof...(Slots),
+            std::enable_if_t<(N != 0)>* = nullptr>
+        explicit export_callable_builder(Slots... slots)
+            noexcept(is_nothrow_move_constructible_v<slots_t>)
+            : slots_(std::move(slots)...) {
+        }
+
+        template <typename Signature, typename Callable>
+        auto bind(Callable&& callable) {
+            using contract_t = free_callable<Signature>;
+            using callable_t = typename std::decay<Callable>::type;
+            using slot_t = bound_export_overload_slot<contract_t, callable_t>;
+            using next_t = export_callable_builder<Group, Slots..., slot_t>;
+
+            static_assert(is_declared_free_callable<Signature, group_t>::value,
+                "This callable group does not declare this signature.");
+            static_assert(!has_bound_export_overload_slot<contract_t, Slots...>::value,
+                "This callable signature has already been bound.");
+
+            return next_t(
+                std::move(static_cast<Slots&>(slots_))...,
+                slot_t(std::forward<Callable>(callable)));
+        }
+
+        slots_t build() {
+            static_assert(is_export_overload_builder_complete<overloads_t, Slots...>::value,
+                "Every declared callable overload must be bound before build().");
+            return std::move(slots_);
+        }
+
+    private:
+        slots_t slots_;
+    };
+
     template <typename Group, typename Context, typename Target, typename... Slots>
     class export_free_callable_group_builder {
     public:
@@ -838,20 +990,26 @@ namespace dynabridge {
             -> decltype(to_cast<R>(
                 std::declval<Context&>(), std::declval<R>()))
         {
-            static_assert(
-                is_export_invocable<
-                    Context, Callable, R, type_list<DynamicArgs&&...>, type_list<Args...>>::value,
-                "Your export binding is not invocable with DynamicArgs. This might be because "
-                "converter<T>::from is missing for an argument, converter<R>::to is missing for "
-                "the return value, or the C++ callable is not invocable with Args.");
-
-            return to_cast<R>(
-                *ctx_,
-                callable_(from_cast<Args>(
-                    *ctx_, std::forward<DynamicArgs>(args))...));
+            auto tuple = std::make_tuple(std::forward<DynamicArgs>(args)...);
+            return invoke_converted(tuple, std::index_sequence_for<Args...>{});
         }
 
     private:
+        template <typename Tuple, std::size_t... Indices>
+        auto invoke_converted(Tuple& tuple, std::index_sequence<Indices...>)
+            -> decltype(to_cast<R>(std::declval<Context&>(), std::declval<R>()))
+        {
+            auto converted = std::make_tuple(
+                export_argument<Args, Context>::try_make(
+                    *ctx_, std::get<Indices>(tuple))...);
+            if (!all_optionals(converted)) {
+                throw bad_conversion("dynabridge export argument conversion failed");
+            }
+            return to_cast<R>(*ctx_, callable_(
+                export_argument<Args, Context>::get(
+                    *ctx_, std::get<Indices>(converted))...));
+        }
+
         Context* ctx_;
         Callable callable_;
     };
@@ -879,18 +1037,23 @@ namespace dynabridge {
         template <typename... DynamicArgs,
             std::enable_if_t<sizeof...(DynamicArgs) == sizeof...(Args)>* = nullptr>
         void operator()(DynamicArgs&&... args) {
-            static_assert(
-                is_void_export_invocable<
-                    Context, Callable, type_list<DynamicArgs&&...>, type_list<Args...>>::value,
-                "Your export binding is not invocable with DynamicArgs. This might be because "
-                "converter<T>::from is missing for an argument, or the C++ callable is not "
-                "invocable with Args.");
-
-            callable_(from_cast<Args>(
-                *ctx_, std::forward<DynamicArgs>(args))...);
+            auto tuple = std::make_tuple(std::forward<DynamicArgs>(args)...);
+            invoke_converted(tuple, std::index_sequence_for<Args...>{});
         }
 
     private:
+        template <typename Tuple, std::size_t... Indices>
+        void invoke_converted(Tuple& tuple, std::index_sequence<Indices...>) {
+            auto converted = std::make_tuple(
+                export_argument<Args, Context>::try_make(
+                    *ctx_, std::get<Indices>(tuple))...);
+            if (!all_optionals(converted)) {
+                throw bad_conversion("dynabridge export argument conversion failed");
+            }
+            callable_(export_argument<Args, Context>::get(
+                *ctx_, std::get<Indices>(converted))...);
+        }
+
         Context* ctx_;
         Callable callable_;
     };
@@ -928,29 +1091,34 @@ namespace dynabridge {
             -> decltype(to_cast<R>(
                 std::declval<Context&>(), std::declval<R>()))
         {
-            static_assert(is_export_member_invocable<Context, Class, Callable,
-                    R, DynamicReceiver&&, type_list<DynamicArgs&&...>,
-                    type_list<Args...>>::value,
-                "Your export member binding is not invocable with DynamicArgs. This might be "
-                "because backend_t::bind_export_object_impl<Class>(ctx, self) is missing, "
-                "object.native(ctx) cannot unwrap the generated proxy receiver, converter<T>::from is "
-                "missing for an argument, converter<R>::to is missing for the return value, "
-                "or the C++ callable is not invocable with the generated proxy receiver and Args.");
-
             auto object = Context::backend_t::template bind_export_object<Class>(
                 *ctx_, std::forward<DynamicReceiver>(receiver_arg));
             receiver_t* receiver = object.native(*ctx_);
             if (receiver == nullptr) {
                 throw std::runtime_error("dynabridge export object has no proxy receiver");
             }
-
-            return to_cast<R>(*ctx_,
-                invoke_export_member_callable(callable_, *receiver,
-                    from_cast<Args>(*ctx_, std::forward<DynamicArgs>(args))...
-                ));
+            auto tuple = std::make_tuple(std::forward<DynamicArgs>(args)...);
+            return invoke_converted(
+                *receiver, tuple, std::index_sequence_for<Args...>{});
         }
 
     private:
+        template <typename Tuple, std::size_t... Indices>
+        auto invoke_converted(receiver_t& receiver, Tuple& tuple, std::index_sequence<Indices...>)
+            -> decltype(to_cast<R>(std::declval<Context&>(), std::declval<R>()))
+        {
+            auto converted = std::make_tuple(
+                export_argument<Args, Context>::try_make(
+                    *ctx_, std::get<Indices>(tuple))...);
+            if (!all_optionals(converted)) {
+                throw bad_conversion("dynabridge export member argument conversion failed");
+            }
+            return to_cast<R>(*ctx_, invoke_export_member_callable(
+                callable_, receiver,
+                export_argument<Args, Context>::get(
+                    *ctx_, std::get<Indices>(converted))...));
+        }
+
         Context* ctx_;
         Callable callable_;
     };
@@ -981,33 +1149,31 @@ namespace dynabridge {
         template <typename DynamicReceiver, typename... DynamicArgs,
             std::enable_if_t<sizeof...(DynamicArgs) == sizeof...(Args)>* = nullptr>
         void operator()(DynamicReceiver&& receiver_arg, DynamicArgs&&... args) {
-            static_assert(
-                is_void_export_member_invocable<
-                    Context,
-                    Class,
-                    Callable,
-                    DynamicReceiver&&,
-                    type_list<DynamicArgs&&...>,
-                    type_list<Args...>>::value,
-                "Your export member binding is not invocable with DynamicArgs. This might be "
-                "because backend_t::bind_export_object_impl<Class>(ctx, self) is missing, "
-                "object.native(ctx) cannot unwrap the generated proxy receiver, converter<T>::from is "
-                "missing for an argument, or the C++ callable is not invocable with the native "
-                "proxy receiver and Args.");
-
             auto object = Context::backend_t::template bind_export_object<Class>(
                 *ctx_, std::forward<DynamicReceiver>(receiver_arg));
             receiver_t* receiver = object.native(*ctx_);
             if (receiver == nullptr) {
                 throw std::runtime_error("dynabridge export object has no proxy receiver");
             }
-
-            invoke_export_member_callable(callable_, *receiver,
-                from_cast<Args>(*ctx_, std::forward<DynamicArgs>(args))...
-            );
+            auto tuple = std::make_tuple(std::forward<DynamicArgs>(args)...);
+            invoke_converted(*receiver, tuple, std::index_sequence_for<Args...>{});
         }
 
     private:
+        template <typename Tuple, std::size_t... Indices>
+        void invoke_converted(receiver_t& receiver, Tuple& tuple, std::index_sequence<Indices...>) {
+            auto converted = std::make_tuple(
+                export_argument<Args, Context>::try_make(
+                    *ctx_, std::get<Indices>(tuple))...);
+            if (!all_optionals(converted)) {
+                throw bad_conversion("dynabridge export member argument conversion failed");
+            }
+            invoke_export_member_callable(
+                callable_, receiver,
+                export_argument<Args, Context>::get(
+                    *ctx_, std::get<Indices>(converted))...);
+        }
+
         Context* ctx_;
         Callable callable_;
     };
@@ -1033,6 +1199,14 @@ namespace dynabridge {
     {
         return export_overload_binder<Overloads, Context,
             typename std::decay<Callable>::type>(ctx, std::forward<Callable>(callable));
+    }
+
+    template <typename Group, typename Context, typename Callable>
+    auto make_export_group_callable(Context& ctx, Callable&& callable) {
+        auto binder = create_export_overload_binder<typename Group::overloads_t>(
+            ctx, std::forward<Callable>(callable));
+        return Context::backend_t::template make_export_callable<Group>(
+            ctx, std::move(binder));
     }
 
     template <typename Signature>

@@ -5,9 +5,12 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
-#include "traits.h"
+#include "callable.h"
 
 namespace dynabridge {
+    template <typename Class, typename Signature, typename Context>
+    struct export_constructor_invoker;
+
     enum class backend_lifecycle_op {
         destroy
     };
@@ -155,6 +158,46 @@ namespace dynabridge {
         : std::true_type {
     };
 
+    template <typename Backend, typename Class, typename Context, typename Object, typename = void>
+    struct is_import_object_convertible : std::false_type {
+    };
+
+    template <typename Backend, typename Class, typename Context, typename Object>
+    struct is_import_object_convertible<Backend, Class, Context, Object, void_t<
+        decltype(Backend::template to_dynamic_object_impl<Class>(
+            std::declval<Context&>(), std::declval<Object>()))>> : std::true_type {
+    };
+
+    template <typename Backend, typename Class, typename Context, typename Dynamic, typename = void>
+    struct is_export_object_try_bindable : std::false_type {
+    };
+
+    template <typename Backend, typename Class, typename Context, typename Dynamic>
+    struct is_export_object_try_bindable<Backend, Class, Context, Dynamic, void_t<
+        decltype(Backend::template try_bind_export_object_impl<Class>(
+            std::declval<Context&>(), std::declval<Dynamic>()))>> : std::true_type {
+    };
+
+    template <typename Backend, typename Group, typename Context, typename Dynamic, typename = void>
+    struct is_callable_importable : std::false_type {
+    };
+
+    template <typename Backend, typename Group, typename Context, typename Dynamic>
+    struct is_callable_importable<Backend, Group, Context, Dynamic, void_t<
+        decltype(Backend::template try_import_callable_impl<Group>(
+            std::declval<Context&>(), std::declval<Dynamic>()))>> : std::true_type {
+    };
+
+    template <typename Backend, typename Group, typename Context, typename Binder, typename = void>
+    struct is_callable_exportable : std::false_type {
+    };
+
+    template <typename Backend, typename Group, typename Context, typename Binder>
+    struct is_callable_exportable<Backend, Group, Context, Binder, void_t<
+        decltype(Backend::template make_export_callable_impl<Group>(
+            std::declval<Context&>(), std::declval<Binder>()))>> : std::true_type {
+    };
+
     template <typename Backend, typename Class, typename Context, typename Target, typename = void>
     struct is_export_class_storable : std::false_type {
     };
@@ -297,6 +340,62 @@ namespace dynabridge {
     template <typename Derived, typename Backend, typename Receiver>
     struct object_base_selector<Derived, Backend, Receiver, export_t> {
         using type = export_object_base<Derived, Backend, Receiver>;
+    };
+
+    template <typename Contract>
+    struct import_contract_backend_invoker;
+
+    template <typename R, typename... Declared>
+    struct import_contract_backend_invoker<free_callable<R(Declared...)>> {
+        template <typename Backend, typename Context, typename R_ = R,
+            std::enable_if_t<!is_void_v<R_>>* = nullptr, typename... Actual>
+        static R_ invoke(Context& ctx, no_receiver_t, Actual&&... actual) {
+            static_assert(sizeof...(Declared) == sizeof...(Actual),
+                "The imported callable argument count does not match its declaration.");
+            return Backend::template invoke_impl<R_>(
+                ctx,
+                no_receiver_t{},
+                import_argument<Declared, Context>::lower(
+                    ctx, std::forward<Actual>(actual))...);
+        }
+
+        template <typename Backend, typename Context, typename R_ = R,
+            std::enable_if_t<is_void_v<R_>>* = nullptr, typename... Actual>
+        static void invoke(Context& ctx, no_receiver_t, Actual&&... actual) {
+            static_assert(sizeof...(Declared) == sizeof...(Actual),
+                "The imported callable argument count does not match its declaration.");
+            Backend::template invoke_impl<R_>(
+                ctx,
+                no_receiver_t{},
+                import_argument<Declared, Context>::lower(
+                    ctx, std::forward<Actual>(actual))...);
+        }
+
+        template <typename Backend, typename Context, typename Receiver, typename R_ = R,
+            std::enable_if_t<!is_void_v<R_>>* = nullptr, typename... Actual>
+        static R_ invoke(Context& ctx, Receiver& receiver, Actual&&... actual) {
+            static_assert(sizeof...(Declared) == sizeof...(Actual),
+                "The imported member argument count does not match its declaration.");
+            using class_t = typename Receiver::bridge_class_t;
+            return Backend::template invoke_impl<R_, Receiver>(
+                ctx,
+                Backend::template to_dynamic_object<class_t>(ctx, receiver.object()),
+                import_argument<Declared, Context>::lower(
+                    ctx, std::forward<Actual>(actual))...);
+        }
+
+        template <typename Backend, typename Context, typename Receiver, typename R_ = R,
+            std::enable_if_t<is_void_v<R_>>* = nullptr, typename... Actual>
+        static void invoke(Context& ctx, Receiver& receiver, Actual&&... actual) {
+            static_assert(sizeof...(Declared) == sizeof...(Actual),
+                "The imported member argument count does not match its declaration.");
+            using class_t = typename Receiver::bridge_class_t;
+            Backend::template invoke_impl<R_, Receiver>(
+                ctx,
+                Backend::template to_dynamic_object<class_t>(ctx, receiver.object()),
+                import_argument<Declared, Context>::lower(
+                    ctx, std::forward<Actual>(actual))...);
+        }
     };
 
     template <typename backend_t>
@@ -458,6 +557,46 @@ namespace dynabridge {
                 std::forward<Self>(self));
         }
 
+        template <typename Class, typename Context, typename Object>
+        static auto to_dynamic_object(Context& ctx, Object&& object) {
+            static_assert(
+                is_import_object_convertible<backend_t, Class, Context, Object&&>::value,
+                "Your backend cannot pass this imported object as an argument. Implement "
+                "backend_t::to_dynamic_object_impl<Class>(ctx, object).");
+            return backend_t::template to_dynamic_object_impl<Class>(
+                ctx, std::forward<Object>(object));
+        }
+
+        template <typename Class, typename Context, typename Dynamic>
+        static auto try_bind_export_object(Context& ctx, Dynamic&& value) {
+            static_assert(
+                is_export_object_try_bindable<backend_t, Class, Context, Dynamic&&>::value,
+                "Your backend cannot validate this exported object argument. Implement "
+                "backend_t::try_bind_export_object_impl<Class>(ctx, value).");
+            return backend_t::template try_bind_export_object_impl<Class>(
+                ctx, std::forward<Dynamic>(value));
+        }
+
+        template <typename Group, typename Context, typename Dynamic>
+        static auto try_import_callable(Context& ctx, Dynamic&& value) {
+            static_assert(
+                is_callable_importable<backend_t, Group, Context, Dynamic&&>::value,
+                "Your backend cannot validate/import this callable argument. Implement "
+                "backend_t::try_import_callable_impl<Group>(ctx, value).");
+            return backend_t::template try_import_callable_impl<Group>(
+                ctx, std::forward<Dynamic>(value));
+        }
+
+        template <typename Group, typename Context, typename Binder>
+        static auto make_export_callable(Context& ctx, Binder&& binder) {
+            static_assert(
+                is_callable_exportable<backend_t, Group, Context, Binder&&>::value,
+                "Your backend cannot expose this C++ callable as a dynamic argument. Implement "
+                "backend_t::make_export_callable_impl<Group>(ctx, binder).");
+            return backend_t::template make_export_callable_impl<Group>(
+                ctx, std::forward<Binder>(binder));
+        }
+
         template <typename Receiver, typename Signature, typename Context, typename Target>
         static auto define_constructor(Context& ctx, Target& target) {
             static_assert(
@@ -559,6 +698,15 @@ namespace dynabridge {
                 ctx,
                 no_receiver_t{},
                 to_cast<Args>(ctx, std::move(args))...);
+        }
+
+        template <typename Contract, typename Context, typename Receiver, typename... Actual>
+        static decltype(auto) invoke_contract(
+            Context& ctx, Receiver&& receiver, Actual&&... actual) {
+            return import_contract_backend_invoker<Contract>::template invoke<backend_t>(
+                ctx,
+                std::forward<Receiver>(receiver),
+                std::forward<Actual>(actual)...);
         }
     };
 }

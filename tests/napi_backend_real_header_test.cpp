@@ -10,6 +10,12 @@ static_assert(
     std::is_same<dynabridge::backend_dynamic_value_t<dynabridge::napi_backend>, napi_value>::value,
     "napi_backend should expose napi_value as its backend dynamic value");
 
+static_assert(
+    std::is_same<
+        dynabridge::napi_backend::trusted_export_context_t::member_receiver_policy_t,
+        dynabridge::napi_backend::trusted_member_receiver_policy>::value,
+    "trusted N-API export contexts should select trusted member receivers");
+
 int main() {
     return 0;
 }

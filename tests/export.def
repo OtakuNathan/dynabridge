@@ -11,6 +11,19 @@ BEGIN_CALLABLE_GROUP(calc)
     DECL_CALLABLE(int, int, unsigned)
 END_CALLABLE_GROUP
 
+BEGIN_CALLABLE_GROUP(transform)
+    DECL_CALLABLE(int, int)
+    DECL_CALLABLE(int, int, unsigned)
+END_CALLABLE_GROUP
+
+BEGIN_CALLABLE_GROUP(consume_counter)
+    DECL_CALLABLE(int, OBJECT(counter), int)
+END_CALLABLE_GROUP
+
+BEGIN_CALLABLE_GROUP(use_callback)
+    DECL_CALLABLE(int, CALLABLE(callback), int)
+END_CALLABLE_GROUP
+
 BEGIN_CLASS(native, counter)
     DECL_CONSTRUCTOR(unsigned)
 
@@ -20,5 +33,17 @@ BEGIN_CLASS(native, counter)
 
     BEGIN_MEMBER_CALLABLE_GROUP(value)
         DECL_MEMBER_FUNCTION(int)
+    END_MEMBER_CALLABLE_GROUP
+END_CLASS
+
+BEGIN_CLASS(native, consumer)
+    DECL_CONSTRUCTOR(OBJECT(counter), CALLABLE(callback))
+
+    BEGIN_MEMBER_CALLABLE_GROUP(combine)
+        DECL_MEMBER_FUNCTION(int, OBJECT(counter), int)
+    END_MEMBER_CALLABLE_GROUP
+
+    BEGIN_MEMBER_CALLABLE_GROUP(apply)
+        DECL_MEMBER_FUNCTION(int, CALLABLE(callback), int)
     END_MEMBER_CALLABLE_GROUP
 END_CLASS

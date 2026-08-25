@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 
+#define NAPI_VERSION 8
 #define NAPI_AUTO_LENGTH static_cast<std::size_t>(-1)
 
 typedef enum napi_status {
@@ -41,6 +42,11 @@ typedef napi_callback_info__* napi_callback_info;
 typedef napi_value (*napi_callback)(napi_env env, napi_callback_info info);
 typedef void (*napi_finalize)(napi_env env, void* finalize_data, void* finalize_hint);
 
+typedef struct {
+    std::uint64_t lower;
+    std::uint64_t upper;
+} napi_type_tag;
+
 struct napi_value__ {
     enum class kind_t {
         undefined,
@@ -56,10 +62,13 @@ struct napi_value__ {
     napi_callback callback = nullptr;
     void* data = nullptr;
     napi_value prototype = nullptr;
+    napi_value constructor = nullptr;
     void* native = nullptr;
     void* external = nullptr;
     napi_finalize finalizer = nullptr;
     void* finalizer_hint = nullptr;
+    bool has_type_tag = false;
+    napi_type_tag type_tag = {};
 };
 
 struct napi_ref__ {
@@ -71,6 +80,7 @@ struct napi_env__ {
     std::vector<std::unique_ptr<napi_ref__>> refs;
     napi_value global = nullptr;
     napi_value undefined = nullptr;
+    std::size_t type_tag_checks = 0;
 };
 
 struct napi_callback_info__ {
@@ -179,6 +189,49 @@ inline napi_status napi_typeof(napi_env, napi_value value, napi_valuetype* resul
         *result = napi_external;
         break;
     }
+    return napi_ok;
+}
+
+inline napi_status napi_instanceof(
+    napi_env,
+    napi_value object,
+    napi_value constructor,
+    bool* result)
+{
+    if (result == nullptr) {
+        return napi_generic_failure;
+    }
+    *result = object != nullptr && constructor != nullptr
+        && object->constructor == constructor;
+    return napi_ok;
+}
+
+inline napi_status napi_type_tag_object(
+    napi_env,
+    napi_value value,
+    const napi_type_tag* type_tag)
+{
+    if (value == nullptr || type_tag == nullptr || value->has_type_tag) {
+        return napi_generic_failure;
+    }
+    value->type_tag = *type_tag;
+    value->has_type_tag = true;
+    return napi_ok;
+}
+
+inline napi_status napi_check_object_type_tag(
+    napi_env env,
+    napi_value value,
+    const napi_type_tag* type_tag,
+    bool* result)
+{
+    if (value == nullptr || type_tag == nullptr || result == nullptr) {
+        return napi_generic_failure;
+    }
+    ++env->type_tag_checks;
+    *result = value->has_type_tag
+        && value->type_tag.lower == type_tag->lower
+        && value->type_tag.upper == type_tag->upper;
     return napi_ok;
 }
 
@@ -341,6 +394,7 @@ inline napi_status napi_new_instance(
 {
     napi_value self = nullptr;
     napi_create_object(env, &self);
+    self->constructor = constructor;
 
     napi_callback_info__ info;
     info.this_arg = self;

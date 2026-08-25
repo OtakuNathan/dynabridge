@@ -24,6 +24,26 @@ namespace dynabridge {
         private:
             int handle = 0;
         };
+
+        class consumer {
+        public:
+            template <typename Callback>
+            consumer(counter& source, Callback& callback)
+                : base_(dynabridge::call_callback(callback, source.value())) {
+            }
+
+            int combine(counter& source, int value) const {
+                return base_ + source.value() + value;
+            }
+
+            template <typename Callback>
+            int apply(Callback& callback, int value) const {
+                return base_ + dynabridge::call_callback(callback, value);
+            }
+
+        private:
+            int base_ = 0;
+        };
     }
 }
 
@@ -54,6 +74,13 @@ namespace {
     struct multiply_function {
         int operator()(int a, unsigned b) const {
             return a * static_cast<int>(b);
+        }
+    };
+
+    struct transform_function {
+        int operator()(int value) const { return value * 10; }
+        int operator()(int value, unsigned extra) const {
+            return value + static_cast<int>(extra);
         }
     };
 
@@ -109,6 +136,29 @@ namespace {
         napi_value argv[2] = {};
         napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
         return int_value(env, value_to_int(env, argv[0]) + value_to_int(env, argv[1]));
+    }
+
+    napi_value callback_value(napi_env env, napi_callback_info info) {
+        std::size_t argc = 1;
+        napi_value argv[1] = {};
+        napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
+        return int_value(env, value_to_int(env, argv[0]) * 3);
+    }
+
+    napi_value pass_counter_callback(napi_env env, napi_callback_info info) {
+        std::size_t argc = 2;
+        napi_value argv[2] = {};
+        napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
+        return int_value(env, object_handle(env, argv[0]) + value_to_int(env, argv[1]));
+    }
+
+    napi_value pass_transform_callback(napi_env env, napi_callback_info info) {
+        std::size_t argc = 2;
+        napi_value argv[2] = {};
+        napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
+        napi_value result = nullptr;
+        napi_call_function(env, nullptr, argv[0], 1, &argv[1], &result);
+        return result;
     }
 
     napi_value counter_callback(napi_env env, napi_callback_info info) {
@@ -171,19 +221,6 @@ static_assert(
         dynabridge::import_symbols::counter>::value,
     "member import symbol should retain its receiver symbol");
 
-template <>
-struct dynabridge::napi_backend::converter<dynabridge::counter<napi_context_t>> {
-    static napi_value to(context_t&, dynabridge::counter<napi_context_t>& counter) {
-        return counter.object().get();
-    }
-
-    static dynabridge::optional<dynabridge::counter<napi_context_t>> from(context_t& ctx, napi_value value) {
-        return dynabridge::optional<dynabridge::counter<napi_context_t>>(dynabridge::counter<napi_context_t>(
-            ctx,
-            object_t<dynabridge::counter<napi_context_t>>(ctx.env(), value)));
-    }
-};
-
 int main() {
     napi_env env = napi_stub_create_env();
 
@@ -242,6 +279,44 @@ int main() {
     auto constructed_counter = dynabridge::construct<dynabridge::counter>(counter_ctx, 21u);
     if (constructed_counter.value() != 21 || constructed_counter.add(21) != 42) {
         return 8;
+    }
+
+    napi_value callback = nullptr;
+    napi_value pass_counter = nullptr;
+    napi_value pass_transform = nullptr;
+    napi_create_function(env, "callback", NAPI_AUTO_LENGTH,
+        callback_value, nullptr, &callback);
+    napi_create_function(env, "pass_counter", NAPI_AUTO_LENGTH,
+        pass_counter_callback, nullptr, &pass_counter);
+    napi_create_function(env, "pass_transform", NAPI_AUTO_LENGTH,
+        pass_transform_callback, nullptr, &pass_transform);
+    set_property(env, import_module_value,
+        symbol_name<dynabridge::import_symbols::callback>(), callback);
+    set_property(env, import_module_value,
+        symbol_name<dynabridge::import_symbols::pass_counter>(), pass_counter);
+    set_property(env, import_module_value,
+        symbol_name<dynabridge::import_symbols::pass_transform>(), pass_transform);
+
+    auto pass_counter_ctx = dynabridge::import_from<
+        dynabridge::import_symbols::pass_counter, napi_context_t>(import_module);
+    if (dynabridge::call_pass_counter(pass_counter_ctx, counter, 29) != 42) {
+        return 31;
+    }
+    auto pass_transform_ctx = dynabridge::import_from<
+        dynabridge::import_symbols::pass_transform, napi_context_t>(import_module);
+    if (dynabridge::call_pass_transform(
+            pass_transform_ctx, transform_function{}, 4) != 40) {
+        return 32;
+    }
+    auto built_transform = dynabridge::bind_transform()
+        .bind<int(int)>(scale_by_ten_function)
+        .bind<int(int, unsigned)>([](int value, unsigned extra) {
+            return value * static_cast<int>(extra);
+        })
+        .build();
+    if (dynabridge::call_pass_transform(
+            pass_transform_ctx, std::move(built_transform), 6) != 60) {
+        return 33;
     }
 
     napi_value module_value = nullptr;
@@ -315,7 +390,7 @@ int main() {
         return 10;
     }
 
-    dynabridge::exports::counter<dynabridge::native::counter>::register_all(export_ctx, module);
+    dynabridge::exports::counter::register_all(export_ctx, module);
 
     auto counter_class_ctx = dynabridge::import_from<dynabridge::import_symbols::counter, napi_context_t>(
         module);
@@ -334,10 +409,13 @@ int main() {
             || value_to_int(env, call0(env, member_value, instance)) != 13) {
         return 11;
     }
+    if (env->type_tag_checks == 0) {
+        return 40;
+    }
 
     dynabridge::native::counter borrowed_counter(31u);
     auto borrowed_object = dynabridge::make_exported<
-        dynabridge::exports::counter<dynabridge::native::counter>>(
+        dynabridge::exports::counter>(
         export_ctx,
         dynabridge::borrow(borrowed_counter));
     if (value_to_int(env, call1(env, member_add, int_value(env, 11), borrowed_object.get())) != 42
@@ -345,8 +423,63 @@ int main() {
         return 22;
     }
 
+    using consume_counter_sig = int(
+        dynabridge::object_param<dynabridge::export_classes::counter, dynabridge::export_t>,
+        int);
+    dynabridge::export_consume_counter<consume_counter_sig>(
+        export_ctx,
+        module,
+        [](dynabridge::native::counter& source, int value) {
+            return source.add(value);
+        });
+    napi_value consume_counter = get_property(env, module_value, "consume_counter");
+    if (value_to_int(env, call2(
+            env, consume_counter, borrowed_object.get(), int_value(env, 11))) != 42) {
+        return 34;
+    }
+    if (call2(env, consume_counter, int_value(env, 7), int_value(env, 7)) != nullptr) {
+        return 35;
+    }
+
+    using use_callback_sig = int(
+        dynabridge::callable_param<dynabridge::import_symbols::callback, dynabridge::import_t>,
+        int);
+    dynabridge::export_use_callback<use_callback_sig>(
+        export_ctx,
+        module,
+        [](auto& callback_ctx, int value) {
+            return dynabridge::call_callback(callback_ctx, value) + 1;
+        });
+    napi_value use_callback = get_property(env, module_value, "use_callback");
+    if (value_to_int(env, call2(
+            env, use_callback, callback, int_value(env, 7))) != 22) {
+        return 36;
+    }
+    if (call2(env, use_callback, int_value(env, 7), int_value(env, 7)) != nullptr) {
+        return 37;
+    }
+
+    dynabridge::exports::consumer::register_all(export_ctx, module);
+    napi_value consumer_class = get_property(env, module_value, "consumer");
+    napi_value consumer_args[] = {borrowed_object.get(), callback};
+    napi_value consumer_instance = nullptr;
+    napi_new_instance(env, consumer_class, 2, consumer_args, &consumer_instance);
+    napi_value consumer_prototype = get_property(env, consumer_class, "prototype");
+    napi_value combine = get_property(env, consumer_prototype, "combine");
+    napi_value apply = get_property(env, consumer_prototype, "apply");
+    if (value_to_int(env, call2(
+            env, combine, borrowed_object.get(), int_value(env, 11), consumer_instance)) != 135
+            || value_to_int(env, call2(
+                env, apply, callback, int_value(env, 7), consumer_instance)) != 114) {
+        return 38;
+    }
+    if (call2(env, consume_counter, consumer_instance, int_value(env, 1)) != nullptr
+            || call1(env, member_add, int_value(env, 1), consumer_instance) != nullptr) {
+        return 39;
+    }
+
     dynabridge::export_instance<
-        dynabridge::exports::counter<dynabridge::native::counter>>(
+        dynabridge::exports::counter>(
         export_ctx,
         module,
         "globalCounter",
@@ -354,6 +487,26 @@ int main() {
     napi_value global_counter = get_property(env, module_value, "globalCounter");
     if (value_to_int(env, call1(env, member_add, int_value(env, 11), global_counter)) != 42) {
         return 23;
+    }
+
+    napi_value trusted_module_value = nullptr;
+    napi_create_object(env, &trusted_module_value);
+    dynabridge::napi_backend::module_t trusted_module{env, trusted_module_value};
+    dynabridge::napi_backend::trusted_export_context_t trusted_ctx(env);
+    dynabridge::exports::counter::register_all(trusted_ctx, trusted_module);
+
+    napi_value trusted_counter_class = get_property(env, trusted_module_value, "counter");
+    napi_value trusted_constructor_arg = int_value(env, 17);
+    napi_value trusted_instance = nullptr;
+    napi_new_instance(
+        env, trusted_counter_class, 1, &trusted_constructor_arg, &trusted_instance);
+    napi_value trusted_prototype = get_property(env, trusted_counter_class, "prototype");
+    napi_value trusted_add = get_property(env, trusted_prototype, "add");
+    const std::size_t checks_before_trusted_call = env->type_tag_checks;
+    if (value_to_int(env, call1(
+            env, trusted_add, int_value(env, 25), trusted_instance)) != 42
+            || env->type_tag_checks != checks_before_trusted_call) {
+        return 41;
     }
 
     napi_stub_delete_env(env);

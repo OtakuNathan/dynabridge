@@ -1,7 +1,9 @@
 #ifndef DYNABRIDGE_TEST_FAKE_BACKEND_H
 #define DYNABRIDGE_TEST_FAKE_BACKEND_H
 
+#include <functional>
 #include <map>
+#include <memory>
 #include <type_traits>
 #include <utility>
 
@@ -15,6 +17,11 @@ namespace dynabridge {
 
         template <typename T>
         struct converter;
+
+        struct callback_entry {
+            std::function<int(int)> unary;
+            std::function<int(int, int)> binary;
+        };
 
         template <
             typename Receiver,
@@ -39,18 +46,18 @@ namespace dynabridge {
             {
                 native_ = new Receiver(std::forward<Args>(args)...);
                 destroy_native_ = &destroy_cached_native<Receiver>;
-                registry()[handle_] = native_;
+                registry()[handle_] = registry_entry{native_, type_key<Receiver>()};
                 registered_ = true;
             }
 
             template <
                 typename Context,
-                typename Arg,
+                typename... Args,
                 typename D = Direction,
                 std::enable_if_t<std::is_same<D, import_t>::value>* = nullptr>
-            object_t(Context& ctx, construct_object_t, Arg&& arg)
+            object_t(Context& ctx, construct_object_t, Args&&... args)
             {
-                this->construct_import_object(ctx, std::forward<Arg>(arg));
+                this->construct_import_object(ctx, std::forward<Args>(args)...);
             }
 
             object_t(const object_t&) = delete;
@@ -105,17 +112,22 @@ namespace dynabridge {
                 return handle_ != 0;
             }
 
-            template <typename Context, typename Arg>
-            void construct_import_object_impl(Context& ctx, Arg&& arg) {
-                handle_ = ctx.callable_(to_cast<typename std::decay<Arg>::type>(
-                    ctx, std::forward<Arg>(arg)));
+            template <typename R>
+            static bool is_registered_as(unsigned handle) {
+                auto iter = registry().find(handle);
+                return iter != registry().end() && iter->second.type == type_key<R>();
+            }
+
+            template <typename Context, typename... Args>
+            void construct_import_object_impl(Context& ctx, Args&&... args) {
+                handle_ = ctx.callable_(std::forward<Args>(args)...);
             }
 
             template <typename Context, typename R = Receiver>
             R* native(Context&) const {
                 auto iter = registry().find(handle_);
-                if (iter != registry().end()) {
-                    return static_cast<R*>(iter->second);
+                if (iter != registry().end() && iter->second.type == type_key<R>()) {
+                    return static_cast<R*>(iter->second.native);
                 }
                 if (native_ == nullptr) {
                     native_ = new R(handle_);
@@ -130,8 +142,13 @@ namespace dynabridge {
                 return ++value;
             }
 
-            static std::map<unsigned, void*>& registry() {
-                static std::map<unsigned, void*> values;
+            struct registry_entry {
+                void* native = nullptr;
+                const void* type = nullptr;
+            };
+
+            static std::map<unsigned, registry_entry>& registry() {
+                static std::map<unsigned, registry_entry> values;
                 return values;
             }
 
@@ -180,6 +197,20 @@ namespace dynabridge {
 
         template <typename Callable>
         using import_context_t = context_t<Callable>;
+
+        struct callback_dispatch {
+            unsigned handle = 0;
+
+            int operator()(int value) const {
+                return invoke_dynamic_callable(handle, value);
+            }
+
+            int operator()(int value, unsigned extra) const {
+                return invoke_dynamic_callable(handle, value, static_cast<int>(extra));
+            }
+        };
+
+        using dynamic_callable_context_t = context_t<callback_dispatch>;
 
         template <typename Callable>
         struct export_context_t : context_t<Callable> {
@@ -263,6 +294,62 @@ namespace dynabridge {
             return object_t<Class, export_t>(handle);
         }
 
+        template <typename Class, typename Context>
+        static optional<object_t<typename Class::proxy_t, export_t>>
+        try_bind_export_object_impl(Context&, unsigned handle) {
+            using proxy_t = typename Class::proxy_t;
+            if (!object_t<proxy_t, export_t>::template is_registered_as<proxy_t>(handle)) {
+                return optional<object_t<proxy_t, export_t>>();
+            }
+            return optional<object_t<proxy_t, export_t>>(
+                in_place, handle);
+        }
+
+        template <typename Class, typename Context, typename Receiver>
+        static unsigned to_dynamic_object_impl(
+            Context&,
+            const object_t<Receiver, import_t>& object) noexcept
+        {
+            return object.get();
+        }
+
+        template <typename Group, typename Context>
+        static optional<dynamic_callable_context_t> try_import_callable_impl(
+            Context&,
+            int handle)
+        {
+            if (callback_registry().find(static_cast<unsigned>(handle)) == callback_registry().end()) {
+                return optional<dynamic_callable_context_t>();
+            }
+            return optional<dynamic_callable_context_t>(
+                in_place, callback_dispatch{static_cast<unsigned>(handle)});
+        }
+
+        template <typename Group, typename Context, typename Binder>
+        static int make_export_callable_impl(Context&, Binder binder) {
+            auto shared = std::make_shared<Binder>(std::move(binder));
+            callback_entry entry;
+            entry.unary = [shared](int value) { return (*shared)(value); };
+            entry.binary = [shared](int value, int extra) {
+                return (*shared)(value, static_cast<unsigned>(extra));
+            };
+            return static_cast<int>(store_dynamic_callable(std::move(entry)));
+        }
+
+        static unsigned register_dynamic_callable(std::function<int(int)> callable) {
+            callback_entry entry;
+            entry.unary = std::move(callable);
+            return store_dynamic_callable(std::move(entry));
+        }
+
+        static int invoke_dynamic_callable(unsigned handle, int value) {
+            return callback_registry().at(handle).unary(value);
+        }
+
+        static int invoke_dynamic_callable(unsigned handle, int value, int extra) {
+            return callback_registry().at(handle).binary(value, extra);
+        }
+
         template <typename Class, typename Context, typename... Args>
         static object_t<Class, export_t> make_export_object_impl(
             Context& ctx,
@@ -279,6 +366,24 @@ namespace dynabridge {
             object_t<Class, export_t> object)
         {
             target.def_instance(name, std::move(object));
+        }
+
+        template <typename Context>
+        static int undefined(Context&) noexcept {
+            return 0;
+        }
+
+    private:
+        static std::map<unsigned, callback_entry>& callback_registry() {
+            static std::map<unsigned, callback_entry> values;
+            return values;
+        }
+
+        static unsigned store_dynamic_callable(callback_entry entry) {
+            static unsigned next = 20000;
+            const unsigned handle = ++next;
+            callback_registry().emplace(handle, std::move(entry));
+            return handle;
         }
     };
 

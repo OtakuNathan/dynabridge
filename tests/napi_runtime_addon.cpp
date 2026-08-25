@@ -35,6 +35,26 @@ namespace dynabridge {
                 return handle;
             }
         };
+
+        class consumer {
+        public:
+            template <typename Callback>
+            consumer(counter& source, Callback& callback)
+                : base_(dynabridge::call_callback(callback, source.value())) {
+            }
+
+            int combine(counter& source, int value) const {
+                return base_ + source.value() + value;
+            }
+
+            template <typename Callback>
+            int apply(Callback& callback, int value) const {
+                return base_ + dynabridge::call_callback(callback, value);
+            }
+
+        private:
+            int base_ = 0;
+        };
     }
 }
 
@@ -42,19 +62,6 @@ int dynabridge::native::counter::constructed = 0;
 int dynabridge::native::counter::destroyed = 0;
 
 using owned_counter = dynabridge::native::counter;
-
-template <>
-struct dynabridge::napi_backend::converter<dynabridge::counter<napi_context_t>> {
-    static napi_value to(context_t&, dynabridge::counter<napi_context_t>& counter) {
-        return counter.object().get();
-    }
-
-    static dynabridge::optional<dynabridge::counter<napi_context_t>> from(context_t& ctx, napi_value value) {
-        return dynabridge::optional<dynabridge::counter<napi_context_t>>(dynabridge::counter<napi_context_t>(
-            ctx,
-            object_t<dynabridge::counter<napi_context_t>>(ctx.env(), value)));
-    }
-};
 
 namespace {
     int stored_value = 0;
@@ -74,6 +81,13 @@ namespace {
     struct multiply_function {
         int operator()(int a, unsigned b) const {
             return a * static_cast<int>(b);
+        }
+    };
+
+    struct transform_function {
+        int operator()(int value) const { return value * 10; }
+        int operator()(int value, unsigned extra) const {
+            return value + static_cast<int>(extra);
         }
     };
 
@@ -191,6 +205,39 @@ namespace {
         }
     }
 
+    napi_value call_imported_pass_counter(napi_env env, napi_callback_info info) {
+        try {
+            std::size_t argc = 3;
+            napi_value argv[3] = {};
+            if (napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr) != napi_ok || argc != 3) {
+                return throw_error(env, "callImportedPassCounter expects callback, object, int");
+            }
+            napi_context_t ctx(env, argv[0]);
+            auto counter = dynabridge::bind_receiver<dynabridge::counter>(ctx, env, argv[1]);
+            const int value = dynabridge::from_cast<int>(ctx, argv[2]);
+            return dynabridge::napi_backend::converter<int>::to(
+                ctx, dynabridge::call_pass_counter(ctx, counter, value));
+        } catch (const std::exception& error) {
+            return throw_error(env, error.what());
+        }
+    }
+
+    napi_value call_imported_pass_transform(napi_env env, napi_callback_info info) {
+        try {
+            std::size_t argc = 2;
+            napi_value argv[2] = {};
+            if (napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr) != napi_ok || argc != 2) {
+                return throw_error(env, "callImportedPassTransform expects callback, int");
+            }
+            napi_context_t ctx(env, argv[0]);
+            const int value = dynabridge::from_cast<int>(ctx, argv[1]);
+            return dynabridge::napi_backend::converter<int>::to(
+                ctx, dynabridge::call_pass_transform(ctx, transform_function{}, value));
+        } catch (const std::exception& error) {
+            return throw_error(env, error.what());
+        }
+    }
+
     void define_function(
         napi_env env,
         dynabridge::napi_backend::module_t& module,
@@ -229,13 +276,34 @@ namespace {
                 .bind<int(int, unsigned)>(multiply_function{})
                 .commit();
 
-            dynabridge::exports::counter<dynabridge::native::counter>::register_all(ctx, module);
+            dynabridge::exports::counter::register_all(ctx, module);
+            using consume_counter_sig = int(
+                dynabridge::object_param<dynabridge::export_classes::counter, dynabridge::export_t>,
+                int);
+            dynabridge::export_consume_counter<consume_counter_sig>(
+                ctx,
+                module,
+                [](owned_counter& counter, int value) {
+                    return counter.add(value);
+                });
+            using use_callback_sig = int(
+                dynabridge::callable_param<dynabridge::import_symbols::callback, dynabridge::import_t>,
+                int);
+            dynabridge::export_use_callback<use_callback_sig>(
+                ctx,
+                module,
+                [](auto& callback, int value) {
+                    return dynabridge::call_callback(callback, value) + 1;
+                });
+            dynabridge::exports::consumer::register_all(ctx, module);
 
             define_function(env, module, "callImportedCalc", call_imported_calc);
             define_function(env, module, "callImportedFoo", call_imported_foo);
             define_function(env, module, "callImportedCounterAdd", call_imported_counter_add);
             define_function(env, module, "callImportedCounterValue", call_imported_counter_value);
             define_function(env, module, "constructImportedCounterAdd", construct_imported_counter_add);
+            define_function(env, module, "callImportedPassCounter", call_imported_pass_counter);
+            define_function(env, module, "callImportedPassTransform", call_imported_pass_transform);
 
             return exports;
         } catch (const std::exception& error) {

@@ -33,11 +33,41 @@ namespace dynabridge {
                 return handle;
             }
         };
+
+        class consumer {
+        public:
+            static int constructed;
+            static int destroyed;
+
+            template <typename Callback>
+            consumer(counter& source, Callback& callback)
+                : base_(dynabridge::call_callback(callback, source.value())) {
+                ++constructed;
+            }
+
+            ~consumer() {
+                ++destroyed;
+            }
+
+            int combine(counter& source, int value) const {
+                return base_ + source.value() + value;
+            }
+
+            template <typename Callback>
+            int apply(Callback& callback, int value) const {
+                return base_ + dynabridge::call_callback(callback, value);
+            }
+
+        private:
+            int base_ = 0;
+        };
     }
 }
 
 int dynabridge::native::counter::constructed = 0;
 int dynabridge::native::counter::destroyed = 0;
+int dynabridge::native::consumer::constructed = 0;
+int dynabridge::native::consumer::destroyed = 0;
 
 namespace {
     using py_context_t = dynabridge::py_backend::context_t;
@@ -61,6 +91,13 @@ namespace {
     struct multiply_function {
         int operator()(int a, unsigned b) const {
             return a * static_cast<int>(b);
+        }
+    };
+
+    struct transform_function {
+        int operator()(int value) const { return value * 10; }
+        int operator()(int value, unsigned extra) const {
+            return value + static_cast<int>(extra);
         }
     };
 
@@ -121,23 +158,6 @@ namespace {
     }
 }
 
-template <>
-struct dynabridge::py_backend::converter<dynabridge::counter<py_context_t>> {
-    static PyObject* to(context_t&, dynabridge::counter<py_context_t>& counter) {
-        PyObject* object = counter.object().get();
-        Py_INCREF(object);
-        return object;
-    }
-
-    static dynabridge::optional<dynabridge::counter<py_context_t>> from(context_t& ctx, PyObject* object) {
-        return dynabridge::optional<dynabridge::counter<py_context_t>>(dynabridge::counter<py_context_t>(
-            ctx,
-            object_t<dynabridge::counter<py_context_t>>(
-                object,
-                dynabridge::py_backend::ref_policy::borrowed)));
-    }
-};
-
 int main() {
     Py_Initialize();
 
@@ -155,6 +175,12 @@ int main() {
             "bar = record\n"
             "def calc(a, b):\n"
             "    return int(a) + int(b)\n"
+            "def callback(value):\n"
+            "    return int(value) * 3\n"
+            "def pass_counter(obj, value):\n"
+            "    return int(obj.handle) + int(value)\n"
+            "def pass_transform(fn, value):\n"
+            "    return int(fn(value))\n"
             "class Receiver:\n"
             "    pass\n"
             "def make_receiver(handle):\n"
@@ -217,6 +243,29 @@ int main() {
         auto constructed_counter = dynabridge::construct<dynabridge::counter>(counter_ctx, 21u);
         if (constructed_counter.value() != 21 || constructed_counter.add(21) != 42) {
             return 12;
+        }
+
+        auto pass_counter_ctx = dynabridge::import_from<
+            dynabridge::import_symbols::pass_counter, py_context_t>(main_module);
+        if (dynabridge::call_pass_counter(pass_counter_ctx, counter, 29) != 42) {
+            return 41;
+        }
+
+        auto pass_transform_ctx = dynabridge::import_from<
+            dynabridge::import_symbols::pass_transform, py_context_t>(main_module);
+        if (dynabridge::call_pass_transform(
+                pass_transform_ctx, transform_function{}, 4) != 40) {
+            return 42;
+        }
+        auto built_transform = dynabridge::bind_transform()
+            .bind<int(int)>(scale_by_ten_function)
+            .bind<int(int, unsigned)>([](int value, unsigned extra) {
+                return value * static_cast<int>(extra);
+            })
+            .build();
+        if (dynabridge::call_pass_transform(
+                pass_transform_ctx, std::move(built_transform), 6) != 60) {
+            return 43;
         }
 
         py_export_context_t export_ctx;
@@ -315,10 +364,21 @@ int main() {
             return 15;
         }
 
-        dynabridge::exports::counter<dynabridge::native::counter>::register_all(export_ctx, module);
+        dynabridge::exports::counter::register_all(export_ctx, module);
 
         dynabridge::py_backend::object_ref counter_class(PyObject_GetAttrString(module.get(), "counter"),
             dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref missing_constructor_args(
+            PyTuple_New(0), dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref missing_constructor_result(
+            PyObject_CallObject(counter_class.get(), missing_constructor_args.get()),
+            dynabridge::py_backend::ref_policy::owned);
+        if (missing_constructor_result || !PyErr_ExceptionMatches(PyExc_TypeError)
+                || owned_counter::constructed != 0 || owned_counter::destroyed != 0) {
+            return 52;
+        }
+        PyErr_Clear();
+
         dynabridge::py_backend::object_ref constructor_args(Py_BuildValue("(I)", 13u),
             dynabridge::py_backend::ref_policy::owned);
         dynabridge::py_backend::object_ref instance(PyObject_CallObject(counter_class.get(), constructor_args.get()),
@@ -352,7 +412,7 @@ int main() {
 
         owned_counter borrowed_counter(31u);
         auto borrowed_object = dynabridge::make_exported<
-            dynabridge::exports::counter<dynabridge::native::counter>>(
+            dynabridge::exports::counter>(
             export_ctx,
             dynabridge::borrow(borrowed_counter));
         dynabridge::py_backend::object_ref borrowed_value(
@@ -365,8 +425,105 @@ int main() {
             return 32;
         }
 
+        using consume_counter_sig = int(
+            dynabridge::object_param<dynabridge::export_classes::counter, dynabridge::export_t>,
+            int);
+        dynabridge::export_consume_counter<consume_counter_sig>(
+            export_ctx,
+            module,
+            [](owned_counter& counter, int value) {
+                return counter.add(value);
+            });
+        dynabridge::py_backend::object_ref consume_counter(
+            PyObject_GetAttrString(module.get(), "consume_counter"),
+            dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref eleven(PyLong_FromLong(11),
+            dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref consumed(PyObject_CallFunctionObjArgs(
+            consume_counter.get(), borrowed_object.get(), eleven.get(), nullptr),
+            dynabridge::py_backend::ref_policy::owned);
+        if (!consumed || PyLong_AsLong(consumed.get()) != 42) {
+            return 44;
+        }
+
+        using use_callback_sig = int(
+            dynabridge::callable_param<dynabridge::import_symbols::callback, dynabridge::import_t>,
+            int);
+        dynabridge::export_use_callback<use_callback_sig>(
+            export_ctx,
+            module,
+            [](auto& callback, int value) {
+                return dynabridge::call_callback(callback, value) + 1;
+            });
+        dynabridge::py_backend::object_ref use_callback(
+            PyObject_GetAttrString(module.get(), "use_callback"),
+            dynabridge::py_backend::ref_policy::owned);
+        auto callback = object_attr(main_module.get(), "callback");
+        dynabridge::py_backend::object_ref seven(PyLong_FromLong(7),
+            dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref callback_result(PyObject_CallFunctionObjArgs(
+            use_callback.get(), callback.get(), seven.get(), nullptr),
+            dynabridge::py_backend::ref_policy::owned);
+        if (!callback_result || PyLong_AsLong(callback_result.get()) != 22) {
+            return 45;
+        }
+
+        dynabridge::py_backend::object_ref wrong_object_result(PyObject_CallFunctionObjArgs(
+            consume_counter.get(), seven.get(), seven.get(), nullptr),
+            dynabridge::py_backend::ref_policy::owned);
+        if (wrong_object_result || !PyErr_ExceptionMatches(PyExc_TypeError)) {
+            return 46;
+        }
+        PyErr_Clear();
+
+        dynabridge::exports::consumer::register_all(export_ctx, module);
+        dynabridge::py_backend::object_ref consumer_class(
+            PyObject_GetAttrString(module.get(), "consumer"),
+            dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref consumer_instance(PyObject_CallFunctionObjArgs(
+            consumer_class.get(), borrowed_object.get(), callback.get(), nullptr),
+            dynabridge::py_backend::ref_policy::owned);
+        if (!consumer_instance || dynabridge::native::consumer::constructed != 1) {
+            return 48;
+        }
+
+        dynabridge::py_backend::object_ref combine(
+            PyObject_GetAttrString(consumer_instance.get(), "combine"),
+            dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref combine_result(PyObject_CallFunctionObjArgs(
+            combine.get(), borrowed_object.get(), eleven.get(), nullptr),
+            dynabridge::py_backend::ref_policy::owned);
+        if (!combine_result || PyLong_AsLong(combine_result.get()) != 135) {
+            return 49;
+        }
+
+        dynabridge::py_backend::object_ref apply(
+            PyObject_GetAttrString(consumer_instance.get(), "apply"),
+            dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref apply_result(PyObject_CallFunctionObjArgs(
+            apply.get(), callback.get(), seven.get(), nullptr),
+            dynabridge::py_backend::ref_policy::owned);
+        if (!apply_result || PyLong_AsLong(apply_result.get()) != 114) {
+            return 50;
+        }
+
+        combine.reset();
+        apply.reset();
+        consumer_instance.reset();
+        if (dynabridge::native::consumer::destroyed != 1) {
+            return 51;
+        }
+
+        dynabridge::py_backend::object_ref wrong_callable_result(PyObject_CallFunctionObjArgs(
+            use_callback.get(), seven.get(), seven.get(), nullptr),
+            dynabridge::py_backend::ref_policy::owned);
+        if (wrong_callable_result || !PyErr_ExceptionMatches(PyExc_TypeError)) {
+            return 47;
+        }
+        PyErr_Clear();
+
         dynabridge::export_instance<
-            dynabridge::exports::counter<dynabridge::native::counter>>(
+            dynabridge::exports::counter>(
             export_ctx,
             module,
             "globalCounter",
