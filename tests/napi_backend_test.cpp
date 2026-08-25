@@ -221,9 +221,9 @@ static_assert(
         dynabridge::import_symbols::counter>::value,
     "member import symbol should retain its receiver symbol");
 
-int main() {
-    napi_env env = napi_stub_create_env();
+namespace {
 
+int run_test(napi_env env) {
     record_state state;
     napi_value record = nullptr;
     napi_create_function(env, "record", NAPI_AUTO_LENGTH, record_callback, &state, &record);
@@ -509,6 +509,19 @@ int main() {
         return 41;
     }
 
-    napi_stub_delete_env(env);
     return 0;
+}
+
+}  // namespace
+
+int main() {
+    napi_env env = napi_stub_create_env();
+    // Lifetime contract: every dynabridge wrapper/context must be destroyed
+    // before the stub env. Their destructors call napi_delete_reference on
+    // refs owned by env->refs; deleting the env first frees those refs and
+    // turns every later reset() into a use-after-free (MSVC Debug heap
+    // catches it; Linux/GCC silently tolerates the writes).
+    const int result = run_test(env);
+    napi_stub_delete_env(env);
+    return result;
 }
