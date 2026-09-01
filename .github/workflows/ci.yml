@@ -45,6 +45,7 @@ jobs:
           cmake -S . -B build
           -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
           -DDYNABRIDGE_BUILD_BENCHMARKS=ON
+          -DDYNABRIDGE_BUILD_EXAMPLES=ON
           -DPython3_ROOT_DIR="${{ env.pythonLocation }}"
 
       - name: Build
@@ -52,6 +53,20 @@ jobs:
 
       - name: Test
         run: ctest --test-dir build -C ${{ matrix.build-type }} --output-on-failure
+
+      - name: Install
+        run: >
+          cmake --install build
+          --config ${{ matrix.build-type }}
+          --prefix "${{ runner.temp }}/dynabridge-install"
+
+      - name: Configure package consumer
+        run: >
+          cmake -S tests/package_consumer -B consumer-build
+          -DCMAKE_PREFIX_PATH="${{ runner.temp }}/dynabridge-install"
+
+      - name: Build package consumer
+        run: cmake --build consumer-build --config ${{ matrix.build-type }} --parallel
 
   valgrind:
     name: ubuntu-latest / valgrind

@@ -1,0 +1,3 @@
+BEGIN_CALLABLE_GROUP(package_ping)
+    DECL_CALLABLE(int, int)
+END_CALLABLE_GROUP
