@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "export_callable.h"
+#include "interface.h"
 
 namespace dynabridge {
     template <typename Class, typename Signature, typename Context>
@@ -45,6 +46,36 @@ namespace dynabridge {
 
     template <typename Class>
     struct export_class_registrar;
+
+    template <typename Descriptor, typename Host>
+    struct export_interface_registration;
+
+    template <typename Host, typename Interfaces>
+    struct export_interface_registrar;
+
+    template <typename Host>
+    struct export_interface_registrar<Host, type_list<>> {
+        template <typename RegisteredClass>
+        static void register_all(RegisteredClass&) {
+        }
+    };
+
+    template <typename Host, typename... Tail>
+    struct export_interface_registrar<Host, type_list<void, Tail...>> {
+        template <typename RegisteredClass>
+        static void register_all(RegisteredClass& type) {
+            export_interface_registrar<Host, type_list<Tail...>>::register_all(type);
+        }
+    };
+
+    template <typename Host, typename Descriptor, typename... Tail>
+    struct export_interface_registrar<Host, type_list<Descriptor, Tail...>> {
+        template <typename RegisteredClass>
+        static void register_all(RegisteredClass& type) {
+            export_interface_registration<Descriptor, Host>::register_all(type);
+            export_interface_registrar<Host, type_list<Tail...>>::register_all(type);
+        }
+    };
 
     template <typename Class>
     struct export_constructor_group_for {
@@ -101,6 +132,9 @@ namespace dynabridge {
     private:
         template <typename>
         friend struct export_class_registrar;
+
+        template <typename, typename>
+        friend struct export_interface_registration;
 
         template <typename Signature, typename Callable>
         auto member(const char* name, Callable&& callable)

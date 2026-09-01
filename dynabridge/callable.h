@@ -23,6 +23,14 @@ namespace dynabridge {
     template <typename Signature>
     using free_callable = callable<no_receiver_t, Signature>;
 
+    template <typename R, typename... Args>
+    struct signature_from_types {
+        using type = R(Args...);
+    };
+
+    template <typename... Types>
+    using signature_from_types_t = typename signature_from_types<Types...>::type;
+
     template <typename Contract>
     struct callable_arity;
 

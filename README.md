@@ -30,8 +30,13 @@ value channel. Object and callback identity use dedicated typed channels rather
 than pretending every runtime handle is a value conversion.
 
 ```text
-Key is static. Value is dynamic. Lookup is compile-time.
+Key is static. Value is dynamic. Contract lookup is compile-time.
 ```
+
+This refers to C++ contract and signature selection. A backend may still resolve
+an import name to a runtime handle or register an export under its generated
+name. Import lookup can normally happen once when the context is created and the
+handle can then be cached; callers that already supply a handle can skip it.
 
 ## Quick Start
 
@@ -70,12 +75,15 @@ BEGIN_CALLABLE_GROUP(add)
     DECL_CALLABLE(int, int, unsigned)
 END_CALLABLE_GROUP
 
-BEGIN_CLASS(native, counter)
-    DECL_CONSTRUCTOR(unsigned)
-
+BEGIN_INTERFACE(addable)
     BEGIN_MEMBER_CALLABLE_GROUP(add)
         DECL_MEMBER_FUNCTION(int, int)
     END_MEMBER_CALLABLE_GROUP
+END_INTERFACE
+
+BEGIN_CLASS(native, counter)
+    IMPLEMENTS(addable)
+    DECL_CONSTRUCTOR(unsigned)
 END_CLASS
 ```
 
@@ -95,9 +103,18 @@ auto counter = dynabridge::construct<dynabridge::counter>(ctx, 13u);
 int value = counter.add(29);
 ```
 
+Interfaces are stateless capability sets shared by concrete bridge classes.
+Generated classes publicly compose their declared interfaces while retaining a
+single context/object or native-storage state. Export registration flattens
+interface methods onto the concrete runtime class; no runtime inheritance or
+interface object is created. Interface and concrete member names must be unique
+within a class, and an interface may not implement another interface.
+
 Free functions, function objects, and lambdas can fill declared export slots.
-Overloaded groups use a typed builder and probe strict `optional<T>` conversion
-results in declaration order:
+Export overloads use ordered first-viable dispatch: the core checks arity and
+then probes strict `optional<T>` conversions in `.def` declaration order. The
+first successful candidate wins, so declaration order is part of the public
+dispatch policy:
 
 ```cpp
 dynabridge::export_calc(ctx, module)
@@ -152,14 +169,20 @@ target_link_libraries(my_addon PRIVATE dynabridge::dynabridge)
 | Python | Minimal CPython C API backend with real runtime tests |
 | JavaScript | Minimal Node-API backend with real Node.js runtime tests |
 | RPC | Transport-agnostic framed demo backend |
+| Scheduling | Optional Flux Foundry adapters for Python interpreter and libuv loop dispatch |
 | Value types | Built-in Python/Node converters for `int` and `unsigned`; applications add only the types they use |
 | Platforms | CI builds Debug and Release on Linux, macOS, and Windows |
 
 This is a bridge core, not a drop-in replacement for the complete policies and
 type catalogs of pybind11, nanobind, or node-addon-api. Thread attachment, the
 Python GIL, Node handle scopes, scheduler choice, and platform object ownership
-remain backend or caller policy. Contract changes require recompilation; there
-is intentionally no runtime C++ symbol registry. Descriptor returns are not
+are not dynabridge core policy. Backends expose the required platform primitives;
+Flux Foundry runners and runtime-specific executors can compose thread affinity,
+asynchronous continuation, and cancellation without reimplementing orchestration
+inside every backend. Contract changes require recompilation; there is
+intentionally no runtime C++ symbol registry. Runtime-language symbol resolution
+still belongs to the backend, and export overloads use ordered first-viable
+selection rather than C++-style conversion ranking. Descriptor returns are not
 currently part of the common protocol, and the RPC backend is a focused demo,
 not a production transport stack.
 

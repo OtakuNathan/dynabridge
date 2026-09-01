@@ -2,15 +2,85 @@
 #include "import_core.h"
 
 namespace dynabridge {
+#define BEGIN_INTERFACE(name)
+#define END_INTERFACE
+#define IMPLEMENTS(name)
+
+    namespace interfaces {
+#undef BEGIN_INTERFACE
+#undef END_INTERFACE
+#define BEGIN_INTERFACE(name) template <typename Host, typename Direction> class name;
+#define END_INTERFACE
+#define BEGIN_CALLABLE_GROUP(name)
+#define DECL_CALLABLE(...)
+#define DECL_FUNCTION(sig)
+#define END_CALLABLE_GROUP
+#define BEGIN_CLASS(clazz)
+#define DECL_CONSTRUCTOR(...)
+#define BEGIN_MEMBER_CALLABLE_GROUP(name)
+#define DECL_MEMBER_FUNCTION(...)
+#define END_MEMBER_CALLABLE_GROUP
+#define END_CLASS
+    #include DYNABRIDGE_IMPORT_DEF
+#undef END_CLASS
+#undef END_MEMBER_CALLABLE_GROUP
+#undef DECL_MEMBER_FUNCTION
+#undef BEGIN_MEMBER_CALLABLE_GROUP
+#undef DECL_CONSTRUCTOR
+#undef BEGIN_CLASS
+#undef END_CALLABLE_GROUP
+#undef DECL_FUNCTION
+#undef DECL_CALLABLE
+#undef BEGIN_CALLABLE_GROUP
+#undef END_INTERFACE
+#undef BEGIN_INTERFACE
+#define BEGIN_INTERFACE(name)
+#define END_INTERFACE
+#define IMPLEMENTS(name)
+    }
+
+    namespace interface_descriptors {
+#undef BEGIN_INTERFACE
+#undef END_INTERFACE
+#define BEGIN_INTERFACE(name) template <typename Direction> struct name;
+#define END_INTERFACE
+#define BEGIN_CALLABLE_GROUP(name)
+#define DECL_CALLABLE(...)
+#define DECL_FUNCTION(sig)
+#define END_CALLABLE_GROUP
+#define BEGIN_CLASS(clazz)
+#define DECL_CONSTRUCTOR(...)
+#define BEGIN_MEMBER_CALLABLE_GROUP(name)
+#define DECL_MEMBER_FUNCTION(...)
+#define END_MEMBER_CALLABLE_GROUP
+#define END_CLASS
+    #include DYNABRIDGE_IMPORT_DEF
+#undef END_CLASS
+#undef END_MEMBER_CALLABLE_GROUP
+#undef DECL_MEMBER_FUNCTION
+#undef BEGIN_MEMBER_CALLABLE_GROUP
+#undef DECL_CONSTRUCTOR
+#undef BEGIN_CLASS
+#undef END_CALLABLE_GROUP
+#undef DECL_FUNCTION
+#undef DECL_CALLABLE
+#undef BEGIN_CALLABLE_GROUP
+#undef END_INTERFACE
+#undef BEGIN_INTERFACE
+#define BEGIN_INTERFACE(name)
+#define END_INTERFACE
+#define IMPLEMENTS(name)
+    }
+
     namespace export_groups {
 #define BEGIN_CALLABLE_GROUP(name) struct name;
-#define DECL_CALLABLE(result, ...)
+#define DECL_CALLABLE(...)
 #define DECL_FUNCTION(sig)
 #define END_CALLABLE_GROUP
 #define BEGIN_CLASS(ns, clazz)
 #define DECL_CONSTRUCTOR(...)
 #define BEGIN_MEMBER_CALLABLE_GROUP(name)
-#define DECL_MEMBER_FUNCTION(result, ...)
+#define DECL_MEMBER_FUNCTION(...)
 #define END_MEMBER_CALLABLE_GROUP
 #define END_CLASS
     #include DYNABRIDGE_EXPORT_DEF
@@ -26,37 +96,15 @@ namespace dynabridge {
 #undef BEGIN_CALLABLE_GROUP
     }
 
-#define BEGIN_CALLABLE_GROUP(name)
-#define DECL_CALLABLE(result, ...)
-#define DECL_FUNCTION(sig)
-#define END_CALLABLE_GROUP
-#define BEGIN_CLASS(clazz) template <typename Context> class clazz;
-#define DECL_CONSTRUCTOR(...)
-#define BEGIN_MEMBER_CALLABLE_GROUP(name)
-#define DECL_MEMBER_FUNCTION(result, ...)
-#define END_MEMBER_CALLABLE_GROUP
-#define END_CLASS
-    #include DYNABRIDGE_IMPORT_DEF
-#undef END_CLASS
-#undef END_MEMBER_CALLABLE_GROUP
-#undef DECL_MEMBER_FUNCTION
-#undef BEGIN_MEMBER_CALLABLE_GROUP
-#undef DECL_CONSTRUCTOR
-#undef BEGIN_CLASS
-#undef END_CALLABLE_GROUP
-#undef DECL_FUNCTION
-#undef DECL_CALLABLE
-#undef BEGIN_CALLABLE_GROUP
-
     namespace import_symbols {
 #define BEGIN_CALLABLE_GROUP(name)
-#define DECL_CALLABLE(result, ...)
+#define DECL_CALLABLE(...)
 #define DECL_FUNCTION(sig)
 #define END_CALLABLE_GROUP
 #define BEGIN_CLASS(clazz) struct clazz;
 #define DECL_CONSTRUCTOR(...)
 #define BEGIN_MEMBER_CALLABLE_GROUP(name)
-#define DECL_MEMBER_FUNCTION(result, ...)
+#define DECL_MEMBER_FUNCTION(...)
 #define END_MEMBER_CALLABLE_GROUP
 #define END_CLASS
     #include DYNABRIDGE_IMPORT_DEF
@@ -75,36 +123,122 @@ namespace dynabridge {
 #define OBJECT(clazz) object_param<import_symbols::clazz, import_t>
 #define CALLABLE(name) callable_param<export_groups::name, export_t>
 
-    namespace import_symbols {
-#define BEGIN_CALLABLE_GROUP(name) \
-    struct name { \
-        static const char* symbol_name() noexcept { return #name; } \
-        using overloads_t = type_list<
-#define DECL_CALLABLE(result, ...) free_callable<result(__VA_ARGS__)>,
-#define DECL_FUNCTION(sig) free_callable<sig>,
-#define END_CALLABLE_GROUP \
-            free_callable<unmatched_callable_t(unmatched_callable_t)> \
-        >; \
-        using group_t = typename callable_group_from_type_list<overloads_t>::type; \
-    };
-#define BEGIN_CLASS(clazz) \
-    struct clazz { \
-        using self_symbol_t = clazz; \
-        template <typename Context> \
-        using delegate_t = dynabridge::clazz<Context>; \
-        static const char* symbol_name() noexcept { return #clazz; }
+    namespace interface_descriptors {
+#undef BEGIN_INTERFACE
+#undef END_INTERFACE
+#define BEGIN_INTERFACE(name) \
+        template <> \
+        struct name<import_t> { \
+            template <typename Host> \
+            using mixin_t = interfaces::name<Host, import_t>; \
+            template <typename ReceiverSymbol> \
+            struct symbols { \
+                static constexpr std::size_t begin_index = DYNABRIDGE_METHOD_INDEX;
+#define END_INTERFACE \
+                static constexpr std::size_t end_index = DYNABRIDGE_METHOD_INDEX; \
+            }; \
+            template <typename ReceiverSymbol> \
+            using symbols_t = symbols<ReceiverSymbol>; \
+            using method_symbols_t = symbols<void>; \
+        };
+#define BEGIN_CALLABLE_GROUP(name)
+#define DECL_CALLABLE(...)
+#define DECL_FUNCTION(sig)
+#define END_CALLABLE_GROUP
+#define BEGIN_CLASS(clazz) struct ignored_class_##clazz { using ReceiverSymbol = void;
+#define IMPLEMENTS(name)
 #define DECL_CONSTRUCTOR(...)
 #define BEGIN_MEMBER_CALLABLE_GROUP(name) \
-        struct name { \
-            using receiver_symbol_t = self_symbol_t; \
-            static const char* symbol_name() noexcept { return #name; } \
-            using overloads_t = type_list<
-#define DECL_MEMBER_FUNCTION(result, ...) free_callable<result(__VA_ARGS__)>,
+            struct name; \
+            static name method_name_at(method_index<DYNABRIDGE_METHOD_INDEX>); \
+            struct name : interface_receiver_metadata<ReceiverSymbol> { \
+                static constexpr const char* symbol_name() noexcept { return #name; } \
+                using overloads_t = type_list<
+#define DECL_MEMBER_FUNCTION(...) free_callable<signature_from_types_t<__VA_ARGS__>>,
 #define END_MEMBER_CALLABLE_GROUP \
-                free_callable<unmatched_callable_t(unmatched_callable_t)> \
-            >; \
-        };
+                    free_callable<unmatched_callable_t(unmatched_callable_t)> \
+                >; \
+            };
 #define END_CLASS };
+    #include DYNABRIDGE_IMPORT_DEF
+#undef END_CLASS
+#undef END_MEMBER_CALLABLE_GROUP
+#undef DECL_MEMBER_FUNCTION
+#undef BEGIN_MEMBER_CALLABLE_GROUP
+#undef DECL_CONSTRUCTOR
+#undef IMPLEMENTS
+#undef BEGIN_CLASS
+#undef END_CALLABLE_GROUP
+#undef DECL_FUNCTION
+#undef DECL_CALLABLE
+#undef BEGIN_CALLABLE_GROUP
+#undef END_INTERFACE
+#undef BEGIN_INTERFACE
+#define BEGIN_INTERFACE(name)
+#define END_INTERFACE
+#define IMPLEMENTS(name)
+    }
+
+#undef CALLABLE
+#undef OBJECT
+
+    namespace export_groups {
+#define BEGIN_CALLABLE_GROUP(name) struct name;
+#define DECL_CALLABLE(...)
+#define DECL_FUNCTION(sig)
+#define END_CALLABLE_GROUP
+#define BEGIN_CLASS(ns, clazz)
+#define DECL_CONSTRUCTOR(...)
+#define BEGIN_MEMBER_CALLABLE_GROUP(name)
+#define DECL_MEMBER_FUNCTION(...)
+#define END_MEMBER_CALLABLE_GROUP
+#define END_CLASS
+    #include DYNABRIDGE_EXPORT_DEF
+#undef END_CLASS
+#undef END_MEMBER_CALLABLE_GROUP
+#undef DECL_MEMBER_FUNCTION
+#undef BEGIN_MEMBER_CALLABLE_GROUP
+#undef DECL_CONSTRUCTOR
+#undef BEGIN_CLASS
+#undef END_CALLABLE_GROUP
+#undef DECL_FUNCTION
+#undef DECL_CALLABLE
+#undef BEGIN_CALLABLE_GROUP
+    }
+
+#define BEGIN_CALLABLE_GROUP(name)
+#define DECL_CALLABLE(...)
+#define DECL_FUNCTION(sig)
+#define END_CALLABLE_GROUP
+#define BEGIN_CLASS(clazz) template <typename Context> class clazz;
+#define DECL_CONSTRUCTOR(...)
+#define BEGIN_MEMBER_CALLABLE_GROUP(name)
+#define DECL_MEMBER_FUNCTION(...)
+#define END_MEMBER_CALLABLE_GROUP
+#define END_CLASS
+    #include DYNABRIDGE_IMPORT_DEF
+#undef END_CLASS
+#undef END_MEMBER_CALLABLE_GROUP
+#undef DECL_MEMBER_FUNCTION
+#undef BEGIN_MEMBER_CALLABLE_GROUP
+#undef DECL_CONSTRUCTOR
+#undef BEGIN_CLASS
+#undef END_CALLABLE_GROUP
+#undef DECL_FUNCTION
+#undef DECL_CALLABLE
+#undef BEGIN_CALLABLE_GROUP
+
+    namespace import_symbols {
+#define BEGIN_CALLABLE_GROUP(name)
+#define DECL_CALLABLE(...)
+#define DECL_FUNCTION(sig)
+#define END_CALLABLE_GROUP
+#define BEGIN_CLASS(clazz) struct clazz;
+#define DECL_CONSTRUCTOR(...)
+#define BEGIN_MEMBER_CALLABLE_GROUP(name)
+#define DECL_MEMBER_FUNCTION(...)
+#define END_MEMBER_CALLABLE_GROUP
+#define END_CLASS
     #include DYNABRIDGE_IMPORT_DEF
 #undef END_CLASS
 #undef END_MEMBER_CALLABLE_GROUP
@@ -118,11 +252,107 @@ namespace dynabridge {
 #undef BEGIN_CALLABLE_GROUP
     }
 
+#undef IMPLEMENTS
+#define BEGIN_CALLABLE_GROUP(name)
+#define DECL_CALLABLE(...)
+#define DECL_FUNCTION(sig)
+#define END_CALLABLE_GROUP
+#define BEGIN_CLASS(clazz) \
+    template <> \
+    struct class_interfaces<import_symbols::clazz> { \
+        using type = type_list<
+#define IMPLEMENTS(name) interface_descriptors::name<import_t>,
+#define DECL_CONSTRUCTOR(...)
+#define BEGIN_MEMBER_CALLABLE_GROUP(name)
+#define DECL_MEMBER_FUNCTION(...)
+#define END_MEMBER_CALLABLE_GROUP
+#define END_CLASS void>; };
+    #include DYNABRIDGE_IMPORT_DEF
+#undef END_CLASS
+#undef END_MEMBER_CALLABLE_GROUP
+#undef DECL_MEMBER_FUNCTION
+#undef BEGIN_MEMBER_CALLABLE_GROUP
+#undef DECL_CONSTRUCTOR
+#undef IMPLEMENTS
+#undef BEGIN_CLASS
+#undef END_CALLABLE_GROUP
+#undef DECL_FUNCTION
+#undef DECL_CALLABLE
+#undef BEGIN_CALLABLE_GROUP
+#define IMPLEMENTS(name)
+
+#define OBJECT(clazz) object_param<import_symbols::clazz, import_t>
+#define CALLABLE(name) callable_param<export_groups::name, export_t>
+
+    namespace import_symbols {
+#undef BEGIN_INTERFACE
+#undef END_INTERFACE
+#define BEGIN_INTERFACE(name) struct ignored_interface_##name { using self_symbol_t = void;
+#define END_INTERFACE };
+#define BEGIN_CALLABLE_GROUP(name) \
+    struct name { \
+        static constexpr const char* symbol_name() noexcept { return #name; } \
+        using overloads_t = type_list<
+#define DECL_CALLABLE(...) free_callable<signature_from_types_t<__VA_ARGS__>>,
+#define DECL_FUNCTION(sig) free_callable<sig>,
+#define END_CALLABLE_GROUP \
+            free_callable<unmatched_callable_t(unmatched_callable_t)> \
+        >; \
+        using group_t = typename callable_group_from_type_list<overloads_t>::type; \
+    };
+#define BEGIN_CLASS(clazz) \
+    struct clazz \
+        : interface_symbol_pack<clazz, typename class_interfaces<clazz>::type> { \
+        static constexpr std::size_t begin_index = DYNABRIDGE_METHOD_INDEX; \
+        using self_symbol_t = clazz; \
+        template <typename Context> \
+        using delegate_t = dynabridge::clazz<Context>; \
+        static constexpr const char* symbol_name() noexcept { return #clazz; }
+#define IMPLEMENTS(name)
+#define DECL_CONSTRUCTOR(...)
+#define BEGIN_MEMBER_CALLABLE_GROUP(name) \
+        struct name; \
+        static name method_name_at(method_index<DYNABRIDGE_METHOD_INDEX>); \
+        struct name { \
+            using receiver_symbol_t = self_symbol_t; \
+            static constexpr const char* symbol_name() noexcept { return #name; } \
+            using overloads_t = type_list<
+#define DECL_MEMBER_FUNCTION(...) free_callable<signature_from_types_t<__VA_ARGS__>>,
+#define END_MEMBER_CALLABLE_GROUP \
+                free_callable<unmatched_callable_t(unmatched_callable_t)> \
+            >; \
+        };
+#define END_CLASS \
+        static constexpr std::size_t end_index = DYNABRIDGE_METHOD_INDEX; \
+    };
+    #include DYNABRIDGE_IMPORT_DEF
+#undef END_CLASS
+#undef END_MEMBER_CALLABLE_GROUP
+#undef DECL_MEMBER_FUNCTION
+#undef BEGIN_MEMBER_CALLABLE_GROUP
+#undef DECL_CONSTRUCTOR
+#undef IMPLEMENTS
+#undef BEGIN_CLASS
+#undef END_CALLABLE_GROUP
+#undef DECL_FUNCTION
+#undef DECL_CALLABLE
+#undef BEGIN_CALLABLE_GROUP
+#undef END_INTERFACE
+#undef BEGIN_INTERFACE
+#define BEGIN_INTERFACE(name)
+#define END_INTERFACE
+#define IMPLEMENTS(name)
+    }
+
     template <typename Symbol>
     struct import_constructor_metadata;
 
+#undef BEGIN_INTERFACE
+#undef END_INTERFACE
+#define BEGIN_INTERFACE(name)
+#define END_INTERFACE
 #define BEGIN_CALLABLE_GROUP(name)
-#define DECL_CALLABLE(result, ...)
+#define DECL_CALLABLE(...)
 #define DECL_FUNCTION(sig)
 #define END_CALLABLE_GROUP
 #define BEGIN_CLASS(clazz) \
@@ -131,7 +361,7 @@ namespace dynabridge {
         using overloads_t = type_list<
 #define DECL_CONSTRUCTOR(...) free_callable<void(__VA_ARGS__)>,
 #define BEGIN_MEMBER_CALLABLE_GROUP(name)
-#define DECL_MEMBER_FUNCTION(result, ...)
+#define DECL_MEMBER_FUNCTION(...)
 #define END_MEMBER_CALLABLE_GROUP
 #define END_CLASS \
             free_callable<unmatched_callable_t(unmatched_callable_t)> \
@@ -153,7 +383,7 @@ namespace dynabridge {
     template <typename Context, typename... Args> \
     decltype(auto) call_##name(Context& ctx, Args&&... args) { \
         using overloads_t = typename import_symbols::name::overloads_t;
-#define DECL_CALLABLE(result, ...)
+#define DECL_CALLABLE(...)
 #define DECL_FUNCTION(sig)
 #define END_CALLABLE_GROUP \
         return import_overload_dispatch<overloads_t>::invoke( \
@@ -162,7 +392,7 @@ namespace dynabridge {
 #define BEGIN_CLASS(clazz)
 #define DECL_CONSTRUCTOR(...)
 #define BEGIN_MEMBER_CALLABLE_GROUP(name)
-#define DECL_MEMBER_FUNCTION(result, ...)
+#define DECL_MEMBER_FUNCTION(...)
 #define END_MEMBER_CALLABLE_GROUP
 #define END_CLASS
     #include DYNABRIDGE_IMPORT_DEF
@@ -189,13 +419,13 @@ namespace dynabridge {
             return call_##name(ctx, std::forward<decltype(args)>(args)...); \
         }; \
     }
-#define DECL_CALLABLE(result, ...)
+#define DECL_CALLABLE(...)
 #define DECL_FUNCTION(sig)
 #define END_CALLABLE_GROUP
 #define BEGIN_CLASS(clazz)
 #define DECL_CONSTRUCTOR(...)
 #define BEGIN_MEMBER_CALLABLE_GROUP(name)
-#define DECL_MEMBER_FUNCTION(result, ...)
+#define DECL_MEMBER_FUNCTION(...)
 #define END_MEMBER_CALLABLE_GROUP
 #define END_CLASS
     #include DYNABRIDGE_IMPORT_DEF
@@ -210,8 +440,12 @@ namespace dynabridge {
 #undef DECL_CALLABLE
 #undef BEGIN_CALLABLE_GROUP
 
+#undef BEGIN_INTERFACE
+#undef END_INTERFACE
+#define BEGIN_INTERFACE(name)
+#define END_INTERFACE
 #define BEGIN_CALLABLE_GROUP(name)
-#define DECL_CALLABLE(result, ...)
+#define DECL_CALLABLE(...)
 #define DECL_FUNCTION(sig)
 #define END_CALLABLE_GROUP
 #define BEGIN_CLASS(clazz) \
@@ -222,7 +456,7 @@ namespace dynabridge {
         using overloads_t = typename metadata_t::overloads_t;
 #define DECL_CONSTRUCTOR(...)
 #define BEGIN_MEMBER_CALLABLE_GROUP(name)
-#define DECL_MEMBER_FUNCTION(result, ...)
+#define DECL_MEMBER_FUNCTION(...)
 #define END_MEMBER_CALLABLE_GROUP
 #define END_CLASS \
         return import_constructor_overload_dispatch<overloads_t>::template construct<receiver_t>( \
@@ -241,7 +475,7 @@ namespace dynabridge {
 #undef BEGIN_CALLABLE_GROUP
 
 #define BEGIN_CALLABLE_GROUP(name)
-#define DECL_CALLABLE(result, ...)
+#define DECL_CALLABLE(...)
 #define DECL_FUNCTION(sig)
 #define END_CALLABLE_GROUP
 #define BEGIN_CLASS(clazz) \
@@ -254,7 +488,7 @@ namespace dynabridge {
     };
 #define DECL_CONSTRUCTOR(...)
 #define BEGIN_MEMBER_CALLABLE_GROUP(name)
-#define DECL_MEMBER_FUNCTION(result, ...)
+#define DECL_MEMBER_FUNCTION(...)
 #define END_MEMBER_CALLABLE_GROUP
 #define END_CLASS
     #include DYNABRIDGE_IMPORT_DEF
@@ -270,12 +504,58 @@ namespace dynabridge {
 #undef BEGIN_CALLABLE_GROUP
 
 #define BEGIN_CALLABLE_GROUP(name)
-#define DECL_CALLABLE(result, ...)
+#define DECL_CALLABLE(...)
 #define DECL_FUNCTION(sig)
 #define END_CALLABLE_GROUP
 #define BEGIN_CLASS(clazz) \
     template <typename Context> \
-    class clazz { \
+    struct import_receiver_symbol<clazz<Context>> { \
+        using type = import_symbols::clazz; \
+    };
+#define DECL_CONSTRUCTOR(...)
+#define BEGIN_MEMBER_CALLABLE_GROUP(name)
+#define DECL_MEMBER_FUNCTION(...)
+#define END_MEMBER_CALLABLE_GROUP
+#define END_CLASS
+    #include DYNABRIDGE_IMPORT_DEF
+#undef END_CLASS
+#undef END_MEMBER_CALLABLE_GROUP
+#undef DECL_MEMBER_FUNCTION
+#undef BEGIN_MEMBER_CALLABLE_GROUP
+#undef DECL_CONSTRUCTOR
+#undef BEGIN_CLASS
+#undef END_CALLABLE_GROUP
+#undef DECL_FUNCTION
+#undef DECL_CALLABLE
+#undef BEGIN_CALLABLE_GROUP
+
+#undef BEGIN_INTERFACE
+#undef END_INTERFACE
+#define BEGIN_INTERFACE(name) \
+    namespace interfaces { \
+    template <typename Host> \
+    class name<Host, import_t> { \
+    public: \
+        using receiver_t = Host; \
+        using receiver_symbol_t = typename import_receiver_symbol<Host>::type; \
+        using descriptor_t = interface_descriptors::name<import_t>; \
+        using bridge_symbol_t = typename descriptor_t::template symbols_t<receiver_symbol_t>; \
+        auto& context() noexcept { return static_cast<Host&>(*this).context(); } \
+        Host& receiver() noexcept { return static_cast<Host&>(*this); }
+#define END_INTERFACE \
+    }; \
+    }
+#define BEGIN_CALLABLE_GROUP(name)
+#define DECL_CALLABLE(...)
+#define DECL_FUNCTION(sig)
+#define END_CALLABLE_GROUP
+#define BEGIN_CLASS(clazz) \
+    template <typename Context> \
+    class clazz \
+        : public interface_pack< \
+            clazz<Context>, \
+            typename class_interfaces<import_symbols::clazz>::type, \
+            typename class_method_names<import_symbols::clazz>::type> { \
     public: \
         using context_t = Context; \
         using receiver_t = clazz<Context>; \
@@ -291,6 +571,9 @@ namespace dynabridge {
         clazz& operator=(const clazz&) = delete; \
         clazz(clazz&&) noexcept = default; \
         clazz& operator=(clazz&&) noexcept = default; \
+        Context& context() noexcept { return *ctx_; } \
+        const Context& context() const noexcept { return *ctx_; } \
+        receiver_t& receiver() noexcept { return *this; } \
         object_t& object() noexcept { return object_; } \
         const object_t& object() const noexcept { return object_; }
 #define DECL_CONSTRUCTOR(...)
@@ -299,10 +582,10 @@ namespace dynabridge {
         decltype(auto) name(Args&&... args) { \
             using member_symbol_t = typename bridge_symbol_t::name; \
             using overloads_t = typename member_symbol_t::overloads_t;
-#define DECL_MEMBER_FUNCTION(result, ...)
+#define DECL_MEMBER_FUNCTION(...)
 #define END_MEMBER_CALLABLE_GROUP \
             return import_overload_dispatch<overloads_t>::invoke_member( \
-                *ctx_, *this, std::forward<Args>(args)...); \
+                context(), receiver(), std::forward<Args>(args)...); \
         }
 #define END_CLASS \
     private: \
@@ -320,6 +603,9 @@ namespace dynabridge {
 #undef DECL_FUNCTION
 #undef DECL_CALLABLE
 #undef BEGIN_CALLABLE_GROUP
+#undef END_INTERFACE
+#undef BEGIN_INTERFACE
+#undef IMPLEMENTS
 
 #undef CALLABLE
 #undef OBJECT

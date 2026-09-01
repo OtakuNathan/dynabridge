@@ -24,24 +24,33 @@ BEGIN_CALLABLE_GROUP(use_callback)
     DECL_CALLABLE(int, CALLABLE(callback), int)
 END_CALLABLE_GROUP
 
-BEGIN_CLASS(native, counter)
-    DECL_CONSTRUCTOR(unsigned)
-
+BEGIN_INTERFACE(counter_addable)
     BEGIN_MEMBER_CALLABLE_GROUP(add)
         DECL_MEMBER_FUNCTION(int, int)
     END_MEMBER_CALLABLE_GROUP
+END_INTERFACE
 
+BEGIN_INTERFACE(counter_readable)
     BEGIN_MEMBER_CALLABLE_GROUP(value)
         DECL_MEMBER_FUNCTION(int)
     END_MEMBER_CALLABLE_GROUP
-END_CLASS
+END_INTERFACE
 
-BEGIN_CLASS(native, consumer)
-    DECL_CONSTRUCTOR(OBJECT(counter), CALLABLE(callback))
-
+BEGIN_INTERFACE(counter_combinable)
     BEGIN_MEMBER_CALLABLE_GROUP(combine)
         DECL_MEMBER_FUNCTION(int, OBJECT(counter), int)
     END_MEMBER_CALLABLE_GROUP
+END_INTERFACE
+
+BEGIN_CLASS(native, counter)
+    IMPLEMENTS(counter_addable)
+    IMPLEMENTS(counter_readable)
+    DECL_CONSTRUCTOR(unsigned)
+END_CLASS
+
+BEGIN_CLASS(native, consumer)
+    IMPLEMENTS(counter_combinable)
+    DECL_CONSTRUCTOR(OBJECT(counter), CALLABLE(callback))
 
     BEGIN_MEMBER_CALLABLE_GROUP(apply)
         DECL_MEMBER_FUNCTION(int, CALLABLE(callback), int)

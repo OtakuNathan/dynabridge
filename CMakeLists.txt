@@ -28,6 +28,10 @@ option(DYNABRIDGE_BUILD_BENCHMARKS "Build dynabridge benchmark executables" OFF)
 if(DYNABRIDGE_BUILD_TESTS OR DYNABRIDGE_BUILD_EXAMPLES OR DYNABRIDGE_BUILD_BENCHMARKS)
     find_package(Python3 COMPONENTS Interpreter Development)
 
+    find_path(FLUX_FOUNDRY_INCLUDE_DIR flow/flow.h
+        HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../flux_foundry"
+    )
+
     find_program(Node_EXECUTABLE NAMES node nodejs)
     set(NodeApi_INCLUDE_HINTS)
     set(NodeApi_LIBRARY_HINTS)
@@ -58,6 +62,41 @@ if(DYNABRIDGE_BUILD_TESTS OR DYNABRIDGE_BUILD_EXAMPLES OR DYNABRIDGE_BUILD_BENCH
     if(WIN32)
         find_library(Node_LIBRARY NAMES node libnode
             PATHS ${NodeApi_LIBRARY_HINTS}
+        )
+    endif()
+endif()
+
+if(FLUX_FOUNDRY_INCLUDE_DIR AND (DYNABRIDGE_BUILD_TESTS OR DYNABRIDGE_BUILD_EXAMPLES))
+    find_package(Threads REQUIRED)
+    find_path(LibUV_INCLUDE_DIR uv.h)
+    find_library(LibUV_LIBRARY NAMES uv libuv)
+
+    if(Python3_Development_FOUND)
+        add_executable(dynabridge_ff_python_executor_demo
+            examples/flux_foundry/python_executor.cpp)
+        set_property(TARGET dynabridge_ff_python_executor_demo PROPERTY CXX_STANDARD 17)
+        target_link_libraries(dynabridge_ff_python_executor_demo PRIVATE
+            dynabridge::dynabridge
+            Python3::Python
+            Threads::Threads
+        )
+        target_include_directories(dynabridge_ff_python_executor_demo SYSTEM PRIVATE
+            "${FLUX_FOUNDRY_INCLUDE_DIR}"
+        )
+    endif()
+
+    if(LibUV_INCLUDE_DIR AND LibUV_LIBRARY)
+        add_executable(dynabridge_ff_uv_executor_demo
+            examples/flux_foundry/uv_executor.cpp)
+        set_property(TARGET dynabridge_ff_uv_executor_demo PROPERTY CXX_STANDARD 17)
+        target_link_libraries(dynabridge_ff_uv_executor_demo PRIVATE
+            dynabridge::dynabridge
+            Threads::Threads
+            "${LibUV_LIBRARY}"
+        )
+        target_include_directories(dynabridge_ff_uv_executor_demo SYSTEM PRIVATE
+            "${FLUX_FOUNDRY_INCLUDE_DIR}"
+            "${LibUV_INCLUDE_DIR}"
         )
     endif()
 endif()
@@ -99,6 +138,41 @@ endfunction()
 
 if(DYNABRIDGE_BUILD_TESTS)
     enable_testing()
+
+    if(TARGET dynabridge_ff_python_executor_demo)
+        add_test(NAME ff_python_executor COMMAND dynabridge_ff_python_executor_demo)
+    endif()
+    if(TARGET dynabridge_ff_uv_executor_demo)
+        add_test(NAME ff_uv_executor COMMAND dynabridge_ff_uv_executor_demo)
+    endif()
+
+    function(dynabridge_check_interface_compilation name source should_compile)
+        set(result_var "dynabridge_${name}_compiled")
+        try_compile(${result_var}
+            "${CMAKE_CURRENT_BINARY_DIR}/compile_checks/${name}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/${source}"
+            CMAKE_FLAGS
+                "-DCMAKE_CXX_STANDARD=14"
+                "-DCMAKE_CXX_STANDARD_REQUIRED=ON"
+                "-DCMAKE_CXX_EXTENSIONS=OFF"
+            OUTPUT_VARIABLE compiler_output
+        )
+
+        if(should_compile AND NOT ${result_var})
+            message(FATAL_ERROR
+                "Interface compile probe ${name} failed unexpectedly:\n${compiler_output}")
+        elseif(NOT should_compile AND ${result_var})
+            message(FATAL_ERROR
+                "Interface compile-fail probe ${name} compiled unexpectedly")
+        endif()
+    endfunction()
+
+    dynabridge_check_interface_compilation(
+        valid_interface tests/compile_fail/valid_interface.cpp TRUE)
+    dynabridge_check_interface_compilation(
+        duplicate_interface tests/compile_fail/duplicate_interface.cpp FALSE)
+    dynabridge_check_interface_compilation(
+        duplicate_method tests/compile_fail/duplicate_method.cpp FALSE)
 
     add_executable(fake_backend_callable_group_test tests/fake_backend_callable_group.cpp)
     target_link_libraries(fake_backend_callable_group_test PRIVATE dynabridge::dynabridge)
@@ -205,9 +279,6 @@ if(DYNABRIDGE_BUILD_BENCHMARKS)
         Threads::Threads
     )
 
-    find_path(FLUX_FOUNDRY_INCLUDE_DIR flow/flow.h
-        HINTS "${CMAKE_CURRENT_SOURCE_DIR}/../flux_foundry"
-    )
     if(FLUX_FOUNDRY_INCLUDE_DIR)
         target_compile_definitions(rpc_call_benchmark PRIVATE
             DYNABRIDGE_HAS_FLUX_FOUNDRY=1

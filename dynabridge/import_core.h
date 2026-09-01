@@ -3,9 +3,13 @@
 
 #include <utility>
 
+#include "interface.h"
 #include "import_callable.h"
 
 namespace dynabridge {
+    template <typename Receiver>
+    struct import_receiver_symbol;
+
     template <typename Symbol, typename = void>
     struct import_symbol_traits {
         static const char* symbol_name() noexcept { return Symbol::symbol_name(); }

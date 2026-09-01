@@ -366,6 +366,30 @@ namespace {
 
 using export_context_t = dynabridge::fake_backend::export_context_t<recorded_call>;
 using export_counter_t = dynabridge::exports::counter;
+using import_counter_t = dynabridge::counter<export_context_t>;
+using import_addable_t = dynabridge::interfaces::counter_addable<
+    import_counter_t, dynabridge::import_t>;
+using export_addable_t = dynabridge::interfaces::counter_addable<
+    export_counter_t, dynabridge::export_t>;
+
+static_assert(std::is_empty<import_addable_t>::value,
+    "import interfaces must not own receiver or context state");
+static_assert(std::is_empty<export_addable_t>::value,
+    "export interfaces must not own native or backend state");
+static_assert(std::is_base_of<import_addable_t, import_counter_t>::value,
+    "import classes must publicly compose declared interfaces");
+static_assert(std::is_base_of<export_addable_t, export_counter_t>::value,
+    "export proxies must publicly compose declared interfaces");
+static_assert(!dynabridge::are_interface_types_unique<dynabridge::type_list<
+        dynabridge::interface_descriptors::counter_addable<dynabridge::import_t>,
+        dynabridge::interface_descriptors::counter_addable<dynabridge::import_t>>>::value,
+    "duplicate IMPLEMENTS declarations must be rejected");
+static_assert(!dynabridge::are_interface_method_names_unique<
+        dynabridge::type_list<
+            dynabridge::interface_descriptors::counter_addable<dynabridge::import_t>,
+            dynabridge::interface_descriptors::counter_addable<dynabridge::export_t>>,
+        dynabridge::type_list<>>::value,
+    "composed interfaces must reject duplicate member names");
 using export_object_arg_t = dynabridge::object_param<
     dynabridge::export_classes::counter, dynabridge::export_t>;
 using import_callable_arg_t = dynabridge::callable_param<

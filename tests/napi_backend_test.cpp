@@ -210,16 +210,18 @@ namespace {
 }
 
 static_assert(
-    std::is_same<
-        dynabridge::import_symbol_traits<dynabridge::import_symbols::counter::add>::receiver_symbol_t,
-        dynabridge::import_symbols::counter>::value,
-    "member import symbol should retain its receiver symbol");
+    !std::is_same<
+        dynabridge::import_symbols::counter::add,
+        dynabridge::interface_descriptors::counter_addable<dynabridge::import_t>
+            ::method_symbols_t::add>::value,
+    "a concrete interface projection should bind its own receiver symbol");
 
 static_assert(
     std::is_same<
-        dynabridge::import_symbol_traits<dynabridge::import_symbols::counter::value>::receiver_symbol_t,
+        dynabridge::import_symbol_traits<
+            dynabridge::import_symbols::counter::add>::receiver_symbol_t,
         dynabridge::import_symbols::counter>::value,
-    "member import symbol should retain its receiver symbol");
+    "implemented interface methods should regain the concrete receiver identity");
 
 namespace {
 

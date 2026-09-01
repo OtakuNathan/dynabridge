@@ -5,14 +5,20 @@ BEGIN_CALLABLE_GROUP(add)
     DECL_CALLABLE(int, int, unsigned)
 END_CALLABLE_GROUP
 
-BEGIN_CLASS(example_native, counter)
-    DECL_CONSTRUCTOR(unsigned)
-
+BEGIN_INTERFACE(counter_addable)
     BEGIN_MEMBER_CALLABLE_GROUP(add)
         DECL_MEMBER_FUNCTION(int, int)
     END_MEMBER_CALLABLE_GROUP
+END_INTERFACE
 
+BEGIN_INTERFACE(counter_readable)
     BEGIN_MEMBER_CALLABLE_GROUP(value)
         DECL_MEMBER_FUNCTION(int)
     END_MEMBER_CALLABLE_GROUP
+END_INTERFACE
+
+BEGIN_CLASS(example_native, counter)
+    IMPLEMENTS(counter_addable)
+    IMPLEMENTS(counter_readable)
+    DECL_CONSTRUCTOR(unsigned)
 END_CLASS

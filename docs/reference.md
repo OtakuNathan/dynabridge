@@ -21,7 +21,7 @@ Dyna Bridge treats cross-language calls as a static contract over dynamic
 runtime values:
 
 ```text
-Key is static. Value is dynamic. Lookup is compile-time.
+Key is static. Value is dynamic. Contract lookup is compile-time.
 ```
 
 The practical rule is:
@@ -34,6 +34,11 @@ The key is the declared `callable<Receiver, Signature>`. The value is whatever
 runtime handle the backend owns, such as `PyObject*`, `napi_value`, or an RPC
 frame. Lookup happens through C++ overload resolution, template
 specialization, and `converter<T>` selection instead of a runtime C++ registry.
+This describes C++ contract lookup, not dynamic-runtime name resolution. A
+backend may still resolve an import name to a `PyObject*`, `napi_value`, or
+another handle, and it still registers exports under generated runtime names.
+An imported handle can normally be cached, and a context constructed from an
+existing handle does not need a name lookup.
 
 Each backend plugs its runtime into the same rule instead of inventing another
 binding framework.
@@ -142,12 +147,15 @@ BEGIN_CALLABLE_GROUP(pass_transform)
     DECL_CALLABLE(int, CALLABLE(transform), int)
 END_CALLABLE_GROUP
 
-BEGIN_CLASS(counter)
-    DECL_CONSTRUCTOR(unsigned)
-
+BEGIN_INTERFACE(counter_addable)
     BEGIN_MEMBER_CALLABLE_GROUP(add)
         DECL_MEMBER_FUNCTION(int, int)
     END_MEMBER_CALLABLE_GROUP
+END_INTERFACE
+
+BEGIN_CLASS(counter)
+    IMPLEMENTS(counter_addable)
+    DECL_CONSTRUCTOR(unsigned)
 
     BEGIN_MEMBER_CALLABLE_GROUP(value)
         DECL_MEMBER_FUNCTION(int)
@@ -173,12 +181,15 @@ BEGIN_CALLABLE_GROUP(consume_counter)
     DECL_CALLABLE(int, OBJECT(counter), int)
 END_CALLABLE_GROUP
 
-BEGIN_CLASS(native, counter)
-    DECL_CONSTRUCTOR(unsigned)
-
+BEGIN_INTERFACE(counter_addable)
     BEGIN_MEMBER_CALLABLE_GROUP(add)
         DECL_MEMBER_FUNCTION(int, int)
     END_MEMBER_CALLABLE_GROUP
+END_INTERFACE
+
+BEGIN_CLASS(native, counter)
+    IMPLEMENTS(counter_addable)
+    DECL_CONSTRUCTOR(unsigned)
 
     BEGIN_MEMBER_CALLABLE_GROUP(value)
         DECL_MEMBER_FUNCTION(int)
@@ -195,6 +206,21 @@ objects. `DECL_MEMBER_FUNCTION(R, Args...)` declares member overloads for import
 and export class declarations.
 Keeping import and export def files separate means importing a callable does
 not automatically generate an export API for it.
+
+`BEGIN_INTERFACE(name)` declares a flat, stateless member capability.
+`IMPLEMENTS(name)` composes its generated public mixin into a concrete class.
+Interfaces cannot declare constructors, create objects, register standalone
+runtime classes, or implement other interfaces. A concrete class owns all
+receiver/native state, and export registration flattens interface methods onto
+that class. Repeating an interface or reusing a member name across implemented
+interfaces and concrete members is rejected at compile time. Generated mixins
+are available as `interfaces::name<Host, import_t>` and
+`interfaces::name<Host, export_t>`. Shared import interface metadata is
+receiver-neutral; its projection into each concrete import class regenerates
+member symbols with that class as `receiver_symbol_t`.
+Method groups must begin on distinct lines in a declaration file. Their stable
+source-line IDs keep repeated X-macro expansion ODR-consistent across translation
+units.
 
 The default declaration files are empty. Select module-specific declarations
 before including the bridge:
@@ -284,6 +310,10 @@ look up an attribute on a module or import by module name; N-API can look up a
 named property on an exports object or another JS object. Unsupported sources
 are rejected at compile time by `backend_base`.
 
+This runtime lookup is separate from generated C++ dispatch. It normally occurs
+when `import_from` creates the context; subsequent calls can reuse the resolved
+handle according to backend policy.
+
 Import symbols are type tags, not runtime enum entries. The type itself is the
 static key; the string name is only metadata for backends that need a dynamic
 lookup name.
@@ -365,6 +395,11 @@ dynabridge::call_pass_transform(ctx, std::move(transform), 6);
 The backend forwards `argc` and dynamic arguments to the binder. The core walks
 declared signatures in order, skips arity mismatches, uses `converter<T>::from`
 for recoverable conversion misses, and returns the first successful result.
+Consequently, export overload dispatch is ordered first-viable selection. The
+order of signatures in the export `.def` file determines candidate priority and
+is part of the public contract. Converters should be strict where candidates
+could otherwise overlap. The core deliberately does not calculate C++-style
+conversion scores; scored ranking is intentionally outside the common protocol.
 Single signature exports keep the direct fast path; overload builders use a
 typed slot set, not `std::function` or a runtime registry.
 
@@ -450,7 +485,8 @@ detail such as `PyObject*`, `napi_ref`, or a test handle. Import classes use the
 generated C++ projection, while export classes use generated
 `exports::<name>` proxies. `BEGIN_CLASS(ns, clazz)` fixes the native type to
 `ns::clazz`; completeness is required only when the proxy is registered or
-instantiated.
+instantiated. Interface declarations do not introduce another object identity:
+their methods reuse the concrete receiver supplied by the delegate or proxy.
 
 ## Extending With a Backend
 
@@ -848,6 +884,44 @@ cancellation can use the fast lane. A call without hedging has no aggregator.
 Authentication, tracing, version checks, compression, and schema adaptation can
 be ordinary typed flow nodes and are absent when they are not composed into the
 blueprint.
+
+### Runtime Executors
+
+Optional adapters in `dynabridge/extensions/flux_foundry/` demonstrate the same
+composition for runtime thread affinity. `uv_executor.h` queues work onto an
+owning libuv loop, while `python_interpreter_executor.h` runs work on a dedicated
+interpreter thread and acquires the GIL once per queued batch. Both directly
+satisfy Flux Foundry's duck-typed `dispatch(task&&)` contract; neither changes
+`backend_base` or introduces a dynabridge scheduler abstraction.
+
+```cpp
+auto flow = ff::make_blueprint<int>()
+    | ff::via(&executor)
+    | ff::then([&ctx](result_t&& input) -> result_t {
+        return result_t(ff::value_tag,
+            dynabridge::call_executor_add(
+                ctx, std::move(input).value(), 2u));
+    })
+    | ff::end();
+```
+
+The complete examples are `examples/flux_foundry/python_executor.cpp` and
+`examples/flux_foundry/uv_executor.cpp`. CMake builds and tests them only when a
+Flux Foundry checkout is found; Python development files or libuv are also
+required for the corresponding adapter. The Python executor must be destroyed
+before `Py_Finalize`; because it uses `PyGILState_*`, this example targets the
+main interpreter rather than CPython subinterpreters. A uv executor is bound to
+the loop thread on construction, and the loop must run after `close()` so libuv
+can complete handle destruction. `close()` must not race a new `dispatch()`.
+As with any executor, its lifetime must cover submitted work.
+
+On the Raspberry Pi 4 benchmark environment below, observed 50,000-task batched
+runs measured roughly 181-194 ns/task for the Python interpreter executor and
+722-797 ns/task for cross-thread libuv dispatch. These figures measure
+queue-and-execute throughput with amortized wakeups, not end-to-end bridge-call
+latency. Queue synchronization, cache coherence, runtime wakeup, and GIL
+acquisition are intrinsic cross-thread costs; the adapters avoid adding another
+registry or dispatch object model on top.
 
 Reference categories remain meaningful at the entrance: `const&` can be
 borrowed until synchronous encoding completes, while `&&` transfers ownership.
