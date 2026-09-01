@@ -3,6 +3,8 @@
 #include "dynabridge/bridge.h"
 #include "dynabridge/backends/napi.h"
 
+#include <stdexcept>
+#include <string>
 #include <type_traits>
 
 namespace dynabridge {
@@ -96,6 +98,24 @@ namespace {
         return result;
     }
 
+    napi_value string_value(napi_env env, const std::string& value) {
+        napi_value result = nullptr;
+        napi_create_string_utf8(env, value.data(), value.size(), &result);
+        return result;
+    }
+
+    std::string value_to_string(napi_env env, napi_value value) {
+        std::size_t size = 0;
+        if (napi_get_value_string_utf8(env, value, nullptr, 0, &size) != napi_ok) {
+            return std::string();
+        }
+        std::string text(size + 1, '\0');
+        std::size_t copied = 0;
+        napi_get_value_string_utf8(env, value, &text[0], text.size(), &copied);
+        text.resize(copied);
+        return text;
+    }
+
     napi_value get_property(napi_env env, napi_value object, const char* name) {
         napi_value result = nullptr;
         napi_get_named_property(env, object, name, &result);
@@ -136,6 +156,14 @@ namespace {
         napi_value argv[2] = {};
         napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
         return int_value(env, value_to_int(env, argv[0]) + value_to_int(env, argv[1]));
+    }
+
+    napi_value echo_callback(napi_env env, napi_callback_info info) {
+        std::size_t argc = 1;
+        napi_value argv[1] = {};
+        napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
+        const std::string decorated = "[" + value_to_string(env, argv[0]) + "]";
+        return string_value(env, decorated);
     }
 
     napi_value callback_value(napi_env env, napi_callback_info info) {
@@ -260,6 +288,19 @@ int run_test(napi_env env) {
         return 3;
     }
 
+    napi_value echo = nullptr;
+    napi_create_function(env, symbol_name<dynabridge::import_symbols::echo>(),
+        NAPI_AUTO_LENGTH, echo_callback, nullptr, &echo);
+    set_property(env, import_module_value, symbol_name<dynabridge::import_symbols::echo>(), echo);
+    auto echo_ctx = dynabridge::import_from<dynabridge::import_symbols::echo, napi_context_t>(
+        import_module);
+    const std::string utf8_text = "h\xC3\xA9llo \xE4\xB8\xAD";
+    const std::string embedded_text(std::string("a\0b", 3) + utf8_text);
+    if (dynabridge::call_echo(echo_ctx, utf8_text) != "[" + utf8_text + "]"
+            || dynabridge::call_echo(echo_ctx, embedded_text) != "[" + embedded_text + "]") {
+        return 60;
+    }
+
     napi_value receiver = nullptr;
     napi_create_object(env, &receiver);
     set_property(env, receiver, "handle", int_value(env, 13));
@@ -338,6 +379,27 @@ int run_test(napi_env env) {
         return 25;
     }
 
+    auto maybe_string = dynabridge::from_optional<std::string>(export_ctx, bad_int);
+    if (maybe_string) {
+        return 61;
+    }
+    const std::string embedded_probe(std::string("a\0b", 3));
+    auto maybe_embedded = dynabridge::from_optional<std::string>(
+        export_ctx, string_value(env, embedded_probe));
+    if (!maybe_embedded || maybe_embedded.value() != embedded_probe) {
+        return 62;
+    }
+
+    bool caught_string_api_failure = false;
+    try {
+        (void)dynabridge::from_optional<std::string>(export_ctx, nullptr);
+    } catch (const std::runtime_error&) {
+        caught_string_api_failure = true;
+    }
+    if (!caught_string_api_failure) {
+        return 65;
+    }
+
     bool caught_bad_conversion = false;
     try {
         (void)dynabridge::from_cast<int>(export_ctx, bad_int);
@@ -374,6 +436,26 @@ int run_test(napi_env env) {
             return a * static_cast<int>(b) + 1;
         })
         .commit();
+
+    dynabridge::export_echo(export_ctx, module)
+        .bind<std::string(std::string)>([](std::string text) {
+            return "<" + text + ">";
+        })
+        .bind<int(int)>([](int value) {
+            return value * 2;
+        })
+        .commit();
+    napi_value echo_export = get_property(env, module_value, "echo");
+    if (value_to_string(env, call1(env, echo_export, string_value(env, utf8_text)))
+            != "<" + utf8_text + ">"
+            || value_to_string(env, call1(env, echo_export, string_value(env, embedded_text)))
+            != "<" + embedded_text + ">"
+            || value_to_int(env, call1(env, echo_export, int_value(env, 21))) != 42) {
+        return 63;
+    }
+    if (call1(env, echo_export, bad_int) != nullptr) {
+        return 64;
+    }
 
     auto exported_calc_ctx = dynabridge::import_from<dynabridge::import_symbols::calc, napi_context_t>(
         module);

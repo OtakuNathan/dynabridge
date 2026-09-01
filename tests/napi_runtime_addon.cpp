@@ -5,6 +5,7 @@
 
 #include <exception>
 #include <stdexcept>
+#include <string>
 
 using napi_context_t = dynabridge::napi_backend::context_t;
 using napi_export_context_t = dynabridge::napi_backend::export_context_t;
@@ -148,6 +149,24 @@ namespace {
         }
     }
 
+    napi_value call_imported_echo(napi_env env, napi_callback_info info) {
+        try {
+            std::size_t argc = 2;
+            napi_value argv[2] = {};
+            if (napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr) != napi_ok || argc != 2) {
+                return throw_error(env, "callImportedEcho expects callback, string");
+            }
+
+            napi_context_t ctx(env, argv[0]);
+            const std::string text = dynabridge::from_cast<std::string>(ctx, argv[1]);
+            return dynabridge::napi_backend::converter<std::string>::to(
+                ctx,
+                dynabridge::call_echo(ctx, text));
+        } catch (const std::exception& error) {
+            return throw_error(env, error.what());
+        }
+    }
+
     napi_value call_imported_counter_add(napi_env env, napi_callback_info info) {
         try {
             std::size_t argc = 3;
@@ -275,6 +294,14 @@ namespace {
                 .bind<int(int)>(scale_by_ten_function)
                 .bind<int(int, unsigned)>(multiply_function{})
                 .commit();
+            dynabridge::export_echo(ctx, module)
+                .bind<std::string(std::string)>([](std::string text) {
+                    return "<" + text + ">";
+                })
+                .bind<int(int)>([](int value) {
+                    return value * 2;
+                })
+                .commit();
 
             dynabridge::exports::counter::register_all(ctx, module);
             using consume_counter_sig = int(
@@ -299,6 +326,7 @@ namespace {
 
             define_function(env, module, "callImportedCalc", call_imported_calc);
             define_function(env, module, "callImportedFoo", call_imported_foo);
+            define_function(env, module, "callImportedEcho", call_imported_echo);
             define_function(env, module, "callImportedCounterAdd", call_imported_counter_add);
             define_function(env, module, "callImportedCounterValue", call_imported_counter_value);
             define_function(env, module, "constructImportedCounterAdd", construct_imported_counter_add);

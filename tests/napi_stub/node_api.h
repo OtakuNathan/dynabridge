@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <map>
 #include <memory>
 #include <string>
@@ -51,6 +52,7 @@ struct napi_value__ {
     enum class kind_t {
         undefined,
         int32,
+        string,
         object,
         function,
         external
@@ -58,6 +60,7 @@ struct napi_value__ {
 
     kind_t kind = kind_t::undefined;
     std::int64_t number = 0;
+    std::string text;
     std::map<std::string, napi_value> properties;
     napi_callback callback = nullptr;
     void* data = nullptr;
@@ -167,6 +170,54 @@ inline napi_status napi_get_value_uint32(napi_env, napi_value value, unsigned* r
     return napi_ok;
 }
 
+inline napi_status napi_create_string_utf8(
+    napi_env env,
+    const char* str,
+    std::size_t length,
+    napi_value* result)
+{
+    if (result == nullptr) {
+        return napi_generic_failure;
+    }
+    if (length == NAPI_AUTO_LENGTH) {
+        length = str == nullptr ? 0 : std::strlen(str);
+    }
+    if (str == nullptr && length != 0) {
+        return napi_generic_failure;
+    }
+    *result = napi_stub_make_value(env, napi_value__::kind_t::string);
+    (*result)->text.assign(str == nullptr ? "" : str, length);
+    return napi_ok;
+}
+
+inline napi_status napi_get_value_string_utf8(
+    napi_env,
+    napi_value value,
+    char* buf,
+    std::size_t bufsize,
+    std::size_t* result)
+{
+    if (value == nullptr || value->kind != napi_value__::kind_t::string) {
+        return napi_generic_failure;
+    }
+    const std::string& text = value->text;
+    if (buf != nullptr && bufsize != 0) {
+        const std::size_t copied = text.size() < bufsize - 1 ? text.size() : bufsize - 1;
+        if (copied != 0) {
+            std::memcpy(buf, text.data(), copied);
+        }
+        buf[copied] = '\0';
+        if (result != nullptr) {
+            *result = copied;
+        }
+        return napi_ok;
+    }
+    if (result != nullptr) {
+        *result = text.size();
+    }
+    return napi_ok;
+}
+
 inline napi_status napi_typeof(napi_env, napi_value value, napi_valuetype* result) {
     if (value == nullptr) {
         return napi_generic_failure;
@@ -178,6 +229,9 @@ inline napi_status napi_typeof(napi_env, napi_value value, napi_valuetype* resul
         break;
     case napi_value__::kind_t::int32:
         *result = napi_number;
+        break;
+    case napi_value__::kind_t::string:
+        *result = napi_string;
         break;
     case napi_value__::kind_t::object:
         *result = napi_object;

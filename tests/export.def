@@ -11,6 +11,11 @@ BEGIN_CALLABLE_GROUP(calc)
     DECL_CALLABLE(int, int, unsigned)
 END_CALLABLE_GROUP
 
+BEGIN_CALLABLE_GROUP(echo)
+    DECL_CALLABLE(std::string, std::string)
+    DECL_CALLABLE(int, int)
+END_CALLABLE_GROUP
+
 BEGIN_CALLABLE_GROUP(transform)
     DECL_CALLABLE(int, int)
     DECL_CALLABLE(int, int, unsigned)

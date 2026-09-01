@@ -1,8 +1,12 @@
 #ifndef DYNABRIDGE_BACKENDS_NAPI_CONVERTERS_H
 #define DYNABRIDGE_BACKENDS_NAPI_CONVERTERS_H
 
+#include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <stdexcept>
+#include <string>
+#include <utility>
 
 namespace dynabridge {
     template <>
@@ -43,6 +47,44 @@ namespace dynabridge {
                 return optional<unsigned>();
             }
             return optional<unsigned>(static_cast<unsigned>(result));
+        }
+    };
+
+    template <>
+    struct napi_backend::converter<std::string> {
+        static napi_value to(context_t& ctx, const std::string& value) {
+            napi_value result = nullptr;
+            napi_backend::check(
+                napi_create_string_utf8(
+                    ctx.env(), value.data(), value.size(), &result),
+                "napi_create_string_utf8 failed");
+            return result;
+        }
+
+        static optional<std::string> from(context_t& ctx, napi_value value) {
+            napi_valuetype type = napi_undefined;
+            napi_backend::check(
+                napi_typeof(ctx.env(), value, &type),
+                "napi_typeof failed during string conversion");
+            if (type != napi_string) {
+                return optional<std::string>();
+            }
+
+            std::size_t size = 0;
+            napi_backend::check(
+                napi_get_value_string_utf8(ctx.env(), value, nullptr, 0, &size),
+                "napi_get_value_string_utf8 size probe failed");
+            if (size == (std::numeric_limits<std::size_t>::max)()) {
+                throw std::length_error("dynabridge N-API string is too large");
+            }
+            std::string result(size + 1, '\0');
+            std::size_t copied = 0;
+            napi_backend::check(
+                napi_get_value_string_utf8(
+                    ctx.env(), value, &result[0], result.size(), &copied),
+                "napi_get_value_string_utf8 failed");
+            result.resize(copied);
+            return optional<std::string>(std::move(result));
         }
     };
 }

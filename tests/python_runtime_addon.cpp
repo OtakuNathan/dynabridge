@@ -5,6 +5,7 @@
 
 #include <exception>
 #include <stdexcept>
+#include <string>
 
 using py_context_t = dynabridge::py_backend::context_t;
 using py_export_context_t = dynabridge::py_backend::export_context_t;
@@ -120,6 +121,23 @@ namespace {
         }
     }
 
+    PyObject* call_imported_echo(PyObject*, PyObject* args) {
+        try {
+            PyObject* callable = nullptr;
+            PyObject* text = nullptr;
+            if (PyArg_ParseTuple(args, "OO", &callable, &text) == 0) {
+                return nullptr;
+            }
+
+            py_context_t ctx(callable, dynabridge::py_backend::ref_policy::borrowed);
+            return dynabridge::py_backend::converter<std::string>::to(
+                ctx,
+                dynabridge::call_echo(ctx, dynabridge::from_cast<std::string>(ctx, text)));
+        } catch (const std::exception& error) {
+            return raise_error(error);
+        }
+    }
+
     PyObject* call_imported_counter_add(PyObject*, PyObject* args) {
         try {
             PyObject* callable = nullptr;
@@ -190,6 +208,12 @@ namespace {
             nullptr
         },
         {
+            "callImportedEcho",
+            call_imported_echo,
+            METH_VARARGS,
+            nullptr
+        },
+        {
             "callImportedCounterAdd",
             call_imported_counter_add,
             METH_VARARGS,
@@ -247,6 +271,14 @@ PyMODINIT_FUNC PyInit_dynabridge_python_runtime_addon() {
         dynabridge::export_calc(ctx, module)
             .bind<int(int)>(scale_by_ten_function)
             .bind<int(int, unsigned)>(multiply_function{})
+            .commit();
+        dynabridge::export_echo(ctx, module)
+            .bind<std::string(std::string)>([](std::string text) {
+                return "<" + text + ">";
+            })
+            .bind<int(int)>([](int value) {
+                return value * 2;
+            })
             .commit();
 
         dynabridge::exports::counter::register_all(ctx, module);

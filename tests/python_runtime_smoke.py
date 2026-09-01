@@ -22,6 +22,9 @@ def main():
     assert addon.calc(6) == 60
     assert addon.calc(6, 7) == 42
     assert addon.multiply(6, 7) == 42
+    assert addon.echo("héllo 中") == "<héllo 中>"
+    assert addon.echo("a\0b") == "<a\0b>"
+    assert addon.echo(21) == 42
 
     addon.store(77)
     assert addon.stored() == 77
@@ -52,6 +55,12 @@ def main():
 
     assert addon.callImportedFoo(foo, 5, 6) is None
     assert foo_args == [5, 6]
+
+    def echo_fn(text):
+        return "[" + text + "]"
+
+    assert addon.callImportedEcho(echo_fn, "héllo 中") == "[héllo 中]"
+    assert addon.callImportedEcho(echo_fn, "a\0b") == "[a\0b]"
 
     class ForeignCounter:
         pass

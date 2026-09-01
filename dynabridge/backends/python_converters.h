@@ -1,8 +1,10 @@
 #ifndef DYNABRIDGE_BACKENDS_PYTHON_CONVERTERS_H
 #define DYNABRIDGE_BACKENDS_PYTHON_CONVERTERS_H
 
+#include <cstddef>
 #include <limits>
 #include <stdexcept>
+#include <string>
 
 namespace dynabridge {
     namespace py_backend_detail {
@@ -104,6 +106,45 @@ namespace dynabridge {
                 return optional<unsigned>();
             }
             return optional<unsigned>(static_cast<unsigned>(result));
+        }
+    };
+
+    template <>
+    struct py_backend::converter<std::string> {
+        static PyObject* to(context_t&, const std::string& value) {
+            // FromStringAndSize keeps embedded NUL bytes; invalid UTF-8 is a
+            // runtime failure, not an overload miss, because export probes
+            // only run on the from() side.
+            if (value.size() > static_cast<std::size_t>(
+                    (std::numeric_limits<Py_ssize_t>::max)())) {
+                throw std::length_error("dynabridge Python string is too large");
+            }
+            PyObject* result = PyUnicode_FromStringAndSize(
+                value.data(), static_cast<Py_ssize_t>(value.size()));
+            if (result == nullptr) {
+                throw std::runtime_error("dynabridge Python string conversion failed");
+            }
+            return result;
+        }
+
+        static optional<std::string> from(context_t&, PyObject* value) {
+            if (!PyUnicode_Check(value)) {
+                return optional<std::string>();
+            }
+
+            Py_ssize_t size = 0;
+            const char* data = PyUnicode_AsUTF8AndSize(value, &size);
+            if (data == nullptr) {
+                if (PyErr_ExceptionMatches(PyExc_UnicodeEncodeError)) {
+                    // A str holding lone surrogates is not valid for this
+                    // UTF-8 value channel; let overload dispatch continue.
+                    PyErr_Clear();
+                    return optional<std::string>();
+                }
+                throw std::runtime_error("dynabridge Python string conversion failed");
+            }
+            return optional<std::string>(
+                std::string(data, static_cast<std::size_t>(size)));
         }
     };
 }

@@ -135,6 +135,16 @@ consistent projections.
 Different modules select different import and export tables. The defaults are
 empty, so including `bridge.h` does not expose repository test declarations.
 
+## Why C++14
+
+The core contract deliberately targets C++14 to remain usable with older distro
+and cross-compilation toolchains. Features it needs from newer standards
+(`optional`, `void_t`, and conjunction-style traits) have small local polyfills
+in `optional.h` and `traits.h`. This adds some implementation and diagnostic
+complexity in exchange for broader compatibility; optional integrations and
+benchmarks may require newer standards. Consumers remain free to build the rest
+of their project with a newer standard.
+
 ## Use With CMake
 
 As a subdirectory:
@@ -170,7 +180,7 @@ target_link_libraries(my_addon PRIVATE dynabridge::dynabridge)
 | JavaScript | Minimal Node-API backend with real Node.js runtime tests |
 | RPC | Transport-agnostic framed demo backend |
 | Scheduling | Optional Flux Foundry adapters for Python interpreter and libuv loop dispatch |
-| Value types | Built-in Python/Node converters for `int` and `unsigned`; applications add only the types they use |
+| Value types | Built-in Python/Node converters for `int`, `unsigned`, and UTF-8 text through `std::string`; embedded NUL is preserved, while arbitrary binary data needs its own converter |
 | Platforms | CI builds Debug and Release on Linux, macOS, and Windows |
 
 This is a bridge core, not a drop-in replacement for the complete policies and

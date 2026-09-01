@@ -10,6 +10,9 @@ async function main() {
     assert.strictEqual(addon.calc(6), 60);
     assert.strictEqual(addon.calc(6, 7), 42);
     assert.strictEqual(addon.multiply(6, 7), 42);
+    assert.strictEqual(addon.echo("héllo 中"), "<héllo 中>");
+    assert.strictEqual(addon.echo("a\0b"), "<a\0b>");
+    assert.strictEqual(addon.echo(21), 42);
 
     addon.store(77);
     assert.strictEqual(addon.stored(), 77);
@@ -48,6 +51,13 @@ async function main() {
         }, 5, 6),
         undefined);
     assert.deepStrictEqual(fooArgs, [5, 6]);
+
+    assert.strictEqual(
+        addon.callImportedEcho((text) => "[" + text + "]", "héllo 中"),
+        "[héllo 中]");
+    assert.strictEqual(
+        addon.callImportedEcho((text) => "[" + text + "]", "a\0b"),
+        "[a\0b]");
 
     const foreignCounter = { handle: 13 };
     function counterDispatch(receiver, value) {

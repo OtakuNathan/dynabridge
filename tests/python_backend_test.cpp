@@ -1,6 +1,7 @@
 #include "dynabridge/backends/python_api.h"
 
 #include <stdexcept>
+#include <string>
 
 #define DYNABRIDGE_IMPORT_DEF "tests/import.def"
 #define DYNABRIDGE_EXPORT_DEF "tests/export.def"
@@ -138,6 +139,25 @@ namespace {
         return static_cast<int>(PyLong_AsLong(result.get()));
     }
 
+    std::string call_string(PyObject* callable, const std::string& a) {
+        dynabridge::py_backend::object_ref arg(
+            PyUnicode_FromStringAndSize(a.data(), static_cast<Py_ssize_t>(a.size())),
+            dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref result(
+            PyObject_CallFunctionObjArgs(callable, arg.get(), nullptr),
+            dynabridge::py_backend::ref_policy::owned);
+        if (!result) {
+            throw std::runtime_error("Python call failed");
+        }
+        Py_ssize_t size = 0;
+        const char* data = PyUnicode_AsUTF8AndSize(result.get(), &size);
+        if (data == nullptr) {
+            PyErr_Clear();
+            throw std::runtime_error("Python string result conversion failed");
+        }
+        return std::string(data, static_cast<std::size_t>(size));
+    }
+
     int call_noarg(PyObject* callable) {
         dynabridge::py_backend::object_ref result(PyObject_CallObject(callable, nullptr),
             dynabridge::py_backend::ref_policy::owned);
@@ -175,6 +195,8 @@ int main() {
             "bar = record\n"
             "def calc(a, b):\n"
             "    return int(a) + int(b)\n"
+            "def echo(text):\n"
+            "    return '[' + text + ']'\n"
             "def callback(value):\n"
             "    return int(value) * 3\n"
             "def pass_counter(obj, value):\n"
@@ -227,6 +249,15 @@ int main() {
             "__main__");
         if (dynabridge::call_calc(calc_ctx, 3, 4u) != 7) {
             return 4;
+        }
+
+        auto echo_ctx = dynabridge::import_from<dynabridge::import_symbols::echo, py_context_t>(
+            main_module);
+        const std::string utf8_text = "h\xC3\xA9llo \xE4\xB8\xAD";
+        const std::string embedded_text(std::string("a\0b", 3) + utf8_text);
+        if (dynabridge::call_echo(echo_ctx, utf8_text) != "[" + utf8_text + "]"
+                || dynabridge::call_echo(echo_ctx, embedded_text) != "[" + embedded_text + "]") {
+            return 60;
         }
 
         auto counter_ctx = dynabridge::import_from<dynabridge::import_symbols::counter, py_context_t>(
@@ -297,6 +328,51 @@ int main() {
             return 30;
         }
 
+        dynabridge::py_backend::object_ref not_a_string(PyLong_FromLong(7),
+            dynabridge::py_backend::ref_policy::owned);
+        auto maybe_string = dynabridge::from_optional<std::string>(
+            export_ctx, not_a_string.get());
+        if (maybe_string || PyErr_Occurred()) {
+            return 62;
+        }
+        // bad_int holds a str, so the string channel accepts its bytes.
+        auto maybe_bad_int_text = dynabridge::from_optional<std::string>(
+            export_ctx, bad_int.get());
+        if (!maybe_bad_int_text || maybe_bad_int_text.value() != std::string("not an int")
+                || PyErr_Occurred()) {
+            return 63;
+        }
+        bool caught_string_conversion = false;
+        try {
+            (void)dynabridge::from_cast<std::string>(export_ctx, not_a_string.get());
+        } catch (const dynabridge::bad_conversion&) {
+            caught_string_conversion = true;
+        }
+        if (!caught_string_conversion || PyErr_Occurred()) {
+            return 64;
+        }
+
+        dynabridge::py_backend::object_ref lone_surrogate(
+            PyUnicode_FromOrdinal(0xD800),
+            dynabridge::py_backend::ref_policy::owned);
+        auto maybe_surrogate = dynabridge::from_optional<std::string>(
+            export_ctx, lone_surrogate.get());
+        if (maybe_surrogate || PyErr_Occurred()) {
+            return 69;
+        }
+
+        bool caught_invalid_utf8 = false;
+        try {
+            (void)dynabridge::py_backend::converter<std::string>::to(
+                export_ctx, std::string("\xFF", 1));
+        } catch (const std::runtime_error&) {
+            caught_invalid_utf8 = true;
+        }
+        if (!caught_invalid_utf8 || !PyErr_ExceptionMatches(PyExc_UnicodeDecodeError)) {
+            return 70;
+        }
+        PyErr_Clear();
+
         dynabridge::export_free_callable(export_ctx, module, "add", add_function);
         dynabridge::export_calc(export_ctx, module, add_function);
         dynabridge::export_free_callable(export_ctx, module, "store", store_function);
@@ -347,6 +423,36 @@ int main() {
                 || call_int_int(calc.get(), 6, 7) != 43) {
             return 14;
         }
+
+        dynabridge::export_echo(export_ctx, module)
+            .bind<std::string(std::string)>([](std::string text) {
+                return "<" + text + ">";
+            })
+            .bind<int(int)>([](int value) {
+                return value * 2;
+            })
+            .commit();
+        dynabridge::py_backend::object_ref echo_function(
+            PyObject_GetAttrString(module.get(), "echo"),
+            dynabridge::py_backend::ref_policy::owned);
+        if (call_string(echo_function.get(), utf8_text) != "<" + utf8_text + ">") {
+            return 65;
+        }
+        if (call_string(echo_function.get(), embedded_text) != "<" + embedded_text + ">") {
+            return 67;
+        }
+        if (call_int(echo_function.get(), 21) != 42) {
+            return 68;
+        }
+        dynabridge::py_backend::object_ref none_args(Py_BuildValue("(O)", Py_None),
+            dynabridge::py_backend::ref_policy::owned);
+        dynabridge::py_backend::object_ref none_result(
+            PyObject_CallObject(echo_function.get(), none_args.get()),
+            dynabridge::py_backend::ref_policy::owned);
+        if (none_result || !PyErr_ExceptionMatches(PyExc_TypeError)) {
+            return 66;
+        }
+        PyErr_Clear();
 
         dynabridge::py_backend::object_ref bad_add_args(Py_BuildValue("(Oi)", bad_int.get(), 1),
             dynabridge::py_backend::ref_policy::owned);
