@@ -2,6 +2,7 @@
 #define DYNABRIDGE_BACKENDS_NAPI_CONVERTERS_H
 
 #include <cstddef>
+#include <cmath>
 #include <cstdint>
 #include <limits>
 #include <stdexcept>
@@ -20,11 +21,14 @@ namespace dynabridge {
         }
 
         static optional<int> from(context_t& ctx, napi_value value) {
-            int result = 0;
-            if (napi_get_value_int32(ctx.env(), value, &result) != napi_ok) {
+            double result = 0;
+            if (napi_get_value_double(ctx.env(), value, &result) != napi_ok
+                    || !std::isfinite(result) || std::trunc(result) != result
+                    || result < (std::numeric_limits<int>::min)()
+                    || result > (std::numeric_limits<int>::max)()) {
                 return optional<int>();
             }
-            return optional<int>(result);
+            return optional<int>(static_cast<int>(result));
         }
     };
 
@@ -39,11 +43,11 @@ namespace dynabridge {
         }
 
         static optional<unsigned> from(context_t& ctx, napi_value value) {
-            std::int64_t result = 0;
-            if (napi_get_value_int64(ctx.env(), value, &result) != napi_ok
+            double result = 0;
+            if (napi_get_value_double(ctx.env(), value, &result) != napi_ok
+                    || !std::isfinite(result) || std::trunc(result) != result
                     || result < 0
-                    || static_cast<std::uint64_t>(result)
-                        > static_cast<std::uint64_t>(std::numeric_limits<unsigned>::max())) {
+                    || result > (std::numeric_limits<unsigned>::max)()) {
                 return optional<unsigned>();
             }
             return optional<unsigned>(static_cast<unsigned>(result));

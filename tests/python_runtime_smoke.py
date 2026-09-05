@@ -88,6 +88,38 @@ def main():
 
     assert addon.ownedCounterDestroyed() == 1
 
+    class Unrelated:
+        __slots__ = tuple(f"s{i}" for i in range(16))
+
+    for receiver in (Unrelated(), object(), None):
+        try:
+            addon.counter.__init__(receiver, 1)
+        except TypeError:
+            pass
+        else:
+            raise AssertionError("constructor accepted an unrelated receiver")
+
+    class Derived(addon.counter):
+        pass
+
+    for cls in (addon.counter, Derived):
+        before = sys.getrefcount(cls)
+        for _ in range(1000):
+            instance = cls(7)
+            assert instance.add(2) == 9
+            del instance
+        gc.collect()
+        assert sys.getrefcount(cls) == before, "instance leaked a type reference"
+
+    instance = addon.counter(1)
+    try:
+        instance.__init__(2)
+    except RuntimeError:
+        pass
+    else:
+        raise AssertionError("constructor reinitialized a live native object")
+    assert instance.value() == 1
+
 
 if __name__ == "__main__":
     main()

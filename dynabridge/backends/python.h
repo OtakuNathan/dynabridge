@@ -139,6 +139,10 @@ namespace dynabridge {
 
         using import_context_t = context_t;
 
+        static object_ref own_import_value_impl(context_t&, PyObject* value) noexcept {
+            return object_ref(value, ref_policy::owned);
+        }
+
         class export_context_t : public context_t {
         public:
             using context_t::context_t;
@@ -405,11 +409,13 @@ namespace dynabridge {
 
     private:
         static void export_instance_dealloc(PyObject* self) noexcept {
+            PyTypeObject* type = Py_TYPE(self);
             auto* instance = reinterpret_cast<export_instance_object*>(self);
             if (instance->destroy != nullptr) {
                 instance->destroy(instance);
             }
-            Py_TYPE(self)->tp_free(self);
+            type->tp_free(self);
+            Py_DECREF(type);
         }
 
         template <typename Receiver>
@@ -899,6 +905,13 @@ namespace dynabridge {
             template <typename... DynamicArgs>
             PyObject* construct(PyObject* self, DynamicArgs... args) {
                 try {
+                    auto& target = ctx_->template export_class<Receiver>();
+                    if (self == nullptr || !PyObject_TypeCheck(
+                            self, reinterpret_cast<PyTypeObject*>(target.get()))) {
+                        PyErr_SetString(PyExc_TypeError,
+                            "dynabridge Python constructor received incompatible self");
+                        return nullptr;
+                    }
                     export_constructor_invoker<Receiver, void(Args...), Context>::construct(
                         *ctx_, self, args...);
                     Py_RETURN_NONE;
@@ -920,9 +933,9 @@ namespace dynabridge {
         template <typename... Args>
         static PyObject* call(context_t&, PyObject* callable, Args... args) {
 #if PY_VERSION_HEX >= 0x03080000
-            return call_vector(callable, args...);
+            return call_vector(callable, std::move(args)...);
 #else
-            return call_tuple(callable, args...);
+            return call_tuple(callable, std::move(args)...);
 #endif
         }
 
@@ -935,7 +948,7 @@ namespace dynabridge {
                 return nullptr;
             }
 
-            PyObject* argv[sizeof...(Args) == 0 ? 1 : sizeof...(Args)] = { args... };
+            PyObject* argv[sizeof...(Args) == 0 ? 1 : sizeof...(Args)] = { call_arg_value(args)... };
             PyObject* result = PyObject_Vectorcall(callable, argv, sizeof...(Args), nullptr);
             decref_args(args...);
             return result;
@@ -962,17 +975,25 @@ namespace dynabridge {
 
         static void fill_tuple(PyObject*, Py_ssize_t) noexcept {}
 
+        static PyObject* call_arg_value(PyObject* value) noexcept { return value; }
+        static PyObject* call_arg_value(const object_ref& value) noexcept { return value.get(); }
+        static PyObject* release_call_arg(PyObject* value) noexcept { return value; }
+        static PyObject* release_call_arg(object_ref& value) noexcept { return value.release(); }
+
         template <typename Head, typename... Tail>
-        static void fill_tuple(PyObject* tuple, Py_ssize_t index, Head head, Tail... tail) {
-            PyTuple_SET_ITEM(tuple, index, head);
+        static void fill_tuple(PyObject* tuple, Py_ssize_t index, Head& head, Tail&... tail) {
+            PyTuple_SET_ITEM(tuple, index, release_call_arg(head));
             fill_tuple(tuple, index + 1, tail...);
         }
 
         static void decref_args() noexcept {}
 
+        static void decref_arg(PyObject* value) noexcept { Py_XDECREF(value); }
+        static void decref_arg(const object_ref&) noexcept {} // RAII owns this reference.
+
         template <typename Head, typename... Tail>
-        static void decref_args(Head head, Tail... tail) noexcept {
-            Py_XDECREF(head);
+        static void decref_args(Head& head, Tail&... tail) noexcept {
+            decref_arg(head);
             decref_args(tail...);
         }
 

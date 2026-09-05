@@ -58,9 +58,9 @@ namespace dynabridge {
 
         template <typename Value>
         static auto lower(Context& ctx, Value&& value)
-            -> decltype(to_cast<Declared>(ctx, std::forward<Value>(value)))
+            -> decltype(own_import_value(ctx, to_cast<Declared>(ctx, std::forward<Value>(value))))
         {
-            return to_cast<Declared>(ctx, std::forward<Value>(value));
+            return own_import_value(ctx, to_cast<Declared>(ctx, std::forward<Value>(value)));
         }
     };
 
@@ -70,9 +70,11 @@ namespace dynabridge {
         using parameter_t = const delegate_t&;
 
         static auto lower(Context& ctx, const delegate_t& value)
-            -> decltype(Context::backend_t::template to_dynamic_object<Class>(ctx, value.object()))
+            -> decltype(own_import_value(ctx,
+                Context::backend_t::template to_dynamic_object<Class>(ctx, value.object())))
         {
-            return Context::backend_t::template to_dynamic_object<Class>(ctx, value.object());
+            return own_import_value(ctx,
+                Context::backend_t::template to_dynamic_object<Class>(ctx, value.object()));
         }
     };
 
@@ -80,9 +82,11 @@ namespace dynabridge {
     struct import_argument<callable_param<Group, export_t>, Context> {
         template <typename Callable>
         static auto lower(Context& ctx, Callable&& callable)
-            -> decltype(make_export_group_callable<Group>(ctx, std::forward<Callable>(callable)))
+            -> decltype(own_import_value(ctx,
+                make_export_group_callable<Group>(ctx, std::forward<Callable>(callable))))
         {
-            return make_export_group_callable<Group>(ctx, std::forward<Callable>(callable));
+            return own_import_value(ctx,
+                make_export_group_callable<Group>(ctx, std::forward<Callable>(callable)));
         }
     };
 

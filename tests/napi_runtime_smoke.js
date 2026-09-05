@@ -13,6 +13,15 @@ async function main() {
     assert.strictEqual(addon.echo("héllo 中"), "<héllo 中>");
     assert.strictEqual(addon.echo("a\0b"), "<a\0b>");
     assert.strictEqual(addon.echo(21), 42);
+    for (const value of [1.9, -0.5, NaN, Infinity, -Infinity, 4294967296, -2147483649]) {
+        assert.throws(() => addon.echo(value), `int accepted ${value}`);
+    }
+    for (const value of [1.9, -0.5, -1, NaN, Infinity, 4294967296]) {
+        assert.throws(() => new addon.counter(value), `unsigned accepted ${value}`);
+    }
+    assert.strictEqual(addon.add(2147483647, 0), 2147483647);
+    assert.strictEqual(addon.add(-2147483648, 0), -2147483648);
+    assert.strictEqual(addon.add(-0, 0), 0);
 
     addon.store(77);
     assert.strictEqual(addon.stored(), 77);

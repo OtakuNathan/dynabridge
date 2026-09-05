@@ -84,6 +84,7 @@ struct napi_env__ {
     napi_value global = nullptr;
     napi_value undefined = nullptr;
     std::size_t type_tag_checks = 0;
+    std::vector<std::pair<void (*)(void*), void*>> cleanup_hooks;
 };
 
 struct napi_callback_info__ {
@@ -108,6 +109,11 @@ inline napi_env napi_stub_create_env() {
 }
 
 inline void napi_stub_delete_env(napi_env env) {
+    while (!env->cleanup_hooks.empty()) {
+        auto hook = env->cleanup_hooks.back();
+        env->cleanup_hooks.pop_back();
+        hook.first(hook.second);
+    }
     for (auto& value : env->values) {
         if (value->finalizer != nullptr && value->native != nullptr) {
             value->finalizer(env, value->native, value->finalizer_hint);
@@ -121,6 +127,29 @@ inline void napi_stub_delete_env(napi_env env) {
 
 inline napi_status napi_get_undefined(napi_env env, napi_value* result) {
     *result = env->undefined;
+    return napi_ok;
+}
+
+inline napi_status napi_add_env_cleanup_hook(napi_env env, void (*hook)(void*), void* data) {
+    env->cleanup_hooks.emplace_back(hook, data);
+    return napi_ok;
+}
+
+inline napi_status napi_remove_env_cleanup_hook(napi_env env, void (*hook)(void*), void* data) {
+    for (auto it = env->cleanup_hooks.begin(); it != env->cleanup_hooks.end(); ++it) {
+        if (it->first == hook && it->second == data) {
+            env->cleanup_hooks.erase(it);
+            return napi_ok;
+        }
+    }
+    return napi_generic_failure;
+}
+
+inline napi_status napi_get_value_double(napi_env, napi_value value, double* result) {
+    if (value == nullptr || value->kind != napi_value__::kind_t::int32) {
+        return napi_generic_failure;
+    }
+    *result = static_cast<double>(value->number);
     return napi_ok;
 }
 

@@ -290,6 +290,25 @@ namespace dynabridge {
         bool owns_ = false;
     };
 
+    // Backends with owning dynamic handles can guard each lowered argument
+    // before evaluation of the remaining arguments has completed.
+    template <typename Context, typename Value>
+    auto own_import_value_impl(Context& ctx, Value&& value, int)
+        -> decltype(Context::backend_t::own_import_value_impl(ctx, std::forward<Value>(value))) {
+        return Context::backend_t::own_import_value_impl(ctx, std::forward<Value>(value));
+    }
+
+    template <typename Context, typename Value>
+    typename std::decay<Value>::type own_import_value_impl(Context&, Value&& value, long) {
+        return std::forward<Value>(value);
+    }
+
+    template <typename Context, typename Value>
+    auto own_import_value(Context& ctx, Value&& value)
+        -> decltype(own_import_value_impl(ctx, std::forward<Value>(value), 0)) {
+        return own_import_value_impl(ctx, std::forward<Value>(value), 0);
+    }
+
     template <typename T, typename Context, typename Value>
     auto to_cast(Context& ctx, Value&& value)
         -> decltype(Context::backend_t::template converter<typename std::decay<T>::type>::to(

@@ -379,7 +379,7 @@ namespace dynabridge {
             using class_t = typename Receiver::bridge_class_t;
             return Backend::template invoke_impl<R_, Receiver>(
                 ctx,
-                Backend::template to_dynamic_object<class_t>(ctx, receiver.object()),
+                own_import_value(ctx, Backend::template to_dynamic_object<class_t>(ctx, receiver.object())),
                 import_argument<Declared, Context>::lower(
                     ctx, std::forward<Actual>(actual))...);
         }
@@ -392,7 +392,7 @@ namespace dynabridge {
             using class_t = typename Receiver::bridge_class_t;
             Backend::template invoke_impl<R_, Receiver>(
                 ctx,
-                Backend::template to_dynamic_object<class_t>(ctx, receiver.object()),
+                own_import_value(ctx, Backend::template to_dynamic_object<class_t>(ctx, receiver.object())),
                 import_argument<Declared, Context>::lower(
                     ctx, std::forward<Actual>(actual))...);
         }
@@ -656,8 +656,8 @@ namespace dynabridge {
 
             return backend_t::template invoke_impl<R, Receiver>(
                 ctx,
-                to_cast<Receiver>(ctx, receiver),
-                to_cast<Args>(ctx, std::move(args))...);
+                own_import_value(ctx, to_cast<Receiver>(ctx, receiver)),
+                own_import_value(ctx, to_cast<Args>(ctx, std::move(args)))...);
         }
 
         template <typename R, typename Context, typename Receiver, typename... Args>
@@ -670,8 +670,8 @@ namespace dynabridge {
 
             backend_t::template invoke_impl<R, Receiver>(
                 ctx,
-                to_cast<Receiver>(ctx, receiver),
-                to_cast<Args>(ctx, std::move(args))...);
+                own_import_value(ctx, to_cast<Receiver>(ctx, receiver)),
+                own_import_value(ctx, to_cast<Args>(ctx, std::move(args)))...);
         }
 
         template <typename R, typename Context, typename... Args>
@@ -684,7 +684,7 @@ namespace dynabridge {
             return backend_t::template invoke_impl<R>(
                 ctx,
                 no_receiver_t{},
-                to_cast<Args>(ctx, std::move(args))...);
+                own_import_value(ctx, to_cast<Args>(ctx, std::move(args)))...);
         }
 
         template <typename R, typename Context, typename... Args>
@@ -697,7 +697,7 @@ namespace dynabridge {
             backend_t::template invoke_impl<R>(
                 ctx,
                 no_receiver_t{},
-                to_cast<Args>(ctx, std::move(args))...);
+                own_import_value(ctx, to_cast<Args>(ctx, std::move(args)))...);
         }
 
         template <typename Contract, typename Context, typename Receiver, typename... Actual>

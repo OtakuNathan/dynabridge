@@ -254,6 +254,30 @@ static_assert(
 namespace {
 
 int run_test(napi_env env) {
+    {
+        using target_t = dynabridge::napi_backend::class_target_t;
+        auto constructor = napi_stub_make_value(env, napi_value__::kind_t::function);
+        napi_ref moved_ref = nullptr;
+        {
+            target_t first(env, constructor, nullptr);
+            target_t second(env, constructor, nullptr);
+            napi_ref old_ref = first.constructor_ref;
+            moved_ref = second.constructor_ref;
+            first = std::move(second);
+            if (old_ref->value != nullptr || moved_ref->value != constructor) return 70;
+            target_t moved(std::move(first));
+            if (moved.constructor_ref != moved_ref || env->cleanup_hooks.size() != 1) return 71;
+        }
+        if (moved_ref->value != nullptr || !env->cleanup_hooks.empty()) return 72;
+
+        // Static module contexts may be destroyed after the env. The cleanup
+        // hook must make their later reference destruction harmless.
+        napi_env temporary_env = napi_stub_create_env();
+        auto temporary_constructor = napi_stub_make_value(
+            temporary_env, napi_value__::kind_t::function);
+        target_t late_target(temporary_env, temporary_constructor, nullptr);
+        napi_stub_delete_env(temporary_env);
+    }
     record_state state;
     napi_value record = nullptr;
     napi_create_function(env, "record", NAPI_AUTO_LENGTH, record_callback, &state, &record);

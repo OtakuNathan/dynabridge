@@ -78,6 +78,16 @@ executors have the same shape. Flux Foundry's executor contract is intentionally
 duck typed: an extension only needs `dispatch(task&&)`. No executor base class or
 core scheduling policy is required.
 
+Import argument lowering can optionally use a backend's
+`own_import_value_impl(ctx, value)` hook. It must adopt the lowered value without
+throwing and return an RAII guard that the backend invocation accepts. This
+protects already converted arguments if a later conversion throws, including
+object and callback arguments and member receivers. Without the hook, lowered
+values are forwarded by value as before. Python adopts each new reference into
+`object_ref`; vectorcall borrows from those guards, while tuple calls transfer
+their references to the tuple. Direct converter calls retain their existing
+ownership contract.
+
 Converters should remain strict on export so overload probing is deterministic.
 Export overloads are visited in `.def` declaration order after arity filtering;
 the first candidate whose argument conversions succeed wins. Declaration order

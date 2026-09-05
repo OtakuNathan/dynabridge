@@ -8,6 +8,25 @@
 #include "dynabridge/bridge.h"
 #include "dynabridge/backends/python.h"
 
+struct conversion_probe {
+    PyObject* value;
+    int* calls;
+    int fail_at;
+};
+
+namespace dynabridge {
+    template <>
+    struct py_backend::converter<conversion_probe> {
+        static PyObject* to(context_t&, conversion_probe probe) {
+            if (++*probe.calls == probe.fail_at) {
+                throw std::runtime_error("injected conversion failure");
+            }
+            Py_INCREF(probe.value);
+            return probe.value;
+        }
+    };
+}
+
 namespace dynabridge {
     namespace native {
         class counter {
@@ -182,6 +201,42 @@ int main() {
     Py_Initialize();
 
     try {
+        {
+            using backend = dynabridge::py_backend;
+            backend::object_ref tracked(PyList_New(0), backend::ref_policy::owned);
+            backend::context_t ctx;
+            // Both the first and a later conversion failure must leave no
+            // owned argument behind, independent of argument evaluation order.
+            for (int fail_at : {1, 2}) {
+                int calls = 0;
+                conversion_probe probe{tracked.get(), &calls, fail_at};
+                bool threw = false;
+                try {
+                    backend::invoke_contract<dynabridge::free_callable<void(
+                        conversion_probe, conversion_probe)>>(
+                            ctx, dynabridge::no_receiver_t{}, probe, probe);
+                } catch (const std::runtime_error&) {
+                    threw = true;
+                }
+                if (!threw || calls != fail_at || Py_REFCNT(tracked.get()) != 1) {
+                    return 70;
+                }
+            }
+            // All arguments convert, but dispatch fails (no callable).
+            int calls = 0;
+            conversion_probe probe{tracked.get(), &calls, 0};
+            try {
+                backend::invoke_contract<dynabridge::free_callable<void(
+                    conversion_probe, conversion_probe)>>(
+                        ctx, dynabridge::no_receiver_t{}, probe, probe);
+                return 71;
+            } catch (const std::runtime_error&) {
+                PyErr_Clear();
+            }
+            if (calls != 2 || Py_REFCNT(tracked.get()) != 1) {
+                return 72;
+            }
+        }
         const char* script =
             "last_argc = 0\n"
             "last_first = 0\n"

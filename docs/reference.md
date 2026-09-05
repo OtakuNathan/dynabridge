@@ -636,6 +636,13 @@ scope. Free exports attach functions to an exports object. Class exports create
 a constructor target and attach member wrappers to its prototype; the member
 wrapper receives the JavaScript `this` value as the bridge receiver.
 
+N-API integer converters accept only finite, integral numbers within the target
+type's range. Fractions, NaN, infinities, and out-of-range values fail conversion
+instead of being truncated or wrapped. Constructor targets release their strong
+references on destruction or replacement; an environment cleanup hook also
+releases them before environment teardown when a context uses static storage.
+This does not permit invoking a context after its environment has shut down.
+
 Class exports own or borrow native C++ state through a generated proxy. The
 type name is declared in the selected export def through
 `BEGIN_CLASS(ns, clazz)`, which also fixes the native type. Registration is the

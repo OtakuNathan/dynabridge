@@ -5,6 +5,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
@@ -211,6 +212,40 @@ namespace dynabridge {
         };
 
         struct class_target_t {
+        private:
+            // Stable address across moves; an env cleanup hook releases the
+            // reference even when a module keeps its context in static storage.
+            struct constructor_reference {
+                napi_env env;
+                napi_ref ref = nullptr;
+
+                constructor_reference(napi_env env_, napi_value constructor) : env(env_) {
+                    check(napi_create_reference(env, constructor, 1, &ref),
+                        "napi_create_reference failed for class constructor");
+                    if (napi_add_env_cleanup_hook(env, cleanup, this) != napi_ok) {
+                        napi_delete_reference(env, ref);
+                        throw std::runtime_error("napi_add_env_cleanup_hook failed");
+                    }
+                }
+
+                ~constructor_reference() noexcept {
+                    if (env != nullptr) {
+                        napi_remove_env_cleanup_hook(env, cleanup, this);
+                        cleanup(this);
+                    }
+                }
+
+                static void cleanup(void* data) noexcept {
+                    auto* self = static_cast<constructor_reference*>(data);
+                    napi_delete_reference(self->env, self->ref);
+                    self->env = nullptr;
+                    self->ref = nullptr;
+                }
+            };
+
+            std::unique_ptr<constructor_reference> reference_;
+
+        public:
             napi_env env = nullptr;
             napi_ref constructor_ref = nullptr;
             class_state_holder* state = nullptr;
@@ -218,16 +253,15 @@ namespace dynabridge {
             class_target_t() noexcept = default;
 
             class_target_t(napi_env env_, napi_value constructor, class_state_holder* state_)
-                : env(env_), state(state_) {
-                check(napi_create_reference(env, constructor, 1, &constructor_ref),
-                    "napi_create_reference failed for class constructor");
+                : reference_(new constructor_reference(env_, constructor)),
+                  env(env_), constructor_ref(reference_->ref), state(state_) {
             }
 
             class_target_t(const class_target_t&) = delete;
             class_target_t& operator=(const class_target_t&) = delete;
 
             class_target_t(class_target_t&& other) noexcept
-                : env(other.env),
+                : reference_(std::move(other.reference_)), env(other.env),
                   constructor_ref(other.constructor_ref),
                   state(other.state) {
                 other.env = nullptr;
@@ -237,6 +271,7 @@ namespace dynabridge {
 
             class_target_t& operator=(class_target_t&& other) noexcept {
                 if (this != &other) {
+                    reference_ = std::move(other.reference_);
                     env = other.env;
                     constructor_ref = other.constructor_ref;
                     state = other.state;
