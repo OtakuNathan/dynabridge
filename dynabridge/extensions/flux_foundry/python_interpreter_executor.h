@@ -1,7 +1,7 @@
 #ifndef DYNABRIDGE_EXTENSIONS_FLUX_FOUNDRY_PYTHON_INTERPRETER_EXECUTOR_H
 #define DYNABRIDGE_EXTENSIONS_FLUX_FOUNDRY_PYTHON_INTERPRETER_EXECUTOR_H
 
-#include <Python.h>
+#include "dynabridge/backends/python_api.h"
 
 #include <cassert>
 #include <condition_variable>
@@ -112,6 +112,9 @@ namespace dynabridge {
                     for (auto& task : batch) {
                         task();
                     }
+                    // Captures may own Python references. Invocation does not
+                    // consume task_wrapper, so destroy the captures under GIL too.
+                    batch.clear();
                     PyGILState_Release(gil);
                 }
             }

@@ -141,6 +141,13 @@ if(DYNABRIDGE_BUILD_TESTS)
 
     if(TARGET dynabridge_ff_python_executor_demo)
         add_test(NAME ff_python_executor COMMAND dynabridge_ff_python_executor_demo)
+        add_executable(dynabridge_ff_python_executor_lifetime tests/python_executor_lifetime.cpp)
+        set_property(TARGET dynabridge_ff_python_executor_lifetime PROPERTY CXX_STANDARD 17)
+        target_include_directories(dynabridge_ff_python_executor_lifetime SYSTEM PRIVATE "${FLUX_FOUNDRY_INCLUDE_DIR}")
+        target_link_libraries(dynabridge_ff_python_executor_lifetime PRIVATE
+            dynabridge::dynabridge Python3::Python Threads::Threads)
+        add_test(NAME ff_python_executor_lifetime COMMAND dynabridge_ff_python_executor_lifetime)
+        set_tests_properties(ff_python_executor_lifetime PROPERTIES TIMEOUT 20)
     endif()
     if(TARGET dynabridge_ff_uv_executor_demo)
         add_test(NAME ff_uv_executor COMMAND dynabridge_ff_uv_executor_demo)
