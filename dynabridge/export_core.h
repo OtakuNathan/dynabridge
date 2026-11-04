@@ -1,6 +1,8 @@
 #ifndef DYNABRIDGE_EXPORT_CORE_H
 #define DYNABRIDGE_EXPORT_CORE_H
 
+#include "error_policy.h"
+
 #include <type_traits>
 #include <utility>
 
@@ -33,7 +35,7 @@ namespace dynabridge {
                 export_argument<Args, Context>::try_make(
                     ctx, std::get<Indices>(dynamic))...);
             if (!all_optionals(converted)) {
-                throw bad_conversion("dynabridge export constructor argument conversion failed");
+                DYNABRIDGE_RAISE(bad_conversion("dynabridge export constructor argument conversion failed"));
             }
             typename Context::backend_t::template object_t<Class, export_t> object(
                 ctx,

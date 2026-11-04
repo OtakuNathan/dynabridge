@@ -5,6 +5,8 @@
 #ifndef DYNABRIDGE_TRAITS_H
 #define DYNABRIDGE_TRAITS_H
 
+#include "error_policy.h"
+
 #include <cstddef>
 #include <memory>
 #include <new>
@@ -314,6 +316,10 @@ namespace dynabridge {
         -> decltype(Context::backend_t::template converter<typename std::decay<T>::type>::to(
             ctx, std::forward<Value>(value)))
     {
+#if !DYNABRIDGE_HAS_EXCEPTIONS && DYNABRIDGE_NO_EXCEPTION_STRICT
+        static_assert(noexcept(Context::backend_t::template converter<typename std::decay<T>::type>::to(
+            ctx, std::forward<Value>(value))), "dynabridge strict no-exception converter must be noexcept");
+#endif
         return Context::backend_t::template converter<typename std::decay<T>::type>::to(
             ctx, std::forward<Value>(value));
     }
@@ -323,6 +329,10 @@ namespace dynabridge {
         -> decltype(Context::backend_t::template converter<typename std::decay<T>::type>::from(
             ctx, std::forward<Dynamic>(value)))
     {
+#if !DYNABRIDGE_HAS_EXCEPTIONS && DYNABRIDGE_NO_EXCEPTION_STRICT
+        static_assert(noexcept(Context::backend_t::template converter<typename std::decay<T>::type>::from(
+            ctx, std::forward<Dynamic>(value))), "dynabridge strict no-exception converter must be noexcept");
+#endif
         return Context::backend_t::template converter<typename std::decay<T>::type>::from(
             ctx, std::forward<Dynamic>(value));
     }
@@ -335,7 +345,7 @@ namespace dynabridge {
     {
         auto result = from_optional<T>(ctx, std::forward<Dynamic>(value));
         if (!result) {
-            throw bad_conversion("dynabridge value is not convertible to the requested C++ type");
+            DYNABRIDGE_RAISE(bad_conversion("dynabridge value is not convertible to the requested C++ type"));
         }
         return std::move(*result);
     }

@@ -1,6 +1,8 @@
 #ifndef DYNABRIDGE_BACKENDS_RPC_H
 #define DYNABRIDGE_BACKENDS_RPC_H
 
+#include "../error_policy.h"
+
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
@@ -150,7 +152,7 @@ namespace dynabridge {
 
                 void raw(const char* data, std::size_t size) {
                     if (size > std::numeric_limits<std::uint32_t>::max()) {
-                        throw protocol_error("RPC string is too large");
+                        DYNABRIDGE_RAISE(protocol_error("RPC string is too large"));
                     }
                     integer<std::uint32_t>(static_cast<std::uint32_t>(size));
                     if (size != 0) {
@@ -177,7 +179,7 @@ namespace dynabridge {
                 template <typename UInt>
                 UInt integer() {
                     static_assert(std::is_unsigned<UInt>::value, "wire integers must be unsigned");
-                    require(sizeof(UInt));
+                    if (!require(sizeof(UInt))) return 0;
                     UInt result = 0;
                     for (std::size_t i = 0; i < sizeof(UInt); ++i) {
                         result |= static_cast<UInt>(current_[i]) << (i * 8);
@@ -189,7 +191,7 @@ namespace dynabridge {
 
                 std::string raw() {
                     const auto size = integer<std::uint32_t>();
-                    require(size);
+                    if (!require(size)) return {};
                     std::string result(
                         reinterpret_cast<const char*>(current_),
                         reinterpret_cast<const char*>(current_ + size));
@@ -199,17 +201,19 @@ namespace dynabridge {
                 }
 
                 bool empty() const noexcept { return remaining_ == 0; }
+                bool valid() const noexcept { return valid_; }
+                void invalidate() noexcept { valid_ = false; }
                 std::size_t remaining() const noexcept { return remaining_; }
 
             private:
-                void require(std::size_t size) {
-                    if (size > remaining_) {
-                        throw protocol_error("truncated RPC frame");
-                    }
+                bool require(std::size_t size) noexcept {
+                    if (!valid_ || size > remaining_) { valid_ = false; return false; }
+                    return true;
                 }
 
                 const std::uint8_t* current_;
                 std::size_t remaining_;
+                bool valid_ = true;
             };
 
             inline void encode_value(writer& out, const value& input) {
@@ -241,12 +245,12 @@ namespace dynabridge {
                     out.raw(input.string_data(), input.string_size());
                     return;
                 }
-                throw protocol_error("unknown RPC value kind");
+                DYNABRIDGE_RAISE(protocol_error("unknown RPC value kind"));
             }
 
             inline std::size_t checked_add(std::size_t left, std::size_t right) {
                 if (right > std::numeric_limits<std::size_t>::max() - left) {
-                    throw protocol_error("RPC frame size overflow");
+                    DYNABRIDGE_RAISE(protocol_error("RPC frame size overflow"));
                 }
                 return left + right;
             }
@@ -263,7 +267,7 @@ namespace dynabridge {
                     return 2;
                 case value_kind::string:
                     if (input.string_size() > std::numeric_limits<std::uint32_t>::max()) {
-                        throw protocol_error("RPC string is too large");
+                        DYNABRIDGE_RAISE(protocol_error("RPC string is too large"));
                     }
                     return checked_add(5, input.string_size());
                 }
@@ -294,7 +298,8 @@ namespace dynabridge {
                 case value_kind::string:
                     return value::string(input.raw());
                 }
-                throw protocol_error("unknown RPC value kind");
+                input.invalidate();
+                return {};
             }
 
             inline std::uint64_t symbol_id(const char* name) noexcept {
@@ -314,7 +319,7 @@ namespace dynabridge {
 
             inline bytes encode_request(std::uint64_t method, const std::vector<value>& args) {
                 if (args.size() > std::numeric_limits<std::uint32_t>::max()) {
-                    throw protocol_error("too many RPC arguments");
+                    DYNABRIDGE_RAISE(protocol_error("too many RPC arguments"));
                 }
                 std::size_t frame_size = 17;
                 for (const auto& arg : args) {
@@ -347,25 +352,30 @@ namespace dynabridge {
                 return out.finish();
             }
 
-            inline request decode_request(const bytes& frame) {
+            // Malformed input is an ordinary result, independent of C++ exceptions.
+            // General allocation failure follows the program's allocator policy.
+            inline bool try_decode_request(const bytes& frame, request& result) {
                 reader input(frame);
                 if (input.integer<std::uint32_t>() != request_magic
-                        || input.integer<std::uint8_t>() != protocol_version) {
-                    throw protocol_error("invalid RPC request header");
-                }
-                request result;
-                result.method = input.integer<std::uint64_t>();
+                    || input.integer<std::uint8_t>() != protocol_version) return false;
+                request staged;
+                staged.method = input.integer<std::uint64_t>();
                 const auto argc = input.integer<std::uint32_t>();
-                if (argc > input.remaining()) {
-                    throw protocol_error("RPC argument count exceeds the frame size");
-                }
-                result.args.reserve(argc);
+                if (!input.valid() || argc > input.remaining()) return false;
+                staged.args.reserve(argc);
                 for (std::uint32_t i = 0; i < argc; ++i) {
-                    result.args.emplace_back(decode_value(input));
+                    auto item = decode_value(input);
+                    if (!input.valid()) return false;
+                    staged.args.emplace_back(std::move(item));
                 }
-                if (!input.empty()) {
-                    throw protocol_error("trailing data in RPC request");
-                }
+                if (!input.valid() || !input.empty()) return false;
+                result = std::move(staged);
+                return true;
+            }
+            inline request decode_request(const bytes& frame) {
+                request result;
+                if (!try_decode_request(frame, result))
+                    DYNABRIDGE_RAISE(protocol_error("invalid RPC request frame"));
                 return result;
             }
 
@@ -380,7 +390,7 @@ namespace dynabridge {
 
             inline bytes encode_error(const std::string& message) {
                 if (message.size() > std::numeric_limits<std::uint32_t>::max()) {
-                    throw protocol_error("RPC error message is too large");
+                    DYNABRIDGE_RAISE(protocol_error("RPC error message is too large"));
                 }
                 writer out(checked_add(10, message.size()));
                 out.integer<std::uint32_t>(response_magic);
@@ -390,19 +400,30 @@ namespace dynabridge {
                 return out.finish();
             }
 
-            inline value decode_response(const bytes& frame) {
+            enum class response_status { ok, malformed, remote_error };
+            inline response_status try_decode_response(const bytes& frame, value& result,
+                                                       std::string& error) {
                 reader input(frame);
                 if (input.integer<std::uint32_t>() != response_magic
-                        || input.integer<std::uint8_t>() != protocol_version) {
-                    throw protocol_error("invalid RPC response header");
+                    || input.integer<std::uint8_t>() != protocol_version) return response_status::malformed;
+                const auto tag = input.integer<std::uint8_t>();
+                if (!input.valid() || tag > 1) return response_status::malformed;
+                if (tag == 1) {
+                    auto message = input.raw();
+                    if (!input.valid() || !input.empty()) return response_status::malformed;
+                    error = std::move(message);
+                    return response_status::remote_error;
                 }
-                if (input.integer<std::uint8_t>() != 0) {
-                    throw remote_error(input.raw());
-                }
-                auto result = decode_value(input);
-                if (!input.empty()) {
-                    throw protocol_error("trailing data in RPC response");
-                }
+                auto staged = decode_value(input);
+                if (!input.valid() || !input.empty()) return response_status::malformed;
+                result = std::move(staged);
+                return response_status::ok;
+            }
+            inline value decode_response(const bytes& frame) {
+                value result; std::string error;
+                const auto code = try_decode_response(frame, result, error);
+                if (code == response_status::remote_error) DYNABRIDGE_RAISE(remote_error(error));
+                if (code != response_status::ok) DYNABRIDGE_RAISE(protocol_error("invalid RPC response frame"));
                 return result;
             }
 
@@ -412,19 +433,18 @@ namespace dynabridge {
             template <typename Binder, typename R, typename... Args>
             struct binder_call<Binder, R(Args...)> {
                 template <std::size_t... Indices>
-                static value call(Binder& binder, std::vector<value>& args,
+                static optional<value> call(Binder& binder, std::vector<value>& args,
                     std::index_sequence<Indices...>) {
-                    return binder(args[Indices]...);
+                    return binder.call_optional(args[Indices]...);
                 }
             };
 
             template <typename Binder, typename... Args>
             struct binder_call<Binder, void(Args...)> {
                 template <std::size_t... Indices>
-                static value call(Binder& binder, std::vector<value>& args,
+                static optional<value> call(Binder& binder, std::vector<value>& args,
                     std::index_sequence<Indices...>) {
-                    binder(args[Indices]...);
-                    return value{};
+                    return binder.call_optional(args[Indices]...);
                 }
             };
 
@@ -484,36 +504,36 @@ namespace dynabridge {
                 std::uint64_t id() const noexcept { return id_; }
                 const std::string& name() const noexcept { return name_; }
 
-                value invoke(std::vector<value>& args) {
+                optional<value> invoke(std::vector<value>& args) {
                     return invoke_(state_, args);
                 }
 
             private:
                 template <typename Binder>
-                static value invoke_binder(void* state, std::vector<value>& args) {
+                static optional<value> invoke_binder(void* state, std::vector<value>& args) {
                     return invoke_binder_impl(
                         *static_cast<Binder*>(state), args,
                         is_export_overload_binder<Binder>{});
                 }
 
                 template <typename Binder>
-                static value invoke_binder_impl(Binder& binder, std::vector<value>& args,
+                static optional<value> invoke_binder_impl(Binder& binder, std::vector<value>& args,
                     std::false_type) {
                     using signature_t = typename Binder::signature_t;
                     return invoke_typed(binder, args, type_identity<signature_t>{});
                 }
 
                 template <typename Binder>
-                static value invoke_binder_impl(Binder& binder, std::vector<value>& args,
+                static optional<value> invoke_binder_impl(Binder& binder, std::vector<value>& args,
                     std::true_type) {
-                    return binder.dispatch(args.size(), detail::vector_accessor{&args});
+                    return binder.dispatch_optional(args.size(), detail::vector_accessor{&args});
                 }
 
                 template <typename Binder, typename R, typename... Args>
-                static value invoke_typed(Binder& binder, std::vector<value>& args,
+                static optional<value> invoke_typed(Binder& binder, std::vector<value>& args,
                     type_identity<R(Args...)>) {
                     if (args.size() != sizeof...(Args)) {
-                        throw bad_conversion("RPC argument count does not match the exported signature");
+                        return {};
                     }
                     return detail::binder_call<Binder, R(Args...)>::call(
                         binder, args, std::index_sequence_for<Args...>{});
@@ -534,7 +554,7 @@ namespace dynabridge {
                 std::uint64_t id_ = 0;
                 std::string name_;
                 void* state_ = nullptr;
-                value (*invoke_)(void*, std::vector<value>&) = nullptr;
+                optional<value> (*invoke_)(void*, std::vector<value>&) = nullptr;
                 void (*destroy_)(void*) = nullptr;
             };
 
@@ -549,7 +569,7 @@ namespace dynabridge {
                     });
                 if (existing != routes_.end() && existing->id() == id) {
                     if (existing->name() != name) {
-                        throw protocol_error("RPC symbol hash collision");
+                        DYNABRIDGE_RAISE(protocol_error("RPC symbol hash collision"));
                     }
                     *existing = route::make(id, name, std::move(binder));
                     return;
@@ -558,22 +578,21 @@ namespace dynabridge {
             }
 
             bytes dispatch(const bytes& frame) {
+#if DYNABRIDGE_HAS_EXCEPTIONS
                 try {
-                    auto request = detail::decode_request(frame);
-                    const auto candidate = std::lower_bound(
-                        routes_.begin(), routes_.end(), request.method,
-                        [](const route& entry, std::uint64_t value) {
-                            return entry.id() < value;
-                        });
-                    if (candidate != routes_.end() && candidate->id() == request.method) {
-                        return detail::encode_response(candidate->invoke(request.args));
-                    }
-                    return detail::encode_error("unknown RPC method");
-                } catch (const std::exception& error) {
-                    return detail::encode_error(error.what());
-                } catch (...) {
-                    return detail::encode_error("unknown RPC server failure");
-                }
+#endif
+                    detail::request request;
+                    if(!detail::try_decode_request(frame,request)) return detail::encode_error("invalid RPC request frame");
+                    const auto candidate=std::lower_bound(routes_.begin(),routes_.end(),request.method,
+                        [](const route& entry,std::uint64_t value) {return entry.id()<value;});
+                    if(candidate==routes_.end() || candidate->id()!=request.method) return detail::encode_error("unknown RPC method");
+                    auto result=candidate->invoke(request.args);
+                    if(!result) return detail::encode_error("RPC argument conversion or arity mismatch");
+                    return detail::encode_response(*result);
+#if DYNABRIDGE_HAS_EXCEPTIONS
+                } catch(const std::exception& error) {return detail::encode_error(error.what());}
+                  catch(...) {return detail::encode_error("unknown RPC server failure");}
+#endif
             }
 
             std::size_t size() const noexcept { return routes_.size(); }
@@ -588,9 +607,7 @@ namespace dynabridge {
                 : server_(&server) {
             }
 
-            bytes round_trip(const bytes& request) {
-                return server_->dispatch(request);
-            }
+            bytes round_trip(const bytes& request) { return server_->dispatch(request); }
 
         private:
             router* server_;
@@ -747,12 +764,12 @@ namespace dynabridge {
         }
 
         template <typename Context>
-        static dynamic_value_t to(Context&, std::string&& value) {
+        static dynamic_value_t to(Context&, std::string&& value) DYNABRIDGE_NOEXCEPT_IF_DISABLED {
             return dynamic_value_t::string(std::move(value));
         }
 
         template <typename Context>
-        static optional<std::string> from(Context&, const dynamic_value_t& value) {
+        static optional<std::string> from(Context&, const dynamic_value_t& value) DYNABRIDGE_NOEXCEPT_IF_DISABLED {
             if (value.kind() != rpc::value_kind::string) {
                 return optional<std::string>();
             }
@@ -760,7 +777,7 @@ namespace dynabridge {
         }
 
         template <typename Context>
-        static optional<std::string> from(Context&, dynamic_value_t& value) {
+        static optional<std::string> from(Context&, dynamic_value_t& value) DYNABRIDGE_NOEXCEPT_IF_DISABLED {
             if (value.kind() != rpc::value_kind::string) {
                 return optional<std::string>();
             }
@@ -768,7 +785,7 @@ namespace dynabridge {
         }
 
         template <typename Context>
-        static optional<std::string> from(Context&, dynamic_value_t&& value) {
+        static optional<std::string> from(Context&, dynamic_value_t&& value) DYNABRIDGE_NOEXCEPT_IF_DISABLED {
             if (value.kind() != rpc::value_kind::string) {
                 return optional<std::string>();
             }

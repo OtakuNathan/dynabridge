@@ -210,3 +210,5 @@ environments, and comparison caveats.
 ## License
 
 Apache License 2.0. See [LICENSE](LICENSE).
+
+Core/RPC no-exception support and strict/relaxed converter checks are documented in [docs/noexceptions.md](docs/noexceptions.md).

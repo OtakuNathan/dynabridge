@@ -1,6 +1,8 @@
 #ifndef DYNABRIDGE_BACKEND_BASE_H
 #define DYNABRIDGE_BACKEND_BASE_H
 
+#include "error_policy.h"
+
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
@@ -52,7 +54,7 @@ namespace dynabridge {
                     return entry.target;
                 }
             }
-            throw std::runtime_error("dynabridge export class is not registered in this context");
+            DYNABRIDGE_RAISE(std::runtime_error("dynabridge export class is not registered in this context"));
         }
 
     private:

@@ -1,6 +1,8 @@
 #ifndef DYNABRIDGE_EXPORT_CALLABLE_H
 #define DYNABRIDGE_EXPORT_CALLABLE_H
 
+#include "error_policy.h"
+
 #include <stdexcept>
 #include <tuple>
 #include <type_traits>
@@ -53,7 +55,7 @@ namespace dynabridge {
         static native_t& get(Context& ctx, optional_t& value) {
             proxy_t* proxy = (*value).native(ctx);
             if (proxy == nullptr) {
-                throw bad_conversion("dynabridge exported object has no bound native proxy");
+                DYNABRIDGE_RAISE(bad_conversion("dynabridge exported object has no bound native proxy"));
             }
             return proxy->native();
         }
@@ -666,7 +668,7 @@ namespace dynabridge {
             if (result) {
                 return *result;
             }
-            throw bad_conversion("dynabridge export overload has no matching signature");
+            DYNABRIDGE_RAISE(bad_conversion("dynabridge export overload has no matching signature"));
         }
     };
 
@@ -984,6 +986,13 @@ namespace dynabridge {
             : ctx_(&ctx), callable_(std::move(callable)) {
         }
 
+        template <typename... DynamicArgs>
+        optional<typename Context::backend_t::dynamic_value_t> call_optional(DynamicArgs&&... args) {
+            auto tuple=std::make_tuple(std::forward<DynamicArgs>(args)...);
+            return export_overload_dispatch<type_list<free_callable<R(Args...)>>,Context,Callable>::call_optional(
+                *ctx_,callable_,sizeof...(DynamicArgs),tuple_export_arg_accessor<decltype(tuple)>{&tuple});
+        }
+
         template <typename... DynamicArgs,
             std::enable_if_t<sizeof...(DynamicArgs) == sizeof...(Args)>* = nullptr>
         auto operator()(DynamicArgs&&... args)
@@ -1003,7 +1012,7 @@ namespace dynabridge {
                 export_argument<Args, Context>::try_make(
                     *ctx_, std::get<Indices>(tuple))...);
             if (!all_optionals(converted)) {
-                throw bad_conversion("dynabridge export argument conversion failed");
+                DYNABRIDGE_RAISE(bad_conversion("dynabridge export argument conversion failed"));
             }
             return to_cast<R>(*ctx_, callable_(
                 export_argument<Args, Context>::get(
@@ -1034,6 +1043,13 @@ namespace dynabridge {
             : ctx_(&ctx), callable_(std::move(callable)) {
         }
 
+        template <typename... DynamicArgs>
+        optional<typename Context::backend_t::dynamic_value_t> call_optional(DynamicArgs&&... args) {
+            auto tuple=std::make_tuple(std::forward<DynamicArgs>(args)...);
+            return export_overload_dispatch<type_list<free_callable<void(Args...)>>,Context,Callable>::call_optional(
+                *ctx_,callable_,sizeof...(DynamicArgs),tuple_export_arg_accessor<decltype(tuple)>{&tuple});
+        }
+
         template <typename... DynamicArgs,
             std::enable_if_t<sizeof...(DynamicArgs) == sizeof...(Args)>* = nullptr>
         void operator()(DynamicArgs&&... args) {
@@ -1048,7 +1064,7 @@ namespace dynabridge {
                 export_argument<Args, Context>::try_make(
                     *ctx_, std::get<Indices>(tuple))...);
             if (!all_optionals(converted)) {
-                throw bad_conversion("dynabridge export argument conversion failed");
+                DYNABRIDGE_RAISE(bad_conversion("dynabridge export argument conversion failed"));
             }
             callable_(export_argument<Args, Context>::get(
                 *ctx_, std::get<Indices>(converted))...);
@@ -1095,7 +1111,7 @@ namespace dynabridge {
                 *ctx_, std::forward<DynamicReceiver>(receiver_arg));
             receiver_t* receiver = object.native(*ctx_);
             if (receiver == nullptr) {
-                throw std::runtime_error("dynabridge export object has no proxy receiver");
+                DYNABRIDGE_RAISE(std::runtime_error("dynabridge export object has no proxy receiver"));
             }
             auto tuple = std::make_tuple(std::forward<DynamicArgs>(args)...);
             return invoke_converted(
@@ -1111,7 +1127,7 @@ namespace dynabridge {
                 export_argument<Args, Context>::try_make(
                     *ctx_, std::get<Indices>(tuple))...);
             if (!all_optionals(converted)) {
-                throw bad_conversion("dynabridge export member argument conversion failed");
+                DYNABRIDGE_RAISE(bad_conversion("dynabridge export member argument conversion failed"));
             }
             return to_cast<R>(*ctx_, invoke_export_member_callable(
                 callable_, receiver,
@@ -1153,7 +1169,7 @@ namespace dynabridge {
                 *ctx_, std::forward<DynamicReceiver>(receiver_arg));
             receiver_t* receiver = object.native(*ctx_);
             if (receiver == nullptr) {
-                throw std::runtime_error("dynabridge export object has no proxy receiver");
+                DYNABRIDGE_RAISE(std::runtime_error("dynabridge export object has no proxy receiver"));
             }
             auto tuple = std::make_tuple(std::forward<DynamicArgs>(args)...);
             invoke_converted(*receiver, tuple, std::index_sequence_for<Args...>{});
@@ -1166,7 +1182,7 @@ namespace dynabridge {
                 export_argument<Args, Context>::try_make(
                     *ctx_, std::get<Indices>(tuple))...);
             if (!all_optionals(converted)) {
-                throw bad_conversion("dynabridge export member argument conversion failed");
+                DYNABRIDGE_RAISE(bad_conversion("dynabridge export member argument conversion failed"));
             }
             invoke_export_member_callable(
                 callable_, receiver,
