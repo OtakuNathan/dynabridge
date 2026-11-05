@@ -74,7 +74,7 @@ public:
         auto box=std::make_shared<owned_receiver<Delegate>>(std::move(owner),std::move(object));
         receiver_=std::shared_ptr<Delegate>(box,&box->receiver);
     }
-    template<class Symbol,class... Args> auto prepare(Args&&... args) {
+    template<class Symbol,class... Args> auto prepare(Args&&... args) const {
         static_assert(std::is_same<typename Symbol::receiver_symbol_t,typename Delegate::bridge_class_t>::value,
                       "async member symbol belongs to a different receiver");
         // Resolve using original expressions BEFORE owning capture changes value categories.

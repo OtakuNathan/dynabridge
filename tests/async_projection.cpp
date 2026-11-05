@@ -27,8 +27,8 @@ struct backend:dynabridge::backend_base<backend> {
 int main(){
     auto owner=std::make_shared<backend::context>();
     using D=dynabridge::async_counter<backend::context>;
-    auto view=dynabridge::bind_async<dynabridge::async_counter>(owner,D::object_t{1});
-    auto static_view=dynabridge::bind_static_async<dynabridge::async_counter>(owner,D::object_t{1});
+    const auto view=dynabridge::bind_async<dynabridge::async_counter>(owner,D::object_t{1});
+    const auto static_view=dynabridge::bind_static_async<dynabridge::async_counter>(owner,D::object_t{1});
     int n=0;
     std::move(view.add(4)).start([&](dynabridge::async_result<int> r) noexcept{n=*r.value;});CHECK(n==14);
     std::move(static_view.value()).start([&](dynabridge::async_result<int> r) noexcept{n=*r.value;});CHECK(n==10);

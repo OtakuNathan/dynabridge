@@ -11,9 +11,9 @@ namespace dynabridge { namespace async_delegates {
 #define DECL_FUNCTION(...)
 #define END_CALLABLE_GROUP
 #define DECL_CONSTRUCTOR(...)
-#define BEGIN_MEMBER_CALLABLE_GROUP(name) template<class... Args> auto name(Args&&... args) { \
+#define BEGIN_MEMBER_CALLABLE_GROUP(name) template<class... Args> auto name(Args&&... args) const { \
     using Symbol=typename Host::bridge_symbol_t::name; \
-    return static_cast<Host*>(this)->template prepare<Symbol>(std::forward<Args>(args)...); }
+    return static_cast<const Host*>(this)->template prepare<Symbol>(std::forward<Args>(args)...); }
 #define DECL_MEMBER_FUNCTION(...)
 #define END_MEMBER_CALLABLE_GROUP
 // Only interface bodies in this pass; class methods need to be suppressed separately.
@@ -55,7 +55,7 @@ namespace async_delegates {
     using Base=async_detail::receiver_storage<dynabridge::clazz<Context>,Erased>; \
     public: using Base::Base; using bridge_symbol_t=import_symbols::clazz;
 #define END_CLASS };
-#define BEGIN_MEMBER_CALLABLE_GROUP(name) template<class... Args> auto name(Args&&... args) { \
+#define BEGIN_MEMBER_CALLABLE_GROUP(name) template<class... Args> auto name(Args&&... args) const { \
     return this->template prepare<typename bridge_symbol_t::name>(std::forward<Args>(args)...); }
 #include DYNABRIDGE_IMPORT_DEF
 #undef BEGIN_INTERFACE

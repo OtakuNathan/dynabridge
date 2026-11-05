@@ -91,6 +91,18 @@ int main(){
         late_error();CHECK(lifetime.expired() && deliveries==1);
         late_error(); // Retained callback token is valid, retired context has gone.
     }
+    {
+        // The error carrier is also a valid owned return value; failure is tagged.
+        auto value=make_invocation<async_error>(owner,[](context&,auto token) noexcept {
+            token.finish(async_result<async_error>(async_error(std::make_error_code(std::errc::io_error))));
+            return async_submission::accept();
+        });
+        std::move(value).start([](async_result<async_error> r) noexcept {CHECK(r.has_value() && r.value->code==std::errc::io_error);});
+        auto rejected=make_invocation<async_error>(owner,[](context&,auto) noexcept {
+            return async_submission::reject(std::make_error_code(std::errc::device_or_resource_busy));
+        });
+        std::move(rejected).start([](async_result<async_error> r) noexcept {CHECK(!r.has_value() && r.error.code==std::errc::device_or_resource_busy);});
+    }
     CHECK(count==5);
     std::puts("async contracts passed");
 }

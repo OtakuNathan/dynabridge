@@ -1343,6 +1343,9 @@ contract and terminate, including in Release builds.
 
 ### Capture and execution context
 
+A const async delegate may prepare new calls: preparation does not mutate its
+binding. This C++ constness does not classify backend effects or grant authority.
+
 Overloads are selected from the original argument expressions before capture.
 Built-in capture accepts arithmetic values, enums and owned `std::string` storage.
 Pointers, arbitrary user-defined views and reference-capturing callbacks are not
@@ -1380,6 +1383,10 @@ late callback keeps the control state valid but does not retain retired operatio
 resources. Tokens prevent duplicate delivery; they cannot repair a backend that
 calls a freed raw pointer. A backend that accepts work must eventually finish it,
 including during shutdown. Invocation destruction before submission runs no work.
+
+`async_result<R>(async_error_tag, error)` explicitly constructs failure, including
+when `R` itself is `async_error`. An `async_error` returned as a value uses the
+ordinary value constructor.
 
 `async_error` preserves a backend `std::error_code` and can be constructed from
 `std::exception_ptr` for FF's exception paths. Typed rejection is delivered by

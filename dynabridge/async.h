@@ -2,6 +2,10 @@
 #define DYNABRIDGE_ASYNC_H
 #include "optional.h"
 #include "error_policy.h"
+#include <cassert>
+#include <cstdlib>
+#include <new>
+#include <type_traits>
 #include <exception>
 #include <functional>
 #include <memory>
@@ -16,6 +20,8 @@ struct async_error {
     async_error(std::error_code c) noexcept : code(c) {}
     async_error(std::exception_ptr p) noexcept : exception(std::move(p)) {}
 };
+struct async_error_tag_t {};
+constexpr async_error_tag_t async_error_tag{};
 template<class R> struct async_result {
     static_assert(!std::is_reference<R>::value, "async results must own their storage");
     static_assert(std::is_nothrow_move_constructible<R>::value, "async results must move without throwing");
@@ -23,14 +29,17 @@ template<class R> struct async_result {
     async_error error;
     explicit async_result(R r) noexcept(std::is_nothrow_move_constructible<R>::value)
         : value(in_place, std::move(r)) {}
-    explicit async_result(async_error e) noexcept : error(std::move(e)) {}
+    async_result(async_error_tag_t, async_error e) noexcept : error(std::move(e)) {}
+    template<class V=R, typename std::enable_if<!std::is_same<V,async_error>::value,int>::type=0>
+    explicit async_result(async_error e) noexcept : async_result(async_error_tag,std::move(e)) {}
     bool has_value() const noexcept { return bool(value); }
 };
 template<> struct async_result<void> {
     bool success;
     async_error error;
     async_result() noexcept : success(true) {}
-    explicit async_result(async_error e) noexcept : success(false), error(std::move(e)) {}
+    async_result(async_error_tag_t, async_error e) noexcept : success(false), error(std::move(e)) {}
+    explicit async_result(async_error e) noexcept : async_result(async_error_tag,std::move(e)) {}
     bool has_value() const noexcept { return success; }
 };
 struct async_submission {
@@ -103,7 +112,7 @@ struct operation_state {
         cleanup();
     }
     void finish(result_type r) noexcept { deliver(std::move(r), true); }
-    void detach(async_error e) noexcept { deliver(result_type(std::move(e)), false); }
+    void detach(async_error e) noexcept { deliver(result_type(async_error_tag,std::move(e)), false); }
     void cleanup() noexcept {
         {
             std::lock_guard<std::mutex> lock(mutex);
@@ -116,7 +125,7 @@ struct operation_state {
     }
     void reject(async_error e) noexcept {
         { std::lock_guard<std::mutex> lock(mutex); require(!retired); }
-        finish(result_type(std::move(e)));
+        finish(result_type(async_error_tag,std::move(e)));
     }
     void submitted() noexcept {
         optional<async_error> deferred;
@@ -129,6 +138,7 @@ struct operation_state {
 }
 // Static performance path: Context, operation and continuation remain concrete types.
 template<class R, class Context, class Op> class static_invocation {
+    static_assert(std::is_nothrow_move_constructible<Op>::value, "operation must move without throwing");
     std::shared_ptr<Context> context_;
     std::shared_ptr<void> access_;
     optional<Op> operation_;
