@@ -150,6 +150,7 @@ public:
         using Token = async_detail::completion<State>;
         async_detail::require(bool(operation_) && bool(context_));
 #if !DYNABRIDGE_HAS_EXCEPTIONS && DYNABRIDGE_NO_EXCEPTION_STRICT
+        static_assert(std::is_nothrow_constructible<H,Handler&&>::value, "strict completion capture must be noexcept");
         static_assert(noexcept(std::declval<Op&>()(std::declval<Context&>(), std::declval<Token>())),
                       "strict async operation submission must be noexcept");
         static_assert(noexcept(std::declval<H&>()(std::declval<async_result<R>>())),
@@ -199,6 +200,12 @@ public:
     invocation& operator=(invocation&&) noexcept = default;
     invocation(const invocation&) = delete;
     template<class Handler> void start(Handler&& handler) && {
+#if !DYNABRIDGE_HAS_EXCEPTIONS && DYNABRIDGE_NO_EXCEPTION_STRICT
+        using H=typename std::decay<Handler>::type;
+        static_assert(std::is_nothrow_constructible<H,Handler&&>::value, "strict completion capture must be noexcept");
+        static_assert(noexcept(std::declval<H&>()(std::declval<async_result<R>>())),
+                      "strict erased completion must be noexcept before erasure");
+#endif
         async_detail::require(bool(operation_));
         auto op = std::move(operation_);
         op->start(handler_type(std::forward<Handler>(handler)));

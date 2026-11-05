@@ -30,6 +30,8 @@ template<class T> struct async_capture<retained_argument<T>> {
 namespace async_detail {
 template<class T> auto capture(T&& value) -> decltype(async_capture<typename std::decay<T>::type>::capture(std::forward<T>(value))) {
 #if !DYNABRIDGE_HAS_EXCEPTIONS && DYNABRIDGE_NO_EXCEPTION_STRICT
+    using Captured=decltype(async_capture<typename std::decay<T>::type>::capture(std::forward<T>(value)));
+    static_assert(std::is_nothrow_move_constructible<Captured>::value, "strict captured storage must move without throwing");
     static_assert(noexcept(async_capture<typename std::decay<T>::type>::capture(std::forward<T>(value))),
                   "strict async capture must be noexcept; move owned values instead of copying");
 #endif
@@ -38,8 +40,16 @@ template<class T> auto capture(T&& value) -> decltype(async_capture<typename std
 template<bool Erased> struct projection;
 template<> struct projection<false> { template<class C> static C apply(C c) { return c; } };
 template<> struct projection<true> { template<class C> static auto apply(C c) { return erase_invocation(std::move(c)); } };
+template<class... Args> struct safe_signature;
+template<> struct safe_signature<> : std::true_type {};
+template<class A,class... Rest> struct safe_signature<A,Rest...>
+    : std::integral_constant<bool,(!std::is_lvalue_reference<A>::value ||
+        std::is_const<typename std::remove_reference<A>::type>::value) && safe_signature<Rest...>::value> {};
 template<class Contract> struct contract_result;
-template<class R,class... Args> struct contract_result<free_callable<R(Args...)>> {using type=R;};
+template<class R,class... Args> struct contract_result<free_callable<R(Args...)>> {
+    static_assert(safe_signature<Args...>::value, "async non-const reference parameters require explicit output semantics");
+    using type=R;
+};
 template<bool Erased,class Contract,class Call> auto checked_projection(Call call) {
     static_assert(std::is_same<typename Call::result_type,typename contract_result<Contract>::type>::value,
                   "async backend result must match the selected schema signature");

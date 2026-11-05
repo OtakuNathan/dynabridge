@@ -6,6 +6,14 @@ using namespace dynabridge;
 #define CHECK(x) do {if(!(x)) {std::fprintf(stderr,"failed line %d: %s\n",__LINE__,#x);std::abort();}} while(false)
 struct move_result {int n;explicit move_result(int x) noexcept:n(x){} move_result(move_result&&) noexcept=default;move_result(const move_result&)=delete;};
 struct context {int n=41;};
+// A legal move need not empty its source; consuming the slot is explicit.
+struct sticky_handler {
+    std::shared_ptr<int> marker;
+    explicit sticky_handler(std::shared_ptr<int> p) noexcept:marker(std::move(p)){}
+    sticky_handler(sticky_handler&& other) noexcept:marker(other.marker){}
+    sticky_handler(const sticky_handler&)=delete;
+    void operator()(async_result<int> result) noexcept {CHECK(result.has_value() && marker.use_count()==1);}
+};
 int main(){
     auto owner=std::make_shared<context>();
     int count=0;
@@ -60,6 +68,28 @@ int main(){
             return async_submission::reject(std::make_error_code(std::errc::connection_refused));
         });
         std::move(rejected).start([](async_result<int> r) noexcept {CHECK(r.error.code==std::errc::connection_refused);});
+    }
+    {
+        std::function<void()> finish_later;
+        auto prepared=make_invocation<int>(owner,[&](context&,auto token) noexcept {
+            finish_later=[token]{token.finish(async_result<int>(1));};return async_submission::accept();
+        });
+        std::move(prepared).start(sticky_handler(std::make_shared<int>(1)));
+        finish_later();finish_later();
+    }
+    {
+        std::function<void()> late_error,timeout;
+        auto backend=std::make_shared<context>();std::weak_ptr<context> lifetime=backend;
+        unsigned deliveries=0;
+        auto prepared=make_invocation<void>(std::move(backend),[&](context&,auto token) noexcept {
+            late_error=[token]{token.finish(async_result<void>(std::make_error_code(std::errc::io_error)));};
+            timeout=[token]{token.detach(std::make_error_code(std::errc::timed_out));};
+            return async_submission::accept(); // Started work reports its failure through completion.
+        });
+        std::move(prepared).start([&](async_result<void> r) noexcept {CHECK(r.error.code==std::errc::timed_out);++deliveries;});
+        timeout();CHECK(!lifetime.expired());
+        late_error();CHECK(lifetime.expired() && deliveries==1);
+        late_error(); // Retained callback token is valid, retired context has gone.
     }
     CHECK(count==5);
     std::puts("async contracts passed");

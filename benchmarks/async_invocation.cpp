@@ -42,4 +42,4 @@ template<bool Erased> void bench(const char* name){
     measure(name,"thread_create_join",500,threaded,[&](auto call){std::move(call).start([&](dynabridge::async_result<int> r) noexcept {checksum+=*r.value;});});
     if(!checksum.load())std::abort();
 }
-int main(){std::puts("mode,scenario,iterations,ns_per_call,allocations_per_call");bench<false>("static");bench<true>("erased");}
+int main(int argc,char**){std::puts("mode,scenario,iterations,ns_per_call,new_calls_per_call");if(argc>1){bench<true>("erased");bench<false>("static");}else{bench<false>("static");bench<true>("erased");}}

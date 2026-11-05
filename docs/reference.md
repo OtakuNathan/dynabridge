@@ -1350,7 +1350,7 @@ implicitly assumed safe. Specialize `async_capture<T>` to provide an owning
 representation, or use `retain_argument(shared_ptr<T>)` for an explicitly retained
 object/callable. Retention does not prove an aliased pointer is covered by its
 owner; the backend/caller must ensure that relationship. Non-const lvalue-reference
-parameters retain the existing schema prohibition. Backend-sensitive lowering
+parameters are rejected by the async projection; output parameters need a separate explicit contract. Backend-sensitive lowering
 belongs in the operation's legal submit context, not in the preparation hook.
 
 Strict no-exception mode checks actual argument and operation capture, submission
@@ -1390,8 +1390,8 @@ interface; zero means the completion protocol was fulfilled, not business succes
 
 `async_contract`, `async_projection`, and `ff_async` test both concrete and erased
 calls; GCC/Clang additionally build strict/relaxed no-exception variants. Configure
-checks reject unsafe pointer capture and strict throwing capture/submission.
+checks reject unsafe pointer capture, mutable reference parameters, mismatched backend results, and strict throwing capture/submission/completion (including before erasure).
 `async_invocation_benchmark` (enable `DYNABRIDGE_BUILD_BENCHMARKS` and provide FF)
 prints paired construction/discard, inline, FF inline, move-only 64 KiB result,
-and cross-thread timings with allocation counts. Its thread case includes thread
+and cross-thread timings with global `operator new` call counts (not all allocator APIs). Its thread case includes thread
 creation/join and must not be described as pure scheduler handoff latency.

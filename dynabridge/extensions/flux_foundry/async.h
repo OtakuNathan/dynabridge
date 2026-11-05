@@ -81,6 +81,11 @@ template<class R,class Handler> struct invocation_sink {
 template<class Call,class Handler> void start_invocation(Call call,Handler&& handler) {
     using H=typename std::decay<Handler>::type;
     using R=typename Call::result_type;
+#if !DYNABRIDGE_HAS_EXCEPTIONS && DYNABRIDGE_NO_EXCEPTION_STRICT
+    static_assert(std::is_nothrow_constructible<H,Handler&&>::value, "strict FF completion capture must be noexcept");
+    static_assert(noexcept(std::declval<H&>()(std::declval<flux_foundry::result_t<R,async_error>>())),
+                  "strict FF completion must be noexcept");
+#endif
     auto slot=std::make_shared<optional<H>>(in_place,std::forward<Handler>(handler));
     using output=flux_foundry::result_t<R,async_error>;
     auto bp=flux_foundry::make_blueprint<Call,async_error>() | await_static_invocation<Call>()

@@ -471,14 +471,14 @@ if(DYNABRIDGE_BUILD_TESTS)
 endif()
 if(DYNABRIDGE_BUILD_TESTS AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     foreach(strict 0 1)
-        foreach(case 0 1 2 3 4)
+        foreach(case 0 1 2 3 4 5 6 7 8)
             try_compile(async_probe_${strict}_${case}
                 "${CMAKE_CURRENT_BINARY_DIR}/async_compile_checks/${strict}_${case}"
                 "${CMAKE_CURRENT_SOURCE_DIR}/tests/compile_fail/async_contract.cpp"
                 CMAKE_FLAGS "-DCMAKE_CXX_STANDARD=14"
                 COMPILE_DEFINITIONS -fno-exceptions -DDYNABRIDGE_NO_EXCEPTION_STRICT=${strict} -DASYNC_CASE=${case}
                 OUTPUT_VARIABLE async_probe_output)
-            if(case EQUAL 1 OR case EQUAL 4 OR (strict EQUAL 1 AND (case EQUAL 2 OR case EQUAL 3)))
+            if(case EQUAL 1 OR case EQUAL 4 OR case EQUAL 6 OR (strict EQUAL 1 AND (case EQUAL 2 OR case EQUAL 3 OR case EQUAL 5 OR case EQUAL 7 OR case EQUAL 8)))
                 if(async_probe_${strict}_${case})
                     message(FATAL_ERROR "Invalid async contract compiled: ${strict}/${case}")
                 endif()
