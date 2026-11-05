@@ -38,6 +38,13 @@ template<class T> auto capture(T&& value) -> decltype(async_capture<typename std
 template<bool Erased> struct projection;
 template<> struct projection<false> { template<class C> static C apply(C c) { return c; } };
 template<> struct projection<true> { template<class C> static auto apply(C c) { return erase_invocation(std::move(c)); } };
+template<class Contract> struct contract_result;
+template<class R,class... Args> struct contract_result<free_callable<R(Args...)>> {using type=R;};
+template<bool Erased,class Contract,class Call> auto checked_projection(Call call) {
+    static_assert(std::is_same<typename Call::result_type,typename contract_result<Contract>::type>::value,
+                  "async backend result must match the selected schema signature");
+    return projection<Erased>::apply(std::move(call));
+}
 template<class Descriptor,class Host> struct mixin {};
 template<class Host,class List> struct interfaces;
 template<class Host,class... D> struct interfaces<Host,type_list<D...>> : mixin<D,Host>... {};
@@ -58,11 +65,13 @@ public:
         receiver_=std::shared_ptr<Delegate>(box,&box->receiver);
     }
     template<class Symbol,class... Args> auto prepare(Args&&... args) {
+        static_assert(std::is_same<typename Symbol::receiver_symbol_t,typename Delegate::bridge_class_t>::value,
+                      "async member symbol belongs to a different receiver");
         // Resolve using original expressions BEFORE owning capture changes value categories.
         using selector=import_contract_selector_group<typename Symbol::overloads_t,Context>;
         using contract=typename decltype(selector::select(std::declval<Args>()...))::type;
         auto arguments=std::make_tuple(capture(std::forward<Args>(args))...);
-        return projection<Erased>::apply(Context::backend_t::template prepare_async<Symbol,contract>(receiver_,std::move(arguments)));
+        return checked_projection<Erased,contract>(Context::backend_t::template prepare_async<Symbol,contract>(receiver_,std::move(arguments)));
     }
 };
 }

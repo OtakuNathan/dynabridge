@@ -90,7 +90,7 @@ namespace async_functions {
     using Selector=import_contract_selector_group<typename Symbol::overloads_t,C>; \
     using Contract=typename decltype(Selector::select(std::declval<A>()...))::type; \
     auto captured=std::make_tuple(async_detail::capture(std::forward<A>(args))...); \
-    return async_detail::projection<Erased>::apply(C::backend_t::template prepare_async_free<Symbol,Contract>(std::move(owner),std::move(captured))); }
+    return async_detail::checked_projection<Erased,Contract>(C::backend_t::template prepare_async_free<Symbol,Contract>(std::move(owner),std::move(captured))); }
 #define END_CALLABLE_GROUP
 #include DYNABRIDGE_IMPORT_DEF
 #undef BEGIN_INTERFACE
