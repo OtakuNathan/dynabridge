@@ -1307,3 +1307,91 @@ Treat benchmark numbers as local measurements, not portable claims.
 ## License
 
 Dyna Bridge is licensed under the Apache License 2.0. See [`LICENSE`](../LICENSE).
+
+## Owned asynchronous invocations
+
+The import schema also generates asynchronous class delegates and free functions.
+`bind_async<Delegate>(context_owner, object)` erases the operation into
+`invocation<R>`. `bind_static_async<Delegate>(context_owner, object)` preserves its
+concrete callable type. Both use the same schema symbols and original overload
+selection; synchronous delegates and wire identifiers are unchanged. Constructors
+remain synchronous. A backend opts in by implementing
+`prepare_async<Symbol, Contract>(receiver_owner, captured_tuple)` and, for free
+functions, `prepare_async_free<Symbol, Contract>(context_owner, captured_tuple)`.
+These hooks prepare a cold operation, not a synchronous call disguised as async.
+
+```cpp
+auto gpu = dynabridge::bind_static_async<dynabridge::gpu>(owner, object);
+auto call = gpu.add_one(41); // static_invocation<int, Context, Callable>
+// The backend can also construct a native operation directly:
+auto native = dynabridge::make_invocation<int>(owner,
+    [](auto& context, auto completion) noexcept {
+        context.submit(completion); // retain the owning token until retirement
+        return dynabridge::async_submission::accept();
+    });
+auto erased = dynabridge::erase_invocation(std::move(native));
+```
+
+`make_invocation<R>` retains the actual operation callable and context type;
+it does not route submission or completion through a virtual function or
+`std::function`. `erase_invocation` adds that optional boundary. The FF extension
+is `<dynabridge/extensions/flux_foundry/async.h>`; it offers
+`await_invocation<R>()`, `await_static_invocation<Call>()`, executor overloads,
+and `start_invocation(call, handler)`. A reusable Blueprint accepts a **fresh**
+invocation as input for each run. Moved-from or twice-started calls violate a
+contract and terminate, including in Release builds.
+
+### Capture and execution context
+
+Overloads are selected from the original argument expressions before capture.
+Built-in capture accepts arithmetic values, enums and owned `std::string` storage.
+Pointers, arbitrary user-defined views and reference-capturing callbacks are not
+implicitly assumed safe. Specialize `async_capture<T>` to provide an owning
+representation, or use `retain_argument(shared_ptr<T>)` for an explicitly retained
+object/callable. Retention does not prove an aliased pointer is covered by its
+owner; the backend/caller must ensure that relationship. Non-const lvalue-reference
+parameters retain the existing schema prohibition. Backend-sensitive lowering
+belongs in the operation's legal submit context, not in the preparation hook.
+
+Strict no-exception mode checks actual argument and operation capture, submission
+and completion expressions. Copying a `const std::string&` is rejected in strict
+mode: pass an owned rvalue or an explicitly retained representation. Relaxed mode
+relaxes annotations; it neither catches exceptions nor permits them to escape a
+completion/destructor boundary. Standard allocator exhaustion in a no-exception
+build remains a process-level failure. Results must own their storage and be
+nothrow movable; they need not be default constructible or copyable.
+
+### Delivery and retirement are separate
+
+An owning completion token has `finish(async_result<R>)` for safe backend
+retirement and `detach(async_error)` for observer-only delivery. Detach leaves the
+context, captured operation and optional per-call access owner alive. Later
+`finish` retires them without a second delivery. Detach during submission is
+provisional: explicit rejection wins over it. Rejection is legal only when no
+operation will subsequently complete; partial starts must return accepted and
+finish with an error after safe cleanup. Backend code must establish retention
+and cleanup records before irreversible effects, and must not throw after taking
+completion responsibility.
+
+The operation's access owner is released before its terminal continuation, and
+completion storage is explicitly consumed and cleared. Context and operation
+storage cannot disappear while their submit body is still executing. A retained
+late callback keeps the control state valid but does not retain retired operation
+resources. Tokens prevent duplicate delivery; they cannot repair a backend that
+calls a freed raw pointer. A backend that accepts work must eventually finish it,
+including during shutdown. Invocation destruction before submission runs no work.
+
+`async_error` preserves a backend `std::error_code` and can be constructed from
+`std::exception_ptr` for FF's exception paths. Typed rejection is delivered by
+resuming FF with that error and returning zero from its narrow `int submit()`
+interface; zero means the completion protocol was fulfilled, not business success.
+
+### Validation and measurement
+
+`async_contract`, `async_projection`, and `ff_async` test both concrete and erased
+calls; GCC/Clang additionally build strict/relaxed no-exception variants. Configure
+checks reject unsafe pointer capture and strict throwing capture/submission.
+`async_invocation_benchmark` (enable `DYNABRIDGE_BUILD_BENCHMARKS` and provide FF)
+prints paired construction/discard, inline, FF inline, move-only 64 KiB result,
+and cross-thread timings with allocation counts. Its thread case includes thread
+creation/join and must not be described as pure scheduler handoff latency.

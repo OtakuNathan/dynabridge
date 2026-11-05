@@ -610,3 +610,5 @@ namespace dynabridge {
 #undef CALLABLE
 #undef OBJECT
 }
+
+#include "async_generate.h"

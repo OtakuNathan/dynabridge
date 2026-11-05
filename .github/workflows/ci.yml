@@ -24,6 +24,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout FF for async integration tests
+        uses: actions/checkout@v4
+        with:
+          repository: OtakuNathan/flux_foundry
+          ref: 81f4b3cb0f20b018f0d3fb8db0bf096057f030e8
+          path: build-deps/flux_foundry
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -46,6 +53,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
           -DDYNABRIDGE_BUILD_BENCHMARKS=ON
           -DDYNABRIDGE_BUILD_EXAMPLES=ON
+          -DFLUX_FOUNDRY_INCLUDE_DIR="${{ github.workspace }}/build-deps/flux_foundry"
           -DPython3_ROOT_DIR="${{ env.pythonLocation }}"
 
       - name: Build

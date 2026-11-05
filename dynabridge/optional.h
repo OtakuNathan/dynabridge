@@ -215,6 +215,7 @@ namespace dynabridge {
         typename T,
         bool = std::is_move_constructible<T>::value,
         bool = std::is_trivially_move_constructible<T>::value
+            && std::is_trivially_copy_constructible<T>::value
             && std::is_trivially_destructible<T>::value>
     class optional_move_construct_base;
 
