@@ -276,7 +276,11 @@ namespace dynabridge {
 #define BEGIN_CLASS(ns, clazz)
 #define DECL_CONSTRUCTOR(...)
 #define BEGIN_MEMBER_CALLABLE_GROUP(name)
-#define DECL_MEMBER_FUNCTION(...)
+// Check member declarations outside lazy registration templates as well.
+// MSVC may defer non-dependent signature aliases in those function bodies.
+#define DECL_MEMBER_FUNCTION(...) \
+    static_assert(!std::is_reference<element_at_t<0, type_list<__VA_ARGS__>>>::value, \
+        "bridge callable return type cannot be a reference; use a value or void instead.");
 #define END_MEMBER_CALLABLE_GROUP
 #define END_CLASS
     #include DYNABRIDGE_EXPORT_DEF

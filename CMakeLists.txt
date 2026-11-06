@@ -162,6 +162,7 @@ if(DYNABRIDGE_BUILD_TESTS)
                 "-DCMAKE_CXX_STANDARD=14"
                 "-DCMAKE_CXX_STANDARD_REQUIRED=ON"
                 "-DCMAKE_CXX_EXTENSIONS=OFF"
+            COMPILE_DEFINITIONS ${ARGN}
             OUTPUT_VARIABLE compiler_output
         )
 
@@ -230,6 +231,15 @@ if(DYNABRIDGE_BUILD_TESTS)
                     -DRETURN_KIND=${kind} -DSCHEMA_EXPORT=${export} -DSCHEMA_MEMBER=${member})
             endforeach()
         endforeach()
+        dynabridge_check_reference_return(return_class_${kind}
+            tests/compile_fail/return_reference_schema.cpp
+            -DRETURN_KIND=${kind} -DSCHEMA_EXPORT=1 -DSCHEMA_MEMBER=1 -DSCHEMA_CLASS=1)
+    endforeach()
+
+    foreach(class 0 1)
+        dynabridge_check_interface_compilation(return_value_schema_${class}
+            tests/compile_fail/return_reference_schema.cpp TRUE
+            -DRETURN_KIND=0 -DSCHEMA_EXPORT=1 -DSCHEMA_MEMBER=1 -DSCHEMA_CLASS=${class})
     endforeach()
 
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

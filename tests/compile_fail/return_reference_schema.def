@@ -1,9 +1,17 @@
 #if SCHEMA_MEMBER
+#if SCHEMA_CLASS
+BEGIN_CLASS(native, return_class)
+#else
 BEGIN_INTERFACE(return_interface)
+#endif
     BEGIN_MEMBER_CALLABLE_GROUP(result)
         DECL_MEMBER_FUNCTION(result_t)
     END_MEMBER_CALLABLE_GROUP
+#if SCHEMA_CLASS
+END_CLASS
+#else
 END_INTERFACE
+#endif
 #else
 BEGIN_CALLABLE_GROUP(result)
     DECL_CALLABLE(result_t)

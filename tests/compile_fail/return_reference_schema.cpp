@@ -1,4 +1,6 @@
-#if RETURN_KIND == 1
+#if RETURN_KIND == 0
+using result_t = int;
+#elif RETURN_KIND == 1
 using result_t = int&;
 #elif RETURN_KIND == 2
 using result_t = const int&;
