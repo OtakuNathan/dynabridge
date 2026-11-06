@@ -193,6 +193,105 @@ if(DYNABRIDGE_BUILD_TESTS)
     target_link_libraries(optional_test PRIVATE dynabridge::dynabridge)
     add_test(NAME optional COMMAND optional_test)
 
+    add_executable(return_value_test tests/return_value_test.cpp)
+    target_link_libraries(return_value_test PRIVATE dynabridge::dynabridge)
+    add_test(NAME return_value COMMAND return_value_test)
+
+    # C++17 guaranteed elision must still support non-copyable, non-movable
+    # prvalue results when the converter can consume an rvalue reference.
+    add_executable(return_value_compatibility_test tests/compile_fail/return_value_compatibility.cpp)
+    target_link_libraries(return_value_compatibility_test PRIVATE dynabridge::dynabridge)
+    set_property(TARGET return_value_compatibility_test PROPERTY CXX_STANDARD 17)
+    add_test(NAME return_value_compatibility COMMAND return_value_compatibility_test)
+
+    function(dynabridge_check_reference_return name source)
+        try_compile(compiled
+            "${CMAKE_CURRENT_BINARY_DIR}/compile_checks/${name}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/${source}"
+            CMAKE_FLAGS -DCMAKE_CXX_STANDARD=14 -DCMAKE_CXX_STANDARD_REQUIRED=ON
+            COMPILE_DEFINITIONS ${ARGN}
+            OUTPUT_VARIABLE compiler_output)
+        file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/compile_checks/${name}.log" "${compiler_output}")
+        if(compiled OR NOT compiler_output MATCHES "bridge callable return type cannot be a reference")
+            message(FATAL_ERROR "Expected reference return diagnostic: ${name}\n${compiler_output}")
+        endif()
+    endfunction()
+
+    foreach(kind 1 2 3)
+        foreach(path RANGE 0 9)
+            dynabridge_check_reference_return(return_reference_${kind}_${path}
+                tests/compile_fail/return_reference.cpp
+                -DRETURN_KIND=${kind} -DRETURN_PATH=${path})
+        endforeach()
+        foreach(export 0 1)
+            foreach(member 0 1)
+                dynabridge_check_reference_return(return_schema_${kind}_${export}_${member}
+                    tests/compile_fail/return_reference_schema.cpp
+                    -DRETURN_KIND=${kind} -DSCHEMA_EXPORT=${export} -DSCHEMA_MEMBER=${member})
+            endforeach()
+        endforeach()
+    endforeach()
+
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        foreach(strict 0 1)
+            foreach(copy 0 1)
+                set(probe "return_materialization_${strict}_${copy}")
+                try_compile(compiled "${CMAKE_CURRENT_BINARY_DIR}/compile_checks/${probe}"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/tests/compile_fail/return_materialization.cpp"
+                    CMAKE_FLAGS -DCMAKE_CXX_STANDARD=14
+                    COMPILE_DEFINITIONS -fno-exceptions
+                        -DDYNABRIDGE_NO_EXCEPTION_STRICT=${strict} -DRETURN_COPY=${copy}
+                    OUTPUT_VARIABLE compiler_output)
+                file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/compile_checks/${probe}.log" "${compiler_output}")
+                if(strict AND copy)
+                    if(compiled OR NOT compiler_output MATCHES "export result materialization must be noexcept")
+                        message(FATAL_ERROR "Expected throwing result copy diagnostic: ${probe}\n${compiler_output}")
+                    endif()
+                elseif(NOT compiled)
+                    message(FATAL_ERROR "Valid export result rejected: ${probe}\n${compiler_output}")
+                endif()
+            endforeach()
+        endforeach()
+    endif()
+
+    add_executable(rpc_probe_test tests/rpc_probe_test.cpp)
+    target_link_libraries(rpc_probe_test PRIVATE dynabridge::dynabridge)
+    add_test(NAME rpc_probe COMMAND rpc_probe_test)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        foreach(strict 0 1)
+            add_executable(rpc_probe_noexceptions_${strict} tests/rpc_probe_test.cpp)
+            target_link_libraries(rpc_probe_noexceptions_${strict} PRIVATE dynabridge::dynabridge)
+            target_compile_options(rpc_probe_noexceptions_${strict} PRIVATE -fno-exceptions)
+            target_compile_definitions(rpc_probe_noexceptions_${strict} PRIVATE DYNABRIDGE_NO_EXCEPTION_STRICT=${strict})
+            add_test(NAME rpc_probe_noexceptions_${strict} COMMAND rpc_probe_noexceptions_${strict})
+            foreach(probe_case VALID MISSING WRONG_RETURN NOT_NOEXCEPT)
+                set(probe_definitions -fno-exceptions -DDYNABRIDGE_NO_EXCEPTION_STRICT=${strict})
+                if(NOT probe_case STREQUAL "VALID")
+                    list(APPEND probe_definitions -DPROBE_${probe_case}=1)
+                endif()
+                set(probe "required_probe_${strict}_${probe_case}")
+                try_compile(${probe}
+                    "${CMAKE_CURRENT_BINARY_DIR}/compile_checks/${probe}"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/tests/compile_fail/rpc_probe_contract.cpp"
+                    CMAKE_FLAGS -DCMAKE_CXX_STANDARD=14
+                    COMPILE_DEFINITIONS ${probe_definitions}
+                    OUTPUT_VARIABLE probe_output)
+                file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/compile_checks/${probe}.log" "${probe_output}")
+                if(probe_case STREQUAL "MISSING" OR probe_case STREQUAL "WRONG_RETURN")
+                    if(${probe} OR NOT probe_output MATCHES "converter must provide bool probe")
+                        message(FATAL_ERROR "Expected required probe diagnostic: ${probe}\n${probe_output}")
+                    endif()
+                elseif(strict AND probe_case STREQUAL "NOT_NOEXCEPT")
+                    if(${probe} OR NOT probe_output MATCHES "converter probe must be noexcept")
+                        message(FATAL_ERROR "Expected noexcept probe diagnostic: ${probe}\n${probe_output}")
+                    endif()
+                elseif(NOT ${probe})
+                    message(FATAL_ERROR "Valid probe rejected: ${probe}\n${probe_output}")
+                endif()
+            endforeach()
+        endforeach()
+    endif()
+
     add_executable(rpc_backend_test tests/rpc_backend_test.cpp)
     target_link_libraries(rpc_backend_test PRIVATE dynabridge::dynabridge)
     add_test(NAME rpc_backend COMMAND rpc_backend_test)
@@ -243,6 +342,13 @@ if(DYNABRIDGE_BUILD_TESTS)
             Python3::Python
         )
         add_test(NAME python_backend COMMAND python_backend_test)
+
+        add_executable(python_exception_test tests/python_exception_test.cpp)
+        target_link_libraries(python_exception_test PRIVATE
+            dynabridge::dynabridge
+            Python3::Python
+        )
+        add_test(NAME python_exception COMMAND python_exception_test)
 
         add_library(python_runtime_addon MODULE tests/python_runtime_addon.cpp)
         dynabridge_configure_python_module(
@@ -313,6 +419,13 @@ if(DYNABRIDGE_BUILD_EXAMPLES)
                     "${CMAKE_CURRENT_SOURCE_DIR}/examples/napi/smoke.js"
                     "$<TARGET_FILE:dynabridge_napi_example>"
             )
+            add_test(
+                NAME napi_example_workers
+                COMMAND "${Node_EXECUTABLE}"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/tests/napi_worker_smoke.js"
+                    "$<TARGET_FILE:dynabridge_napi_example>"
+            )
+            set_tests_properties(napi_example_workers PROPERTIES TIMEOUT 30)
         endif()
     endif()
 endif()

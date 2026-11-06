@@ -324,6 +324,49 @@ namespace dynabridge {
             ctx, std::forward<Value>(value));
     }
 
+    // Explicit opt-in for RPC-like backends. Sharing rpc::value alone does not
+    // grant this policy or permission to consume caller-owned arguments.
+    struct rpc_export_probe_policy {};
+
+    template <typename Backend, typename = void>
+    struct uses_rpc_export_probe : std::false_type {};
+    template <typename Backend>
+    struct uses_rpc_export_probe<Backend, void_t<typename Backend::export_probe_policy>>
+        : std::is_same<typename Backend::export_probe_policy, rpc_export_probe_policy> {};
+
+    template <typename Converter, typename Context, typename Dynamic, typename = void>
+    struct has_converter_probe : std::false_type {};
+
+    template <typename Converter, typename Context, typename Dynamic>
+    struct has_converter_probe<Converter, Context, Dynamic, void_t<decltype(
+        Converter::probe(std::declval<Context&>(), std::declval<const Dynamic&>()))>>
+        : std::is_same<bool, decltype(Converter::probe(
+            std::declval<Context&>(), std::declval<const Dynamic&>()))> {};
+
+    template <typename T, typename Context, typename Dynamic>
+    void check_converter_probe_contract() {
+        using converter_t = typename Context::backend_t::template converter<
+            typename std::decay<T>::type>;
+        static_assert(has_converter_probe<converter_t, Context, Dynamic>::value,
+            "dynabridge converter must provide bool probe(Context&, const Dynamic&)");
+#if !DYNABRIDGE_HAS_EXCEPTIONS && DYNABRIDGE_NO_EXCEPTION_STRICT
+        static_assert(noexcept(converter_t::probe(
+            std::declval<Context&>(), std::declval<const Dynamic&>())),
+            "dynabridge strict no-exception converter probe must be noexcept");
+#endif
+    }
+
+    template <typename T, typename Context, typename Dynamic>
+    bool from_probe(Context& ctx, const Dynamic& value) {
+        check_converter_probe_contract<T, Context, Dynamic>();
+        return Context::backend_t::template converter<typename std::decay<T>::type>::probe(ctx, value);
+    }
+
+    // Exact library binder types specialize this trait; lookalike/custom binders
+    // retain their original const accessor or typed invocation path.
+    template <typename T>
+    struct is_transactional_export_binder : std::false_type {};
+
     template <typename T, typename Context, typename Dynamic>
     auto from_optional(Context& ctx, Dynamic&& value)
         -> decltype(Context::backend_t::template converter<typename std::decay<T>::type>::from(

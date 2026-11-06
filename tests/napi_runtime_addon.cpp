@@ -4,6 +4,7 @@
 #include "dynabridge/backends/napi.h"
 
 #include <exception>
+#include <memory>
 #include <stdexcept>
 #include <string>
 
@@ -273,8 +274,11 @@ namespace {
 
     napi_value init(napi_env env, napi_value exports) {
         try {
-            static napi_export_context_t ctx;
-            ctx = napi_export_context_t(env);
+            std::unique_ptr<napi_export_context_t> owner(new napi_export_context_t(env));
+            dynabridge::napi_backend::check(napi_add_env_cleanup_hook(
+                env, [](void* data) { delete static_cast<napi_export_context_t*>(data); }, owner.get()),
+                "napi_add_env_cleanup_hook failed for export context");
+            auto& ctx = *owner.release();
             dynabridge::napi_backend::module_t module{env, exports};
 
             dynabridge::export_free_callable(ctx, module, "add", add_function);

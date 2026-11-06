@@ -31,10 +31,13 @@ namespace dynabridge {
             Tuple& dynamic,
             std::index_sequence<Indices...>)
         {
-            auto converted = std::make_tuple(
-                export_argument<Args, Context>::try_make(
-                    ctx, std::get<Indices>(dynamic))...);
-            if (!all_optionals(converted)) {
+            const auto accessor = tuple_export_arg_accessor<Tuple>{&dynamic};
+            export_arguments_plan<Context, Args...> plan(ctx, accessor);
+            if (!plan.probe(ctx, accessor)) {
+                DYNABRIDGE_RAISE(bad_conversion("dynabridge export constructor argument conversion failed"));
+            }
+            auto converted = std::make_tuple(plan.template convert<Indices>(ctx, accessor)...);
+            if (!accepted_export_arguments<Context>(converted)) {
                 DYNABRIDGE_RAISE(bad_conversion("dynabridge export constructor argument conversion failed"));
             }
             typename Context::backend_t::template object_t<Class, export_t> object(

@@ -1,0 +1,78 @@
+diff --git a/dynabridge/backend_base.h b/dynabridge/backend_base.h
+index a90eeee..5143ad0 100644
+--- a/dynabridge/backend_base.h
++++ b/dynabridge/backend_base.h
+@@ -607,6 +607,13 @@ namespace dynabridge {
+             return backend_t::template define_constructor_impl<Receiver, Signature>(ctx, target);
+         }
+ 
++        template <typename Class, typename Context, typename Self, typename... Args>
++        static void construct_export_instance_impl(Context& ctx, Self self, Args&&... args) {
++            typename backend_t::template object_t<Class, export_t> object(
++                ctx, self, std::forward<Args>(args)...);
++            (void)object;
++        }
++
+         template <typename Class, typename Context, typename... Args>
+         static auto make_export_object(Context& ctx, Args&&... args) {
+             static_assert(
+diff --git a/dynabridge/backends/napi.h b/dynabridge/backends/napi.h
+index 6debe0e..1ce5414 100644
+--- a/dynabridge/backends/napi.h
++++ b/dynabridge/backends/napi.h
+@@ -141,6 +141,14 @@ namespace dynabridge {
+ 
+             template <typename Context>
+             void construct_export_object_from_native(Context& ctx, napi_value self, Receiver* receiver) {
++                wrap_export_native(ctx, self, receiver);
++                reset(ctx.env(), self);
++            }
++
++            // The JS constructor callback already roots self. Attaching native
++            // ownership does not itself require a persistent C++ object handle.
++            template <typename Context>
++            static void wrap_export_native(Context& ctx, napi_value self, Receiver* receiver) {
+ #if NAPI_VERSION >= 8
+                 if (napi_type_tag_object(ctx.env(), self, export_type_tag()) != napi_ok) {
+                     export_base_t::destroy_native(ctx, receiver);
+@@ -151,7 +159,6 @@ namespace dynabridge {
+                     export_base_t::destroy_native(ctx, receiver);
+                     throw std::runtime_error("napi_wrap failed");
+                 }
+-                reset(ctx.env(), self);
+             }
+ 
+ #if NAPI_VERSION >= 8
+@@ -490,6 +497,14 @@ namespace dynabridge {
+             static_cast<class_state<Receiver, Context>*>(target.state)->template set_constructor<Signature>();
+         }
+ 
++        template <typename Class, typename Context, typename... Args>
++        static void construct_export_instance_impl(Context& ctx, napi_value self, Args&&... args) {
++            using object_type = object_t<Class, export_t>;
++            using native_base = export_object_base<object_type, napi_backend, Class>;
++            Class* native = native_base::construct_native(ctx, std::forward<Args>(args)...);
++            object_type::wrap_export_native(ctx, self, native);
++        }
++
+         template <typename Class, typename Context>
+         static void store_export_class_impl(Context& ctx, class_target_t target) {
+             ctx.template store_export_class<Class>(std::move(target));
+diff --git a/dynabridge/export_core.h b/dynabridge/export_core.h
+index 9f2e1d4..6ce2998 100644
+--- a/dynabridge/export_core.h
++++ b/dynabridge/export_core.h
+@@ -35,12 +35,11 @@ namespace dynabridge {
+             if (!all_optionals(converted)) {
+                 throw bad_conversion("dynabridge export constructor argument conversion failed");
+             }
+-            typename Context::backend_t::template object_t<Class, export_t> object(
++            Context::backend_t::template construct_export_instance_impl<Class>(
+                 ctx,
+                 self,
+                 export_argument<Args, Context>::get(
+                     ctx, std::get<Indices>(converted))...);
+-            (void)object;
+         }
+     };
+ 

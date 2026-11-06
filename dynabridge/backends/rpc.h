@@ -455,6 +455,15 @@ namespace dynabridge {
                 template <std::size_t I>
                 const value& get() const { return (*args)[I]; }
             };
+            // The router exclusively owns decoded request arguments. Only a
+            // library binder may consume them, after candidate-wide probing.
+            struct consuming_vector_accessor {
+                constexpr static std::size_t static_arity = dynamic_arity;
+                std::vector<value>* args = nullptr;
+
+                template <std::size_t I>
+                value& get() const { return (*args)[I]; }
+            };
         }
 
         // CONTRACT (thread safety): the router is not synchronized.
@@ -513,18 +522,30 @@ namespace dynabridge {
                 static optional<value> invoke_binder(void* state, std::vector<value>& args) {
                     return invoke_binder_impl(
                         *static_cast<Binder*>(state), args,
-                        is_export_overload_binder<Binder>{});
+                        is_transactional_export_binder<Binder>{});
                 }
 
                 template <typename Binder>
                 static optional<value> invoke_binder_impl(Binder& binder, std::vector<value>& args,
+                    std::true_type) {
+                    return binder.dispatch_optional(args.size(), detail::consuming_vector_accessor{&args});
+                }
+
+                template <typename Binder>
+                static optional<value> invoke_binder_impl(Binder& binder, std::vector<value>& args,
+                    std::false_type) {
+                    return invoke_legacy_binder(binder, args, is_export_overload_binder<Binder>{});
+                }
+
+                template <typename Binder>
+                static optional<value> invoke_legacy_binder(Binder& binder, std::vector<value>& args,
                     std::false_type) {
                     using signature_t = typename Binder::signature_t;
                     return invoke_typed(binder, args, type_identity<signature_t>{});
                 }
 
                 template <typename Binder>
-                static optional<value> invoke_binder_impl(Binder& binder, std::vector<value>& args,
+                static optional<value> invoke_legacy_binder(Binder& binder, std::vector<value>& args,
                     std::true_type) {
                     return binder.dispatch_optional(args.size(), detail::vector_accessor{&args});
                 }
@@ -615,6 +636,7 @@ namespace dynabridge {
     }
 
     struct rpc_backend : backend_base<rpc_backend> {
+        using export_probe_policy = rpc_export_probe_policy;
         using dynamic_value_t = rpc::value;
         using module_t = rpc::router;
 
@@ -692,6 +714,13 @@ namespace dynabridge {
     template <>
     struct rpc_backend::converter<int> {
         template <typename Context>
+        static bool probe(Context&, const dynamic_value_t& value) noexcept {
+            return value.kind() == rpc::value_kind::signed_integer
+                && value.as_signed() >= std::numeric_limits<int>::min()
+                && value.as_signed() <= std::numeric_limits<int>::max();
+        }
+
+        template <typename Context>
         static dynamic_value_t to(Context&, int value) noexcept {
             return dynamic_value_t::signed_integer(value);
         }
@@ -710,6 +739,12 @@ namespace dynabridge {
     template <>
     struct rpc_backend::converter<unsigned> {
         template <typename Context>
+        static bool probe(Context&, const dynamic_value_t& value) noexcept {
+            return value.kind() == rpc::value_kind::unsigned_integer
+                && value.as_unsigned() <= std::numeric_limits<unsigned>::max();
+        }
+
+        template <typename Context>
         static dynamic_value_t to(Context&, unsigned value) noexcept {
             return dynamic_value_t::unsigned_integer(value);
         }
@@ -727,6 +762,11 @@ namespace dynabridge {
     template <>
     struct rpc_backend::converter<double> {
         template <typename Context>
+        static bool probe(Context&, const dynamic_value_t& value) noexcept {
+            return value.kind() == rpc::value_kind::real;
+        }
+
+        template <typename Context>
         static dynamic_value_t to(Context&, double value) noexcept {
             return dynamic_value_t::real(value);
         }
@@ -743,6 +783,11 @@ namespace dynabridge {
     template <>
     struct rpc_backend::converter<bool> {
         template <typename Context>
+        static bool probe(Context&, const dynamic_value_t& value) noexcept {
+            return value.kind() == rpc::value_kind::boolean;
+        }
+
+        template <typename Context>
         static dynamic_value_t to(Context&, bool value) noexcept {
             return dynamic_value_t::boolean(value);
         }
@@ -758,6 +803,11 @@ namespace dynabridge {
 
     template <>
     struct rpc_backend::converter<std::string> {
+        template <typename Context>
+        static bool probe(Context&, const dynamic_value_t& value) noexcept {
+            return value.kind() == rpc::value_kind::string;
+        }
+
         template <typename Context>
         static dynamic_value_t to(Context&, const std::string& value) noexcept {
             return dynamic_value_t::borrowed_string(value);

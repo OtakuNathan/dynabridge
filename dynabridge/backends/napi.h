@@ -147,7 +147,7 @@ namespace dynabridge {
                     throw std::runtime_error("napi_type_tag_object failed");
                 }
 #endif
-                if (napi_wrap(ctx.env(), self, receiver, native_finalizer<Context, Receiver>, &ctx, nullptr) != napi_ok) {
+                if (napi_wrap(ctx.env(), self, receiver, native_finalizer<Receiver>, nullptr, nullptr) != napi_ok) {
                     export_base_t::destroy_native(ctx, receiver);
                     throw std::runtime_error("napi_wrap failed");
                 }
@@ -166,9 +166,11 @@ namespace dynabridge {
 #endif
 
         private:
-            template <typename Context, typename Native>
-            static void native_finalizer(napi_env, void* data, void* hint) {
-                export_base_t::destroy_native(*static_cast<Context*>(hint), static_cast<Native*>(data));
+            template <typename Native>
+            static void native_finalizer(napi_env, void* data, void*) {
+                // Env cleanup hooks run before object finalizers. The module's
+                // context may already be gone; native deletion needs no ctx.
+                delete static_cast<Native*>(data);
             }
 
             napi_env env_ = nullptr;

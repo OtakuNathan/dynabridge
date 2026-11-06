@@ -65,6 +65,57 @@ namespace dynabridge {
             PyObject* object_ = nullptr;
         };
 
+        // Like object_ref, this owner must be copied, restored, and destroyed
+        // with its interpreter active and its GIL held. Do not retain it (or an
+        // exception_ptr referring to it) beyond that interpreter's lifetime.
+        class python_error : public std::runtime_error {
+        public:
+            explicit python_error(const char* message)
+                : std::runtime_error(message) {
+                if (!PyErr_Occurred()) {
+                    PyErr_SetString(PyExc_RuntimeError, message);
+                }
+                PyErr_Fetch(&type_, &value_, &traceback_);
+            }
+
+            python_error(const python_error& other) noexcept
+                : std::runtime_error(other), type_(other.type_),
+                  value_(other.value_), traceback_(other.traceback_) {
+                Py_XINCREF(type_);
+                Py_XINCREF(value_);
+                Py_XINCREF(traceback_);
+            }
+
+            python_error(python_error&& other) noexcept
+                : std::runtime_error(std::move(other)),
+                  type_(std::exchange(other.type_, nullptr)),
+                  value_(std::exchange(other.value_, nullptr)),
+                  traceback_(std::exchange(other.traceback_, nullptr)) {}
+
+            python_error& operator=(const python_error&) = delete;
+            python_error& operator=(python_error&&) = delete;
+
+            ~python_error() noexcept override {
+                Py_XDECREF(type_);
+                Py_XDECREF(value_);
+                Py_XDECREF(traceback_);
+            }
+
+            // Retain our references so a copied or rethrown exception can also
+            // restore its original state. PyErr_Restore steals these new refs.
+            void restore() const noexcept {
+                Py_XINCREF(type_);
+                Py_XINCREF(value_);
+                Py_XINCREF(traceback_);
+                PyErr_Restore(type_, value_, traceback_);
+            }
+
+        private:
+            PyObject* type_ = nullptr;
+            PyObject* value_ = nullptr;
+            PyObject* traceback_ = nullptr;
+        };
+
         template <typename Receiver, typename Direction = typename bridge_direction<Receiver>::type>
         class object_t;
 
@@ -234,7 +285,7 @@ namespace dynabridge {
         static R invoke_impl(context_t& ctx, no_receiver_t, Args... args) {
             object_ref result(call(ctx, ctx.callable(), std::move(args)...), ref_policy::owned);
             if (!result) {
-                throw std::runtime_error("Python callable returned null");
+                throw python_error("Python callable returned null");
             }
             return from_cast<R>(ctx, result.get());
         }
@@ -243,7 +294,7 @@ namespace dynabridge {
         static void invoke_impl(context_t& ctx, no_receiver_t, Args... args) {
             object_ref result(call(ctx, ctx.callable(), std::move(args)...), ref_policy::owned);
             if (!result) {
-                throw std::runtime_error("Python callable returned null");
+                throw python_error("Python callable returned null");
             }
         }
 
@@ -254,7 +305,7 @@ namespace dynabridge {
             object_ref result(call(ctx, ctx.callable(), std::move(receiver), std::move(args)...),
                 ref_policy::owned);
             if (!result) {
-                throw std::runtime_error("Python member callable returned null");
+                throw python_error("Python member callable returned null");
             }
             return from_cast<R>(ctx, result.get());
         }
@@ -266,7 +317,7 @@ namespace dynabridge {
             object_ref result(call(ctx, ctx.callable(), std::move(receiver), std::move(args)...),
                 ref_policy::owned);
             if (!result) {
-                throw std::runtime_error("Python member callable returned null");
+                throw python_error("Python member callable returned null");
             }
         }
 
@@ -630,6 +681,9 @@ namespace dynabridge {
 
                 try {
                     return call_indices<R>(args, std::index_sequence_for<Args...>{});
+                } catch (const python_error& error) {
+                    error.restore();
+                    return nullptr;
                 } catch (const bad_conversion& error) {
                     PyErr_SetString(PyExc_TypeError, error.what());
                     return nullptr;
@@ -663,6 +717,9 @@ namespace dynabridge {
 
                 try {
                     return call_vector_indices<R>(args, std::index_sequence_for<Args...>{});
+                } catch (const python_error& error) {
+                    error.restore();
+                    return nullptr;
                 } catch (const bad_conversion& error) {
                     PyErr_SetString(PyExc_TypeError, error.what());
                     return nullptr;
@@ -775,6 +832,9 @@ namespace dynabridge {
                         return nullptr;
                     }
                     return *result;
+                } catch (const python_error& error) {
+                    error.restore();
+                    return nullptr;
                 } catch (const bad_conversion& error) {
                     PyErr_SetString(PyExc_TypeError, error.what());
                     return nullptr;
@@ -805,6 +865,9 @@ namespace dynabridge {
                         return nullptr;
                     }
                     return *result;
+                } catch (const python_error& error) {
+                    error.restore();
+                    return nullptr;
                 } catch (const bad_conversion& error) {
                     PyErr_SetString(PyExc_TypeError, error.what());
                     return nullptr;
@@ -915,6 +978,9 @@ namespace dynabridge {
                     export_constructor_invoker<Receiver, void(Args...), Context>::construct(
                         *ctx_, self, args...);
                     Py_RETURN_NONE;
+                } catch (const python_error& error) {
+                    error.restore();
+                    return nullptr;
                 } catch (const bad_conversion& error) {
                     PyErr_SetString(PyExc_TypeError, error.what());
                     return nullptr;
@@ -950,6 +1016,17 @@ namespace dynabridge {
 
             PyObject* argv[sizeof...(Args) == 0 ? 1 : sizeof...(Args)] = { call_arg_value(args)... };
             PyObject* result = PyObject_Vectorcall(callable, argv, sizeof...(Args), nullptr);
+            if (result == nullptr) {
+                // Capture before releasing arguments: their finalizers may call
+                // Python again while the C++ stack unwinds.
+                try {
+                    throw python_error("Python callable returned null");
+                } catch (...) {
+                    // Also release raw arguments if exception allocation fails.
+                    decref_args(args...);
+                    throw;
+                }
+            }
             decref_args(args...);
             return result;
         }
@@ -970,7 +1047,11 @@ namespace dynabridge {
             }
 
             fill_tuple(tuple.get(), 0, args...);
-            return PyObject_CallObject(callable, tuple.get());
+            PyObject* result = PyObject_CallObject(callable, tuple.get());
+            if (result == nullptr) {
+                throw python_error("Python callable returned null");
+            }
+            return result;
         }
 
         static void fill_tuple(PyObject*, Py_ssize_t) noexcept {}
@@ -1156,7 +1237,7 @@ namespace dynabridge {
                 std::forward<Args>(args)...),
             ref_policy::owned);
         if (!get()) {
-            throw std::runtime_error("Python constructor returned null");
+            throw python_error("Python constructor returned null");
         }
     }
 

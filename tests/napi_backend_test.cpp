@@ -253,6 +253,36 @@ static_assert(
 
 namespace {
 
+int run_cleanup_lifetime_test() {
+    bool context_alive = true;
+    bool native_destroyed = false;
+    struct tracked_context : napi_export_context_t {
+        bool& alive;
+        tracked_context(napi_env env, bool& alive_)
+            : napi_export_context_t(env), alive(alive_) {}
+        ~tracked_context() { alive = false; }
+    };
+    struct tracked_native {
+        bool& context_alive;
+        bool& destroyed;
+        ~tracked_native() { destroyed = !context_alive; }
+    };
+
+    napi_env env = napi_stub_create_env();
+    auto* ctx = new tracked_context(env, context_alive);
+    napi_add_env_cleanup_hook(
+        env, [](void* data) { delete static_cast<tracked_context*>(data); }, ctx);
+    napi_value instance = nullptr;
+    napi_create_object(env, &instance);
+    {
+        dynabridge::napi_backend::object_t<tracked_native, dynabridge::export_t> object;
+        object.construct_export_object_from_native(
+            *ctx, instance, new tracked_native{context_alive, native_destroyed});
+    }
+    napi_stub_delete_env(env);
+    return !context_alive && native_destroyed ? 0 : 74;
+}
+
 int run_test(napi_env env) {
     {
         using target_t = dynabridge::napi_backend::class_target_t;
@@ -513,6 +543,12 @@ int run_test(napi_env env) {
     napi_value instance = nullptr;
     napi_new_instance(env, counter_class, 1, &constructor_arg, &instance);
 
+    // Env-owned contexts are deleted by cleanup hooks before native object
+    // finalizers run. A wrapped object must not retain a context as its hint.
+    if (instance->finalizer == nullptr || instance->finalizer_hint != nullptr) {
+        return 73;
+    }
+
     if (value_to_int(env, call1(env, member_add, int_value(env, 29), instance)) != 42
             || value_to_int(env, call0(env, member_value, instance)) != 13) {
         return 11;
@@ -623,6 +659,8 @@ int run_test(napi_env env) {
 }  // namespace
 
 int main() {
+    const int lifetime_result = run_cleanup_lifetime_test();
+    if (lifetime_result != 0) return lifetime_result;
     napi_env env = napi_stub_create_env();
     // Lifetime contract: every dynabridge wrapper/context must be destroyed
     // before the stub env. Their destructors call napi_delete_reference on

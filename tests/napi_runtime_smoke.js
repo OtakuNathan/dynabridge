@@ -95,6 +95,27 @@ async function main() {
         await new Promise((resolve) => setImmediate(resolve));
     }
     assert.strictEqual(addon.ownedCounterDestroyed(), 1);
+
+    // Constructor callbacks need no persistent C++ handle, but JS must still
+    // retain each native object and release it exactly once after collection.
+    const constructedBefore = addon.ownedCounterConstructed();
+    const destroyedBefore = addon.ownedCounterDestroyed();
+    function constructBatch() {
+        const objects = Array.from({length: 256}, (_, i) => new addon.counter(i));
+        global.gc();
+        assert.strictEqual(addon.ownedCounterDestroyed(), destroyedBefore);
+        for (let i = 0; i < objects.length; ++i) {
+            assert.strictEqual(objects[i].value(), i);
+            assert.strictEqual(objects[i].add(1), i + 1);
+        }
+    }
+    constructBatch();
+    assert.strictEqual(addon.ownedCounterConstructed(), constructedBefore + 256);
+    for (let i = 0; i < 8; ++i) {
+        global.gc();
+        await new Promise((resolve) => setImmediate(resolve));
+    }
+    assert.strictEqual(addon.ownedCounterDestroyed(), destroyedBefore + 256);
 }
 
 main().catch((error) => {

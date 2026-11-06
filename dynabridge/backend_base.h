@@ -349,6 +349,8 @@ namespace dynabridge {
 
     template <typename R, typename... Declared>
     struct import_contract_backend_invoker<free_callable<R(Declared...)>> {
+        static_assert(!std::is_reference<R>::value,
+            "bridge callable return type cannot be a reference; use a value or void instead.");
         template <typename Backend, typename Context, typename R_ = R,
             std::enable_if_t<!is_void_v<R_>>* = nullptr, typename... Actual>
         static R_ invoke(Context& ctx, no_receiver_t, Actual&&... actual) {
@@ -651,6 +653,8 @@ namespace dynabridge {
         template <typename R, typename Context, typename Receiver, typename... Args>
         static std::enable_if_t<!is_void_v<R>, R> invoke(
             Context& ctx, Receiver& receiver, Args... args) {
+            static_assert(!std::is_reference<R>::value,
+                "bridge callable return type cannot be a reference; use a value or void instead.");
             static_assert(is_invocable<backend_t, Context, Receiver, Args...>::value,
                  "Your context is not invocable with Receiver and Args. This might be because "
                  "converter<Receiver>::to is missing for the receiver, or converter<T>::to "
@@ -679,6 +683,8 @@ namespace dynabridge {
         template <typename R, typename Context, typename... Args>
         static std::enable_if_t<!is_void_v<R>, R> invoke(
             Context& ctx, no_receiver_t, Args... args) {
+            static_assert(!std::is_reference<R>::value,
+                "bridge callable return type cannot be a reference; use a value or void instead.");
             static_assert(is_invocable<backend_t, Context, no_receiver_t, Args...>::value,
                  "Your context is not invocable with Args. This might be because "
                  "converter<T>::to is missing for an argument.");

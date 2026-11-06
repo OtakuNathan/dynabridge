@@ -12,6 +12,8 @@ namespace dynabridge {
 
     template <typename Receiver, typename R, typename... Args>
     struct callable<Receiver, R(Args...)> {
+        static_assert(!std::is_reference<R>::value,
+            "bridge callable return type cannot be a reference; use a value or void instead.");
         static_assert(are_bridge_params_valid<Args...>::value,
             "bridge callable arguments cannot be non-const lvalue references; "
             "use value, const&, or && instead.");
@@ -25,6 +27,8 @@ namespace dynabridge {
 
     template <typename R, typename... Args>
     struct signature_from_types {
+        static_assert(!std::is_reference<R>::value,
+            "bridge callable return type cannot be a reference; use a value or void instead.");
         using type = R(Args...);
     };
 

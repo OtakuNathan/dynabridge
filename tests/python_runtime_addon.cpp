@@ -99,6 +99,9 @@ namespace {
             return dynabridge::py_backend::converter<int>::to(
                 ctx,
                 dynabridge::call_calc(ctx, a, b));
+        } catch (const dynabridge::py_backend::python_error& error) {
+            error.restore();
+            return nullptr;
         } catch (const std::exception& error) {
             return raise_error(error);
         }
@@ -116,6 +119,9 @@ namespace {
             py_context_t ctx(callable, dynabridge::py_backend::ref_policy::borrowed);
             dynabridge::call_foo(ctx, a, b);
             Py_RETURN_NONE;
+        } catch (const dynabridge::py_backend::python_error& error) {
+            error.restore();
+            return nullptr;
         } catch (const std::exception& error) {
             return raise_error(error);
         }
@@ -133,6 +139,9 @@ namespace {
             return dynabridge::py_backend::converter<std::string>::to(
                 ctx,
                 dynabridge::call_echo(ctx, dynabridge::from_cast<std::string>(ctx, text)));
+        } catch (const dynabridge::py_backend::python_error& error) {
+            error.restore();
+            return nullptr;
         } catch (const std::exception& error) {
             return raise_error(error);
         }
@@ -153,6 +162,9 @@ namespace {
                 receiver,
                 dynabridge::py_backend::ref_policy::borrowed);
             return dynabridge::py_backend::converter<int>::to(ctx, counter.add(value));
+        } catch (const dynabridge::py_backend::python_error& error) {
+            error.restore();
+            return nullptr;
         } catch (const std::exception& error) {
             return raise_error(error);
         }
@@ -172,6 +184,9 @@ namespace {
                 receiver,
                 dynabridge::py_backend::ref_policy::borrowed);
             return dynabridge::py_backend::converter<int>::to(ctx, counter.value());
+        } catch (const dynabridge::py_backend::python_error& error) {
+            error.restore();
+            return nullptr;
         } catch (const std::exception& error) {
             return raise_error(error);
         }
@@ -189,6 +204,9 @@ namespace {
             py_context_t ctx(callable, dynabridge::py_backend::ref_policy::borrowed);
             auto counter = dynabridge::construct<dynabridge::counter>(ctx, handle);
             return dynabridge::py_backend::converter<int>::to(ctx, counter.add(value));
+        } catch (const dynabridge::py_backend::python_error& error) {
+            error.restore();
+            return nullptr;
         } catch (const std::exception& error) {
             return raise_error(error);
         }

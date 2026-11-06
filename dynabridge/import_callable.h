@@ -142,7 +142,7 @@ namespace dynabridge {
     };
 
     template <typename Context, typename R, typename U = void>
-    struct is_forward_result_convertible : std::true_type {
+    struct is_forward_result_convertible : negation<std::is_reference<R>> {
     };
 
     template <typename Context, typename U>
@@ -166,7 +166,7 @@ namespace dynabridge {
             : std::true_type {
         };
 
-        constexpr static bool value = probe<Context>::value;
+        constexpr static bool value = !std::is_reference<R>::value && probe<Context>::value;
     };
 
     template <typename Context, typename Receiver, typename... Args>
@@ -195,6 +195,8 @@ namespace dynabridge {
 
     template <typename Receiver, typename R, typename... Args>
     struct import_callable<callable<Receiver, R(Args...)>> {
+        static_assert(!std::is_reference<R>::value,
+            "bridge callable return type cannot be a reference; use a value or void instead.");
         using receiver_t = Receiver;
         using signature_t = R(Args...);
 
@@ -230,6 +232,8 @@ namespace dynabridge {
 
     template <typename R, typename... Args>
     struct import_callable<callable<no_receiver_t, R(Args...)>> {
+        static_assert(!std::is_reference<R>::value,
+            "bridge callable return type cannot be a reference; use a value or void instead.");
         using receiver_t = no_receiver_t;
         using signature_t = R(Args...);
 

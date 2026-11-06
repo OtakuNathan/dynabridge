@@ -47,6 +47,7 @@ template<class A,class... Rest> struct safe_signature<A,Rest...>
         std::is_const<typename std::remove_reference<A>::type>::value) && safe_signature<Rest...>::value> {};
 template<class Contract> struct contract_result;
 template<class R,class... Args> struct contract_result<free_callable<R(Args...)>> {
+    static_assert(!std::is_reference<R>::value, "bridge callable return type cannot be a reference; use a value or void instead.");
     static_assert(safe_signature<Args...>::value, "async non-const reference parameters require explicit output semantics");
     using type=R;
 };

@@ -82,6 +82,34 @@ def main():
     assert addon.callImportedCounterValue(counter_dispatch, foreign_counter) == 13
     assert addon.constructImportedCounterAdd(counter_dispatch, 21, 21) == 42
 
+    # Hand-written C API wrappers must restore the owned exception too.
+    original = ValueError("original callback failure", 123)
+
+    def raising(*args):
+        raise original
+
+    for invoke in (
+        lambda: addon.callImportedCalc(raising, 3, 4),
+        lambda: addon.callImportedFoo(raising, 5, 6),
+        lambda: addon.callImportedEcho(raising, "text"),
+        lambda: addon.callImportedCounterAdd(raising, foreign_counter, 29),
+        lambda: addon.callImportedCounterValue(raising, foreign_counter),
+        lambda: addon.constructImportedCounterAdd(raising, 21, 21),
+    ):
+        original.__traceback__ = None
+        try:
+            invoke()
+        except ValueError as error:
+            assert error is original
+            tb = error.__traceback__
+            while tb.tb_next is not None:
+                tb = tb.tb_next
+            assert tb.tb_frame.f_code.co_name == "raising"
+        else:
+            raise AssertionError("import wrapper lost callback exception")
+    original.__traceback__ = None
+    assert addon.callImportedCalc(calc, 3, 4) == 7
+
     counter = None
     for _ in range(8):
         gc.collect()

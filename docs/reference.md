@@ -242,6 +242,26 @@ Callable arguments may be values, `const T&`, or `T&&`. Non-const lvalue
 references such as `T&` are rejected because a bridge boundary cannot provide a
 meaningful writable C++ reference into another runtime.
 
+Declared return types must be values or `void`; `T&`, `const T&`, and `T&&`
+returns are rejected at compile time for imports, exports, and callbacks. This
+restriction does not change `const T&` input parameters.
+
+An export callable may itself return a reference when its declared result is a
+value: the core copies or moves it into the declared value (without top-level cv
+qualifiers) as needed while converted arguments are still alive, then passes an
+rvalue to `converter<R>::to`. An lvalue result must therefore be copyable into
+that value; an rvalue result may be moved. Exact non-const value rvalues are forwarded
+without an extra materialization. Converting results must be implicitly
+convertible to the declared value. This also applies to member and overload
+exports.
+In strict no-exception mode, this materialization must be non-throwing.
+
+Export result converters must produce a dynamic representation that owns or
+retains the result, not borrow the temporary native value. Materialization does
+not make pointer/view payloads owning and cannot repair a native function that
+already returns a dangling reference. Import-side argument borrowing is
+unchanged: RPC may borrow a `const std::string&` until immediate request encoding.
+
 ### Object and Callable Parameters
 
 Descriptors are interpreted by the direction of their def file:
@@ -621,6 +641,23 @@ class is a dedicated extension type whose instance layout stores the generated
 proxy inline plus its context and destroy thunk; `tp_dealloc` releases the proxy
 through the backend lifecycle hook.
 
+Failed imported Python callable and constructor invocations throw
+`py_backend::python_error` (a `std::runtime_error`)
+that owns the original Python exception type, value, and traceback and clears
+the interpreter's pending error during C++ unwinding. Generated callable,
+overload, member, and constructor boundaries restore that exception instead of
+replacing it with `RuntimeError`. Native `bad_conversion` and other C++ errors
+still become `TypeError` and `RuntimeError`, respectively. A hand-written Python
+C API entry point should catch `const py_backend::python_error&` before
+`std::exception`, call `error.restore()`, and return its error sentinel.
+
+Like the backend's other Python reference owners, this exception must be copied,
+restored, and destroyed with the originating interpreter active and its GIL held.
+Destroy all copies, including retained `std::exception_ptr` instances, before
+interpreter shutdown. The carrier does not acquire a GIL, switch interpreters,
+or make cross-interpreter exception transfer safe. The Python backend requires
+C++ exceptions; the RPC/core no-exception configurations do not change that.
+
 `dynabridge/backends/python_api.h` is the canonical include for `Python.h`.
 On MSVC Debug builds, Python's headers otherwise assume a debug Python ABI when
 `_DEBUG` is defined, which does not match the release Python installed on most
@@ -966,6 +1003,20 @@ framing, ordinary functions, functors, lambdas, strict overload selection,
 import/export behavior without embedding Node.js. When system `node_api.h` and
 `node` are available, CMake also builds a `.node` addon and runs
 `napi_runtime_smoke.js` through the real Node.js runtime.
+
+With examples enabled, `napi_example_workers` also tests concurrent Worker loads,
+continued main-thread calls, repeated initialization, and natural/forced Worker
+shutdown. An addon must allocate a separate export context for each initialization,
+keep its address stable while its callbacks can run, and release it on that env's
+thread at shutdown. Do not reuse a process-wide `static` context: a Worker's
+`napi_env` and handles cannot be used by the main thread or another Worker.
+The Node example registers context ownership with `napi_add_env_cleanup_hook`
+before exporting anything. If later initialization fails, already-created
+callbacks still have a live context until cleanup. Object finalizers run after
+cleanup hooks and therefore delete their native proxy without accessing the
+already-released context. Native application state shared between Workers needs
+its own synchronization; separate bridge contexts do not make shared C++ data
+thread-safe.
 
 ## Benchmarks
 
