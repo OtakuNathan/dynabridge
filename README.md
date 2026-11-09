@@ -14,6 +14,34 @@ C++ callable shape x backend runtime x converter set = usable language bridge
 The repository includes minimal CPython C API and Node-API backends, a framed
 RPC backend, and a fake backend used by the core tests.
 
+## Choose an export entry point
+
+| Your callable | Registration |
+| --- | --- |
+| Ordinary function / function pointer | `export_name(context, module, function)` deduces the signature. |
+| Lambda, including captures / function object | `export_name<Signature>(context, module, callable)` supplies the declared signature. |
+| Multiple implementations for multiple declared signatures | `export_name(context, module).bind<Signature>(implementation)...commit()` |
+
+For example, after declaring `run_arena` in the module's `.def`:
+
+```cpp
+using Signature =
+    std::string(const std::string&, const std::string&);
+
+dynabridge::export_run_arena<Signature>(
+    context, module,
+    [](const std::string& csv, const std::string& config) {
+        return arena::run_arena(csv, config);
+    });
+```
+
+`+[]` converts a noncapturing lambda to a function pointer for signature
+deduction; exporting a lambda does not require that conversion. See the
+[callable export guide and complete CPython module](docs/callable_exports.md)
+for captures, overload selection, converters, registration, and build commands.
+The [three-library replay example](docs/replay_composition.md) combines a Python
+boundary with FF computation and lease access permissions.
+
 ## Why It Exists
 
 Dyna Bridge separates three concerns that binding libraries often combine:
@@ -202,6 +230,8 @@ environments, and comparison caveats.
 
 ## Documentation
 
+- [Callable export selection and minimal module template](docs/callable_exports.md)
+- [Replay composition: Dyna Bridge, FF, and lease](docs/replay_composition.md)
 - [Architecture and extension boundaries](docs/architecture.md)
 - [Full API reference and backend walkthrough](docs/reference.md)
 - [Python example](examples/python/module.cpp)

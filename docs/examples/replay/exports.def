@@ -1,0 +1,3 @@
+BEGIN_CALLABLE_GROUP(run_arena)
+    DECL_CALLABLE(std::string, const std::string&, const std::string&)
+END_CALLABLE_GROUP
