@@ -931,10 +931,11 @@ blueprint.
 
 ### Runtime Executors
 
-Optional adapters in `dynabridge/extensions/flux_foundry/` demonstrate the same
-composition for runtime thread affinity. `uv_executor.h` queues work onto an
-owning libuv loop, while `python_interpreter_executor.h` runs work on a dedicated
-interpreter thread and acquires the GIL once per queued batch. Both directly
+Libuv integration uses `flux_foundry::uv_executor` directly, from FF's
+`<executor/uv_executor.h>`; dynabridge does not maintain a separate libuv queue
+or handle implementation. Its optional `python_interpreter_executor.h` adapter
+in `dynabridge/extensions/flux_foundry/` runs work on a dedicated interpreter
+thread and acquires the GIL once per queued batch. Both directly
 satisfy Flux Foundry's duck-typed `dispatch(task&&)` contract; neither changes
 `backend_base` or introduces a dynabridge scheduler abstraction.
 
@@ -951,19 +952,38 @@ auto flow = ff::make_blueprint<int>()
 
 The complete examples are `examples/flux_foundry/python_executor.cpp` and
 `examples/flux_foundry/uv_executor.cpp`. CMake builds and tests them only when a
-Flux Foundry checkout is found; Python development files or libuv are also
-required for the corresponding adapter. The Python executor must be destroyed
+Flux Foundry checkout is found; the libuv example requires a checkout containing
+`executor/uv_executor.h`. Python development files or libuv are also
+required for the corresponding integration. The Python executor must be destroyed
 before `Py_Finalize`; because it uses `PyGILState_*`, this example targets the
 main interpreter rather than CPython subinterpreters. A uv executor is bound to
 the loop thread on construction, and the loop must run after `close()` so libuv
-can complete handle destruction. `close()` must not race a new `dispatch()`.
-As with any executor, its lifetime must cover submitted work.
+can complete handle destruction. FF's `close()` stops admission and drains
+accepted tasks; it may run concurrently with submissions while the executor
+object remains alive. Object destruction must not race its member calls.
 
-On the Raspberry Pi 4 benchmark environment below, observed 50,000-task batched
-runs measured roughly 181-194 ns/task for the Python interpreter executor and
+FF uses a bounded preallocated queue (default capacity 1024), unlike the former
+dynabridge executor's unbounded deque. `try_dispatch(task&&)` returns false with
+the task intact when the queue is full or admission is closed. Choose explicit
+backpressure at application ingress. The example's separate producer retries
+full-queue submissions while its loop runs and closes only after the producer
+joins. Do not spin waiting for capacity on the loop owner. `dispatch(task&&)`,
+including FF `via`, terminates on rejection, so provision capacity or enforce
+admission before entering that path. The demo also runs with capacity 1 in CTest.
+
+The old `<dynabridge/extensions/flux_foundry/uv_executor.h>` path retains only
+`dynabridge::flux_foundry_extensions::uv_executor` as a type alias to FF's class.
+It preserves source names, not the old unbounded admission behavior. Existing
+callers using that alias must also account for FF's capacity and rejection
+policy. New code should include FF's header and use its type directly. The
+dynabridge core CMake target still has no mandatory FF or libuv dependency.
+
+Historical 50,000-task runs of the former adapters on the Raspberry Pi 4
+environment below measured roughly 181-194 ns/task for the Python interpreter executor and
 722-797 ns/task for cross-thread libuv dispatch. These figures measure
 queue-and-execute throughput with amortized wakeups, not end-to-end bridge-call
-latency. Queue synchronization, cache coherence, runtime wakeup, and GIL
+latency, and are not measurements of the current FF libuv executor.
+Queue synchronization, cache coherence, runtime wakeup, and GIL
 acquisition are intrinsic cross-thread costs; the adapters avoid adding another
 registry or dispatch object model on top.
 

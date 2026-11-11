@@ -207,7 +207,7 @@ target_link_libraries(my_addon PRIVATE dynabridge::dynabridge)
 | Python | Minimal CPython C API backend with real runtime tests |
 | JavaScript | Minimal Node-API backend with real Node.js runtime tests |
 | RPC | Transport-agnostic framed demo backend |
-| Scheduling | Optional Flux Foundry adapters for Python interpreter and libuv loop dispatch |
+| Scheduling | Optional Python interpreter adapter; libuv loop dispatch uses Flux Foundry's executor directly |
 | Value types | Built-in Python/Node converters for `int`, `unsigned`, and UTF-8 text through `std::string`; embedded NUL is preserved, while arbitrary binary data needs its own converter |
 | Platforms | CI builds Debug and Release on Linux, macOS, and Windows |
 

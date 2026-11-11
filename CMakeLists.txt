@@ -85,7 +85,8 @@ if(FLUX_FOUNDRY_INCLUDE_DIR AND (DYNABRIDGE_BUILD_TESTS OR DYNABRIDGE_BUILD_EXAM
         )
     endif()
 
-    if(LibUV_INCLUDE_DIR AND LibUV_LIBRARY)
+    if(LibUV_INCLUDE_DIR AND LibUV_LIBRARY
+            AND EXISTS "${FLUX_FOUNDRY_INCLUDE_DIR}/executor/uv_executor.h")
         add_executable(dynabridge_ff_uv_executor_demo
             examples/flux_foundry/uv_executor.cpp)
         set_property(TARGET dynabridge_ff_uv_executor_demo PROPERTY CXX_STANDARD 17)
@@ -98,6 +99,8 @@ if(FLUX_FOUNDRY_INCLUDE_DIR AND (DYNABRIDGE_BUILD_TESTS OR DYNABRIDGE_BUILD_EXAM
             "${FLUX_FOUNDRY_INCLUDE_DIR}"
             "${LibUV_INCLUDE_DIR}"
         )
+    elseif(LibUV_INCLUDE_DIR AND LibUV_LIBRARY)
+        message(STATUS "Skipping FF libuv example: selected Flux Foundry lacks executor/uv_executor.h")
     endif()
 endif()
 
@@ -151,6 +154,8 @@ if(DYNABRIDGE_BUILD_TESTS)
     endif()
     if(TARGET dynabridge_ff_uv_executor_demo)
         add_test(NAME ff_uv_executor COMMAND dynabridge_ff_uv_executor_demo)
+        add_test(NAME ff_uv_executor_capacity1 COMMAND dynabridge_ff_uv_executor_demo 1)
+        set_tests_properties(ff_uv_executor ff_uv_executor_capacity1 PROPERTIES TIMEOUT 30)
     endif()
 
     function(dynabridge_check_interface_compilation name source should_compile)
@@ -447,6 +452,11 @@ if(DYNABRIDGE_BUILD_BENCHMARKS)
         dynabridge::dynabridge
         Threads::Threads
     )
+    if(DYNABRIDGE_BUILD_TESTS)
+        # Multiple calls must complete after each FF asynchronous handoff.
+        add_test(NAME rpc_benchmark_smoke COMMAND rpc_call_benchmark 100)
+        set_tests_properties(rpc_benchmark_smoke PROPERTIES TIMEOUT 30)
+    endif()
 
     if(FLUX_FOUNDRY_INCLUDE_DIR)
         target_compile_definitions(rpc_call_benchmark PRIVATE

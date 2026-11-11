@@ -461,8 +461,10 @@ namespace {
         }
     };
 
-    template <typename T, typename Runner, typename Input>
-    T run_flow(Runner& runner, flow_result_state<T>& state, Input&& input) {
+    template <typename T, typename Blueprint, typename Input>
+    T run_flow(Blueprint& blueprint, flow_result_state<T>& state, Input&& input) {
+        // An async handoff consumes a fast runner; share the blueprint, not the runner.
+        auto runner = ff::make_fast_runner(blueprint, flow_result_receiver<T>{&state});
         state.done.store(false, std::memory_order_relaxed);
         state.error = flow_error_t{};
         runner(std::forward<Input>(input));
@@ -515,13 +517,14 @@ namespace {
         ff::gsource_executor<64> executor_;
     };
 
-    template <typename T, typename Runner, typename Input>
+    template <typename T, typename Blueprint, typename Input>
     T run_glib_flow(
         glib_runtime& runtime,
-        Runner& runner,
+        Blueprint& blueprint,
         flow_result_state<T>& state,
         Input&& input)
     {
+        auto runner = ff::make_fast_runner(blueprint, flow_result_receiver<T>{&state});
         state.done.store(false, std::memory_order_relaxed);
         state.error = flow_error_t{};
         runner(std::forward<Input>(input));
@@ -1101,36 +1104,34 @@ int main(int argc, char** argv) {
 
         flow_result_state<int> scalar_state;
         flow_result_state<std::string> string_state;
-        auto scalar_runner = ff::make_fast_runner(
-            std::move(scalar_flow), flow_result_receiver<int>{&scalar_state});
-        auto string_runner = ff::make_fast_runner(
-            std::move(string_flow), flow_result_receiver<std::string>{&string_state});
+        auto scalar_blueprint = ff::make_lite_ptr<decltype(scalar_flow)>(std::move(scalar_flow));
+        auto string_blueprint = ff::make_lite_ptr<decltype(string_flow)>(std::move(string_flow));
 
-        if (run_flow(string_runner, string_state, string_input{&payload_16}) != payload_16
-                || run_flow(string_runner, string_state, string_input{&payload_1k}) != payload_1k
-                || run_flow(string_runner, string_state, string_input{&payload_64k}) != payload_64k) {
+        if (run_flow(string_blueprint, string_state, string_input{&payload_16}) != payload_16
+                || run_flow(string_blueprint, string_state, string_input{&payload_1k}) != payload_1k
+                || run_flow(string_blueprint, string_state, string_input{&payload_64k}) != payload_64k) {
             throw std::runtime_error("dynabridge + Flux Foundry payload verification failed");
         }
         print_result("dynabridge + FF TCP", measure(tcp_iterations,
-            [&scalar_runner, &scalar_state](int value) {
-                return run_flow(scalar_runner, scalar_state, value);
+            [&scalar_blueprint, &scalar_state](int value) {
+                return run_flow(scalar_blueprint, scalar_state, value);
             }, sink));
         print_result("dynabridge + FF TCP 16 B", measure_payload(tcp_iterations,
             payload_16,
-            [&string_runner, &string_state](const std::string& value) {
-                return run_flow(string_runner, string_state, string_input{&value});
+            [&string_blueprint, &string_state](const std::string& value) {
+                return run_flow(string_blueprint, string_state, string_input{&value});
             }, payload_sink));
         print_result("dynabridge + FF TCP 1 KiB", measure_payload(
             tcp_iterations / 2 == 0 ? 1 : tcp_iterations / 2,
             payload_1k,
-            [&string_runner, &string_state](const std::string& value) {
-                return run_flow(string_runner, string_state, string_input{&value});
+            [&string_blueprint, &string_state](const std::string& value) {
+                return run_flow(string_blueprint, string_state, string_input{&value});
             }, payload_sink));
         print_result("dynabridge + FF TCP 64 KiB", measure_payload(
             tcp_iterations / 20 == 0 ? 1 : tcp_iterations / 20,
             payload_64k,
-            [&string_runner, &string_state](const std::string& value) {
-                return run_flow(string_runner, string_state, string_input{&value});
+            [&string_blueprint, &string_state](const std::string& value) {
+                return run_flow(string_blueprint, string_state, string_input{&value});
             }, payload_sink));
 #else
         std::cout << "dynabridge + FF TCP           not built (Flux Foundry not found)\n";
@@ -1157,21 +1158,19 @@ int main(int argc, char** argv) {
         auto string_flow = make_glib_string_rpc_flow(glib_echo_ctx);
         flow_result_state<int> scalar_state;
         flow_result_state<std::string> string_state;
-        auto scalar_runner = ff::make_fast_runner(
-            std::move(scalar_flow), flow_result_receiver<int>{&scalar_state});
-        auto string_runner = ff::make_fast_runner(
-            std::move(string_flow), flow_result_receiver<std::string>{&string_state});
+        auto scalar_blueprint = ff::make_lite_ptr<decltype(scalar_flow)>(std::move(scalar_flow));
+        auto string_blueprint = ff::make_lite_ptr<decltype(string_flow)>(std::move(string_flow));
 
         if (call_manual_glib_string(runtime, glib_echo_ctx, payload_16) != payload_16
                 || call_manual_glib_string(runtime, glib_echo_ctx, payload_1k) != payload_1k
                 || call_manual_glib_string(runtime, glib_echo_ctx, payload_64k) != payload_64k) {
             throw std::runtime_error("manual GLib RPC payload verification failed");
         }
-        if (run_glib_flow(runtime, string_runner, string_state,
+        if (run_glib_flow(runtime, string_blueprint, string_state,
                     string_input{&payload_16}) != payload_16
-                || run_glib_flow(runtime, string_runner, string_state,
+                || run_glib_flow(runtime, string_blueprint, string_state,
                     string_input{&payload_1k}) != payload_1k
-                || run_glib_flow(runtime, string_runner, string_state,
+                || run_glib_flow(runtime, string_blueprint, string_state,
                     string_input{&payload_64k}) != payload_64k) {
             throw std::runtime_error("dynabridge + Flux Foundry GLib payload verification failed");
         }
@@ -1179,9 +1178,9 @@ int main(int argc, char** argv) {
             [&runtime, &glib_ctx, &sink](std::size_t i) {
                 sink = call_manual_glib_scalar(runtime, glib_ctx, static_cast<int>(i));
             },
-            [&runtime, &scalar_runner, &scalar_state, &sink](std::size_t i) {
+            [&runtime, &scalar_blueprint, &scalar_state, &sink](std::size_t i) {
                 sink = run_glib_flow(
-                    runtime, scalar_runner, scalar_state, static_cast<int>(i));
+                    runtime, scalar_blueprint, scalar_state, static_cast<int>(i));
             });
         print_result("dynabridge manual GLib TCP", scalar_times.first);
         print_result("dynabridge + FF GLib TCP", scalar_times.second);
@@ -1189,7 +1188,7 @@ int main(int argc, char** argv) {
         const auto measure_glib_payload = [
             &runtime,
             &glib_echo_ctx,
-            &string_runner,
+            &string_blueprint,
             &string_state,
             &payload_sink](std::size_t iterations, const std::string& payload) {
             return measure_pair(iterations,
@@ -1197,10 +1196,10 @@ int main(int argc, char** argv) {
                     payload_sink = call_manual_glib_string(
                         runtime, glib_echo_ctx, payload).size();
                 },
-                [&runtime, &string_runner, &string_state, &payload, &payload_sink](std::size_t) {
+                [&runtime, &string_blueprint, &string_state, &payload, &payload_sink](std::size_t) {
                     payload_sink = run_glib_flow(
                         runtime,
-                        string_runner,
+                        string_blueprint,
                         string_state,
                         string_input{&payload}).size();
                 });

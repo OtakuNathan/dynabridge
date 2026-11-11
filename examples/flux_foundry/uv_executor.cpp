@@ -2,7 +2,7 @@
 #define DYNABRIDGE_EXPORT_DEF "examples/flux_foundry/import.def"
 #include "dynabridge/bridge.h"
 #include "dynabridge/backends/rpc.h"
-#include "dynabridge/extensions/flux_foundry/uv_executor.h"
+#include <executor/uv_executor.h>
 
 #include <flow/flow.h>
 
@@ -10,6 +10,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <cstdio>
+#include <cstdlib>
 #include <exception>
 #include <mutex>
 #include <thread>
@@ -54,7 +55,11 @@ namespace {
     };
 }
 
-int main() {
+int main(int argc, char** argv) {
+    const std::size_t capacity = argc > 1
+        ? static_cast<std::size_t>(std::strtoull(argv[1], nullptr, 10))
+        : ff::uv_executor::default_capacity;
+    if (!capacity) return 1;
     uv_loop_t loop;
     if (uv_loop_init(&loop) != 0) {
         return 1;
@@ -62,7 +67,7 @@ int main() {
 
     int status = 0;
     {
-        dynabridge::flux_foundry_extensions::uv_executor executor(&loop);
+        ff::uv_executor executor(&loop, capacity);
         dynabridge::rpc_backend::export_context_t export_ctx;
         dynabridge::rpc::router module;
         dynabridge::export_executor_add(export_ctx, module, &executor_add);
@@ -96,12 +101,17 @@ int main() {
         const auto start = std::chrono::steady_clock::now();
         std::thread benchmark_producer([&] {
             for (std::size_t index = 0; index < iterations; ++index) {
-                executor.dispatch(ff::task_wrapper_sbo(
+                ff::task_wrapper_sbo task(
                     [&remaining, &loop]() noexcept {
                         if (remaining.fetch_sub(1, std::memory_order_acq_rel) == 1) {
                             uv_stop(&loop);
                         }
-                    }));
+                    });
+                // This producer is separate from the loop and close follows
+                // its join. A full queue leaves task intact for retry.
+                while (!executor.try_dispatch(std::move(task))) {
+                    std::this_thread::yield();
+                }
             }
         });
         uv_run(&loop, UV_RUN_DEFAULT);
@@ -120,6 +130,7 @@ int main() {
 
         executor.close();
         uv_run(&loop, UV_RUN_DEFAULT);
+        if (!executor.closed()) status = 4;
     }
 
     if (uv_loop_close(&loop) != 0) {
