@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: OtakuNathan/flux_foundry
-          ref: 81f4b3cb0f20b018f0d3fb8db0bf096057f030e8
+          ref: 98d73c280667226f0fbb6f4408626ab875e2bd2a
           path: build-deps/flux_foundry
 
       - name: Set up Python
@@ -51,8 +51,8 @@ jobs:
         run: >
           cmake -S . -B build
           -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
-          -DDYNABRIDGE_BUILD_BENCHMARKS=ON
-          -DDYNABRIDGE_BUILD_EXAMPLES=ON
+          -DPORTAL_BUILD_BENCHMARKS=ON
+          -DPORTAL_BUILD_EXAMPLES=ON
           -DFLUX_FOUNDRY_INCLUDE_DIR="${{ github.workspace }}/build-deps/flux_foundry"
           -DPython3_ROOT_DIR="${{ env.pythonLocation }}"
 
@@ -66,12 +66,12 @@ jobs:
         run: >
           cmake --install build
           --config ${{ matrix.build-type }}
-          --prefix "${{ runner.temp }}/dynabridge-install"
+          --prefix "${{ runner.temp }}/portal-install"
 
       - name: Configure package consumer
         run: >
           cmake -S tests/package_consumer -B consumer-build
-          -DCMAKE_PREFIX_PATH="${{ runner.temp }}/dynabridge-install"
+          -DCMAKE_PREFIX_PATH="${{ runner.temp }}/portal-install"
 
       - name: Build package consumer
         run: cmake --build consumer-build --config ${{ matrix.build-type }} --parallel

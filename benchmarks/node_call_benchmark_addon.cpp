@@ -1,7 +1,7 @@
-#define DYNABRIDGE_IMPORT_DEF "tests/import.def"
-#define DYNABRIDGE_EXPORT_DEF "tests/export.def"
+#define PORTAL_IMPORT_DEF "tests/import.def"
+#define PORTAL_EXPORT_DEF "tests/export.def"
 
-namespace dynabridge {
+namespace portal {
     namespace native {
         class counter {
         public:
@@ -21,8 +21,8 @@ namespace dynabridge {
     }
 }
 
-#include "dynabridge/bridge.h"
-#include "dynabridge/backends/napi.h"
+#include "portal/bridge.h"
+#include "portal/backends/napi.h"
 
 #include <node_api.h>
 
@@ -31,12 +31,12 @@ namespace dynabridge {
 #include <stdexcept>
 #include <utility>
 
-#if defined(DYNABRIDGE_HAS_NODE_ADDON_API)
+#if defined(PORTAL_HAS_NODE_ADDON_API)
 #include <napi.h>
 #endif
 
 namespace {
-    using napi_context_t = dynabridge::napi_backend::context_t;
+    using napi_context_t = portal::napi_backend::context_t;
 
     int add_function(int a, unsigned b) {
         return a + static_cast<int>(b);
@@ -169,20 +169,20 @@ namespace {
         }
     }
 
-    napi_value dynabridge_call_loop(napi_env env, napi_callback_info info) {
+    napi_value portal_call_loop(napi_env env, napi_callback_info info) {
         try {
             std::size_t argc = 2;
             napi_value argv[2] = {};
             if (napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr) != napi_ok
                     || argc != 2) {
-                return throw_error(env, "dynabridgeCallLoop expects function and iteration count");
+                return throw_error(env, "portalCallLoop expects function and iteration count");
             }
 
             napi_context_t ctx(env, argv[0]);
             const std::uint32_t iterations = get_iterations(env, argv[1]);
             int checksum = 0;
             for (std::uint32_t i = 0; i < iterations; ++i) {
-                checksum += dynabridge::call_calc(ctx, 1, 2u);
+                checksum += portal::call_calc(ctx, 1, 2u);
             }
 
             return make_int(env, checksum);
@@ -251,7 +251,7 @@ namespace {
     }
 
     void raw_counter_finalizer(napi_env, void* data, void*) {
-        delete static_cast<dynabridge::native::counter*>(data);
+        delete static_cast<portal::native::counter*>(data);
     }
 
     napi_value raw_counter_constructor(napi_env env, napi_callback_info info) {
@@ -263,7 +263,7 @@ namespace {
                     || argc != 1) {
                 return throw_error(env, "RawCounter expects one argument");
             }
-            auto* counter = new dynabridge::native::counter(get_uint(env, argv[0]));
+            auto* counter = new portal::native::counter(get_uint(env, argv[0]));
             if (napi_wrap(env, self, counter, raw_counter_finalizer, nullptr, nullptr) != napi_ok) {
                 delete counter;
                 return throw_error(env, "napi_wrap failed for RawCounter");
@@ -274,12 +274,12 @@ namespace {
         }
     }
 
-    dynabridge::native::counter* raw_counter(napi_env env, napi_value value) {
+    portal::native::counter* raw_counter(napi_env env, napi_value value) {
         void* data = nullptr;
         if (napi_unwrap(env, value, &data) != napi_ok || data == nullptr) {
             throw std::runtime_error("napi_unwrap failed for RawCounter");
         }
-        return static_cast<dynabridge::native::counter*>(data);
+        return static_cast<portal::native::counter*>(data);
     }
 
     napi_value raw_counter_add(napi_env env, napi_callback_info info) {
@@ -358,22 +358,22 @@ namespace {
         }
     }
 
-    napi_value dynabridge_object_call_loop(napi_env env, napi_callback_info info) {
+    napi_value portal_object_call_loop(napi_env env, napi_callback_info info) {
         try {
             std::size_t argc = 3;
             napi_value argv[3] = {};
             if (napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr) != napi_ok
                     || argc != 3) {
                 return throw_error(env,
-                    "dynabridgeObjectCallLoop expects function, object and iteration count");
+                    "portalObjectCallLoop expects function, object and iteration count");
             }
 
             napi_context_t ctx(env, argv[0]);
-            auto counter = dynabridge::bind_receiver<dynabridge::counter>(ctx, env, argv[1]);
+            auto counter = portal::bind_receiver<portal::counter>(ctx, env, argv[1]);
             const std::uint32_t iterations = get_iterations(env, argv[2]);
             int checksum = 0;
             for (std::uint32_t i = 0; i < iterations; ++i) {
-                checksum += dynabridge::call_pass_counter(ctx, counter, 1);
+                checksum += portal::call_pass_counter(ctx, counter, 1);
             }
             return make_int(env, checksum);
         } catch (const std::exception& error) {
@@ -381,21 +381,21 @@ namespace {
         }
     }
 
-    napi_value dynabridge_callback_call_loop(napi_env env, napi_callback_info info) {
+    napi_value portal_callback_call_loop(napi_env env, napi_callback_info info) {
         try {
             std::size_t argc = 2;
             napi_value argv[2] = {};
             if (napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr) != napi_ok
                     || argc != 2) {
                 return throw_error(env,
-                    "dynabridgeCallbackCallLoop expects function and iteration count");
+                    "portalCallbackCallLoop expects function and iteration count");
             }
 
             napi_context_t ctx(env, argv[0]);
             const std::uint32_t iterations = get_iterations(env, argv[1]);
             int checksum = 0;
             for (std::uint32_t i = 0; i < iterations; ++i) {
-                checksum += dynabridge::call_pass_transform(ctx, transform_function{}, 1);
+                checksum += portal::call_pass_transform(ctx, transform_function{}, 1);
             }
             return make_int(env, checksum);
         } catch (const std::exception& error) {
@@ -403,7 +403,7 @@ namespace {
         }
     }
 
-#if defined(DYNABRIDGE_HAS_NODE_ADDON_API)
+#if defined(PORTAL_HAS_NODE_ADDON_API)
     class node_counter : public Napi::ObjectWrap<node_counter> {
     public:
         static Napi::Function define(Napi::Env env) {
@@ -432,7 +432,7 @@ namespace {
             return Napi::Number::New(info.Env(), counter_.value());
         }
 
-        dynabridge::native::counter counter_;
+        portal::native::counter counter_;
     };
 
     Napi::Value node_addon_api_add(const Napi::CallbackInfo& info) {
@@ -523,7 +523,7 @@ namespace {
 
     void define_raw_function(
         napi_env env,
-        dynabridge::napi_backend::module_t& module,
+        portal::napi_backend::module_t& module,
         const char* name,
         napi_callback callback)
     {
@@ -536,11 +536,11 @@ namespace {
 
     napi_value init(napi_env env, napi_value exports) {
         try {
-            static dynabridge::napi_backend::export_context_t ctx;
-            ctx = dynabridge::napi_backend::export_context_t(env);
-            static dynabridge::napi_backend::trusted_export_context_t trusted_ctx;
-            trusted_ctx = dynabridge::napi_backend::trusted_export_context_t(env);
-            dynabridge::napi_backend::module_t module{env, exports};
+            static portal::napi_backend::export_context_t ctx;
+            ctx = portal::napi_backend::export_context_t(env);
+            static portal::napi_backend::trusted_export_context_t trusted_ctx;
+            trusted_ctx = portal::napi_backend::trusted_export_context_t(env);
+            portal::napi_backend::module_t module{env, exports};
             define_raw_function(env, module, "rawAdd", raw_add);
             define_raw_function(env, module, "rawCalc", raw_calc);
             define_raw_function(env, module, "rawConsumeCounter", raw_consume_counter);
@@ -548,11 +548,11 @@ namespace {
             define_raw_function(env, module, "rawCallLoop", raw_call_loop);
             define_raw_function(env, module, "rawObjectCallLoop", raw_object_call_loop);
             define_raw_function(env, module, "rawCallbackCallLoop", raw_callback_call_loop);
-            define_raw_function(env, module, "dynabridgeCallLoop", dynabridge_call_loop);
+            define_raw_function(env, module, "portalCallLoop", portal_call_loop);
             define_raw_function(
-                env, module, "dynabridgeObjectCallLoop", dynabridge_object_call_loop);
+                env, module, "portalObjectCallLoop", portal_object_call_loop);
             define_raw_function(
-                env, module, "dynabridgeCallbackCallLoop", dynabridge_callback_call_loop);
+                env, module, "portalCallbackCallLoop", portal_callback_call_loop);
 
             napi_value raw_counter_class = nullptr;
             if (napi_define_class(
@@ -595,8 +595,8 @@ namespace {
             }
             module.define(env, "rawBenchmarkCounter", raw_benchmark_counter);
 
-            dynabridge::export_free_callable(ctx, module, "dynabridgeAdd", add_function);
-            dynabridge::export_calc(ctx, module)
+            portal::export_free_callable(ctx, module, "portalAdd", add_function);
+            portal::export_calc(ctx, module)
                 .bind<int(int)>([](int a) {
                     return a * 10;
                 })
@@ -604,48 +604,48 @@ namespace {
                     return add_function(a, b);
                 })
                 .commit();
-            dynabridge::exports::counter::register_all(ctx, module);
-            auto exported_counter = dynabridge::make_exported<dynabridge::exports::counter>(
-                ctx, dynabridge::native::counter(2u));
+            portal::exports::counter::register_all(ctx, module);
+            auto exported_counter = portal::make_exported<portal::exports::counter>(
+                ctx, portal::native::counter(2u));
             module.define(env, "benchmarkCounter", exported_counter.get());
 
             napi_value trusted_module_value = nullptr;
             if (napi_create_object(env, &trusted_module_value) != napi_ok) {
                 throw std::runtime_error("trusted benchmark module creation failed");
             }
-            dynabridge::napi_backend::module_t trusted_module{env, trusted_module_value};
-            dynabridge::exports::counter::register_all(trusted_ctx, trusted_module);
+            portal::napi_backend::module_t trusted_module{env, trusted_module_value};
+            portal::exports::counter::register_all(trusted_ctx, trusted_module);
             auto trusted_exported_counter =
-                dynabridge::make_exported<dynabridge::exports::counter>(
-                    trusted_ctx, dynabridge::native::counter(2u));
+                portal::make_exported<portal::exports::counter>(
+                    trusted_ctx, portal::native::counter(2u));
             module.define(
                 env, "trustedBenchmarkCounter", trusted_exported_counter.get());
 
             using object_signature = int(
-                dynabridge::object_param<
-                    dynabridge::export_classes::counter,
-                    dynabridge::export_t>,
+                portal::object_param<
+                    portal::export_classes::counter,
+                    portal::export_t>,
                 int);
-            dynabridge::export_consume_counter<object_signature>(
+            portal::export_consume_counter<object_signature>(
                 ctx,
                 module,
-                [](dynabridge::native::counter& counter, int value) {
+                [](portal::native::counter& counter, int value) {
                     return counter.add(value);
                 });
 
             using callback_signature = int(
-                dynabridge::callable_param<
-                    dynabridge::import_symbols::callback,
-                    dynabridge::import_t>,
+                portal::callable_param<
+                    portal::import_symbols::callback,
+                    portal::import_t>,
                 int);
-            dynabridge::export_use_callback<callback_signature>(
+            portal::export_use_callback<callback_signature>(
                 ctx,
                 module,
                 [](auto& callback_ctx, int value) {
-                    return dynabridge::call_callback(callback_ctx, value);
+                    return portal::call_callback(callback_ctx, value);
                 });
 
-#if defined(DYNABRIDGE_HAS_NODE_ADDON_API)
+#if defined(PORTAL_HAS_NODE_ADDON_API)
             Napi::Env napi_env_wrap(env);
             Napi::Object exports_object(napi_env_wrap, exports);
             exports_object["nodeAddonApiAdd"] =
@@ -680,7 +680,7 @@ namespace {
             napi_value has_node_addon_api = nullptr;
             napi_get_boolean(
                 env,
-#if defined(DYNABRIDGE_HAS_NODE_ADDON_API)
+#if defined(PORTAL_HAS_NODE_ADDON_API)
                 true,
 #else
                 false,
@@ -695,4 +695,4 @@ namespace {
     }
 }
 
-NAPI_MODULE(dynabridge_node_call_benchmark, init)
+NAPI_MODULE(portal_node_call_benchmark, init)

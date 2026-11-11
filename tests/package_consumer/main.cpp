@@ -1,14 +1,14 @@
-#define DYNABRIDGE_EXPORT_DEF "export.def"
-#include <dynabridge/bridge.h>
+#define PORTAL_EXPORT_DEF "export.def"
+#include <portal/bridge.h>
 
 #include <type_traits>
 
 int main() {
     static_assert(
-        std::is_same<dynabridge::free_callable<int(int)>,
-                     dynabridge::callable<dynabridge::no_receiver_t, int(int)>>::value,
+        std::is_same<portal::free_callable<int(int)>,
+                     portal::callable<portal::no_receiver_t, int(int)>>::value,
         "installed target must expose the public bridge headers");
 
-    auto builder = dynabridge::bind_package_ping();
+    auto builder = portal::bind_package_ping();
     (void)builder;
 }

@@ -1,4 +1,4 @@
-#include "dynabridge/extensions/flux_foundry/python_interpreter_executor.h"
+#include "portal/extensions/flux_foundry/python_interpreter_executor.h"
 #include <atomic>
 #include <cstdio>
 
@@ -33,7 +33,7 @@ int main() {
     PyObject* object = PyList_New(0);
     const auto references = Py_REFCNT(object);
     {
-        dynabridge::flux_foundry_extensions::python_interpreter_executor executor;
+        portal::flux_foundry_extensions::python_interpreter_executor executor;
         for (int i = 0; i < 1000; ++i)
             executor.dispatch(flux_foundry::task_wrapper_sbo(owned_task(object, invoked, unsafe)));
         executor.shutdown();

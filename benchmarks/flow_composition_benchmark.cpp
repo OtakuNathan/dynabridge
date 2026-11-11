@@ -10,11 +10,11 @@
 #include "flow/flow.h"
 
 #if defined(_MSC_VER)
-#define DYNABRIDGE_BENCH_FORCE_INLINE __forceinline
+#define PORTAL_BENCH_FORCE_INLINE __forceinline
 #elif defined(__GNUC__) || defined(__clang__)
-#define DYNABRIDGE_BENCH_FORCE_INLINE inline __attribute__((always_inline))
+#define PORTAL_BENCH_FORCE_INLINE inline __attribute__((always_inline))
 #else
-#define DYNABRIDGE_BENCH_FORCE_INLINE inline
+#define PORTAL_BENCH_FORCE_INLINE inline
 #endif
 
 namespace {
@@ -24,11 +24,11 @@ namespace {
     using error_t = std::exception_ptr;
     using result_t = ff::result_t<value_t, error_t>;
 
-    DYNABRIDGE_BENCH_FORCE_INLINE value_t step(value_t value) noexcept {
+    PORTAL_BENCH_FORCE_INLINE value_t step(value_t value) noexcept {
         return (value ^ 0x5a5a5a5au) + (value >> 3u);
     }
 
-    DYNABRIDGE_BENCH_FORCE_INLINE value_t direct_pipeline(value_t value) noexcept {
+    PORTAL_BENCH_FORCE_INLINE value_t direct_pipeline(value_t value) noexcept {
         value = step(value); value = step(value); value = step(value); value = step(value);
         value = step(value); value = step(value); value = step(value); value = step(value);
         value = step(value); value = step(value); value = step(value); value = step(value);

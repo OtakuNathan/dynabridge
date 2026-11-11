@@ -1,18 +1,18 @@
-#define DYNABRIDGE_IMPORT_DEF "tests/import.def"
-#define DYNABRIDGE_EXPORT_DEF "tests/export.def"
-#include "dynabridge/bridge.h"
-#include "dynabridge/backends/python.h"
+#define PORTAL_IMPORT_DEF "tests/import.def"
+#define PORTAL_EXPORT_DEF "tests/export.def"
+#include "portal/bridge.h"
+#include "portal/backends/python.h"
 
 #include <cstdio>
 #include <exception>
 #include <stdexcept>
 #include <type_traits>
 
-using backend = dynabridge::py_backend;
+using backend = portal::py_backend;
 using ref = backend::object_ref;
 constexpr auto owned = backend::ref_policy::owned;
 
-namespace dynabridge { namespace native {
+namespace portal { namespace native {
 class counter {
 public:
     explicit counter(unsigned value) : value_(value) {}
@@ -25,12 +25,12 @@ class consumer {
 public:
     template <typename Callback>
     consumer(counter& source, Callback& callback) {
-        dynabridge::call_callback(callback, source.value());
+        portal::call_callback(callback, source.value());
     }
     int combine(counter& source, int n) const { return source.add(n); }
     template <typename Callback>
     int apply(Callback& callback, int n) const {
-        return dynabridge::call_callback(callback, n);
+        return portal::call_callback(callback, n);
     }
 };
 }}
@@ -66,9 +66,9 @@ void check_argument_cleanup(PyObject* original) {
         bool caught = false;
         try {
             if (use_owner) {
-                backend::invoke_impl<void>(ctx, dynabridge::no_receiver_t{}, ref(arg, owned));
+                backend::invoke_impl<void>(ctx, portal::no_receiver_t{}, ref(arg, owned));
             } else {
-                backend::invoke_impl<void>(ctx, dynabridge::no_receiver_t{}, arg);
+                backend::invoke_impl<void>(ctx, portal::no_receiver_t{}, arg);
             }
         } catch (const backend::python_error& error) {
             caught = true;
@@ -122,11 +122,11 @@ def success(*args):
     std::exception_ptr saved;
     bool caught = false;
     try {
-        dynabridge::call_callback(raising, 1);
+        portal::call_callback(raising, 1);
     } catch (const backend::python_error& error) {
         caught = true;
         require(!PyErr_Occurred(), "error remained pending during C++ handling");
-        require(dynabridge::call_callback(success, 1) == 42, "recovery call failed");
+        require(portal::call_callback(success, 1) == 42, "recovery call failed");
         backend::python_error copied(error);
         backend::python_error moved(std::move(copied));
         moved.restore();
@@ -157,46 +157,46 @@ def success(*args):
 
     backend::export_context_t ctx;
     backend::module_t module(PyModule_New("exception_test"), owned);
-    dynabridge::exports::counter::register_all(ctx, module);
-    dynabridge::exports::consumer::register_all(ctx, module);
-    using callback_sig = int(dynabridge::callable_param<
-        dynabridge::import_symbols::callback, dynabridge::import_t>, int);
-    dynabridge::export_use_callback<callback_sig>(ctx, module, [](auto& cb, int n) {
-        return dynabridge::call_callback(cb, n);
+    portal::exports::counter::register_all(ctx, module);
+    portal::exports::consumer::register_all(ctx, module);
+    using callback_sig = int(portal::callable_param<
+        portal::import_symbols::callback, portal::import_t>, int);
+    portal::export_use_callback<callback_sig>(ctx, module, [](auto& cb, int n) {
+        return portal::call_callback(cb, n);
     });
-    dynabridge::export_calc(ctx, module)
-        .bind<int(int)>([&](int n) { return dynabridge::call_callback(raising, n); })
+    portal::export_calc(ctx, module)
+        .bind<int(int)>([&](int n) { return portal::call_callback(raising, n); })
         .bind<int(int, unsigned)>([&](int n, unsigned m) {
-            return dynabridge::call_calc(raising, n, m);
+            return portal::call_calc(raising, n, m);
         }).commit();
-    dynabridge::export_free_callable<void(int)>(ctx, module, "voidRaise", [&](int n) {
-        dynabridge::call_foo(raising, n);
+    portal::export_free_callable<void(int)>(ctx, module, "voidRaise", [&](int n) {
+        portal::call_foo(raising, n);
     });
-    dynabridge::export_free_callable<int(int)>(ctx, module, "recover", [&](int n) {
+    portal::export_free_callable<int(int)>(ctx, module, "recover", [&](int n) {
         try {
-            return dynabridge::call_callback(raising, n);
+            return portal::call_callback(raising, n);
         } catch (const backend::python_error&) {
             require(!PyErr_Occurred(), "pending error after catch");
-            return dynabridge::call_callback(success, n);
+            return portal::call_callback(success, n);
         }
     });
-    dynabridge::export_free_callable<int(int)>(ctx, module, "replace", [&](int n) {
+    portal::export_free_callable<int(int)>(ctx, module, "replace", [&](int n) {
         try {
-            return dynabridge::call_callback(raising, n);
+            return portal::call_callback(raising, n);
         } catch (const backend::python_error&) {
             throw std::logic_error("replacement native failure");
         }
     });
-    dynabridge::export_free_callable<int(int)>(ctx, module, "unwind", [&](int n) {
+    portal::export_free_callable<int(int)>(ctx, module, "unwind", [&](int n) {
         struct cleanup {
             ~cleanup() { PyErr_SetString(PyExc_KeyError, "cleanup changed pending error"); }
         } guard;
-        return dynabridge::call_callback(raising, n);
+        return portal::call_callback(raising, n);
     });
-    dynabridge::export_free_callable<int(int)>(ctx, module, "nativeFailure", [](int) -> int {
+    portal::export_free_callable<int(int)>(ctx, module, "nativeFailure", [](int) -> int {
         throw std::runtime_error("native failure");
     });
-    dynabridge::export_free_callable<int(int)>(ctx, module, "unknownFailure", [](int) -> int {
+    portal::export_free_callable<int(int)>(ctx, module, "unknownFailure", [](int) -> int {
         throw 7;
     });
     require(PyDict_SetItemString(globals.get(), "m", module.get()) == 0, "cannot publish module");
@@ -250,7 +250,7 @@ for exc in (KeyboardInterrupt('interrupt'), SystemExit(3), MemoryError('memory')
 
 for call, kind, message in (
     (lambda: m.nativeFailure(1), RuntimeError, 'native failure'),
-    (lambda: m.unknownFailure(1), RuntimeError, 'dynabridge Python callback failed'),
+    (lambda: m.unknownFailure(1), RuntimeError, 'portal Python callback failed'),
     (lambda: m.replace(1), RuntimeError, 'replacement native failure'),
     (lambda: m.use_callback(1, 1), TypeError, None),
 ):

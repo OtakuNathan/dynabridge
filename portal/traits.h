@@ -1,0 +1,425 @@
+//
+// Created by wufen on 6/9/2026.
+//
+
+#ifndef PORTAL_TRAITS_H
+#define PORTAL_TRAITS_H
+
+#include "error_policy.h"
+
+#include <cstddef>
+#include <memory>
+#include <new>
+#include <stdexcept>
+#include <type_traits>
+#include <utility>
+#include "optional.h"
+#include "type_list.h"
+
+#define PORTAL_CPP_14 201402L
+#define PORTAL_CPP_17 201703L
+#define PORTAL_CPP_20 202002L
+
+#if defined(_MSVC_LANG)
+    #define PORTAL_CPP_VER _MSVC_LANG
+#elif defined(__cplusplus)
+    #define PORTAL_CPP_VER __cplusplus
+#else
+    #define PORTAL_CPP_VER 0L
+#endif
+
+#define PORTAL_CPP_AT_LEAST(ver) (PORTAL_CPP_VER >= PORTAL_CPP_##ver)
+#define PORTAL_CPP_AT_MOST(ver)  (PORTAL_CPP_VER <= PORTAL_CPP_##ver)
+
+namespace portal {
+
+    template <typename T>
+    struct type_identity { using type = T; };
+
+    struct bad_conversion : std::runtime_error {
+        explicit bad_conversion(const char* message)
+            : std::runtime_error(message) {
+        }
+    };
+
+#if PORTAL_CPP_AT_MOST(14)
+    template <typename T>
+    struct negation : std::integral_constant<bool, !T::value> {};
+
+    template <typename ...>
+    struct conjunction : std::true_type {};
+
+    template <typename head>
+    struct conjunction <head> : head {};
+
+    template <typename head, typename ... tail>
+    struct conjunction<head, tail...> :
+        std::conditional_t<bool(head::value), conjunction<tail...>, head> {
+    };
+
+    template <typename ... Ts>
+    constexpr bool conjunction_v = conjunction<Ts...>::value;
+
+    template <typename ...>
+    struct disjunction : std::false_type {};
+
+    template <typename head>
+    struct disjunction <head> : head {};
+
+    template <typename head, typename ... tail>
+    struct disjunction<head, tail...> :
+        std::conditional_t<static_cast<bool>(head::value), head, disjunction<tail...>> {
+    };
+
+    template <typename ... Ts>
+    constexpr bool disjunction_v = disjunction<Ts...>::value;
+
+    namespace swap_adl_tests {
+        using std::swap;
+
+        template <typename, typename>
+        auto can_swap(...) noexcept(false) -> std::false_type;
+
+        template <typename T, typename U>
+        auto can_swap(int) noexcept(noexcept(swap(std::declval<T>(), std::declval<U>()))
+            && noexcept(swap(std::declval<U>(), std::declval<T>())))
+            -> decltype(
+                swap(std::declval<T>(), std::declval<U>()),
+                swap(std::declval<U>(), std::declval<T>()),
+                std::true_type{}
+            );
+
+        template <typename T, typename U, bool = decltype(can_swap<T, U>(0))::value>
+        struct is_nothrow_swappable_helper : std::false_type {
+        };
+
+        template <typename T, typename U>
+        struct is_nothrow_swappable_helper<T, U, true>
+            : std::integral_constant<bool,
+                noexcept(swap(std::declval<T>(), std::declval<U>()))
+                && noexcept(swap(std::declval<U>(), std::declval<T>()))> {
+        };
+    }
+
+    template<class T, class U = T>
+    struct is_swappable : decltype(swap_adl_tests::can_swap<T&, U&>(0)) {
+    };
+
+    template <typename R, typename... Args>
+    struct is_swappable<R (*)(Args...)> : std::true_type { };
+
+    template<class T, std::size_t N>
+    struct is_swappable<T[N], T[N]> : decltype(swap_adl_tests::can_swap<T(&)[N], T(&)[N]>(0)) {
+    };
+
+    template<class T, class U = T>
+    struct is_nothrow_swappable : swap_adl_tests::is_nothrow_swappable_helper<T&, U&> {
+    };
+
+    template <typename R, typename... Args>
+    struct is_nothrow_swappable<R (*)(Args...)> : std::true_type { };
+
+    template <typename... Us>
+    struct is_swappable <type_list<Us...>> : conjunction<is_swappable<Us>...> { };
+
+    template <typename... Us>
+    struct is_nothrow_swappable <type_list<Us...>> : conjunction<is_nothrow_swappable<Us>...> { };
+
+    template <typename ... >
+    struct void_ { using type = void; };
+
+    template <typename ...  Ts>
+    using void_t = typename void_<Ts...>::type;
+
+    template <typename T>
+    constexpr bool is_void_v = std::is_void<T>::value;
+
+    template <typename T>
+    constexpr bool is_nothrow_move_constructible_v =
+        std::is_nothrow_move_constructible<T>::value;
+#else
+    using std::void_t;
+    using std::conjunction;
+    using std::conjunction_v;
+    using std::disjunction;
+    using std::disjunction_v;
+    using std::negation;
+    using std::is_swappable;
+    using std::is_nothrow_swappable;
+    using std::is_void_v;
+    using std::is_nothrow_move_constructible_v;
+#endif
+
+    struct no_receiver_t { };
+
+    struct import_t { };
+
+    struct export_t { };
+
+    template <typename T, typename = void>
+    struct bridge_direction {
+        using type = import_t;
+    };
+
+    template <typename T>
+    struct bridge_direction<T, void_t<typename T::bridge_direction>> {
+        using type = typename T::bridge_direction;
+    };
+
+    struct unmatched_callable_t { };
+
+    struct construct_object_t { };
+
+    constexpr construct_object_t construct_object { };
+    constexpr std::size_t dynamic_arity = static_cast<std::size_t>(-1);
+
+    template <typename T>
+    struct borrowed_ref {
+        T* value = nullptr;
+    };
+
+    template <typename T>
+    borrowed_ref<T> borrow(T& value) noexcept {
+        return borrowed_ref<T>{std::addressof(value)};
+    }
+
+    template <typename T>
+    struct owned_value {
+        template <typename U>
+        explicit owned_value(U&& value)
+            : value(std::forward<U>(value)) {
+        }
+
+        T value;
+    };
+
+    template <typename T>
+    owned_value<typename std::decay<T>::type> own(T&& value) {
+        return owned_value<typename std::decay<T>::type>(std::forward<T>(value));
+    }
+
+    template <typename Native>
+    class export_native_storage {
+    public:
+        using native_t = Native;
+
+        export_native_storage() = delete;
+
+        explicit export_native_storage(borrowed_ref<Native> borrowed) noexcept
+            : native_(borrowed.value),
+              owns_(false) {
+        }
+
+        explicit export_native_storage(owned_value<Native>&& owned)
+            noexcept(std::is_nothrow_move_constructible<Native>::value) {
+            construct(std::move(owned.value));
+        }
+
+        template <
+            typename... Args,
+            typename = std::enable_if_t<std::is_constructible<Native, Args&&...>::value>>
+        explicit export_native_storage(Args&&... args) {
+            construct(std::forward<Args>(args)...);
+        }
+
+        export_native_storage(const export_native_storage&) = delete;
+        export_native_storage& operator=(const export_native_storage&) = delete;
+
+        export_native_storage(export_native_storage&& other)
+            noexcept(std::is_nothrow_move_constructible<Native>::value) {
+            move_from(std::move(other));
+        }
+
+        export_native_storage& operator=(export_native_storage&& other)
+            noexcept(std::is_nothrow_move_constructible<Native>::value) {
+            if (this != &other) {
+                reset();
+                move_from(std::move(other));
+            }
+            return *this;
+        }
+
+        ~export_native_storage() noexcept {
+            reset();
+        }
+
+        Native* get() noexcept {
+            return native_;
+        }
+
+        const Native* get() const noexcept {
+            return native_;
+        }
+
+        Native& ref() noexcept {
+            return *native_;
+        }
+
+        const Native& ref() const noexcept {
+            return *native_;
+        }
+
+    private:
+        using storage_t = typename std::aligned_storage<sizeof(Native), alignof(Native)>::type;
+
+        template <typename... Args>
+        void construct(Args&&... args) {
+            native_ = new (&storage_) Native(std::forward<Args>(args)...);
+            owns_ = true;
+        }
+
+        void move_from(export_native_storage&& other) {
+            if (other.owns_) {
+                construct(std::move(*other.native_));
+                other.reset();
+            } else {
+                native_ = other.native_;
+                owns_ = false;
+                other.native_ = nullptr;
+            }
+        }
+
+        void reset() noexcept {
+            if (owns_ && native_ != nullptr) {
+                native_->~Native();
+            }
+            native_ = nullptr;
+            owns_ = false;
+        }
+
+        storage_t storage_;
+        Native* native_ = nullptr;
+        bool owns_ = false;
+    };
+
+    // Backends with owning dynamic handles can guard each lowered argument
+    // before evaluation of the remaining arguments has completed.
+    template <typename Context, typename Value>
+    auto own_import_value_impl(Context& ctx, Value&& value, int)
+        -> decltype(Context::backend_t::own_import_value_impl(ctx, std::forward<Value>(value))) {
+        return Context::backend_t::own_import_value_impl(ctx, std::forward<Value>(value));
+    }
+
+    template <typename Context, typename Value>
+    typename std::decay<Value>::type own_import_value_impl(Context&, Value&& value, long) {
+        return std::forward<Value>(value);
+    }
+
+    template <typename Context, typename Value>
+    auto own_import_value(Context& ctx, Value&& value)
+        -> decltype(own_import_value_impl(ctx, std::forward<Value>(value), 0)) {
+        return own_import_value_impl(ctx, std::forward<Value>(value), 0);
+    }
+
+    template <typename T, typename Context, typename Value>
+    auto to_cast(Context& ctx, Value&& value)
+        -> decltype(Context::backend_t::template converter<typename std::decay<T>::type>::to(
+            ctx, std::forward<Value>(value)))
+    {
+#if !PORTAL_HAS_EXCEPTIONS && PORTAL_NO_EXCEPTION_STRICT
+        static_assert(noexcept(Context::backend_t::template converter<typename std::decay<T>::type>::to(
+            ctx, std::forward<Value>(value))), "portal strict no-exception converter must be noexcept");
+#endif
+        return Context::backend_t::template converter<typename std::decay<T>::type>::to(
+            ctx, std::forward<Value>(value));
+    }
+
+    // Explicit opt-in for RPC-like backends. Sharing rpc::value alone does not
+    // grant this policy or permission to consume caller-owned arguments.
+    struct rpc_export_probe_policy {};
+
+    template <typename Backend, typename = void>
+    struct uses_rpc_export_probe : std::false_type {};
+    template <typename Backend>
+    struct uses_rpc_export_probe<Backend, void_t<typename Backend::export_probe_policy>>
+        : std::is_same<typename Backend::export_probe_policy, rpc_export_probe_policy> {};
+
+    template <typename Converter, typename Context, typename Dynamic, typename = void>
+    struct has_converter_probe : std::false_type {};
+
+    template <typename Converter, typename Context, typename Dynamic>
+    struct has_converter_probe<Converter, Context, Dynamic, void_t<decltype(
+        Converter::probe(std::declval<Context&>(), std::declval<const Dynamic&>()))>>
+        : std::is_same<bool, decltype(Converter::probe(
+            std::declval<Context&>(), std::declval<const Dynamic&>()))> {};
+
+    template <typename T, typename Context, typename Dynamic>
+    void check_converter_probe_contract() {
+        using converter_t = typename Context::backend_t::template converter<
+            typename std::decay<T>::type>;
+        static_assert(has_converter_probe<converter_t, Context, Dynamic>::value,
+            "portal converter must provide bool probe(Context&, const Dynamic&)");
+#if !PORTAL_HAS_EXCEPTIONS && PORTAL_NO_EXCEPTION_STRICT
+        static_assert(noexcept(converter_t::probe(
+            std::declval<Context&>(), std::declval<const Dynamic&>())),
+            "portal strict no-exception converter probe must be noexcept");
+#endif
+    }
+
+    template <typename T, typename Context, typename Dynamic>
+    bool from_probe(Context& ctx, const Dynamic& value) {
+        check_converter_probe_contract<T, Context, Dynamic>();
+        return Context::backend_t::template converter<typename std::decay<T>::type>::probe(ctx, value);
+    }
+
+    // Exact library binder types specialize this trait; lookalike/custom binders
+    // retain their original const accessor or typed invocation path.
+    template <typename T>
+    struct is_transactional_export_binder : std::false_type {};
+
+    template <typename T, typename Context, typename Dynamic>
+    auto from_optional(Context& ctx, Dynamic&& value)
+        -> decltype(Context::backend_t::template converter<typename std::decay<T>::type>::from(
+            ctx, std::forward<Dynamic>(value)))
+    {
+#if !PORTAL_HAS_EXCEPTIONS && PORTAL_NO_EXCEPTION_STRICT
+        static_assert(noexcept(Context::backend_t::template converter<typename std::decay<T>::type>::from(
+            ctx, std::forward<Dynamic>(value))), "portal strict no-exception converter must be noexcept");
+#endif
+        return Context::backend_t::template converter<typename std::decay<T>::type>::from(
+            ctx, std::forward<Dynamic>(value));
+    }
+
+    template <typename T, typename Context, typename Dynamic>
+    auto from_cast(Context& ctx, Dynamic&& value)
+        -> typename std::decay<decltype(from_optional<T>(
+            std::declval<Context&>(),
+            std::declval<Dynamic>()))>::type::value_type
+    {
+        auto result = from_optional<T>(ctx, std::forward<Dynamic>(value));
+        if (!result) {
+            PORTAL_RAISE(bad_conversion("portal value is not convertible to the requested C++ type"));
+        }
+        return std::move(*result);
+    }
+
+    template <typename T>
+    struct is_bad_bridge_param
+        : std::integral_constant<bool,
+            std::is_lvalue_reference<T>::value
+            && !std::is_const<typename std::remove_reference<T>::type>::value> {
+    };
+
+    template <typename... Args>
+    struct are_bridge_params_valid
+        : negation<disjunction<is_bad_bridge_param<Args>...>> {
+    };
+
+    template <typename T>
+    struct is_function_pointer : std::false_type {
+    };
+
+    template <typename R, typename... Args>
+    struct is_function_pointer<R (*)(Args...)> : std::true_type {
+    };
+
+    template <typename T, typename = void>
+    struct is_export_overload_binder : std::false_type {
+    };
+
+    template <typename T>
+    struct is_export_overload_binder<T, void_t<typename T::overloads_t>> : std::true_type {
+    };
+    }
+
+#endif //PORTAL_TRAITS_H

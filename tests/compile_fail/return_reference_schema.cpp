@@ -8,9 +8,9 @@ using result_t = const int&;
 using result_t = int&&;
 #endif
 #if SCHEMA_EXPORT
-#define DYNABRIDGE_EXPORT_DEF "../tests/compile_fail/return_reference_schema.def"
+#define PORTAL_EXPORT_DEF "../tests/compile_fail/return_reference_schema.def"
 #else
-#define DYNABRIDGE_IMPORT_DEF "../tests/compile_fail/return_reference_schema.def"
+#define PORTAL_IMPORT_DEF "../tests/compile_fail/return_reference_schema.def"
 #endif
-#include "../../dynabridge/bridge.h"
+#include "../../portal/bridge.h"
 int main() {}

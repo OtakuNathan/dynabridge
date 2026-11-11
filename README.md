@@ -1,18 +1,23 @@
-# Dyna Bridge
+# Portal
 
-[![CI](https://github.com/OtakuNathan/dynabridge/actions/workflows/ci.yml/badge.svg)](https://github.com/OtakuNathan/dynabridge/actions/workflows/ci.yml)
+[![CI](https://github.com/OtakuNathan/portal/actions/workflows/ci.yml/badge.svg)](https://github.com/OtakuNathan/portal/actions/workflows/ci.yml)
 
-Dyna Bridge is a C++14, header-only contract layer for crossing runtime
+Portal is a C++14, header-only contract layer for crossing runtime
 boundaries with ordinary C++ call syntax. It keeps callable shape, overloads,
 class identity, and conversion requirements in the type system while a backend
 supplies the platform-specific runtime operations.
 
 ```text
-C++ callable shape x backend runtime x converter set = usable language bridge
+C++ callable shape x backend runtime x converter set = usable boundary call
 ```
 
 The repository includes minimal CPython C API and Node-API backends, a framed
 RPC backend, and a fake backend used by the core tests.
+
+Portal was previously named Dyna Bridge. The public API now uses
+`<portal/...>` headers, the `portal::` namespace and `PORTAL_*` macros.
+CMake consumers use `find_package(portal CONFIG REQUIRED)` and link
+`portal::portal`. Update consumers together; the former names are not aliases.
 
 ## Choose an export entry point
 
@@ -28,7 +33,7 @@ For example, after declaring `run_arena` in the module's `.def`:
 using Signature =
     std::string(const std::string&, const std::string&);
 
-dynabridge::export_run_arena<Signature>(
+portal::export_run_arena<Signature>(
     context, module,
     [](const std::string& csv, const std::string& config) {
         return arena::run_arena(csv, config);
@@ -44,7 +49,7 @@ boundary with FF computation and lease access permissions.
 
 ## Why It Exists
 
-Dyna Bridge separates three concerns that binding libraries often combine:
+Portal separates three concerns that binding libraries often combine:
 
 - The contract declares which functions, overloads, classes, constructors, and
   member functions exist.
@@ -74,7 +79,7 @@ two runtime examples:
 ```sh
 cmake -S . -B build \
   -DCMAKE_BUILD_TYPE=Release \
-  -DDYNABRIDGE_BUILD_EXAMPLES=ON
+  -DPORTAL_BUILD_EXAMPLES=ON
 cmake --build build --config Release --parallel
 ctest --test-dir build -C Release --output-on-failure
 ```
@@ -91,9 +96,9 @@ entry points are
 Select module-local declaration tables before including the bridge:
 
 ```cpp
-#define DYNABRIDGE_IMPORT_DEF "my_module/import.def"
-#define DYNABRIDGE_EXPORT_DEF "my_module/export.def"
-#include <dynabridge/bridge.h>
+#define PORTAL_IMPORT_DEF "my_module/import.def"
+#define PORTAL_EXPORT_DEF "my_module/export.def"
+#include <portal/bridge.h>
 ```
 
 An export table can declare a free function and a native class:
@@ -118,16 +123,16 @@ END_CLASS
 Registration uses generated, typed entry points:
 
 ```cpp
-dynabridge::export_add(ctx, module, native::add);
-dynabridge::exports::counter::register_all(ctx, module);
+portal::export_add(ctx, module, native::add);
+portal::exports::counter::register_all(ctx, module);
 ```
 
 Import declarations generate normal C++ calls and receiver delegates:
 
 ```cpp
-int result = dynabridge::call_add(ctx, 12, 13u);
+int result = portal::call_add(ctx, 12, 13u);
 
-auto counter = dynabridge::construct<dynabridge::counter>(ctx, 13u);
+auto counter = portal::construct<portal::counter>(ctx, 13u);
 int value = counter.add(29);
 ```
 
@@ -145,7 +150,7 @@ first successful candidate wins, so declaration order is part of the public
 dispatch policy:
 
 ```cpp
-dynabridge::export_calc(ctx, module)
+portal::export_calc(ctx, module)
     .bind<int(int)>(scale_by_ten)
     .bind<int(int, unsigned)>(multiply)
     .commit();
@@ -178,25 +183,25 @@ of their project with a newer standard.
 As a subdirectory:
 
 ```cmake
-add_subdirectory(external/dynabridge)
-target_link_libraries(my_addon PRIVATE dynabridge::dynabridge)
+add_subdirectory(external/portal)
+target_link_libraries(my_addon PRIVATE portal::portal)
 target_include_directories(my_addon PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 ```
 
 The final include directory makes module-local `.def` paths such as
 `"my_module/export.def"` visible during schema expansion.
 
-Tests, examples, and benchmarks default to off when Dyna Bridge is a
+Tests, examples, and benchmarks default to off when Portal is a
 subproject. For an installed package:
 
 ```sh
-cmake -S . -B build -DDYNABRIDGE_BUILD_TESTS=OFF
+cmake -S . -B build -DPORTAL_BUILD_TESTS=OFF
 cmake --install build --prefix /path/to/prefix
 ```
 
 ```cmake
-find_package(dynabridge CONFIG REQUIRED)
-target_link_libraries(my_addon PRIVATE dynabridge::dynabridge)
+find_package(portal CONFIG REQUIRED)
+target_link_libraries(my_addon PRIVATE portal::portal)
 ```
 
 ## Scope and Status
@@ -214,7 +219,7 @@ target_link_libraries(my_addon PRIVATE dynabridge::dynabridge)
 This is a bridge core, not a drop-in replacement for the complete policies and
 type catalogs of pybind11, nanobind, or node-addon-api. Thread attachment, the
 Python GIL, Node handle scopes, scheduler choice, and platform object ownership
-are not dynabridge core policy. Backends expose the required platform primitives;
+are not portal core policy. Backends expose the required platform primitives;
 Flux Foundry runners and runtime-specific executors can compose thread affinity,
 asynchronous continuation, and cancellation without reimplementing orchestration
 inside every backend. Contract changes require recompilation; there is
@@ -231,7 +236,7 @@ environments, and comparison caveats.
 ## Documentation
 
 - [Callable export selection and minimal module template](docs/callable_exports.md)
-- [Replay composition: Dyna Bridge, FF, and lease](docs/replay_composition.md)
+- [Replay composition: Portal, FF, and lease](docs/replay_composition.md)
 - [Architecture and extension boundaries](docs/architecture.md)
 - [Full API reference and backend walkthrough](docs/reference.md)
 - [Python example](examples/python/module.cpp)

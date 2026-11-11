@@ -8,7 +8,7 @@ if (!addonPath) {
 }
 
 const addon = require(addonPath);
-const iterations = Number.parseInt(process.env.DYNABRIDGE_BENCH_ITERS || '1000000', 10);
+const iterations = Number.parseInt(process.env.PORTAL_BENCH_ITERS || '1000000', 10);
 
 function jsAdd(a, b) {
   return a + b;
@@ -174,24 +174,24 @@ const exportResults = [
   runConstructLoop('raw N-API export construct', addon.rawCounter),
   runJsLoop1('raw N-API overload export 1', addon.rawCalc, 1, 10),
   runJsLoop2('raw N-API overload export 2', addon.rawCalc, 1, 2, 3),
-  runJsLoop2('dynabridge export', addon.dynabridgeAdd, 1, 2, 3),
-  runJsLoop2('dynabridge export class argument', addon.consume_counter, addon.benchmarkCounter, 1, 3),
+  runJsLoop2('portal export', addon.portalAdd, 1, 2, 3),
+  runJsLoop2('portal export class argument', addon.consume_counter, addon.benchmarkCounter, 1, 3),
   runJsLoop1(
-    'dynabridge export class member',
+    'portal export class member',
     addon.benchmarkCounter.add.bind(addon.benchmarkCounter),
     1,
     3
   ),
   runJsLoop1(
-    'dynabridge trusted class member',
+    'portal trusted class member',
     addon.trustedBenchmarkCounter.add.bind(addon.trustedBenchmarkCounter),
     1,
     3
   ),
-  runJsLoop2('dynabridge export callback', addon.use_callback, callback, 1, 3),
-  runConstructLoop('dynabridge export construct', addon.counter),
-  runJsLoop1('dynabridge overload export 1', addon.calc, 1, 10),
-  runJsLoop2('dynabridge overload export 2', addon.calc, 1, 2, 3),
+  runJsLoop2('portal export callback', addon.use_callback, callback, 1, 3),
+  runConstructLoop('portal export construct', addon.counter),
+  runJsLoop1('portal overload export 1', addon.calc, 1, 10),
+  runJsLoop2('portal overload export 2', addon.calc, 1, 2, 3),
 ];
 
 if (addon.hasNodeAddonApi) {
@@ -228,9 +228,9 @@ const importResults = [
   runNativeLoop('raw N-API import', addon.rawCallLoop),
   runNativeObjectLoop('raw N-API import object', addon.rawObjectCallLoop),
   runNativeCallbackLoop('raw N-API import callback', addon.rawCallbackCallLoop),
-  runNativeLoop('dynabridge import', addon.dynabridgeCallLoop),
-  runNativeObjectLoop('dynabridge import object', addon.dynabridgeObjectCallLoop),
-  runNativeCallbackLoop('dynabridge import callback', addon.dynabridgeCallbackCallLoop),
+  runNativeLoop('portal import', addon.portalCallLoop),
+  runNativeObjectLoop('portal import object', addon.portalObjectCallLoop),
+  runNativeCallbackLoop('portal import callback', addon.portalCallbackCallLoop),
 ];
 
 if (addon.hasNodeAddonApi) {

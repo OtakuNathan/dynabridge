@@ -1,6 +1,6 @@
 # Architecture
 
-Dyna Bridge models a boundary call as the product of three independent pieces:
+Portal models a boundary call as the product of three independent pieces:
 
 ```text
 callable<Receiver, Signature> x Backend x ConverterSet

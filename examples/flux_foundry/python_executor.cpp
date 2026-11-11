@@ -1,7 +1,7 @@
-#define DYNABRIDGE_IMPORT_DEF "examples/flux_foundry/import.def"
-#include "dynabridge/bridge.h"
-#include "dynabridge/backends/python.h"
-#include "dynabridge/extensions/flux_foundry/python_interpreter_executor.h"
+#define PORTAL_IMPORT_DEF "examples/flux_foundry/import.def"
+#include "portal/bridge.h"
+#include "portal/backends/python.h"
+#include "portal/extensions/flux_foundry/python_interpreter_executor.h"
 
 #include <flow/flow.h>
 
@@ -47,27 +47,27 @@ int main() {
     Py_Initialize();
     int status = 0;
     {
-        dynabridge::py_backend::object_ref globals(PyDict_New(),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref script(globals ? PyRun_String(
+        portal::py_backend::object_ref globals(PyDict_New(),
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref script(globals ? PyRun_String(
                 "def executor_add(a, b):\n"
                 "    return a + b\n",
                 Py_file_input, globals.get(), globals.get()) : nullptr,
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (!globals || !script) {
             PyErr_Print();
             status = 1;
         } else {
             PyObject* callable = PyDict_GetItemString(globals.get(), "executor_add");
-            dynabridge::py_backend::context_t ctx(callable);
-            dynabridge::flux_foundry_extensions::python_interpreter_executor executor;
+            portal::py_backend::context_t ctx(callable);
+            portal::flux_foundry_extensions::python_interpreter_executor executor;
             result_state result;
 
             auto blueprint = ff::make_blueprint<int>()
                 | ff::via(&executor)
                 | ff::then([&ctx](result_t&& input) -> result_t {
                     return result_t(ff::value_tag,
-                        dynabridge::call_executor_add(
+                        portal::call_executor_add(
                             ctx, std::move(input).value(), 2u));
                 })
                 | ff::end();
@@ -109,7 +109,7 @@ int main() {
                 const double ns_per_task =
                     std::chrono::duration<double, std::nano>(elapsed).count()
                     / static_cast<double>(iterations);
-                std::printf("Python executor: dynabridge + FF result=%d, %.1f ns/task\n",
+                std::printf("Python executor: portal + FF result=%d, %.1f ns/task\n",
                     result.value, ns_per_task);
             }
         }

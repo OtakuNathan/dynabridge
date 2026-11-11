@@ -1,16 +1,16 @@
-#define DYNABRIDGE_IMPORT_DEF "tests/import.def"
-#define DYNABRIDGE_EXPORT_DEF "tests/export.def"
-#include "dynabridge/bridge.h"
-#include "dynabridge/backends/python.h"
+#define PORTAL_IMPORT_DEF "tests/import.def"
+#define PORTAL_EXPORT_DEF "tests/export.def"
+#include "portal/bridge.h"
+#include "portal/backends/python.h"
 
 #include <exception>
 #include <stdexcept>
 #include <string>
 
-using py_context_t = dynabridge::py_backend::context_t;
-using py_export_context_t = dynabridge::py_backend::export_context_t;
+using py_context_t = portal::py_backend::context_t;
+using py_export_context_t = portal::py_backend::export_context_t;
 
-namespace dynabridge {
+namespace portal {
     namespace native {
         class counter {
         public:
@@ -39,10 +39,10 @@ namespace dynabridge {
     }
 }
 
-int dynabridge::native::counter::constructed = 0;
-int dynabridge::native::counter::destroyed = 0;
+int portal::native::counter::constructed = 0;
+int portal::native::counter::destroyed = 0;
 
-using owned_counter = dynabridge::native::counter;
+using owned_counter = portal::native::counter;
 
 namespace {
     int stored_value = 0;
@@ -95,11 +95,11 @@ namespace {
                 return nullptr;
             }
 
-            py_context_t ctx(callable, dynabridge::py_backend::ref_policy::borrowed);
-            return dynabridge::py_backend::converter<int>::to(
+            py_context_t ctx(callable, portal::py_backend::ref_policy::borrowed);
+            return portal::py_backend::converter<int>::to(
                 ctx,
-                dynabridge::call_calc(ctx, a, b));
-        } catch (const dynabridge::py_backend::python_error& error) {
+                portal::call_calc(ctx, a, b));
+        } catch (const portal::py_backend::python_error& error) {
             error.restore();
             return nullptr;
         } catch (const std::exception& error) {
@@ -116,10 +116,10 @@ namespace {
                 return nullptr;
             }
 
-            py_context_t ctx(callable, dynabridge::py_backend::ref_policy::borrowed);
-            dynabridge::call_foo(ctx, a, b);
+            py_context_t ctx(callable, portal::py_backend::ref_policy::borrowed);
+            portal::call_foo(ctx, a, b);
             Py_RETURN_NONE;
-        } catch (const dynabridge::py_backend::python_error& error) {
+        } catch (const portal::py_backend::python_error& error) {
             error.restore();
             return nullptr;
         } catch (const std::exception& error) {
@@ -135,11 +135,11 @@ namespace {
                 return nullptr;
             }
 
-            py_context_t ctx(callable, dynabridge::py_backend::ref_policy::borrowed);
-            return dynabridge::py_backend::converter<std::string>::to(
+            py_context_t ctx(callable, portal::py_backend::ref_policy::borrowed);
+            return portal::py_backend::converter<std::string>::to(
                 ctx,
-                dynabridge::call_echo(ctx, dynabridge::from_cast<std::string>(ctx, text)));
-        } catch (const dynabridge::py_backend::python_error& error) {
+                portal::call_echo(ctx, portal::from_cast<std::string>(ctx, text)));
+        } catch (const portal::py_backend::python_error& error) {
             error.restore();
             return nullptr;
         } catch (const std::exception& error) {
@@ -156,13 +156,13 @@ namespace {
                 return nullptr;
             }
 
-            py_context_t ctx(callable, dynabridge::py_backend::ref_policy::borrowed);
-            auto counter = dynabridge::bind_receiver<dynabridge::counter>(
+            py_context_t ctx(callable, portal::py_backend::ref_policy::borrowed);
+            auto counter = portal::bind_receiver<portal::counter>(
                 ctx,
                 receiver,
-                dynabridge::py_backend::ref_policy::borrowed);
-            return dynabridge::py_backend::converter<int>::to(ctx, counter.add(value));
-        } catch (const dynabridge::py_backend::python_error& error) {
+                portal::py_backend::ref_policy::borrowed);
+            return portal::py_backend::converter<int>::to(ctx, counter.add(value));
+        } catch (const portal::py_backend::python_error& error) {
             error.restore();
             return nullptr;
         } catch (const std::exception& error) {
@@ -178,13 +178,13 @@ namespace {
                 return nullptr;
             }
 
-            py_context_t ctx(callable, dynabridge::py_backend::ref_policy::borrowed);
-            auto counter = dynabridge::bind_receiver<dynabridge::counter>(
+            py_context_t ctx(callable, portal::py_backend::ref_policy::borrowed);
+            auto counter = portal::bind_receiver<portal::counter>(
                 ctx,
                 receiver,
-                dynabridge::py_backend::ref_policy::borrowed);
-            return dynabridge::py_backend::converter<int>::to(ctx, counter.value());
-        } catch (const dynabridge::py_backend::python_error& error) {
+                portal::py_backend::ref_policy::borrowed);
+            return portal::py_backend::converter<int>::to(ctx, counter.value());
+        } catch (const portal::py_backend::python_error& error) {
             error.restore();
             return nullptr;
         } catch (const std::exception& error) {
@@ -201,10 +201,10 @@ namespace {
                 return nullptr;
             }
 
-            py_context_t ctx(callable, dynabridge::py_backend::ref_policy::borrowed);
-            auto counter = dynabridge::construct<dynabridge::counter>(ctx, handle);
-            return dynabridge::py_backend::converter<int>::to(ctx, counter.add(value));
-        } catch (const dynabridge::py_backend::python_error& error) {
+            py_context_t ctx(callable, portal::py_backend::ref_policy::borrowed);
+            auto counter = portal::construct<portal::counter>(ctx, handle);
+            return portal::py_backend::converter<int>::to(ctx, counter.add(value));
+        } catch (const portal::py_backend::python_error& error) {
             error.restore();
             return nullptr;
         } catch (const std::exception& error) {
@@ -254,14 +254,14 @@ namespace {
 
     PyModuleDef module_def = {
         PyModuleDef_HEAD_INIT,
-        "dynabridge_python_runtime_addon",
+        "portal_python_runtime_addon",
         nullptr,
         -1,
         module_methods
     };
 }
 
-PyMODINIT_FUNC PyInit_dynabridge_python_runtime_addon() {
+PyMODINIT_FUNC PyInit_portal_python_runtime_addon() {
     PyObject* module_object = PyModule_Create(&module_def);
     if (module_object == nullptr) {
         return nullptr;
@@ -269,28 +269,28 @@ PyMODINIT_FUNC PyInit_dynabridge_python_runtime_addon() {
 
     try {
         static py_export_context_t ctx;
-        dynabridge::py_backend::module_t module(
+        portal::py_backend::module_t module(
             module_object,
-            dynabridge::py_backend::ref_policy::borrowed);
+            portal::py_backend::ref_policy::borrowed);
 
-        dynabridge::export_free_callable(ctx, module, "add", add_function);
-        dynabridge::export_calc(ctx, module, add_function);
-        dynabridge::export_free_callable(ctx, module, "store", store_function);
-        dynabridge::export_free_callable(ctx, module, "stored", stored_function);
-        dynabridge::export_free_callable(ctx, module, "ownedCounterConstructed", owned_counter_constructed);
-        dynabridge::export_free_callable(ctx, module, "ownedCounterDestroyed", owned_counter_destroyed);
-        dynabridge::export_free_callable<int(int, unsigned)>(
+        portal::export_free_callable(ctx, module, "add", add_function);
+        portal::export_calc(ctx, module, add_function);
+        portal::export_free_callable(ctx, module, "store", store_function);
+        portal::export_free_callable(ctx, module, "stored", stored_function);
+        portal::export_free_callable(ctx, module, "ownedCounterConstructed", owned_counter_constructed);
+        portal::export_free_callable(ctx, module, "ownedCounterDestroyed", owned_counter_destroyed);
+        portal::export_free_callable<int(int, unsigned)>(
             ctx,
             module,
             "multiply",
             [](int a, unsigned b) {
                 return a * static_cast<int>(b);
             });
-        dynabridge::export_calc(ctx, module)
+        portal::export_calc(ctx, module)
             .bind<int(int)>(scale_by_ten_function)
             .bind<int(int, unsigned)>(multiply_function{})
             .commit();
-        dynabridge::export_echo(ctx, module)
+        portal::export_echo(ctx, module)
             .bind<std::string(std::string)>([](std::string text) {
                 return "<" + text + ">";
             })
@@ -299,14 +299,14 @@ PyMODINIT_FUNC PyInit_dynabridge_python_runtime_addon() {
             })
             .commit();
 
-        dynabridge::exports::counter::register_all(ctx, module);
+        portal::exports::counter::register_all(ctx, module);
     } catch (const std::exception& error) {
         Py_DECREF(module_object);
         PyErr_SetString(PyExc_RuntimeError, error.what());
         return nullptr;
     } catch (...) {
         Py_DECREF(module_object);
-        PyErr_SetString(PyExc_RuntimeError, "dynabridge Python runtime addon init failed");
+        PyErr_SetString(PyExc_RuntimeError, "portal Python runtime addon init failed");
         return nullptr;
     }
 

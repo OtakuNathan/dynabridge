@@ -1,7 +1,7 @@
 // Standalone: g++ -std=c++14 -I. tests/rpc_probe_test.cpp -o /tmp/probe-contract && /tmp/probe-contract
-// Repeat with -fno-exceptions -DDYNABRIDGE_NO_EXCEPTION_STRICT=0 and =1.
-#include "dynabridge/bridge.h"
-#include "dynabridge/backends/rpc.h"
+// Repeat with -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=0 and =1.
+#include "portal/bridge.h"
+#include "portal/backends/rpc.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -13,9 +13,9 @@
 #include <csignal>
 #endif
 #define CHECK(x) do { if (!(x)) { std::fprintf(stderr,"line %d: %s\n",__LINE__,#x); std::abort(); } } while(false)
-using V = dynabridge::rpc::value;
-using C = dynabridge::rpc_backend::export_context_t;
-namespace codec = dynabridge::rpc::detail;
+using V = portal::rpc::value;
+using C = portal::rpc_backend::export_context_t;
+namespace codec = portal::rpc::detail;
 static int probes, conversions, natives, fallbacks, alive, created, destroyed, mode, required_probes;
 static const char* consumed_address;
 struct prepared {
@@ -25,18 +25,18 @@ struct prepared {
     prepared(const prepared&) = delete;
     ~prepared() { if (text) { --alive; ++destroyed; } }
 };
-namespace dynabridge {
+namespace portal {
 template<> struct rpc_backend::converter<prepared> {
     template<class Context> static bool probe(Context&, const V& v) noexcept {
         ++probes; // Test instrumentation only: production probes must have no user effects.
         return v.kind() == rpc::value_kind::string && v.string_size() != 0;
     }
     template<class Context, class Dynamic>
-    static optional<prepared> from(Context& c, Dynamic&& v) DYNABRIDGE_NOEXCEPT_IF_DISABLED {
+    static optional<prepared> from(Context& c, Dynamic&& v) PORTAL_NOEXCEPT_IF_DISABLED {
         CHECK(probes >= required_probes);
         ++conversions;
         if (mode == 1 || v.kind() != rpc::value_kind::string || v.string_size() == 0) return {};
-#if DYNABRIDGE_HAS_EXCEPTIONS
+#if PORTAL_HAS_EXCEPTIONS
         if (mode == 2) throw std::runtime_error("converter failure");
         if (mode == 4 && conversions == 2) throw std::runtime_error("late converter failure");
 #endif
@@ -49,12 +49,12 @@ template<> struct rpc_backend::converter<prepared> {
 // A custom descriptor export_argument uses the old try_make/get API only.
 // Its preparation may run foreign user code and must not be repeated at commit.
 struct descriptor_tag {};
-using descriptor = dynabridge::object_param<descriptor_tag, dynabridge::export_t>;
+using descriptor = portal::object_param<descriptor_tag, portal::export_t>;
 struct custom_scalar {};
 static int descriptor_calls, scalar_calls;
 static V* descriptor_mutation;
 static bool descriptor_reject, descriptor_mutate_to_valid;
-namespace dynabridge {
+namespace portal {
 template<> struct export_argument<descriptor, C> {
     using cpp_type = prepared&;
     using optional_t = optional<prepared>;
@@ -81,12 +81,12 @@ struct selection_callable {
     int operator()(prepared p, int) const noexcept { ++natives; CHECK(*p.text == "payload"); return 1; }
     int operator()(const prepared& p, unsigned) const noexcept { ++natives; CHECK(*p.text == "payload"); return 2; }
 };
-using SI = dynabridge::free_callable<int(prepared, int)>;
-using SU = dynabridge::free_callable<int(const prepared&, unsigned)>;
+using SI = portal::free_callable<int(prepared, int)>;
+using SU = portal::free_callable<int(const prepared&, unsigned)>;
 struct terminal {
-    int operator()(prepared) const DYNABRIDGE_NOEXCEPT_IF_DISABLED {
+    int operator()(prepared) const PORTAL_NOEXCEPT_IF_DISABLED {
         ++natives;
-#if DYNABRIDGE_HAS_EXCEPTIONS
+#if PORTAL_HAS_EXCEPTIONS
         if (mode == 3) throw std::runtime_error("native failure");
 #endif
         return 1;
@@ -97,27 +97,27 @@ struct alias_terminal {
     int operator()(prepared, prepared) const noexcept { ++natives; return 1; }
     int operator()(std::string, std::string) const noexcept { ++fallbacks; return 2; }
 };
-using AliasList = dynabridge::type_list<dynabridge::free_callable<int(prepared, prepared)>, dynabridge::free_callable<int(std::string, std::string)>>;
-using TerminalList = dynabridge::type_list<dynabridge::free_callable<int(prepared)>, dynabridge::free_callable<int(std::string)>>;
+using AliasList = portal::type_list<portal::free_callable<int(prepared, prepared)>, portal::free_callable<int(std::string, std::string)>>;
+using TerminalList = portal::type_list<portal::free_callable<int(prepared)>, portal::free_callable<int(std::string)>>;
 struct transport {
     V response;
-    dynabridge::rpc::bytes round_trip(const dynabridge::rpc::bytes&) { return codec::encode_response(response); }
+    portal::rpc::bytes round_trip(const portal::rpc::bytes&) { return codec::encode_response(response); }
 };
 // Legacy duck-type binders intentionally have only the const-value call API.
 struct legacy_binder {
     using signature_t = int(std::string);
-    dynabridge::optional<V> call_optional(const V& v) { return dynabridge::optional<V>(V::signed_integer(static_cast<int>(v.string_size()))); }
+    portal::optional<V> call_optional(const V& v) { return portal::optional<V>(V::signed_integer(static_cast<int>(v.string_size()))); }
 };
 // Merely sharing the wire value does not opt a backend into probes.
 struct old_value { int number; };
-struct old_backend : dynabridge::backend_base<old_backend> {
+struct old_backend : portal::backend_base<old_backend> {
     using dynamic_value_t = V;
-    template<class T> struct converter : dynabridge::rpc_backend::converter<T> {};
+    template<class T> struct converter : portal::rpc_backend::converter<T> {};
     template<class Context> static V undefined(Context&) noexcept { return {}; }
 };
 static int old_attempts;
 template<> struct old_backend::converter<old_value> {
-    template<class Context> static dynabridge::optional<old_value> from(Context&, const V&) noexcept {
+    template<class Context> static portal::optional<old_value> from(Context&, const V&) noexcept {
         ++old_attempts; return {};
     }
 };
@@ -127,34 +127,34 @@ struct old_callable {
     int operator()(std::string s) const noexcept { return int(s.size()); }
 };
 struct legacy_overload_binder {
-    using overloads_t = dynabridge::type_list<>;
+    using overloads_t = portal::type_list<>;
     template<class Accessor>
-    dynabridge::optional<V> dispatch_optional(std::size_t count, Accessor accessor) {
+    portal::optional<V> dispatch_optional(std::size_t count, Accessor accessor) {
         static_assert(std::is_same<decltype(accessor.template get<0>()), const V&>::value,
             "custom binders must keep const access");
-        return count == 1 ? dynabridge::optional<V>(V::signed_integer(int(accessor.template get<0>().string_size()))) : dynabridge::optional<V>{};
+        return count == 1 ? portal::optional<V>(V::signed_integer(int(accessor.template get<0>().string_size()))) : portal::optional<V>{};
     }
 };
 int main() {
     old_context old;
-    auto legacy = dynabridge::create_export_overload_binder<dynabridge::type_list<
-        dynabridge::free_callable<int(old_value)>, dynabridge::free_callable<int(std::string)>>>(old, old_callable{});
+    auto legacy = portal::create_export_overload_binder<portal::type_list<
+        portal::free_callable<int(old_value)>, portal::free_callable<int(std::string)>>>(old, old_callable{});
     CHECK(legacy(V::string("abc")).as_signed() == 3 && old_attempts == 1);
-    CHECK(!dynabridge::from_optional<old_value>(old, V::boolean(true)) && old_attempts == 2);
-    static_assert(!dynabridge::is_transactional_export_binder<decltype(legacy)>::value, "explicit policy required");
+    CHECK(!portal::from_optional<old_value>(old, V::boolean(true)) && old_attempts == 2);
+    static_assert(!portal::is_transactional_export_binder<decltype(legacy)>::value, "explicit policy required");
     C c;
     reset();
     V bad = V::string("");
-    CHECK(!dynabridge::from_optional<prepared>(c, bad));
+    CHECK(!portal::from_optional<prepared>(c, bad));
     CHECK(probes == 0 && conversions == 1 && bad.string_size() == 0);
     V good = V::string("payload");
-    CHECK(dynabridge::from_probe<prepared>(c, good));
+    CHECK(portal::from_probe<prepared>(c, good));
     CHECK(conversions == 1 && good.copy_string() == "payload");
-    { auto p = dynabridge::from_optional<prepared>(c, static_cast<const V&>(good)); CHECK(p && *p->text == "payload"); }
+    { auto p = portal::from_optional<prepared>(c, static_cast<const V&>(good)); CHECK(p && *p->text == "payload"); }
     CHECK(probes == 1 && conversions == 2 && created == destroyed && good.copy_string() == "payload");
 
     reset();
-    auto group = dynabridge::create_export_overload_binder<dynabridge::type_list<SI, SU>>(c, selection_callable{});
+    auto group = portal::create_export_overload_binder<portal::type_list<SI, SU>>(c, selection_callable{});
     std::vector<V> args{V::string("payload"), V::unsigned_integer(7)};
     auto result = group.dispatch_optional(args.size(), codec::consuming_vector_accessor{&args});
     CHECK(result && result->as_signed() == 2 && conversions == 1 && natives == 1);
@@ -172,7 +172,7 @@ int main() {
     CHECK(!group.dispatch_optional(0, codec::consuming_vector_accessor{&args}));
     CHECK(!group.dispatch_optional(3, codec::consuming_vector_accessor{&args}));
     CHECK(probes == before);
-    auto empty = dynabridge::create_export_overload_binder<dynabridge::type_list<>>(c, selection_callable{});
+    auto empty = portal::create_export_overload_binder<portal::type_list<>>(c, selection_callable{});
     CHECK(!empty.dispatch_optional(args.size(), codec::consuming_vector_accessor{&args}));
 
     reset();
@@ -181,12 +181,12 @@ int main() {
     result = group.dispatch_optional(args.size(), codec::consuming_vector_accessor{&args});
     CHECK(result && result->as_signed() == 1 && probes == 1 && conversions == 1 && natives == 1);
     reset();
-    auto ordered = dynabridge::create_export_overload_binder<TerminalList>(c, terminal{});
+    auto ordered = portal::create_export_overload_binder<TerminalList>(c, terminal{});
     args = {V::string("payload")};
     result = ordered.dispatch_optional(1, codec::consuming_vector_accessor{&args});
     CHECK(result && result->as_signed() == 1 && probes == 1 && conversions == 1 && fallbacks == 0);
     reset();
-    auto rvalue = dynabridge::create_export_callable_binder<int(prepared&&)>(c,
+    auto rvalue = portal::create_export_callable_binder<int(prepared&&)>(c,
         [](prepared&& p) noexcept { ++natives; return static_cast<int>(p.text->size()); });
     V input = V::string(std::string(4096, 'x'));
     const char* original = input.string_data();
@@ -206,7 +206,7 @@ int main() {
     CHECK(probes == 1 && conversions == 1 && created == destroyed);
 
     reset();
-    auto three = dynabridge::create_export_callable_binder<int(prepared, const prepared&, prepared&&)>(c,
+    auto three = portal::create_export_callable_binder<int(prepared, const prepared&, prepared&&)>(c,
         [](prepared a, const prepared& b, prepared&& d) noexcept {
             ++natives;
             CHECK(*a.text == "payload" && *b.text == "payload" && *d.text == "payload");
@@ -219,7 +219,7 @@ int main() {
     CHECK(alive == 0 && created == 3 && destroyed == 3);
 
     reset();
-    auto descriptor_binder = dynabridge::create_export_callable_binder<int(prepared, descriptor)>(c,
+    auto descriptor_binder = portal::create_export_callable_binder<int(prepared, descriptor)>(c,
         [](prepared p, prepared& handle) noexcept {
             ++natives;
             CHECK(*p.text == "payload" && *handle.text == "descriptor");
@@ -243,20 +243,20 @@ int main() {
     CHECK(descriptor_calls == 1 && conversions == 0 && natives == 0 && created == 0);
     descriptor_reject = false;
     reset(); descriptor_calls = 0;
-    using DescriptorContract = dynabridge::free_callable<int(prepared, descriptor)>;
-    auto descriptor_overloads = dynabridge::create_export_overload_binder<dynabridge::type_list<DescriptorContract, DescriptorContract>>(c,
+    using DescriptorContract = portal::free_callable<int(prepared, descriptor)>;
+    auto descriptor_overloads = portal::create_export_overload_binder<portal::type_list<DescriptorContract, DescriptorContract>>(c,
         [](prepared, prepared&) noexcept { ++natives; return 9; });
     args = {V::boolean(true), V::signed_integer(1)};
     CHECK(!descriptor_overloads.dispatch_optional(2, codec::consuming_vector_accessor{&args}));
     CHECK(descriptor_calls == 2 && conversions == 0 && natives == 0);
     CHECK(created == 2 && destroyed == 2 && alive == 0);
     scalar_calls = 0;
-    auto custom = dynabridge::create_export_callable_binder<int(custom_scalar)>(c, [](int value) noexcept { return value; });
+    auto custom = portal::create_export_callable_binder<int(custom_scalar)>(c, [](int value) noexcept { return value; });
     CHECK(custom(V::signed_integer(27)).as_signed() == 27 && scalar_calls == 1);
     CHECK(!custom.call_optional(V::boolean(true)) && scalar_calls == 1);
 
     reset();
-    auto aliases = dynabridge::create_export_overload_binder<AliasList>(c, alias_terminal{});
+    auto aliases = portal::create_export_overload_binder<AliasList>(c, alias_terminal{});
     V shared = V::string("payload");
     CHECK(aliases(shared, shared).as_signed() == 1);
     CHECK(shared.copy_string() == "payload" && conversions == 2 && natives == 1 && fallbacks == 0);
@@ -264,10 +264,10 @@ int main() {
 
     reset();
     transport wire{V::string("payload")};
-    dynabridge::rpc_backend::import_context_t<transport> imported(wire, 1);
-    { auto p = dynabridge::rpc_backend::invoke<prepared>(imported, dynabridge::no_receiver_t{}); CHECK(*p.text == "payload"); }
+    portal::rpc_backend::import_context_t<transport> imported(wire, 1);
+    { auto p = portal::rpc_backend::invoke<prepared>(imported, portal::no_receiver_t{}); CHECK(*p.text == "payload"); }
     CHECK(probes == 0 && conversions == 1 && created == destroyed);
-    dynabridge::rpc::router router;
+    portal::rpc::router router;
     router.define("legacy", legacy_binder{});
     router.define("legacy_group", legacy_overload_binder{});
     V output; std::string error;
@@ -283,7 +283,7 @@ int main() {
     CHECK(codec::try_decode_response(router.dispatch(codec::encode_request_values(codec::symbol_id("prepared"), V::boolean(true))), output, error) == codec::response_status::remote_error);
     CHECK(conversions == 0 && natives == 0);
 
-#if DYNABRIDGE_HAS_EXCEPTIONS
+#if PORTAL_HAS_EXCEPTIONS
     // std::ref explicitly requests aliasing and is unwrapped by std::make_tuple.
     // Unlike plain lvalues, these are not stable independent dynamic inputs:
     // consuming one invalidates the other's earlier nonempty probe. No fallback.
@@ -291,20 +291,20 @@ int main() {
     shared = V::string("payload");
     bool alias_failed = false;
     try { (void)aliases(std::ref(shared), std::ref(shared)); }
-    catch (const dynabridge::bad_conversion& e) {
+    catch (const portal::bad_conversion& e) {
         alias_failed = true;
-        CHECK(std::strcmp(e.what(), "dynabridge export argument rejected an accepted probe") == 0);
+        CHECK(std::strcmp(e.what(), "portal export argument rejected an accepted probe") == 0);
     }
     CHECK(alias_failed && probes == 2 && conversions == 2 && natives == 0 && fallbacks == 0);
     CHECK(shared.string_size() == 0 && created == destroyed && alive == 0);
     reset();
     bool mismatch = false;
     try { (void)rvalue(V::boolean(true)); }
-    catch (const dynabridge::bad_conversion& e) { mismatch = true; CHECK(std::strcmp(e.what(), "dynabridge export argument conversion failed") == 0); }
+    catch (const portal::bad_conversion& e) { mismatch = true; CHECK(std::strcmp(e.what(), "portal export argument conversion failed") == 0); }
     CHECK(mismatch && conversions == 0 && natives == 0);
     mismatch = false;
     try { (void)group(V::string("payload"), V::boolean(true)); }
-    catch (const dynabridge::bad_conversion& e) { mismatch = true; CHECK(std::strcmp(e.what(), "dynabridge export overload has no matching signature") == 0); }
+    catch (const portal::bad_conversion& e) { mismatch = true; CHECK(std::strcmp(e.what(), "portal export overload has no matching signature") == 0); }
     CHECK(mismatch && conversions == 0 && natives == 0);
     // Conversion failure after another argument committed cleans up without
     // invoking the native function or trying a later overload. No rollback is promised.
@@ -317,13 +317,13 @@ int main() {
     CHECK(created == 1 && destroyed == 1 && alive == 0);
     for (int failure = 1; failure <= 3; ++failure) {
         reset(); mode = failure;
-        auto stop = dynabridge::create_export_overload_binder<TerminalList>(c, terminal{});
+        auto stop = portal::create_export_overload_binder<TerminalList>(c, terminal{});
         args = {V::string("payload")};
         bool threw = false;
         try { (void)stop.dispatch_optional(1, codec::consuming_vector_accessor{&args}); }
         catch (const std::exception& e) {
             threw = true;
-            CHECK(std::strcmp(e.what(), failure == 1 ? "dynabridge export argument rejected an accepted probe" : failure == 2 ? "converter failure" : "native failure") == 0);
+            CHECK(std::strcmp(e.what(), failure == 1 ? "portal export argument rejected an accepted probe" : failure == 2 ? "converter failure" : "native failure") == 0);
         }
         CHECK(threw && probes == 1 && conversions == 1 && fallbacks == 0);
         CHECK(natives == (failure == 3 ? 1 : 0) && alive == 0 && created == destroyed);
@@ -340,7 +340,7 @@ int main() {
             _exit(92);
         }
         mode = 1;
-        auto stop = dynabridge::create_export_overload_binder<TerminalList>(c, terminal{});
+        auto stop = portal::create_export_overload_binder<TerminalList>(c, terminal{});
         args = {V::string("payload")};
         (void)stop.dispatch_optional(1, codec::consuming_vector_accessor{&args});
         _exit(91);

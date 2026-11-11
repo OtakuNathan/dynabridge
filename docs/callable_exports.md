@@ -28,7 +28,7 @@ an ordinary lambda can be registered directly:
 using Signature =
     std::string(const std::string&, const std::string&);
 
-dynabridge::export_run_arena<Signature>(
+portal::export_run_arena<Signature>(
     context, module,
     [](const std::string& csv, const std::string& config) {
         return arena::run_arena(csv, config);
@@ -43,7 +43,7 @@ conversion.
 
 ```cpp
 const std::string prefix = "saved:";
-dynabridge::export_run_arena<Signature>(context, module,
+portal::export_run_arena<Signature>(context, module,
     [prefix](const std::string& csv, const std::string& config) {
         return prefix + arena::run_arena(csv, config);
     });
@@ -57,7 +57,7 @@ binders must also remain valid while exported callables use it.
 For multiple signatures declared under one group:
 
 ```cpp
-dynabridge::export_calc(context, module)
+portal::export_calc(context, module)
     .bind<int(int)>([](int value) { return value * 10; })
     .bind<int(int, unsigned)>([](int value, unsigned factor) {
         return value * static_cast<int>(factor);
@@ -86,11 +86,11 @@ The runnable template has two source files:
 The registration path is:
 
 1. Make declaration types visible (`<string>` here), select
-   `DYNABRIDGE_EXPORT_DEF`, and include `dynabridge/bridge.h`. Default import and
+   `PORTAL_EXPORT_DEF`, and include `portal/bridge.h`. Default import and
    export tables are empty; no import table is needed for this module.
-2. Include `dynabridge/backends/python.h`. This selects CPython operations and
+2. Include `portal/backends/python.h`. This selects CPython operations and
    includes its built-in `int`, `unsigned`, and `std::string` converters. Include
-   `dynabridge/backends/python_api.h` rather than `Python.h` directly if a separate
+   `portal/backends/python_api.h` rather than `Python.h` directly if a separate
    file needs the Python API. New value types need a suitable backend converter.
 3. Create the Python module, keep an export context alive, wrap the module as
    borrowed, and register the declared callables.

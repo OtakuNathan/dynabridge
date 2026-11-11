@@ -1,7 +1,7 @@
-#ifndef DYNABRIDGE_EXAMPLES_COMMON_NATIVE_H
-#define DYNABRIDGE_EXAMPLES_COMMON_NATIVE_H
+#ifndef PORTAL_EXAMPLES_COMMON_NATIVE_H
+#define PORTAL_EXAMPLES_COMMON_NATIVE_H
 
-namespace dynabridge {
+namespace portal {
     namespace example_native {
         inline int add(int left, unsigned right) {
             return left + static_cast<int>(right);

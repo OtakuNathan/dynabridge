@@ -3,6 +3,8 @@
 Status: measured candidate, **not enabled in the library**. The experimental
 implementation is preserved in
 [`napi-constructor-no-ref.patch`](../benchmarks/experiments/napi-constructor-no-ref.patch).
+This historical patch retains the pre-Portal paths and applies to the baseline
+revision below, not the renamed current tree.
 
 ## Change under test
 
@@ -33,7 +35,7 @@ application-level speedup or a general framework ranking.
 
 | Scenario | Before | Candidate | Change |
 | --- | ---: | ---: | ---: |
-| Existing full benchmark: dynabridge construction | 5193.1 | 4728.6 | -8.9% |
+| Existing full benchmark: portal construction | 5193.1 | 4728.6 | -8.9% |
 | Isolated construction, retaining objects through validation | 4597.0 | 4138.1 | -10.0% |
 | Isolated benchmark: ordinary export control | 159.5 | 169.1 | +6.0% |
 | CPU 3 pinned: construction | 4879.5 | 4429.1 | -9.2% |
@@ -83,7 +85,7 @@ applying the patch only to the candidate. Preserve each addon under a distinct
 path, and alternate these commands:
 
 ```sh
-DYNABRIDGE_BENCH_ITERS=100000 node --expose-gc \
+PORTAL_BENCH_ITERS=100000 node --expose-gc \
   benchmarks/node_constructor_benchmark.js /absolute/path/to/addon.node
 ```
 

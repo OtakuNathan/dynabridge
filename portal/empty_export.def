@@ -1,0 +1,3 @@
+// Empty default export table.
+// Define PORTAL_EXPORT_DEF before including portal/bridge.h to
+// generate module-specific export declarations.

@@ -3,7 +3,7 @@ import sys
 
 
 def load_addon(path):
-    spec = importlib.util.spec_from_file_location("dynabridge_python_example", path)
+    spec = importlib.util.spec_from_file_location("portal_python_example", path)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"cannot load extension module from {path}")
     module = importlib.util.module_from_spec(spec)

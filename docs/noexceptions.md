@@ -3,7 +3,7 @@
 The core and scalar RPC backend support GCC/Clang `-fno-exceptions`. This does not
 claim no-exception support for Python, Node-API, or every optional backend.
 
-`DYNABRIDGE_NO_EXCEPTION_STRICT=1` requires noexcept declarations on converters
+`PORTAL_NO_EXCEPTION_STRICT=1` requires noexcept declarations on converters
 invoked through `to_cast` and `from_optional`. The default relaxed policy (`0`)
 accepts unannotated converters. Both disable throwing when compiler exceptions
 are off; relaxed mode does not catch exceptions or weaken input validation.

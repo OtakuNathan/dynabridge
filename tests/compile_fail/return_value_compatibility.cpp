@@ -1,4 +1,4 @@
-#include "../../dynabridge/export_callable.h"
+#include "../../portal/export_callable.h"
 struct immovable {
     immovable() = default;
     immovable(const immovable&) = delete;
@@ -14,7 +14,7 @@ template<> struct backend::converter<immovable> {
 struct context { using backend_t = backend; };
 int main() {
     context ctx;
-    auto binder = dynabridge::create_export_callable_binder<immovable()>(ctx,
+    auto binder = portal::create_export_callable_binder<immovable()>(ctx,
         []() -> immovable { return immovable{}; });
     return binder() != 7;
 }

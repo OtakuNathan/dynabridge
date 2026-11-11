@@ -1,5 +1,5 @@
-#ifndef DYNABRIDGE_TEST_FAKE_BACKEND_H
-#define DYNABRIDGE_TEST_FAKE_BACKEND_H
+#ifndef PORTAL_TEST_FAKE_BACKEND_H
+#define PORTAL_TEST_FAKE_BACKEND_H
 
 #include <functional>
 #include <map>
@@ -7,10 +7,10 @@
 #include <type_traits>
 #include <utility>
 
-#include "dynabridge/traits.h"
-#include "dynabridge/backend_base.h"
+#include "portal/traits.h"
+#include "portal/backend_base.h"
 
-namespace dynabridge {
+namespace portal {
 
     struct fake_backend : backend_base<fake_backend> {
         using dynamic_value_t = int;
@@ -387,7 +387,7 @@ namespace dynabridge {
         }
     };
 
-    
+
     template <>
     struct fake_backend::converter<int> {
         template <typename T>
@@ -422,4 +422,4 @@ namespace dynabridge {
     };
     }
 
-#endif //DYNABRIDGE_TEST_FAKE_BACKEND_H
+#endif //PORTAL_TEST_FAKE_BACKEND_H

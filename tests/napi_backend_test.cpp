@@ -1,13 +1,13 @@
-#define DYNABRIDGE_IMPORT_DEF "tests/import.def"
-#define DYNABRIDGE_EXPORT_DEF "tests/export.def"
-#include "dynabridge/bridge.h"
-#include "dynabridge/backends/napi.h"
+#define PORTAL_IMPORT_DEF "tests/import.def"
+#define PORTAL_EXPORT_DEF "tests/export.def"
+#include "portal/bridge.h"
+#include "portal/backends/napi.h"
 
 #include <stdexcept>
 #include <string>
 #include <type_traits>
 
-namespace dynabridge {
+namespace portal {
     namespace native {
         class counter {
         public:
@@ -31,7 +31,7 @@ namespace dynabridge {
         public:
             template <typename Callback>
             consumer(counter& source, Callback& callback)
-                : base_(dynabridge::call_callback(callback, source.value())) {
+                : base_(portal::call_callback(callback, source.value())) {
             }
 
             int combine(counter& source, int value) const {
@@ -40,7 +40,7 @@ namespace dynabridge {
 
             template <typename Callback>
             int apply(Callback& callback, int value) const {
-                return base_ + dynabridge::call_callback(callback, value);
+                return base_ + portal::call_callback(callback, value);
             }
 
         private:
@@ -50,8 +50,8 @@ namespace dynabridge {
 }
 
 namespace {
-    using napi_context_t = dynabridge::napi_backend::context_t;
-    using napi_export_context_t = dynabridge::napi_backend::export_context_t;
+    using napi_context_t = portal::napi_backend::context_t;
+    using napi_export_context_t = portal::napi_backend::export_context_t;
 
     struct record_state {
         int argc = 0;
@@ -128,7 +128,7 @@ namespace {
 
     template <typename Symbol>
     const char* symbol_name() noexcept {
-        return dynabridge::import_symbol_traits<Symbol>::symbol_name();
+        return portal::import_symbol_traits<Symbol>::symbol_name();
     }
 
     int object_handle(napi_env env, napi_value object) {
@@ -239,16 +239,16 @@ namespace {
 
 static_assert(
     !std::is_same<
-        dynabridge::import_symbols::counter::add,
-        dynabridge::interface_descriptors::counter_addable<dynabridge::import_t>
+        portal::import_symbols::counter::add,
+        portal::interface_descriptors::counter_addable<portal::import_t>
             ::method_symbols_t::add>::value,
     "a concrete interface projection should bind its own receiver symbol");
 
 static_assert(
     std::is_same<
-        dynabridge::import_symbol_traits<
-            dynabridge::import_symbols::counter::add>::receiver_symbol_t,
-        dynabridge::import_symbols::counter>::value,
+        portal::import_symbol_traits<
+            portal::import_symbols::counter::add>::receiver_symbol_t,
+        portal::import_symbols::counter>::value,
     "implemented interface methods should regain the concrete receiver identity");
 
 namespace {
@@ -275,7 +275,7 @@ int run_cleanup_lifetime_test() {
     napi_value instance = nullptr;
     napi_create_object(env, &instance);
     {
-        dynabridge::napi_backend::object_t<tracked_native, dynabridge::export_t> object;
+        portal::napi_backend::object_t<tracked_native, portal::export_t> object;
         object.construct_export_object_from_native(
             *ctx, instance, new tracked_native{context_alive, native_destroyed});
     }
@@ -285,7 +285,7 @@ int run_cleanup_lifetime_test() {
 
 int run_test(napi_env env) {
     {
-        using target_t = dynabridge::napi_backend::class_target_t;
+        using target_t = portal::napi_backend::class_target_t;
         auto constructor = napi_stub_make_value(env, napi_value__::kind_t::function);
         napi_ref moved_ref = nullptr;
         {
@@ -314,44 +314,44 @@ int run_test(napi_env env) {
 
     napi_value import_module_value = nullptr;
     napi_create_object(env, &import_module_value);
-    set_property(env, import_module_value, symbol_name<dynabridge::import_symbols::foo>(), record);
-    set_property(env, import_module_value, symbol_name<dynabridge::import_symbols::bar>(), record);
-    dynabridge::napi_backend::module_t import_module{env, import_module_value};
+    set_property(env, import_module_value, symbol_name<portal::import_symbols::foo>(), record);
+    set_property(env, import_module_value, symbol_name<portal::import_symbols::bar>(), record);
+    portal::napi_backend::module_t import_module{env, import_module_value};
 
-    auto record_ctx = dynabridge::import_from<dynabridge::import_symbols::foo, napi_context_t>(
+    auto record_ctx = portal::import_from<portal::import_symbols::foo, napi_context_t>(
         import_module);
-    dynabridge::call_foo(record_ctx, 1, 2);
+    portal::call_foo(record_ctx, 1, 2);
     if (state.argc != 2 || state.first != 1 || state.second != 2) {
         return 1;
     }
 
-    auto bar_ctx = dynabridge::import_from<dynabridge::import_symbols::bar, napi_context_t>(
+    auto bar_ctx = portal::import_from<portal::import_symbols::bar, napi_context_t>(
         import_module);
-    dynabridge::bar(bar_ctx)(7);
+    portal::bar(bar_ctx)(7);
     if (state.argc != 1 || state.first != 7) {
         return 2;
     }
 
     napi_value calc = nullptr;
-    napi_create_function(env, symbol_name<dynabridge::import_symbols::calc>(),
+    napi_create_function(env, symbol_name<portal::import_symbols::calc>(),
         NAPI_AUTO_LENGTH, calc_callback, nullptr, &calc);
-    set_property(env, import_module_value, symbol_name<dynabridge::import_symbols::calc>(), calc);
-    auto calc_ctx = dynabridge::import_from<dynabridge::import_symbols::calc, napi_context_t>(
+    set_property(env, import_module_value, symbol_name<portal::import_symbols::calc>(), calc);
+    auto calc_ctx = portal::import_from<portal::import_symbols::calc, napi_context_t>(
         import_module);
-    if (dynabridge::call_calc(calc_ctx, 3, 4u) != 7) {
+    if (portal::call_calc(calc_ctx, 3, 4u) != 7) {
         return 3;
     }
 
     napi_value echo = nullptr;
-    napi_create_function(env, symbol_name<dynabridge::import_symbols::echo>(),
+    napi_create_function(env, symbol_name<portal::import_symbols::echo>(),
         NAPI_AUTO_LENGTH, echo_callback, nullptr, &echo);
-    set_property(env, import_module_value, symbol_name<dynabridge::import_symbols::echo>(), echo);
-    auto echo_ctx = dynabridge::import_from<dynabridge::import_symbols::echo, napi_context_t>(
+    set_property(env, import_module_value, symbol_name<portal::import_symbols::echo>(), echo);
+    auto echo_ctx = portal::import_from<portal::import_symbols::echo, napi_context_t>(
         import_module);
     const std::string utf8_text = "h\xC3\xA9llo \xE4\xB8\xAD";
     const std::string embedded_text(std::string("a\0b", 3) + utf8_text);
-    if (dynabridge::call_echo(echo_ctx, utf8_text) != "[" + utf8_text + "]"
-            || dynabridge::call_echo(echo_ctx, embedded_text) != "[" + embedded_text + "]") {
+    if (portal::call_echo(echo_ctx, utf8_text) != "[" + utf8_text + "]"
+            || portal::call_echo(echo_ctx, embedded_text) != "[" + embedded_text + "]") {
         return 60;
     }
 
@@ -361,11 +361,11 @@ int run_test(napi_env env) {
 
     napi_value counter_call = nullptr;
     napi_create_function(env, "counter_call", NAPI_AUTO_LENGTH, counter_callback, nullptr, &counter_call);
-    set_property(env, import_module_value, symbol_name<dynabridge::import_symbols::counter>(), counter_call);
-    dynabridge::napi_backend::object_t<void> import_source(env, import_module_value);
-    auto counter_ctx = dynabridge::import_from<dynabridge::import_symbols::counter, napi_context_t>(
+    set_property(env, import_module_value, symbol_name<portal::import_symbols::counter>(), counter_call);
+    portal::napi_backend::object_t<void> import_source(env, import_module_value);
+    auto counter_ctx = portal::import_from<portal::import_symbols::counter, napi_context_t>(
         import_source);
-    auto counter = dynabridge::bind_receiver<dynabridge::counter>(
+    auto counter = portal::bind_receiver<portal::counter>(
         counter_ctx,
         env,
         receiver);
@@ -373,7 +373,7 @@ int run_test(napi_env env) {
         return 4;
     }
 
-    auto constructed_counter = dynabridge::construct<dynabridge::counter>(counter_ctx, 21u);
+    auto constructed_counter = portal::construct<portal::counter>(counter_ctx, 21u);
     if (constructed_counter.value() != 21 || constructed_counter.add(21) != 42) {
         return 8;
     }
@@ -388,57 +388,57 @@ int run_test(napi_env env) {
     napi_create_function(env, "pass_transform", NAPI_AUTO_LENGTH,
         pass_transform_callback, nullptr, &pass_transform);
     set_property(env, import_module_value,
-        symbol_name<dynabridge::import_symbols::callback>(), callback);
+        symbol_name<portal::import_symbols::callback>(), callback);
     set_property(env, import_module_value,
-        symbol_name<dynabridge::import_symbols::pass_counter>(), pass_counter);
+        symbol_name<portal::import_symbols::pass_counter>(), pass_counter);
     set_property(env, import_module_value,
-        symbol_name<dynabridge::import_symbols::pass_transform>(), pass_transform);
+        symbol_name<portal::import_symbols::pass_transform>(), pass_transform);
 
-    auto pass_counter_ctx = dynabridge::import_from<
-        dynabridge::import_symbols::pass_counter, napi_context_t>(import_module);
-    if (dynabridge::call_pass_counter(pass_counter_ctx, counter, 29) != 42) {
+    auto pass_counter_ctx = portal::import_from<
+        portal::import_symbols::pass_counter, napi_context_t>(import_module);
+    if (portal::call_pass_counter(pass_counter_ctx, counter, 29) != 42) {
         return 31;
     }
-    auto pass_transform_ctx = dynabridge::import_from<
-        dynabridge::import_symbols::pass_transform, napi_context_t>(import_module);
-    if (dynabridge::call_pass_transform(
+    auto pass_transform_ctx = portal::import_from<
+        portal::import_symbols::pass_transform, napi_context_t>(import_module);
+    if (portal::call_pass_transform(
             pass_transform_ctx, transform_function{}, 4) != 40) {
         return 32;
     }
-    auto built_transform = dynabridge::bind_transform()
+    auto built_transform = portal::bind_transform()
         .bind<int(int)>(scale_by_ten_function)
         .bind<int(int, unsigned)>([](int value, unsigned extra) {
             return value * static_cast<int>(extra);
         })
         .build();
-    if (dynabridge::call_pass_transform(
+    if (portal::call_pass_transform(
             pass_transform_ctx, std::move(built_transform), 6) != 60) {
         return 33;
     }
 
     napi_value module_value = nullptr;
     napi_create_object(env, &module_value);
-    dynabridge::napi_backend::module_t module{env, module_value};
+    portal::napi_backend::module_t module{env, module_value};
     napi_export_context_t export_ctx(env);
 
     napi_value bad_int = nullptr;
     napi_create_object(env, &bad_int);
-    auto maybe_int = dynabridge::from_optional<int>(export_ctx, bad_int);
+    auto maybe_int = portal::from_optional<int>(export_ctx, bad_int);
     if (maybe_int) {
         return 24;
     }
 
-    auto maybe_unsigned = dynabridge::from_optional<unsigned>(export_ctx, int_value(env, -1));
+    auto maybe_unsigned = portal::from_optional<unsigned>(export_ctx, int_value(env, -1));
     if (maybe_unsigned) {
         return 25;
     }
 
-    auto maybe_string = dynabridge::from_optional<std::string>(export_ctx, bad_int);
+    auto maybe_string = portal::from_optional<std::string>(export_ctx, bad_int);
     if (maybe_string) {
         return 61;
     }
     const std::string embedded_probe(std::string("a\0b", 3));
-    auto maybe_embedded = dynabridge::from_optional<std::string>(
+    auto maybe_embedded = portal::from_optional<std::string>(
         export_ctx, string_value(env, embedded_probe));
     if (!maybe_embedded || maybe_embedded.value() != embedded_probe) {
         return 62;
@@ -446,7 +446,7 @@ int run_test(napi_env env) {
 
     bool caught_string_api_failure = false;
     try {
-        (void)dynabridge::from_optional<std::string>(export_ctx, nullptr);
+        (void)portal::from_optional<std::string>(export_ctx, nullptr);
     } catch (const std::runtime_error&) {
         caught_string_api_failure = true;
     }
@@ -456,24 +456,24 @@ int run_test(napi_env env) {
 
     bool caught_bad_conversion = false;
     try {
-        (void)dynabridge::from_cast<int>(export_ctx, bad_int);
-    } catch (const dynabridge::bad_conversion&) {
+        (void)portal::from_cast<int>(export_ctx, bad_int);
+    } catch (const portal::bad_conversion&) {
         caught_bad_conversion = true;
     }
     if (!caught_bad_conversion) {
         return 20;
     }
 
-    dynabridge::export_free_callable(export_ctx, module, "add", add_function);
-    dynabridge::export_calc(export_ctx, module, add_function);
-    dynabridge::export_free_callable(export_ctx, module, "store", store_function);
-    dynabridge::export_calc<int(int, unsigned)>(
+    portal::export_free_callable(export_ctx, module, "add", add_function);
+    portal::export_calc(export_ctx, module, add_function);
+    portal::export_free_callable(export_ctx, module, "store", store_function);
+    portal::export_calc<int(int, unsigned)>(
         export_ctx,
         module,
         [](int a, unsigned b) {
             return a * static_cast<int>(b);
         });
-    dynabridge::export_calc(export_ctx, module)
+    portal::export_calc(export_ctx, module)
         .bind<int(int)>(scale_by_ten_function)
         .bind<int(int, unsigned)>(multiply_function{})
         .commit();
@@ -482,7 +482,7 @@ int run_test(napi_env env) {
         return 30;
     }
 
-    dynabridge::export_calc(export_ctx, module)
+    portal::export_calc(export_ctx, module)
         .bind<int(int)>([](int a) {
             return a * 11;
         })
@@ -491,7 +491,7 @@ int run_test(napi_env env) {
         })
         .commit();
 
-    dynabridge::export_echo(export_ctx, module)
+    portal::export_echo(export_ctx, module)
         .bind<std::string(std::string)>([](std::string text) {
             return "<" + text + ">";
         })
@@ -511,11 +511,11 @@ int run_test(napi_env env) {
         return 64;
     }
 
-    auto exported_calc_ctx = dynabridge::import_from<dynabridge::import_symbols::calc, napi_context_t>(
+    auto exported_calc_ctx = portal::import_from<portal::import_symbols::calc, napi_context_t>(
         module);
     if (value_to_int(env, call2(env, get_property(env, module_value, "add"), int_value(env, 12), int_value(env, 13))) != 25
             || value_to_int(env, call1(env, get_property(env, module_value, "calc"), int_value(env, 6))) != 66
-            || dynabridge::call_calc(exported_calc_ctx, 6, 7u) != 43) {
+            || portal::call_calc(exported_calc_ctx, 6, 7u) != 43) {
         return 9;
     }
     if (call2(env, get_property(env, module_value, "add"), bad_int, int_value(env, 1)) != nullptr) {
@@ -528,16 +528,16 @@ int run_test(napi_env env) {
         return 10;
     }
 
-    dynabridge::exports::counter::register_all(export_ctx, module);
+    portal::exports::counter::register_all(export_ctx, module);
 
-    auto counter_class_ctx = dynabridge::import_from<dynabridge::import_symbols::counter, napi_context_t>(
+    auto counter_class_ctx = portal::import_from<portal::import_symbols::counter, napi_context_t>(
         module);
     napi_value counter_class = counter_class_ctx.callable();
     napi_value prototype = get_property(env, counter_class, "prototype");
     napi_value member_add = get_property(env, prototype,
-        symbol_name<dynabridge::import_symbols::counter::add>());
+        symbol_name<portal::import_symbols::counter::add>());
     napi_value member_value = get_property(env, prototype,
-        symbol_name<dynabridge::import_symbols::counter::value>());
+        symbol_name<portal::import_symbols::counter::value>());
 
     napi_value constructor_arg = int_value(env, 13);
     napi_value instance = nullptr;
@@ -557,23 +557,23 @@ int run_test(napi_env env) {
         return 40;
     }
 
-    dynabridge::native::counter borrowed_counter(31u);
-    auto borrowed_object = dynabridge::make_exported<
-        dynabridge::exports::counter>(
+    portal::native::counter borrowed_counter(31u);
+    auto borrowed_object = portal::make_exported<
+        portal::exports::counter>(
         export_ctx,
-        dynabridge::borrow(borrowed_counter));
+        portal::borrow(borrowed_counter));
     if (value_to_int(env, call1(env, member_add, int_value(env, 11), borrowed_object.get())) != 42
             || value_to_int(env, call0(env, member_value, borrowed_object.get())) != 31) {
         return 22;
     }
 
     using consume_counter_sig = int(
-        dynabridge::object_param<dynabridge::export_classes::counter, dynabridge::export_t>,
+        portal::object_param<portal::export_classes::counter, portal::export_t>,
         int);
-    dynabridge::export_consume_counter<consume_counter_sig>(
+    portal::export_consume_counter<consume_counter_sig>(
         export_ctx,
         module,
-        [](dynabridge::native::counter& source, int value) {
+        [](portal::native::counter& source, int value) {
             return source.add(value);
         });
     napi_value consume_counter = get_property(env, module_value, "consume_counter");
@@ -586,13 +586,13 @@ int run_test(napi_env env) {
     }
 
     using use_callback_sig = int(
-        dynabridge::callable_param<dynabridge::import_symbols::callback, dynabridge::import_t>,
+        portal::callable_param<portal::import_symbols::callback, portal::import_t>,
         int);
-    dynabridge::export_use_callback<use_callback_sig>(
+    portal::export_use_callback<use_callback_sig>(
         export_ctx,
         module,
         [](auto& callback_ctx, int value) {
-            return dynabridge::call_callback(callback_ctx, value) + 1;
+            return portal::call_callback(callback_ctx, value) + 1;
         });
     napi_value use_callback = get_property(env, module_value, "use_callback");
     if (value_to_int(env, call2(
@@ -603,7 +603,7 @@ int run_test(napi_env env) {
         return 37;
     }
 
-    dynabridge::exports::consumer::register_all(export_ctx, module);
+    portal::exports::consumer::register_all(export_ctx, module);
     napi_value consumer_class = get_property(env, module_value, "consumer");
     napi_value consumer_args[] = {borrowed_object.get(), callback};
     napi_value consumer_instance = nullptr;
@@ -622,12 +622,12 @@ int run_test(napi_env env) {
         return 39;
     }
 
-    dynabridge::export_instance<
-        dynabridge::exports::counter>(
+    portal::export_instance<
+        portal::exports::counter>(
         export_ctx,
         module,
         "globalCounter",
-        dynabridge::borrow(borrowed_counter));
+        portal::borrow(borrowed_counter));
     napi_value global_counter = get_property(env, module_value, "globalCounter");
     if (value_to_int(env, call1(env, member_add, int_value(env, 11), global_counter)) != 42) {
         return 23;
@@ -635,9 +635,9 @@ int run_test(napi_env env) {
 
     napi_value trusted_module_value = nullptr;
     napi_create_object(env, &trusted_module_value);
-    dynabridge::napi_backend::module_t trusted_module{env, trusted_module_value};
-    dynabridge::napi_backend::trusted_export_context_t trusted_ctx(env);
-    dynabridge::exports::counter::register_all(trusted_ctx, trusted_module);
+    portal::napi_backend::module_t trusted_module{env, trusted_module_value};
+    portal::napi_backend::trusted_export_context_t trusted_ctx(env);
+    portal::exports::counter::register_all(trusted_ctx, trusted_module);
 
     napi_value trusted_counter_class = get_property(env, trusted_module_value, "counter");
     napi_value trusted_constructor_arg = int_value(env, 17);
@@ -662,7 +662,7 @@ int main() {
     const int lifetime_result = run_cleanup_lifetime_test();
     if (lifetime_result != 0) return lifetime_result;
     napi_env env = napi_stub_create_env();
-    // Lifetime contract: every dynabridge wrapper/context must be destroyed
+    // Lifetime contract: every portal wrapper/context must be destroyed
     // before the stub env. Their destructors call napi_delete_reference on
     // refs owned by env->refs; deleting the env first frees those refs and
     // turns every later reset() into a use-after-free (MSVC Debug heap

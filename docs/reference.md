@@ -1,23 +1,23 @@
-# Dyna Bridge Reference
+# Portal Reference
 
 [Back to the project overview](../README.md)
 
-[![CI](https://github.com/OtakuNathan/dynabridge/actions/workflows/ci.yml/badge.svg)](https://github.com/OtakuNathan/dynabridge/actions/workflows/ci.yml)
+[![CI](https://github.com/OtakuNathan/portal/actions/workflows/ci.yml/badge.svg)](https://github.com/OtakuNathan/portal/actions/workflows/ci.yml)
 
-Dyna Bridge is a small C++ bridge core for calling across C++ and dynamic
-languages while keeping the C++ side simple, typed, and familiar.
+Portal is a C++ contract layer for calls across runtime and transport
+boundaries, keeping the C++ side simple, typed, and familiar.
 
 The idea is to describe the contract once with normal C++ function signatures,
-then let a backend decide how those calls cross a language boundary. The same
+then let a backend decide how those calls cross a runtime or transport boundary. The same
 bridge layer currently targets JavaScript through Node-API, Python through the
 Python C API, framed RPC, and a test-only fake backend. Another runtime can
 participate by implementing the backend and converter contracts.
 
-> Current namespace: `dynabridge`.
+> Current namespace: `portal`.
 
 ## Core Idea
 
-Dyna Bridge treats cross-language calls as a static contract over dynamic
+Portal treats cross-language calls as a static contract over dynamic
 runtime values:
 
 ```text
@@ -43,14 +43,14 @@ existing handle does not need a name lookup.
 Each backend plugs its runtime into the same rule instead of inventing another
 binding framework.
 
-Dyna Bridge is whitelist-first. A callable, class, overload, or conversion does
+Portal is whitelist-first. A callable, class, overload, or conversion does
 not exist at the bridge boundary unless it is declared explicitly. This is close
 to an executable import/export table: no declaration means no symbol, no
 converter means no boundary crossing, and no backend policy means no runtime
 effect. If another runtime should not touch something, do not put it in the
 bridge table; the core will not generate a path to discover or call it.
 
-Dyna Bridge models call shape with `callable<Receiver, R(Args...)>`;
+Portal models call shape with `callable<Receiver, R(Args...)>`;
 `free_callable<R(Args...)>` is its `no_receiver_t` specialization. Arguments
 cross the boundary through three separate channels:
 
@@ -107,9 +107,9 @@ files. The core defaults are empty, so real modules opt into their own tables.
 The repository includes four backend implementations:
 
 - `tests/fake_backend.h` is a small in-memory backend for core tests.
-- `dynabridge/backends/python.h` is a minimal Python C API backend.
-- `dynabridge/backends/napi.h` is a minimal N-API backend.
-- `dynabridge/backends/rpc.h` is a transport-agnostic framed RPC backend.
+- `portal/backends/python.h` is a minimal Python C API backend.
+- `portal/backends/napi.h` is a minimal N-API backend.
+- `portal/backends/rpc.h` is a transport-agnostic framed RPC backend.
 
 Backend headers declare their `converter<T>` primary template and include their
 default value specializations at the end, for example `python.h` includes
@@ -117,9 +117,9 @@ default value specializations at the end, for example `python.h` includes
 specializations: object identity always uses the object channel.
 
 Code that uses the Python C API should include
-`dynabridge/backends/python_api.h` instead of including `Python.h` directly.
+`portal/backends/python_api.h` instead of including `Python.h` directly.
 The wrapper keeps MSVC Debug builds compatible with a normal release Python
-runtime; define `DYNABRIDGE_PYTHON_KEEP_MSVC_DEBUG` only when linking against a
+runtime; define `PORTAL_PYTHON_KEEP_MSVC_DEBUG` only when linking against a
 real Python debug build.
 
 ## Callable Declarations
@@ -226,9 +226,9 @@ The default declaration files are empty. Select module-specific declarations
 before including the bridge:
 
 ```cpp
-#define DYNABRIDGE_IMPORT_DEF "my_module_import.def"
-#define DYNABRIDGE_EXPORT_DEF "my_module_export.def"
-#include "dynabridge/bridge.h"
+#define PORTAL_IMPORT_DEF "my_module_import.def"
+#define PORTAL_EXPORT_DEF "my_module_export.def"
+#include "portal/bridge.h"
 ```
 
 This lets each module or domain own its import/export table while keeping the
@@ -286,24 +286,24 @@ Each free group becomes an overload set, a same-name binder, and a direct import
 function with a `call_` prefix:
 
 ```cpp
-dynabridge::fake_backend::import_context_t<recorded_call> ctx(recorded_call{});
+portal::fake_backend::import_context_t<recorded_call> ctx(recorded_call{});
 
-dynabridge::call_foo(ctx, 1);
-dynabridge::call_foo(ctx, 1, 2);
-dynabridge::call_foo(ctx, 1u);
+portal::call_foo(ctx, 1);
+portal::call_foo(ctx, 1, 2);
+portal::call_foo(ctx, 1u);
 
-int result = dynabridge::call_calc(ctx, 3, 4u);
+int result = portal::call_calc(ctx, 3, 4u);
 
-auto foo = dynabridge::foo(ctx);
+auto foo = portal::foo(ctx);
 foo(1);
 foo(1, 2);
 
-auto counter = dynabridge::bind_receiver<dynabridge::counter>(ctx, /* handle */);
+auto counter = portal::bind_receiver<portal::counter>(ctx, /* handle */);
 
 int member_result = counter.add(29);
 int current = counter.value();
 
-auto constructed = dynabridge::construct<dynabridge::counter>(ctx, 13u);
+auto constructed = portal::construct<portal::counter>(ctx, 13u);
 int constructed_value = constructed.value();
 ```
 
@@ -312,16 +312,16 @@ The call looks like ordinary C++, but the backend decides what it really means.
 ## Importing From a Lookup Domain
 
 The selected import def also generates static symbol metadata under
-`dynabridge::import_symbols`. Use `import_from` when a backend can resolve a
+`portal::import_symbols`. Use `import_from` when a backend can resolve a
 declared symbol from a dynamic lookup domain such as a Python module, a
 JavaScript object, or a Lua table:
 
 ```cpp
-auto ctx = dynabridge::import_from<
-    dynabridge::import_symbols::calc,
-    dynabridge::py_backend::import_context_t>(module);
+auto ctx = portal::import_from<
+    portal::import_symbols::calc,
+    portal::py_backend::import_context_t>(module);
 
-int result = dynabridge::call_calc(ctx, 3, 4u);
+int result = portal::call_calc(ctx, 3, 4u);
 ```
 
 The lookup name comes from the X-macro declaration, so user code does not repeat
@@ -341,11 +341,11 @@ lookup name.
 Class declarations also generate nested member symbols:
 
 ```cpp
-using counter_symbol = dynabridge::import_symbols::counter;
-using add_symbol = dynabridge::import_symbols::counter::add;
+using counter_symbol = portal::import_symbols::counter;
+using add_symbol = portal::import_symbols::counter::add;
 
 static_assert(std::is_same<
-    dynabridge::import_symbol_traits<add_symbol>::receiver_symbol_t,
+    portal::import_symbol_traits<add_symbol>::receiver_symbol_t,
     counter_symbol>::value, "add belongs to counter");
 ```
 
@@ -364,20 +364,20 @@ int add(int a, unsigned b) {
     return a + static_cast<int>(b);
 }
 
-dynabridge::export_free_callable(ctx, module, "add", add);
+portal::export_free_callable(ctx, module, "add", add);
 ```
 
 When a callable group already provides the name, use the generated export helper
 and avoid the runtime string:
 
 ```cpp
-dynabridge::export_calc(ctx, module, add);
+portal::export_calc(ctx, module, add);
 ```
 
 Lambda or function objects use an explicit signature:
 
 ```cpp
-dynabridge::export_calc<int(int, unsigned)>(
+portal::export_calc<int(int, unsigned)>(
     ctx,
     module,
     [](int a, unsigned b) {
@@ -390,7 +390,7 @@ If a group declares multiple signatures, use the generated builder. Each
 holder; `commit()` installs one dynamic function:
 
 ```cpp
-dynabridge::export_calc(ctx, module)
+portal::export_calc(ctx, module)
     .bind<int(int)>([scale](int a) {
         return a * scale;
     })
@@ -404,12 +404,12 @@ The same slots can build a standalone callable argument without registering a
 module symbol:
 
 ```cpp
-auto transform = dynabridge::bind_transform()
+auto transform = portal::bind_transform()
     .bind<int(int)>(scale_by_ten)
     .bind<int(int, unsigned)>(multiply)
     .build();
 
-dynabridge::call_pass_transform(ctx, std::move(transform), 6);
+portal::call_pass_transform(ctx, std::move(transform), 6);
 ```
 
 The backend forwards `argc` and dynamic arguments to the binder. The core walks
@@ -430,8 +430,8 @@ dynamic `self` handle. The proxy owns or borrows the native C++ object and
 forwards declared member functions:
 
 ```cpp
-dynabridge::py_backend::export_context_t export_ctx;
-dynabridge::exports::counter::register_all(export_ctx, module);
+portal::py_backend::export_context_t export_ctx;
+portal::exports::counter::register_all(export_ctx, module);
 ```
 
 `register_all` registers the whitelisted constructors and member functions from
@@ -445,17 +445,17 @@ explicit callable you bind.
 C++ can also create dynamic instances after the type is registered:
 
 ```cpp
-auto object = dynabridge::make_exported<
-    dynabridge::exports::counter>(
+auto object = portal::make_exported<
+    portal::exports::counter>(
     export_ctx,
     native::counter{13});
 
-dynabridge::export_instance<
-    dynabridge::exports::counter>(
+portal::export_instance<
+    portal::exports::counter>(
     export_ctx,
     module,
     "global_counter",
-    dynabridge::borrow(existing_counter));
+    portal::borrow(existing_counter));
 ```
 
 `make_exported` returns the backend object handle. `export_instance` creates
@@ -469,8 +469,8 @@ The lower-level member binder also accepts ordinary C++ member function
 pointers. Native member pointers are invoked through the proxy's `native()`:
 
 ```cpp
-auto add = dynabridge::create_export_member_callable_binder<
-    dynabridge::exports::counter,
+auto add = portal::create_export_member_callable_binder<
+    portal::exports::counter,
     int(int)>(
     ctx,
     &native::counter::add);
@@ -480,7 +480,7 @@ Class delegates hold a context plus an object from the other runtime. Generated
 member methods forward through the same converter barrier:
 
 ```cpp
-auto counter = dynabridge::bind_receiver<dynabridge::counter>(ctx, /* handle */);
+auto counter = portal::bind_receiver<portal::counter>(ctx, /* handle */);
 
 counter.add(1);
 counter.value();
@@ -520,7 +520,7 @@ contract through backend hooks. The core does not know which policy was chosen,
 so unused runtime policies do not add dispatch cost.
 
 ```cpp
-struct my_backend : dynabridge::backend_base<my_backend> {
+struct my_backend : portal::backend_base<my_backend> {
     // Optional, lets the core preflight converter<T>::from/to probes.
     using dynamic_value_t = dynamic_value;
 
@@ -554,7 +554,7 @@ struct my_backend::converter<int> {
     static dynamic_value to(Context& ctx, int value);
 
     template <typename Context>
-    static dynabridge::optional<int> from(Context& ctx, dynamic_value value);
+    static portal::optional<int> from(Context& ctx, dynamic_value value);
 };
 ```
 
@@ -565,16 +565,16 @@ allocation errors or failed API calls. A mismatch returns an empty optional:
 template <>
 struct my_backend::converter<int> {
     template <typename Context>
-    static dynabridge::optional<int> from(Context& ctx, dynamic_value value) {
+    static portal::optional<int> from(Context& ctx, dynamic_value value) {
         if (!is_integer(ctx, value)) {
             return {};
         }
-        return dynabridge::optional<int>(read_integer(ctx, value));
+        return portal::optional<int>(read_integer(ctx, value));
     }
 };
 ```
 
-`optional<T>` is dynabridge's lightweight in-place optional for converter probe
+`optional<T>` is portal's lightweight in-place optional for converter probe
 results. Empty means "this overload does not accept the dynamic value"; it is
 normal control flow and should stay off the exception path. For trivial value
 types such as `int` or runtime handles, `optional<T>` preserves trivial
@@ -589,7 +589,7 @@ C++ receiver and arguments first, then calls `invoke_impl`. Free callables use
 
 ```cpp
 template <typename Receiver, typename R, typename... DynamicArgs>
-static R invoke_impl(import_context_t& ctx, dynabridge::no_receiver_t, DynamicArgs... args);
+static R invoke_impl(import_context_t& ctx, portal::no_receiver_t, DynamicArgs... args);
 
 template <typename Receiver, typename R, typename DynamicReceiver, typename... DynamicArgs>
 static R invoke_impl(import_context_t& ctx, DynamicReceiver receiver, DynamicArgs... args);
@@ -607,7 +607,7 @@ class object_t
           my_backend, Receiver, Direction>::type {
 public:
     template <typename... Args>
-    object_t(import_context_t& ctx, dynabridge::construct_object_t, Args&&... args);
+    object_t(import_context_t& ctx, portal::construct_object_t, Args&&... args);
 
     template <typename... Args>
     void construct_import_object_impl(import_context_t& ctx, Args&&... args);
@@ -658,7 +658,7 @@ interpreter shutdown. The carrier does not acquire a GIL, switch interpreters,
 or make cross-interpreter exception transfer safe. The Python backend requires
 C++ exceptions; the RPC/core no-exception configurations do not change that.
 
-`dynabridge/backends/python_api.h` is the canonical include for `Python.h`.
+`portal/backends/python_api.h` is the canonical include for `Python.h`.
 On MSVC Debug builds, Python's headers otherwise assume a debug Python ABI when
 `_DEBUG` is defined, which does not match the release Python installed on most
 CI and developer machines. The wrapper temporarily hides `_DEBUG` only while
@@ -684,7 +684,7 @@ Class exports own or borrow native C++ state through a generated proxy. The
 type name is declared in the selected export def through
 `BEGIN_CLASS(ns, clazz)`, which also fixes the native type. Registration is the
 non-template call
-`dynabridge::exports::clazz::register_all(export_ctx, module)`.
+`portal::exports::clazz::register_all(export_ctx, module)`.
 Constructor signatures must be whitelisted with `DECL_CONSTRUCTOR(Args...)`;
 `register_all` enables them together with the declared member functions and
 stores the class target in `export_ctx`. The backend constructor callback builds
@@ -705,7 +705,7 @@ a trusted member with a forged JavaScript `this` value violates that policy and
 can cause undefined behavior.
 
 ```cpp
-namespace dynabridge {
+namespace portal {
     namespace native {
         struct counter {
             explicit counter(unsigned handle);
@@ -714,20 +714,20 @@ namespace dynabridge {
     }
 }
 
-dynabridge::py_backend::export_context_t export_ctx;
-dynabridge::exports::counter::register_all(export_ctx, module);
+portal::py_backend::export_context_t export_ctx;
+portal::exports::counter::register_all(export_ctx, module);
 
 native::counter existing_counter{13};
-auto object = dynabridge::make_exported<
-    dynabridge::exports::counter>(
+auto object = portal::make_exported<
+    portal::exports::counter>(
     export_ctx,
     native::counter{21});
-dynabridge::export_instance<
-    dynabridge::exports::counter>(
+portal::export_instance<
+    portal::exports::counter>(
     export_ctx,
     module,
     "global_counter",
-    dynabridge::borrow(existing_counter));
+    portal::borrow(existing_counter));
 ```
 
 The core probes calls before dispatch. It always checks that
@@ -746,7 +746,7 @@ Exports are also routed through the backend. The core creates a binder and calls
 `backend_base` and forwarded to `define_impl`:
 
 ```cpp
-struct my_backend : dynabridge::backend_base<my_backend> {
+struct my_backend : portal::backend_base<my_backend> {
     template <typename Binder>
     static void define_impl(export_context_t& ctx, module_t& module, const char* name, Binder binder);
 };
@@ -758,7 +758,7 @@ The backend returns its own class target. Generated constructor exports call
 target:
 
 ```cpp
-struct my_backend : dynabridge::backend_base<my_backend> {
+struct my_backend : portal::backend_base<my_backend> {
     template <typename Class>
     static class_target_t define_class_impl(export_context_t& ctx, module_t& module, const char* name);
 
@@ -772,7 +772,7 @@ struct my_backend : dynabridge::backend_base<my_backend> {
     static void define_impl(export_context_t& ctx, class_target_t& target, const char* name, Binder binder);
 
     template <typename Class>
-    static object_t<Class, dynabridge::export_t> bind_export_object_impl(
+    static object_t<Class, portal::export_t> bind_export_object_impl(
         export_context_t& ctx,
         dynamic_value self);
 
@@ -782,12 +782,12 @@ struct my_backend : dynabridge::backend_base<my_backend> {
         const ImportObject& object);
 
     template <typename ClassTag>
-    static dynabridge::optional<object_t<
-        typename ClassTag::proxy_t, dynabridge::export_t>>
+    static portal::optional<object_t<
+        typename ClassTag::proxy_t, portal::export_t>>
     try_bind_export_object_impl(export_context_t& ctx, dynamic_value value);
 
     template <typename ImportGroup>
-    static dynabridge::optional<import_context_t>
+    static portal::optional<import_context_t>
     try_import_callable_impl(export_context_t& ctx, dynamic_value value);
 
     template <typename ExportGroup, typename Binder>
@@ -796,7 +796,7 @@ struct my_backend : dynabridge::backend_base<my_backend> {
         Binder binder);
 
     template <typename Class, typename... Args>
-    static object_t<Class, dynabridge::export_t> make_export_object_impl(
+    static object_t<Class, portal::export_t> make_export_object_impl(
         export_context_t& ctx,
         Args&&... args);
 
@@ -805,7 +805,7 @@ struct my_backend : dynabridge::backend_base<my_backend> {
         export_context_t& ctx,
         module_t& module,
         const char* name,
-        object_t<Class, dynabridge::export_t> object);
+        object_t<Class, portal::export_t> object);
 };
 ```
 
@@ -846,34 +846,34 @@ keeps a const view so a failed candidate cannot consume arguments needed by the
 next candidate.
 
 ```cpp
-dynabridge::rpc_backend::export_context_t export_ctx;
-dynabridge::rpc::router server;
-dynabridge::export_rpc_add(export_ctx, server, &add);
+portal::rpc_backend::export_context_t export_ctx;
+portal::rpc::router server;
+portal::export_rpc_add(export_ctx, server, &add);
 
-dynabridge::rpc::loopback_transport transport(server);
-using context_t = dynabridge::rpc_backend::import_context_t<
-    dynabridge::rpc::loopback_transport>;
-auto ctx = dynabridge::import_from<
-    dynabridge::import_symbols::rpc_add, context_t>(transport);
+portal::rpc::loopback_transport transport(server);
+using context_t = portal::rpc_backend::import_context_t<
+    portal::rpc::loopback_transport>;
+auto ctx = portal::import_from<
+    portal::import_symbols::rpc_add, context_t>(transport);
 
-int result = dynabridge::call_rpc_add(ctx, 3, 4u);
+int result = portal::call_rpc_add(ctx, 3, 4u);
 ```
 
 See `tests/rpc_import.def`, `tests/rpc_export.def`, and
 `tests/rpc_backend_test.cpp` for the complete declaration and binding example.
 
-## Dynabridge + Flux Foundry
+## Portal + Flux Foundry
 
 The RPC backend can remain a small typed wire layer while
 [Flux Foundry](https://github.com/OtakuNathan/flux_foundry) supplies orchestration. This is a
 composition of existing responsibilities rather than a second RPC framework:
 
 ```text
-dynabridge callable contract
+portal callable contract
     -> Flux Foundry encode flow
     -> external async transport awaitable
     -> Flux Foundry decode/error flow
-    -> typed dynabridge result
+    -> typed portal result
 ```
 
 The RPC benchmark includes a concrete adapter with one external operation named
@@ -932,19 +932,19 @@ blueprint.
 ### Runtime Executors
 
 Libuv integration uses `flux_foundry::uv_executor` directly, from FF's
-`<executor/uv_executor.h>`; dynabridge does not maintain a separate libuv queue
+`<executor/uv_executor.h>`; portal does not maintain a separate libuv queue
 or handle implementation. Its optional `python_interpreter_executor.h` adapter
-in `dynabridge/extensions/flux_foundry/` runs work on a dedicated interpreter
+in `portal/extensions/flux_foundry/` runs work on a dedicated interpreter
 thread and acquires the GIL once per queued batch. Both directly
 satisfy Flux Foundry's duck-typed `dispatch(task&&)` contract; neither changes
-`backend_base` or introduces a dynabridge scheduler abstraction.
+`backend_base` or introduces a portal scheduler abstraction.
 
 ```cpp
 auto flow = ff::make_blueprint<int>()
     | ff::via(&executor)
     | ff::then([&ctx](result_t&& input) -> result_t {
         return result_t(ff::value_tag,
-            dynabridge::call_executor_add(
+            portal::call_executor_add(
                 ctx, std::move(input).value(), 2u));
     })
     | ff::end();
@@ -963,7 +963,7 @@ accepted tasks; it may run concurrently with submissions while the executor
 object remains alive. Object destruction must not race its member calls.
 
 FF uses a bounded preallocated queue (default capacity 1024), unlike the former
-dynabridge executor's unbounded deque. `try_dispatch(task&&)` returns false with
+portal executor's unbounded deque. `try_dispatch(task&&)` returns false with
 the task intact when the queue is full or admission is closed. Choose explicit
 backpressure at application ingress. The example's separate producer retries
 full-queue submissions while its loop runs and closes only after the producer
@@ -971,12 +971,9 @@ joins. Do not spin waiting for capacity on the loop owner. `dispatch(task&&)`,
 including FF `via`, terminates on rejection, so provision capacity or enforce
 admission before entering that path. The demo also runs with capacity 1 in CTest.
 
-The old `<dynabridge/extensions/flux_foundry/uv_executor.h>` path retains only
-`dynabridge::flux_foundry_extensions::uv_executor` as a type alias to FF's class.
-It preserves source names, not the old unbounded admission behavior. Existing
-callers using that alias must also account for FF's capacity and rejection
-policy. New code should include FF's header and use its type directly. The
-dynabridge core CMake target still has no mandatory FF or libuv dependency.
+Include `<executor/uv_executor.h>` and use `flux_foundry::uv_executor` directly.
+The former adapter header and alias have been removed. The Portal core CMake
+target still has no mandatory FF or libuv dependency.
 
 Historical 50,000-task runs of the former adapters on the Raspberry Pi 4
 environment below measured roughly 181-194 ns/task for the Python interpreter executor and
@@ -1006,14 +1003,14 @@ policies compose without a per-call general-purpose RPC object model.
 Configure and build:
 
 ```sh
-cmake -S . -B /tmp/dynabridge-cmake-debug -DCMAKE_BUILD_TYPE=Debug
-cmake --build /tmp/dynabridge-cmake-debug
+cmake -S . -B /tmp/portal-cmake-debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build /tmp/portal-cmake-debug
 ```
 
 Run tests:
 
 ```sh
-ctest --test-dir /tmp/dynabridge-cmake-debug --output-on-failure
+ctest --test-dir /tmp/portal-cmake-debug --output-on-failure
 ```
 
 The current tests cover fake, RPC, Python, and N-API paths. The RPC test covers
@@ -1045,13 +1042,13 @@ module loading, class registration, reflection-like discovery, or real
 application work. Build them separately in Release mode:
 
 ```sh
-cmake -S . -B /tmp/dynabridge-cmake-bench \
+cmake -S . -B /tmp/portal-cmake-bench \
     -DCMAKE_BUILD_TYPE=Release \
-    -DDYNABRIDGE_BUILD_BENCHMARKS=ON
-cmake --build /tmp/dynabridge-cmake-bench --target python_call_benchmark
-cmake --build /tmp/dynabridge-cmake-bench --target node_call_benchmark_addon
-cmake --build /tmp/dynabridge-cmake-bench --target rpc_call_benchmark
-cmake --build /tmp/dynabridge-cmake-bench --target flow_composition_benchmark
+    -DPORTAL_BUILD_BENCHMARKS=ON
+cmake --build /tmp/portal-cmake-bench --target python_call_benchmark
+cmake --build /tmp/portal-cmake-bench --target node_call_benchmark_addon
+cmake --build /tmp/portal-cmake-bench --target rpc_call_benchmark
+cmake --build /tmp/portal-cmake-bench --target flow_composition_benchmark
 ```
 
 Flux Foundry-enabled targets detect a sibling `../flux_foundry` checkout
@@ -1066,7 +1063,7 @@ the same 20-step integer pipeline as direct C++, a Flux Foundry `fast_runner`,
 the same runner with one `fast_awaitable` that resumes synchronously from
 `submit()` under owning and non-owning blueprint policies, and a C++20 coroutine
 with one reusable frame, twenty ready `co_await` expressions, and one real
-resume per call. Only this benchmark target requires C++20; dynabridge and Flux
+resume per call. Only this benchmark target requires C++20; portal and Flux
 Foundry remain C++14 libraries.
 
 On the Raspberry Pi 4 environment described below, three-run medians were:
@@ -1098,7 +1095,7 @@ On Linux, installing the `gio-2.0` development package (for example,
 Run the RPC benchmark with an optional local-iteration count:
 
 ```sh
-/tmp/dynabridge-cmake-bench/rpc_call_benchmark 100000
+/tmp/portal-cmake-bench/rpc_call_benchmark 100000
 ```
 
 It always measures direct C++ and the fully framed in-memory transport. On
@@ -1110,14 +1107,14 @@ One Raspberry Pi 4 run (Cortex-A72 at 1.8 GHz, Debian aarch64, GCC 14.2,
 Release, 100,000 local and 10,000 scalar/small-payload TCP calls) produced
 these three-run median times:
 
-| TCP workload | dynabridge | FF blocking | FF GLib | rpclib | GLib vs rpclib |
+| TCP workload | portal | FF blocking | FF GLib | rpclib | GLib vs rpclib |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | scalar `int(int, unsigned)` | 52,685 | 53,432 | 87,895 | 93,962 | 6% lower |
 | 16 B string | 54,022 | 55,207 | 87,919 | 96,507 | 9% lower |
 | 1 KiB string | 58,018 | 58,523 | 91,900 | 102,878 | 11% lower |
 | 64 KiB string | 267,717 | 429,819 | 479,373 | 629,619 | 24% lower |
 
-Times are ns/call. Blocking FF completion stays close to direct dynabridge
+Times are ns/call. Blocking FF completion stays close to direct portal
 through 1 KiB. The GLib path additionally includes main-context polling and
 GSource dispatch, then resumes the continuation inline; it remained 6-24%
 below rpclib across these payloads. The framed scalar loopback path measured
@@ -1141,29 +1138,29 @@ microsecond on this machine. The 64 KiB delta is payload-sensitive rather than
 a fixed scheduler cost and remains a profiling target for the benchmark
 adapter's ownership and result-delivery path.
 
-This is a latency microbenchmark, not an RPC feature comparison. Dynabridge's
+This is a latency microbenchmark, not an RPC feature comparison. Portal's
 demo protocol is deliberately narrow; rpclib provides a broader MsgPack RPC
 protocol. Network topology, payload size, concurrency, backpressure, timeouts,
 and production error handling can dominate real workloads.
 
 ### Python and Node.js
 
-Set `DYNABRIDGE_BENCH_ITERS` to control the timed loop length.
+Set `PORTAL_BENCH_ITERS` to control the timed loop length.
 
 Run the Python call benchmark:
 
 ```sh
-DYNABRIDGE_BENCH_ITERS=1000000 /tmp/dynabridge-cmake-bench/python_call_benchmark
+PORTAL_BENCH_ITERS=1000000 /tmp/portal-cmake-bench/python_call_benchmark
 ```
 
 Run the Node.js call benchmark:
 
 ```sh
-DYNABRIDGE_BENCH_ITERS=1000000 node benchmarks/node_call_benchmark.js \
-    /tmp/dynabridge-cmake-bench/node_call_benchmark_addon.node
+PORTAL_BENCH_ITERS=1000000 node benchmarks/node_call_benchmark.js \
+    /tmp/portal-cmake-bench/node_call_benchmark_addon.node
 ```
 
-The benchmark compares dynabridge import/export calls with raw Python C API
+The benchmark compares portal import/export calls with raw Python C API
 tuple and vectorcall baselines. If `pybind11` or `nanobind` is available at
 CMake configure time, it also includes their function-call, `cpp_function`, and
 overload cases. The pybind11 high-level `operator()` path builds a tuple before
@@ -1175,12 +1172,12 @@ Timed loops keep a checksum for each case and fail if the result is not the
 expected value. This keeps the calls alive and also catches accidental benchmark
 drift, such as comparing overloads that compute different results.
 
-The Node.js benchmark compares dynabridge import/export calls with raw Node-API
+The Node.js benchmark compares portal import/export calls with raw Node-API
 and, when `node-addon-api` headers are available, node-addon-api C++ wrapper
 calls. Unlike CPython vectorcall, Node-API already passes callback arguments
 through `napi_callback_info`; this benchmark mostly exposes wrapper cost and
 backend policy choices such as callback argument extraction and receiver lookup.
-The dynabridge import case uses an `import_context_t`-owned persistent callable handle
+The portal import case uses an `import_context_t`-owned persistent callable handle
 with current-scope caches, so the hot loop does not perform per-call
 `napi_get_reference_value` or `napi_get_undefined` lookups.
 
@@ -1237,7 +1234,7 @@ runtime APIs and established C++ wrappers. These are three-run medians from
 Lower is better; `--` means the benchmark does not provide an equivalent raw
 Python class implementation.
 
-| Python path (ns/call) | Raw C API | dynabridge | pybind11 | nanobind |
+| Python path (ns/call) | Raw C API | portal | pybind11 | nanobind |
 | --- | ---: | ---: | ---: | ---: |
 | Export scalar callable (tuple) | -- | 156.6 | 614.0 | 181.1 |
 | Export scalar callable (vectorcall) | -- | 98.5 | -- | 116.9 |
@@ -1248,7 +1245,7 @@ Python class implementation.
 | Export existing callback | -- | 302.7 | 1,138.4 | 432.2 |
 | Export construction | -- | 368.5 | 1,877.8 | 212.5 |
 
-| Node.js path (ns/call) | Raw N-API | dynabridge | node-addon-api |
+| Node.js path (ns/call) | Raw N-API | portal | node-addon-api |
 | --- | ---: | ---: | ---: |
 | Export value | 121.4 | 138.2 | 167.1 |
 | Export class argument | 426.7 | 697.5 | 440.3 |
@@ -1261,13 +1258,13 @@ Python class implementation.
 | Import fresh callback | 9,819.9 | 11,660.2 | 12,982.0 |
 
 The Python backend now uses the same broad object strategy as nanobind: a
-dedicated extension type with native state at a fixed offset. Dynabridge's
+dedicated extension type with native state at a fixed offset. Portal's
 class argument and member rows are slightly lower in this run. Construction is
 still about 1.7x higher even after both implementations enter through type-level
-vectorcall. Dynabridge reuses its generic constructor argument and object
+vectorcall. Portal reuses its generic constructor argument and object
 wrappers, while nanobind's constructor caster placement-constructs the native
 value directly. It is a lifecycle cost, not steady-state dispatch. On Node.js,
-dynabridge validates a per-proxy Node-API type tag before unwrapping both class
+portal validates a per-proxy Node-API type tag before unwrapping both class
 arguments and member receivers. The handwritten N-API and node-addon-api rows
 directly unwrap and cast the benchmark object, so they do not provide the same
 wrong-receiver check. The explicit trusted policy removes that check and stays
@@ -1289,16 +1286,16 @@ Environment:
 - Runtime: Node.js 22.14.0.
 - Optional comparisons: pybind11 3.0.4 and node-addon-api.
 
-Representative `ns/call` from `DYNABRIDGE_BENCH_ITERS=5000000`:
+Representative `ns/call` from `PORTAL_BENCH_ITERS=5000000`:
 
 | Python case | ns/call |
 | --- | ---: |
-| dynabridge import | 64.3 |
+| portal import | 64.3 |
 | raw C API tuple | 85.2 |
 | raw C API vectorcall | 57.8 |
-| dynabridge export tuple | 53.6 |
-| dynabridge export vectorcall | 31.5 |
-| dynabridge overload vectorcall 2 | 52.9 |
+| portal export tuple | 53.6 |
+| portal export vectorcall | 31.5 |
+| portal overload vectorcall 2 | 52.9 |
 | pybind11 function call | 115.6 |
 | pybind11 manual vectorcall | 72.2 |
 | pybind11 cpp_function vectorcall | 202.0 |
@@ -1307,19 +1304,19 @@ Representative `ns/call` from `DYNABRIDGE_BENCH_ITERS=5000000`:
 | Node.js case | ns/call |
 | --- | ---: |
 | raw N-API export | 44.6 |
-| dynabridge export | 47.9 |
+| portal export | 47.9 |
 | node-addon-api export | 65.3 |
 | raw N-API overload export 2 | 56.1 |
-| dynabridge overload export 2 | 56.9 |
+| portal overload export 2 | 56.9 |
 | node-addon-api overload export 2 | 67.6 |
 | raw N-API import | 124.9 |
-| dynabridge import | 173.2 |
+| portal import | 173.2 |
 | node-addon-api import | 177.9 |
 
-Conclusion: on this desktop build, Dyna Bridge is much faster than pybind11 for
+Conclusion: on this desktop build, Portal is much faster than pybind11 for
 the typed Python export and overload paths, and faster than node-addon-api for
 Node.js export wrappers. Raw N-API remains the lower bound for Node.js import
-calls, while Dyna Bridge stays close to node-addon-api.
+calls, while Portal stays close to node-addon-api.
 
 #### Raspberry Pi aarch64 Linux
 
@@ -1332,19 +1329,19 @@ Environment:
 - Optional comparisons: pybind11-dev 2.13.6, nanobind 2.12.0, and
   node-addon-api 8.3.1.
 
-Representative `ns/call` from `DYNABRIDGE_BENCH_ITERS=1000000` after the
+Representative `ns/call` from `PORTAL_BENCH_ITERS=1000000` after the
 integer converter fast paths:
 
 | Python case | ns/call |
 | --- | ---: |
-| dynabridge import | 169.0 |
+| portal import | 169.0 |
 | raw C API tuple | 315.1 |
 | raw C API vectorcall | 234.6 |
-| dynabridge export tuple | 140.4 |
-| dynabridge export vectorcall | 95.9 |
-| dynabridge overload vectorcall 1 | 92.1 |
-| dynabridge overload vectorcall 2 | 104.8 |
-| dynabridge overload fallback vectorcall | 142.4 |
+| portal export tuple | 140.4 |
+| portal export vectorcall | 95.9 |
+| portal overload vectorcall 1 | 92.1 |
+| portal overload vectorcall 2 | 104.8 |
+| portal overload fallback vectorcall | 142.4 |
 | pybind11 function call | 349.0 |
 | pybind11 manual vectorcall | 263.4 |
 | pybind11 cpp_function tuple | 555.1 |
@@ -1358,16 +1355,16 @@ integer converter fast paths:
 | Node.js case | ns/call |
 | --- | ---: |
 | raw N-API export | 117.7 |
-| dynabridge export | 204.8 |
+| portal export | 204.8 |
 | node-addon-api export | 239.3 |
 | raw N-API overload export 2 | 234.6 |
-| dynabridge overload export 2 | 222.8 |
+| portal overload export 2 | 222.8 |
 | node-addon-api overload export 2 | 247.7 |
 | raw N-API import | 753.2 |
-| dynabridge import | 754.0 |
+| portal import | 754.0 |
 | node-addon-api import | 733.8 |
 
-Conclusion: on the Raspberry Pi run, Dyna Bridge beats pybind11 and is
+Conclusion: on the Raspberry Pi run, Portal beats pybind11 and is
 competitive with nanobind on the measured Python vectorcall export and overload
 paths. It also stays close to, or faster than, node-addon-api on the measured
 Node.js export cases. Raw runtime APIs still represent the baseline when
@@ -1377,7 +1374,7 @@ Treat benchmark numbers as local measurements, not portable claims.
 
 ## License
 
-Dyna Bridge is licensed under the Apache License 2.0. See [`LICENSE`](../LICENSE).
+Portal is licensed under the Apache License 2.0. See [`LICENSE`](../LICENSE).
 
 ## Owned asynchronous invocations
 
@@ -1392,21 +1389,21 @@ functions, `prepare_async_free<Symbol, Contract>(context_owner, captured_tuple)`
 These hooks prepare a cold operation, not a synchronous call disguised as async.
 
 ```cpp
-auto gpu = dynabridge::bind_static_async<dynabridge::gpu>(owner, object);
+auto gpu = portal::bind_static_async<portal::gpu>(owner, object);
 auto call = gpu.add_one(41); // static_invocation<int, Context, Callable>
 // The backend can also construct a native operation directly:
-auto native = dynabridge::make_invocation<int>(owner,
+auto native = portal::make_invocation<int>(owner,
     [](auto& context, auto completion) noexcept {
         context.submit(completion); // retain the owning token until retirement
-        return dynabridge::async_submission::accept();
+        return portal::async_submission::accept();
     });
-auto erased = dynabridge::erase_invocation(std::move(native));
+auto erased = portal::erase_invocation(std::move(native));
 ```
 
 `make_invocation<R>` retains the actual operation callable and context type;
 it does not route submission or completion through a virtual function or
 `std::function`. `erase_invocation` adds that optional boundary. The FF extension
-is `<dynabridge/extensions/flux_foundry/async.h>`; it offers
+is `<portal/extensions/flux_foundry/async.h>`; it offers
 `await_invocation<R>()`, `await_static_invocation<Call>()`, executor overloads,
 and `start_invocation(call, handler)`. A reusable Blueprint accepts a **fresh**
 invocation as input for each run. Moved-from or twice-started calls violate a
@@ -1469,7 +1466,7 @@ interface; zero means the completion protocol was fulfilled, not business succes
 `async_contract`, `async_projection`, and `ff_async` test both concrete and erased
 calls; GCC/Clang additionally build strict/relaxed no-exception variants. Configure
 checks reject unsafe pointer capture, mutable reference parameters, mismatched backend results, and strict throwing capture/submission/completion (including before erasure).
-`async_invocation_benchmark` (enable `DYNABRIDGE_BUILD_BENCHMARKS` and provide FF)
+`async_invocation_benchmark` (enable `PORTAL_BUILD_BENCHMARKS` and provide FF)
 prints paired construction/discard, inline, FF inline, move-only 64 KiB result,
 and cross-thread timings with global `operator new` call counts (not all allocator APIs). Its thread case includes thread
 creation/join and must not be described as pure scheduler handoff latency.

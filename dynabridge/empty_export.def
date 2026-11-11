@@ -1,3 +1,0 @@
-// Empty default export table.
-// Define DYNABRIDGE_EXPORT_DEF before including dynabridge/bridge.h to
-// generate module-specific export declarations.

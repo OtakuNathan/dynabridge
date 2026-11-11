@@ -1,7 +1,7 @@
-#define DYNABRIDGE_IMPORT_DEF "examples/flux_foundry/import.def"
-#define DYNABRIDGE_EXPORT_DEF "examples/flux_foundry/import.def"
-#include "dynabridge/bridge.h"
-#include "dynabridge/backends/rpc.h"
+#define PORTAL_IMPORT_DEF "examples/flux_foundry/import.def"
+#define PORTAL_EXPORT_DEF "examples/flux_foundry/import.def"
+#include "portal/bridge.h"
+#include "portal/backends/rpc.h"
 #include <executor/uv_executor.h>
 
 #include <flow/flow.h>
@@ -68,21 +68,21 @@ int main(int argc, char** argv) {
     int status = 0;
     {
         ff::uv_executor executor(&loop, capacity);
-        dynabridge::rpc_backend::export_context_t export_ctx;
-        dynabridge::rpc::router module;
-        dynabridge::export_executor_add(export_ctx, module, &executor_add);
-        dynabridge::rpc::loopback_transport transport(module);
-        using context_t = dynabridge::rpc_backend::import_context_t<
-            dynabridge::rpc::loopback_transport>;
-        auto ctx = dynabridge::import_from<
-            dynabridge::import_symbols::executor_add, context_t>(transport);
+        portal::rpc_backend::export_context_t export_ctx;
+        portal::rpc::router module;
+        portal::export_executor_add(export_ctx, module, &executor_add);
+        portal::rpc::loopback_transport transport(module);
+        using context_t = portal::rpc_backend::import_context_t<
+            portal::rpc::loopback_transport>;
+        auto ctx = portal::import_from<
+            portal::import_symbols::executor_add, context_t>(transport);
 
         result_state result(&loop);
         auto blueprint = ff::make_blueprint<int>()
             | ff::via(&executor)
             | ff::then([&ctx](result_t&& input) -> result_t {
                 return result_t(ff::value_tag,
-                    dynabridge::call_executor_add(
+                    portal::call_executor_add(
                         ctx, std::move(input).value(), 2u));
             })
             | ff::end();
@@ -124,7 +124,7 @@ int main(int argc, char** argv) {
             const double ns_per_task =
                 std::chrono::duration<double, std::nano>(elapsed).count()
                 / static_cast<double>(iterations);
-            std::printf("uv executor: dynabridge + FF result=%d, %.1f ns/task\n",
+            std::printf("uv executor: portal + FF result=%d, %.1f ns/task\n",
                 result.value, ns_per_task);
         }
 

@@ -4,12 +4,12 @@
 #include <type_traits>
 #include <utility>
 
-#define DYNABRIDGE_IMPORT_DEF "tests/import.def"
-#define DYNABRIDGE_EXPORT_DEF "tests/export.def"
-#include "dynabridge/bridge.h"
+#define PORTAL_IMPORT_DEF "tests/import.def"
+#define PORTAL_EXPORT_DEF "tests/export.def"
+#include "portal/bridge.h"
 #include "fake_backend.h"
 
-namespace dynabridge {
+namespace portal {
     namespace native {
         class counter {
         public:
@@ -38,7 +38,7 @@ namespace {
         unsigned value = 0;
     };
 
-    using native_counter = dynabridge::native::counter;
+    using native_counter = portal::native::counter;
 
     int add_function(int a, unsigned b) {
         return a + static_cast<int>(b);
@@ -71,7 +71,7 @@ namespace {
     struct consumer_runtime {
         unsigned operator()(unsigned object, int callback) const {
             return object + static_cast<unsigned>(
-                dynabridge::fake_backend::invoke_dynamic_callable(callback, 1));
+                portal::fake_backend::invoke_dynamic_callable(callback, 1));
         }
 
         int operator()(unsigned receiver, unsigned object, int value) const {
@@ -80,7 +80,7 @@ namespace {
 
         int operator()(unsigned receiver, int callback, int value) const {
             return static_cast<int>(receiver)
-                + dynabridge::fake_backend::invoke_dynamic_callable(callback, value);
+                + portal::fake_backend::invoke_dynamic_callable(callback, value);
         }
     };
 
@@ -148,14 +148,14 @@ namespace {
         }
 
         template <typename Binder,
-            std::enable_if_t<!dynabridge::is_export_overload_binder<
+            std::enable_if_t<!portal::is_export_overload_binder<
                 typename std::decay<Binder>::type>::value>* = nullptr>
         void def(const char* name, Binder binder) {
-            def_impl(name, std::move(binder), dynabridge::type_identity<typename Binder::signature_t>{});
+            def_impl(name, std::move(binder), portal::type_identity<typename Binder::signature_t>{});
         }
 
         template <typename Binder,
-            std::enable_if_t<dynabridge::is_export_overload_binder<
+            std::enable_if_t<portal::is_export_overload_binder<
                 typename std::decay<Binder>::type>::value>* = nullptr>
         void def(const char* name, Binder binder) {
             ++def_count;
@@ -172,7 +172,7 @@ namespace {
         }
 
         template <typename Binder>
-        void def_impl(const char* name, Binder binder, dynabridge::type_identity<int(int, unsigned)>) {
+        void def_impl(const char* name, Binder binder, portal::type_identity<int(int, unsigned)>) {
             ++def_count;
 
             if (std::strcmp(name, "add") == 0) {
@@ -187,7 +187,7 @@ namespace {
         }
 
         template <typename Binder>
-        void def_impl(const char* name, Binder binder, dynabridge::type_identity<void(int)>) {
+        void def_impl(const char* name, Binder binder, portal::type_identity<void(int)>) {
             ++def_count;
 
             if (std::strcmp(name, "store") == 0) {
@@ -199,7 +199,7 @@ namespace {
         void def_impl(
             const char* name,
             Binder binder,
-            dynabridge::type_identity<int(dynabridge::exports::counter, int)>)
+            portal::type_identity<int(portal::exports::counter, int)>)
         {
             ++def_count;
 
@@ -212,7 +212,7 @@ namespace {
         void def_impl(
             const char* name,
             Binder binder,
-            dynabridge::type_identity<int(dynabridge::exports::counter)>)
+            portal::type_identity<int(portal::exports::counter)>)
         {
             ++def_count;
 
@@ -222,7 +222,7 @@ namespace {
         }
 
         template <typename Binder, typename Signature>
-        void def_impl(const char*, Binder, dynabridge::type_identity<Signature>) {
+        void def_impl(const char*, Binder, portal::type_identity<Signature>) {
             ++def_count;
         }
     };
@@ -342,13 +342,13 @@ namespace {
     struct use_callback_export {
         template <typename Callback>
         int operator()(Callback& callback, int value) const {
-            return dynabridge::call_callback(callback, value);
+            return portal::call_callback(callback, value);
         }
     };
 
     struct member_object_export {
         int operator()(
-            dynabridge::exports::counter& receiver,
+            portal::exports::counter& receiver,
             native_counter& other,
             int value) const {
             return receiver.native().add(other.add(value));
@@ -356,21 +356,21 @@ namespace {
     };
 
     struct descriptor_return_export {
-        dynabridge::object_param<
-            dynabridge::export_classes::counter,
-            dynabridge::export_t> operator()(int) const {
+        portal::object_param<
+            portal::export_classes::counter,
+            portal::export_t> operator()(int) const {
             return {};
         }
     };
 }
 
-using export_context_t = dynabridge::fake_backend::export_context_t<recorded_call>;
-using export_counter_t = dynabridge::exports::counter;
-using import_counter_t = dynabridge::counter<export_context_t>;
-using import_addable_t = dynabridge::interfaces::counter_addable<
-    import_counter_t, dynabridge::import_t>;
-using export_addable_t = dynabridge::interfaces::counter_addable<
-    export_counter_t, dynabridge::export_t>;
+using export_context_t = portal::fake_backend::export_context_t<recorded_call>;
+using export_counter_t = portal::exports::counter;
+using import_counter_t = portal::counter<export_context_t>;
+using import_addable_t = portal::interfaces::counter_addable<
+    import_counter_t, portal::import_t>;
+using export_addable_t = portal::interfaces::counter_addable<
+    export_counter_t, portal::export_t>;
 
 static_assert(std::is_empty<import_addable_t>::value,
     "import interfaces must not own receiver or context state");
@@ -380,33 +380,33 @@ static_assert(std::is_base_of<import_addable_t, import_counter_t>::value,
     "import classes must publicly compose declared interfaces");
 static_assert(std::is_base_of<export_addable_t, export_counter_t>::value,
     "export proxies must publicly compose declared interfaces");
-static_assert(!dynabridge::are_interface_types_unique<dynabridge::type_list<
-        dynabridge::interface_descriptors::counter_addable<dynabridge::import_t>,
-        dynabridge::interface_descriptors::counter_addable<dynabridge::import_t>>>::value,
+static_assert(!portal::are_interface_types_unique<portal::type_list<
+        portal::interface_descriptors::counter_addable<portal::import_t>,
+        portal::interface_descriptors::counter_addable<portal::import_t>>>::value,
     "duplicate IMPLEMENTS declarations must be rejected");
-static_assert(!dynabridge::are_interface_method_names_unique<
-        dynabridge::type_list<
-            dynabridge::interface_descriptors::counter_addable<dynabridge::import_t>,
-            dynabridge::interface_descriptors::counter_addable<dynabridge::export_t>>,
-        dynabridge::type_list<>>::value,
+static_assert(!portal::are_interface_method_names_unique<
+        portal::type_list<
+            portal::interface_descriptors::counter_addable<portal::import_t>,
+            portal::interface_descriptors::counter_addable<portal::export_t>>,
+        portal::type_list<>>::value,
     "composed interfaces must reject duplicate member names");
-using export_object_arg_t = dynabridge::object_param<
-    dynabridge::export_classes::counter, dynabridge::export_t>;
-using import_callable_arg_t = dynabridge::callable_param<
-    dynabridge::import_symbols::callback, dynabridge::import_t>;
+using export_object_arg_t = portal::object_param<
+    portal::export_classes::counter, portal::export_t>;
+using import_callable_arg_t = portal::callable_param<
+    portal::import_symbols::callback, portal::import_t>;
 
 static_assert(
-    dynabridge::is_export_callable_bindable<
+    portal::is_export_callable_bindable<
         int(export_object_arg_t, int), export_context_t, consume_counter_export>::value,
     "export object descriptors should resolve to native references");
 
 static_assert(
-    dynabridge::is_export_callable_bindable<
+    portal::is_export_callable_bindable<
         int(import_callable_arg_t, int), export_context_t, use_callback_export>::value,
     "export callable descriptors should resolve to imported contexts");
 
 static_assert(
-    dynabridge::is_export_member_callable_bindable<
+    portal::is_export_member_callable_bindable<
         export_counter_t,
         int(export_object_arg_t, int),
         export_context_t,
@@ -414,86 +414,86 @@ static_assert(
     "export member probes should understand object descriptor arguments");
 
 static_assert(
-    !dynabridge::is_export_callable_bindable<
+    !portal::is_export_callable_bindable<
         export_object_arg_t(int), export_context_t, descriptor_return_export>::value,
     "object and callable return descriptors are intentionally unsupported");
 
 static_assert(
     std::is_same<
-        dynabridge::backend_dynamic_value_t<dynabridge::fake_backend>,
+        portal::backend_dynamic_value_t<portal::fake_backend>,
         int>::value,
     "backend dynamic value should come from dynamic_value_t");
 
 static_assert(
-    dynabridge::are_bridge_params_valid<int, const int&, int&&>::value,
+    portal::are_bridge_params_valid<int, const int&, int&&>::value,
     "bridge params should accept values, const lvalue references, and rvalue references");
 
 static_assert(
-    !dynabridge::are_bridge_params_valid<int&>::value,
+    !portal::are_bridge_params_valid<int&>::value,
     "bridge params should reject non-const lvalue references");
 
-using valid_ref_contract = dynabridge::free_callable<void(const int&, int&&)>;
+using valid_ref_contract = portal::free_callable<void(const int&, int&&)>;
 
 static_assert(
-    dynabridge::is_callable_v<valid_ref_contract>,
+    portal::is_callable_v<valid_ref_contract>,
     "bridge callable signatures should allow const lvalue references and rvalue references");
 
 static_assert(
-    dynabridge::is_export_callable_bindable<
+    portal::is_export_callable_bindable<
         int(int, unsigned), export_context_t, decltype(&add_function)>::value,
     "function pointers with a matching signature should be export bindable");
 
 static_assert(
-    dynabridge::is_export_callable_bindable<
+    portal::is_export_callable_bindable<
         void(int), export_context_t, decltype(&store_function)>::value,
     "void function pointers with a matching signature should be export bindable");
 
 static_assert(
-    !dynabridge::is_export_callable_bindable<
+    !portal::is_export_callable_bindable<
         void(int&), export_context_t, decltype(&ref_store_function)>::value,
     "export bindable probe should reject non-const lvalue bridge references");
 
 static_assert(
-    !dynabridge::is_export_callable_bindable<
+    !portal::is_export_callable_bindable<
         int(int, unsigned), export_context_t, wrong_arity>::value,
     "export bindable probe should reject callables with the wrong arity");
 
 static_assert(
-    !dynabridge::is_export_callable_bindable<
+    !portal::is_export_callable_bindable<
         int(int, unsigned), export_context_t, wrong_return>::value,
     "export bindable probe should reject return values converter<R>::to cannot accept");
 
 static_assert(
-    dynabridge::is_export_invocable<
+    portal::is_export_invocable<
         export_context_t,
         decltype(&add_function),
         int,
-        dynabridge::type_list<int&&, unsigned&&>,
-        dynabridge::type_list<int, unsigned>>::value,
+        portal::type_list<int&&, unsigned&&>,
+        portal::type_list<int, unsigned>>::value,
     "export invocation probe should accept dynamic args with matching converters");
 
 static_assert(
-    dynabridge::are_export_arguments_convertible<
+    portal::are_export_arguments_convertible<
         export_context_t,
-        dynabridge::type_list<int, unsigned>>::value,
+        portal::type_list<int, unsigned>>::value,
     "export argument probe should accept args convertible from backend dynamic value");
 
 static_assert(
-    !dynabridge::are_export_arguments_convertible<
+    !portal::are_export_arguments_convertible<
         export_context_t,
-        dynabridge::type_list<not_convertible>>::value,
+        portal::type_list<not_convertible>>::value,
     "export argument probe should reject args without converter<T>::from(dynamic_value_t)");
 
 static_assert(
-    dynabridge::is_void_export_invocable<
+    portal::is_void_export_invocable<
         export_context_t,
         decltype(&store_function),
-        dynabridge::type_list<int&&>,
-        dynabridge::type_list<int>>::value,
+        portal::type_list<int&&>,
+        portal::type_list<int>>::value,
     "void export invocation probe should accept dynamic args with matching converters");
 
 static_assert(
-    dynabridge::is_export_member_callable_bindable<
+    portal::is_export_member_callable_bindable<
         export_counter_t,
         int(int),
         export_context_t,
@@ -501,7 +501,7 @@ static_assert(
     "export member bindable probe should accept receiver-aware callables");
 
 static_assert(
-    dynabridge::is_export_member_callable_bindable<
+    portal::is_export_member_callable_bindable<
         export_counter_t,
         int(),
         export_context_t,
@@ -509,49 +509,49 @@ static_assert(
     "export member bindable probe should accept no-arg member callables");
 
 static_assert(
-    dynabridge::is_export_member_receiver_convertible<
+    portal::is_export_member_receiver_convertible<
         export_context_t,
         export_counter_t,
-        dynabridge::type_list<int>>::value,
+        portal::type_list<int>>::value,
     "export member receiver probe should accept bindable self and convertible args");
 
 static_assert(
-    !dynabridge::is_export_member_receiver_convertible<
+    !portal::is_export_member_receiver_convertible<
         export_context_t,
         export_counter_t,
-        dynabridge::type_list<not_convertible>>::value,
+        portal::type_list<not_convertible>>::value,
     "export member receiver probe should reject args without converter<T>::from(dynamic_value_t)");
 
 static_assert(
-    dynabridge::is_declared_free_callable<
+    portal::is_declared_free_callable<
         void(unsigned),
-        typename dynabridge::export_constructor_group_for<
+        typename portal::export_constructor_group_for<
             export_counter_t>::type>::value,
     "export constructor group should include declared constructor signatures");
 
 static_assert(
-    !dynabridge::is_declared_free_callable<
+    !portal::is_declared_free_callable<
         void(int),
-        typename dynabridge::export_constructor_group_for<
+        typename portal::export_constructor_group_for<
             export_counter_t>::type>::value,
     "export constructor group should reject undeclared constructor signatures");
 
 static_assert(
-    dynabridge::is_export_class_constructible<
+    portal::is_export_class_constructible<
         export_counter_t,
         export_context_t,
-        dynabridge::type_list<unsigned>>::value,
+        portal::type_list<unsigned>>::value,
     "export constructor probe should accept generated proxy constructor matches");
 
 static_assert(
-    !dynabridge::is_export_class_constructible<
+    !portal::is_export_class_constructible<
         export_counter_t,
         export_context_t,
-        dynabridge::type_list<not_convertible>>::value,
+        portal::type_list<not_convertible>>::value,
     "export constructor probe should reject generated proxy constructor mismatches");
 
 static_assert(
-    dynabridge::is_export_member_callable_bindable<
+    portal::is_export_member_callable_bindable<
         export_counter_t,
         int(int),
         export_context_t,
@@ -559,7 +559,7 @@ static_assert(
     "export member bindable probe should accept member function pointers");
 
 static_assert(
-    dynabridge::is_export_member_callable_bindable<
+    portal::is_export_member_callable_bindable<
         export_counter_t,
         int(),
         export_context_t,
@@ -567,7 +567,7 @@ static_assert(
     "export member bindable probe should accept const member function pointers");
 
 static_assert(
-    !dynabridge::is_export_member_callable_bindable<
+    !portal::is_export_member_callable_bindable<
         export_counter_t,
         int(int),
         export_context_t,
@@ -575,7 +575,7 @@ static_assert(
     "export member bindable probe should reject callables with the wrong arity");
 
 static_assert(
-    !dynabridge::is_export_member_callable_bindable<
+    !portal::is_export_member_callable_bindable<
         export_counter_t,
         int(int),
         export_context_t,
@@ -583,90 +583,90 @@ static_assert(
     "export member bindable probe should reject return values converter<R>::to cannot accept");
 
 static_assert(
-    dynabridge::is_export_member_invocable<
+    portal::is_export_member_invocable<
         export_context_t,
         export_counter_t,
         counter_add_export,
         int,
         unsigned&&,
-        dynabridge::type_list<int&&>,
-        dynabridge::type_list<int>>::value,
+        portal::type_list<int&&>,
+        portal::type_list<int>>::value,
     "export member invocation probe should accept dynamic receiver and args with matching converters");
 
 static_assert(
-    dynabridge::is_export_member_invocable<
+    portal::is_export_member_invocable<
         export_context_t,
         export_counter_t,
         decltype(&native_counter::add),
         int,
         unsigned&&,
-        dynabridge::type_list<int&&>,
-        dynabridge::type_list<int>>::value,
+        portal::type_list<int&&>,
+        portal::type_list<int>>::value,
     "export member invocation probe should accept member function pointers");
 
 static_assert(
-    !dynabridge::is_export_member_invocable<
+    !portal::is_export_member_invocable<
         export_context_t,
         export_counter_t,
         counter_add_export,
         int,
         not_convertible&&,
-        dynabridge::type_list<int&&>,
-        dynabridge::type_list<int>>::value,
+        portal::type_list<int&&>,
+        portal::type_list<int>>::value,
     "export member invocation probe should reject self handles the backend cannot bind");
 
 static_assert(
-    dynabridge::is_forward_invocable<
-        export_context_t, dynabridge::no_receiver_t, int, unsigned>::value,
+    portal::is_forward_invocable<
+        export_context_t, portal::no_receiver_t, int, unsigned>::value,
     "forward argument probe should accept arguments with converter<T>::to");
 
 static_assert(
-    !dynabridge::is_forward_invocable<
-        export_context_t, dynabridge::no_receiver_t, not_convertible>::value,
+    !portal::is_forward_invocable<
+        export_context_t, portal::no_receiver_t, not_convertible>::value,
     "forward argument probe should reject arguments without converter<T>::to");
 
 static_assert(
-    dynabridge::is_forward_result_convertible<
+    portal::is_forward_result_convertible<
         export_context_t, int>::value,
     "forward result probe should accept return values with converter<R>::from");
 
 static_assert(
-    !dynabridge::is_forward_result_convertible<
+    !portal::is_forward_result_convertible<
         export_context_t, not_convertible>::value,
     "forward result probe should reject return values without converter<R>::from");
 
 static_assert(
-    dynabridge::is_import_object_convertible<
-        dynabridge::fake_backend,
-        dynabridge::import_symbols::counter,
+    portal::is_import_object_convertible<
+        portal::fake_backend,
+        portal::import_symbols::counter,
         export_context_t,
-        dynabridge::fake_backend::object_t<
-            dynabridge::counter<export_context_t>, dynabridge::import_t>&>::value,
+        portal::fake_backend::object_t<
+            portal::counter<export_context_t>, portal::import_t>&>::value,
     "imported receivers should use the backend object channel without a converter");
 
 static_assert(
-    dynabridge::is_forward_constructible<
-        export_context_t, dynabridge::counter<export_context_t>, unsigned>::value,
+    portal::is_forward_constructible<
+        export_context_t, portal::counter<export_context_t>, unsigned>::value,
     "forward construct probe should accept declared constructor args with converters");
 
 static_assert(
-    !dynabridge::is_forward_constructible<
-        export_context_t, dynabridge::counter<export_context_t>, not_convertible>::value,
+    !portal::is_forward_constructible<
+        export_context_t, portal::counter<export_context_t>, not_convertible>::value,
     "forward construct probe should reject constructor args without converters");
 
 int main() {
     export_context_t ctx(recorded_call{});
-    auto foo_binder = dynabridge::foo(ctx);
-    auto bar_binder = dynabridge::bar(ctx);
-    auto calc_binder = dynabridge::calc(ctx);
+    auto foo_binder = portal::foo(ctx);
+    auto bar_binder = portal::bar(ctx);
+    auto calc_binder = portal::calc(ctx);
 
-    dynabridge::call_foo(ctx, 1, 2);
+    portal::call_foo(ctx, 1, 2);
     if (ctx.callable_.argc != 2 || ctx.callable_.first != 1
             || ctx.callable_.second != 2 || ctx.callable_.overload != 3) {
         return 1;
     }
 
-    dynabridge::call_bar(ctx, 7);
+    portal::call_bar(ctx, 7);
     if (ctx.callable_.argc != 1 || ctx.callable_.first != 7
             || ctx.callable_.second != 0 || ctx.callable_.overload != 1) {
         return 2;
@@ -678,19 +678,19 @@ int main() {
         return 21;
     }
 
-    dynabridge::call_foo(ctx, 8, 9);
+    portal::call_foo(ctx, 8, 9);
     if (ctx.callable_.argc != 2 || ctx.callable_.first != 8
             || ctx.callable_.second != 9 || ctx.callable_.overload != 3) {
         return 3;
     }
 
-    dynabridge::call_foo(ctx, 10);
+    portal::call_foo(ctx, 10);
     if (ctx.callable_.argc != 1 || ctx.callable_.first != 10
             || ctx.callable_.second != 0 || ctx.callable_.overload != 1) {
         return 4;
     }
 
-    dynabridge::call_foo(ctx, 11u);
+    portal::call_foo(ctx, 11u);
     if (ctx.callable_.argc != 1 || ctx.callable_.first != 11
             || ctx.callable_.second != 0 || ctx.callable_.overload != 2) {
         return 5;
@@ -723,7 +723,7 @@ int main() {
         return 9;
     }
 
-    auto counter_obj = dynabridge::bind<dynabridge::counter>(ctx, 13u);
+    auto counter_obj = portal::bind<portal::counter>(ctx, 13u);
     ctx.reset_conversions();
     const int member_result = counter_obj.add(29);
     if (member_result != 42 || ctx.callable_.argc != 2
@@ -743,7 +743,7 @@ int main() {
     }
 
     ctx.reset_conversions();
-    auto constructed_counter = dynabridge::construct_counter(ctx, 21u);
+    auto constructed_counter = portal::construct_counter(ctx, 21u);
     if (constructed_counter.object().get() != 21
             || ctx.callable_.argc != 1
             || ctx.callable_.first != 21
@@ -754,7 +754,7 @@ int main() {
     }
 
     ctx.reset_conversions();
-    auto generic_constructed_counter = dynabridge::construct<dynabridge::counter>(ctx, 34u);
+    auto generic_constructed_counter = portal::construct<portal::counter>(ctx, 34u);
     const int constructed_member_result = generic_constructed_counter.add(8);
     if (constructed_member_result != 42
             || ctx.callable_.argc != 2
@@ -768,7 +768,7 @@ int main() {
 
     int export_first = 0;
     int export_second = 0;
-    auto export_calc_binder = dynabridge::create_export_callable_binder<int(int, unsigned)>(
+    auto export_calc_binder = portal::create_export_callable_binder<int(int, unsigned)>(
         ctx,
         [&](int a, unsigned b) {
             export_first = a;
@@ -784,7 +784,7 @@ int main() {
     }
 
     int export_void_value = 0;
-    auto export_void_binder = dynabridge::create_export_callable_binder<void(int)>(
+    auto export_void_binder = portal::create_export_callable_binder<void(int)>(
         ctx,
         [&](int value) {
             export_void_value = value;
@@ -797,10 +797,10 @@ int main() {
     }
 
     fake_module module;
-    dynabridge::export_free_callable(ctx, module, "add", add_function);
-    dynabridge::export_calc(ctx, module, add_function);
-    dynabridge::export_free_callable(ctx, module, "store", store_function);
-    dynabridge::export_free_callable<int(int, unsigned)>(
+    portal::export_free_callable(ctx, module, "add", add_function);
+    portal::export_calc(ctx, module, add_function);
+    portal::export_free_callable(ctx, module, "store", store_function);
+    portal::export_free_callable<int(int, unsigned)>(
         ctx,
         module,
         "lambda_add",
@@ -837,7 +837,7 @@ int main() {
         return 18;
     }
 
-    dynabridge::export_calc<int(int, unsigned)>(
+    portal::export_calc<int(int, unsigned)>(
         ctx,
         module,
         [](int a, unsigned b) {
@@ -853,9 +853,9 @@ int main() {
         return 20;
     }
 
-    dynabridge::export_free_callable<int(int, unsigned)>(
+    portal::export_free_callable<int(int, unsigned)>(
         ctx, module, "explicit_add", add_function);
-    dynabridge::export_calc<int(int, unsigned)>(ctx, module, add_function);
+    portal::export_calc<int(int, unsigned)>(ctx, module, add_function);
     if (!module.explicit_add || module.def_count != 7) {
         return 29;
     }
@@ -872,7 +872,7 @@ int main() {
         return 31;
     }
 
-    dynabridge::export_calc(ctx, module)
+    portal::export_calc(ctx, module)
         .bind<int(int)>(scale_by_ten_function)
         .bind<int(int, unsigned)>(multiply_function{})
         .commit();
@@ -893,7 +893,7 @@ int main() {
     }
 
     auto scale = std::unique_ptr<int>(new int(11));
-    dynabridge::export_calc(ctx, module)
+    portal::export_calc(ctx, module)
         .bind<int(int)>([scale = std::move(scale)](int a) {
             return a * *scale;
         })
@@ -917,12 +917,12 @@ int main() {
         return 42;
     }
 
-    using select_overloads_t = dynabridge::type_list<
-        dynabridge::free_callable<int(unsigned)>,
-        dynabridge::free_callable<int(int)>,
-        dynabridge::free_callable<
-            dynabridge::unmatched_callable_t(dynabridge::unmatched_callable_t)>>;
-    auto select_binder = dynabridge::create_export_overload_binder<select_overloads_t>(
+    using select_overloads_t = portal::type_list<
+        portal::free_callable<int(unsigned)>,
+        portal::free_callable<int(int)>,
+        portal::free_callable<
+            portal::unmatched_callable_t(portal::unmatched_callable_t)>>;
+    auto select_binder = portal::create_export_overload_binder<select_overloads_t>(
         ctx,
         select_overload_function{});
 
@@ -963,7 +963,7 @@ int main() {
         return 23;
     }
 
-    auto native_counter_add = dynabridge::create_export_member_callable_binder<export_counter_t, int(int)>(
+    auto native_counter_add = portal::create_export_member_callable_binder<export_counter_t, int(int)>(
         ctx,
         &native_counter::add);
 
@@ -973,7 +973,7 @@ int main() {
         return 24;
     }
 
-    auto native_counter_value = dynabridge::create_export_member_callable_binder<export_counter_t, int()>(
+    auto native_counter_value = portal::create_export_member_callable_binder<export_counter_t, int()>(
         ctx,
         &native_counter::value);
 
@@ -983,7 +983,7 @@ int main() {
         return 25;
     }
 
-    dynabridge::export_instance<export_counter_t>(ctx, module, "global_counter", native_counter{21u});
+    portal::export_instance<export_counter_t>(ctx, module, "global_counter", native_counter{21u});
     if (module.exported_counter == 0 || !module.exported_counter_lifetime || module.def_count != 13) {
         return 37;
     }
@@ -995,9 +995,9 @@ int main() {
     }
 
     native_counter borrowed_counter{31u};
-    auto borrowed_object = dynabridge::make_exported<export_counter_t>(
+    auto borrowed_object = portal::make_exported<export_counter_t>(
         ctx,
-        dynabridge::borrow(borrowed_counter));
+        portal::borrow(borrowed_counter));
     ctx.reset_conversions();
     const int borrowed_instance_value = native_counter_value(borrowed_object.get());
     if (borrowed_instance_value != 31 || ctx.to_count != 1 || ctx.from_count != 0) {
@@ -1007,40 +1007,40 @@ int main() {
     auto object_runtime = [](unsigned handle, int value) {
         return static_cast<int>(handle) + value;
     };
-    dynabridge::fake_backend::context_t<decltype(object_runtime)> object_ctx(
+    portal::fake_backend::context_t<decltype(object_runtime)> object_ctx(
         std::move(object_runtime));
-    auto imported_object = dynabridge::bind<dynabridge::counter>(object_ctx, 13u);
+    auto imported_object = portal::bind<portal::counter>(object_ctx, 13u);
     const auto& const_imported_object = imported_object;
     object_ctx.reset_conversions();
-    if (dynabridge::call_pass_counter(object_ctx, const_imported_object, 29) != 42
+    if (portal::call_pass_counter(object_ctx, const_imported_object, 29) != 42
             || object_ctx.to_count != 1 || object_ctx.from_count != 1) {
         return 101;
     }
 
     auto callable_runtime = [](int callback, int value) {
-        return dynabridge::fake_backend::invoke_dynamic_callable(
+        return portal::fake_backend::invoke_dynamic_callable(
             static_cast<unsigned>(callback), value);
     };
-    dynabridge::fake_backend::context_t<decltype(callable_runtime)> callable_ctx(
+    portal::fake_backend::context_t<decltype(callable_runtime)> callable_ctx(
         std::move(callable_runtime));
-    if (dynabridge::call_pass_transform(callable_ctx, transform_function{}, 4) != 40) {
+    if (portal::call_pass_transform(callable_ctx, transform_function{}, 4) != 40) {
         return 102;
     }
 
-    auto transform = dynabridge::bind_transform()
+    auto transform = portal::bind_transform()
         .bind<int(int)>(scale_by_ten_function)
         .bind<int(int, unsigned)>([](int value, unsigned extra) {
             return value * static_cast<int>(extra);
         })
         .build();
-    if (dynabridge::call_pass_transform(callable_ctx, std::move(transform), 6) != 60) {
+    if (portal::call_pass_transform(callable_ctx, std::move(transform), 6) != 60) {
         return 103;
     }
 
     using consume_counter_sig = int(
-        dynabridge::object_param<dynabridge::export_classes::counter, dynabridge::export_t>,
+        portal::object_param<portal::export_classes::counter, portal::export_t>,
         int);
-    auto consume_counter = dynabridge::create_export_callable_binder<consume_counter_sig>(
+    auto consume_counter = portal::create_export_callable_binder<consume_counter_sig>(
         ctx,
         [](native_counter& counter, int value) {
             return counter.add(value);
@@ -1051,18 +1051,18 @@ int main() {
     try {
         (void)consume_counter(999999, 1);
         return 105;
-    } catch (const dynabridge::bad_conversion&) {
+    } catch (const portal::bad_conversion&) {
     }
 
-    const unsigned dynamic_callback = dynabridge::fake_backend::register_dynamic_callable(
+    const unsigned dynamic_callback = portal::fake_backend::register_dynamic_callable(
         [](int value) { return value * 3; });
     using use_callback_sig = int(
-        dynabridge::callable_param<dynabridge::import_symbols::callback, dynabridge::import_t>,
+        portal::callable_param<portal::import_symbols::callback, portal::import_t>,
         int);
-    auto use_callback = dynabridge::create_export_callable_binder<use_callback_sig>(
+    auto use_callback = portal::create_export_callable_binder<use_callback_sig>(
         ctx,
         [](auto& callback, int value) {
-            return dynabridge::call_callback(callback, value) + 1;
+            return portal::call_callback(callback, value) + 1;
         });
     if (use_callback(static_cast<int>(dynamic_callback), 7) != 22) {
         return 106;
@@ -1070,13 +1070,13 @@ int main() {
     try {
         (void)use_callback(-1, 7);
         return 107;
-    } catch (const dynabridge::bad_conversion&) {
+    } catch (const portal::bad_conversion&) {
     }
 
-    dynabridge::fake_backend::context_t<consumer_runtime> constructor_ctx(
+    portal::fake_backend::context_t<consumer_runtime> constructor_ctx(
         consumer_runtime{});
-    auto constructor_counter = dynabridge::bind<dynabridge::counter>(constructor_ctx, 40u);
-    auto imported_consumer = dynabridge::construct<dynabridge::consumer>(
+    auto constructor_counter = portal::bind<portal::counter>(constructor_ctx, 40u);
+    auto imported_consumer = portal::construct<portal::consumer>(
         constructor_ctx, constructor_counter, transform_function{});
     if (imported_consumer.object().get() != 50u) {
         return 108;

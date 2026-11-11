@@ -1,6 +1,6 @@
-#define DYNABRIDGE_METHOD_INDEX __LINE__
-#define DYNABRIDGE_IMPORT_DEF "../tests/compile_fail/valid_interface.def"
-#include "../../dynabridge/bridge.h"
+#define PORTAL_METHOD_INDEX __LINE__
+#define PORTAL_IMPORT_DEF "../tests/compile_fail/valid_interface.def"
+#include "../../portal/bridge.h"
 
 struct compile_context {
     struct backend_t {
@@ -10,7 +10,7 @@ struct compile_context {
     };
 };
 
-static_assert(sizeof(dynabridge::subject<compile_context>) > 0,
+static_assert(sizeof(portal::subject<compile_context>) > 0,
     "a valid generated interface must compile");
 
 int main() {

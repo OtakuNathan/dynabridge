@@ -1,31 +1,31 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(dynabridge VERSION 0.1.0 LANGUAGES CXX)
+project(portal VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
-add_library(dynabridge INTERFACE)
-add_library(dynabridge::dynabridge ALIAS dynabridge)
-target_compile_features(dynabridge INTERFACE cxx_std_14)
-target_include_directories(dynabridge INTERFACE
+add_library(portal INTERFACE)
+add_library(portal::portal ALIAS portal)
+target_compile_features(portal INTERFACE cxx_std_14)
+target_include_directories(portal INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-    set(DYNABRIDGE_IS_TOP_LEVEL ON)
+    set(PORTAL_IS_TOP_LEVEL ON)
 else()
-    set(DYNABRIDGE_IS_TOP_LEVEL OFF)
+    set(PORTAL_IS_TOP_LEVEL OFF)
 endif()
 
-option(DYNABRIDGE_BUILD_TESTS "Build dynabridge tests" ${DYNABRIDGE_IS_TOP_LEVEL})
-option(DYNABRIDGE_BUILD_EXAMPLES "Build dynabridge runtime examples" OFF)
-option(DYNABRIDGE_BUILD_BENCHMARKS "Build dynabridge benchmark executables" OFF)
+option(PORTAL_BUILD_TESTS "Build portal tests" ${PORTAL_IS_TOP_LEVEL})
+option(PORTAL_BUILD_EXAMPLES "Build portal runtime examples" OFF)
+option(PORTAL_BUILD_BENCHMARKS "Build portal benchmark executables" OFF)
 
-if(DYNABRIDGE_BUILD_TESTS OR DYNABRIDGE_BUILD_EXAMPLES OR DYNABRIDGE_BUILD_BENCHMARKS)
+if(PORTAL_BUILD_TESTS OR PORTAL_BUILD_EXAMPLES OR PORTAL_BUILD_BENCHMARKS)
     find_package(Python3 COMPONENTS Interpreter Development)
 
     find_path(FLUX_FOUNDRY_INCLUDE_DIR flow/flow.h
@@ -66,36 +66,36 @@ if(DYNABRIDGE_BUILD_TESTS OR DYNABRIDGE_BUILD_EXAMPLES OR DYNABRIDGE_BUILD_BENCH
     endif()
 endif()
 
-if(FLUX_FOUNDRY_INCLUDE_DIR AND (DYNABRIDGE_BUILD_TESTS OR DYNABRIDGE_BUILD_EXAMPLES))
+if(FLUX_FOUNDRY_INCLUDE_DIR AND (PORTAL_BUILD_TESTS OR PORTAL_BUILD_EXAMPLES))
     find_package(Threads REQUIRED)
     find_path(LibUV_INCLUDE_DIR uv.h)
     find_library(LibUV_LIBRARY NAMES uv libuv)
 
     if(Python3_Development_FOUND)
-        add_executable(dynabridge_ff_python_executor_demo
+        add_executable(portal_ff_python_executor_demo
             examples/flux_foundry/python_executor.cpp)
-        set_property(TARGET dynabridge_ff_python_executor_demo PROPERTY CXX_STANDARD 17)
-        target_link_libraries(dynabridge_ff_python_executor_demo PRIVATE
-            dynabridge::dynabridge
+        set_property(TARGET portal_ff_python_executor_demo PROPERTY CXX_STANDARD 17)
+        target_link_libraries(portal_ff_python_executor_demo PRIVATE
+            portal::portal
             Python3::Python
             Threads::Threads
         )
-        target_include_directories(dynabridge_ff_python_executor_demo SYSTEM PRIVATE
+        target_include_directories(portal_ff_python_executor_demo SYSTEM PRIVATE
             "${FLUX_FOUNDRY_INCLUDE_DIR}"
         )
     endif()
 
     if(LibUV_INCLUDE_DIR AND LibUV_LIBRARY
             AND EXISTS "${FLUX_FOUNDRY_INCLUDE_DIR}/executor/uv_executor.h")
-        add_executable(dynabridge_ff_uv_executor_demo
+        add_executable(portal_ff_uv_executor_demo
             examples/flux_foundry/uv_executor.cpp)
-        set_property(TARGET dynabridge_ff_uv_executor_demo PROPERTY CXX_STANDARD 17)
-        target_link_libraries(dynabridge_ff_uv_executor_demo PRIVATE
-            dynabridge::dynabridge
+        set_property(TARGET portal_ff_uv_executor_demo PROPERTY CXX_STANDARD 17)
+        target_link_libraries(portal_ff_uv_executor_demo PRIVATE
+            portal::portal
             Threads::Threads
             "${LibUV_LIBRARY}"
         )
-        target_include_directories(dynabridge_ff_uv_executor_demo SYSTEM PRIVATE
+        target_include_directories(portal_ff_uv_executor_demo SYSTEM PRIVATE
             "${FLUX_FOUNDRY_INCLUDE_DIR}"
             "${LibUV_INCLUDE_DIR}"
         )
@@ -104,14 +104,14 @@ if(FLUX_FOUNDRY_INCLUDE_DIR AND (DYNABRIDGE_BUILD_TESTS OR DYNABRIDGE_BUILD_EXAM
     endif()
 endif()
 
-set(DYNABRIDGE_CAN_BUILD_NAPI_RUNTIME OFF)
+set(PORTAL_CAN_BUILD_NAPI_RUNTIME OFF)
 if(NodeApi_INCLUDE_DIR AND Node_EXECUTABLE)
     if(NOT WIN32 OR Node_LIBRARY)
-        set(DYNABRIDGE_CAN_BUILD_NAPI_RUNTIME ON)
+        set(PORTAL_CAN_BUILD_NAPI_RUNTIME ON)
     endif()
 endif()
 
-function(dynabridge_configure_python_module target output_name)
+function(portal_configure_python_module target output_name)
     set_target_properties(${target} PROPERTIES
         PREFIX ""
         OUTPUT_NAME "${output_name}"
@@ -119,7 +119,7 @@ function(dynabridge_configure_python_module target output_name)
     if(WIN32)
         set_target_properties(${target} PROPERTIES SUFFIX ".pyd")
     endif()
-    target_link_libraries(${target} PRIVATE dynabridge::dynabridge)
+    target_link_libraries(${target} PRIVATE portal::portal)
     target_include_directories(${target} PRIVATE ${Python3_INCLUDE_DIRS})
     if(APPLE)
         target_link_options(${target} PRIVATE "-undefined" "dynamic_lookup")
@@ -128,9 +128,9 @@ function(dynabridge_configure_python_module target output_name)
     endif()
 endfunction()
 
-function(dynabridge_configure_napi_module target)
+function(portal_configure_napi_module target)
     set_target_properties(${target} PROPERTIES PREFIX "" SUFFIX ".node")
-    target_link_libraries(${target} PRIVATE dynabridge::dynabridge)
+    target_link_libraries(${target} PRIVATE portal::portal)
     target_include_directories(${target} PRIVATE "${NodeApi_INCLUDE_DIR}")
     if(APPLE)
         target_link_options(${target} PRIVATE "-undefined" "dynamic_lookup")
@@ -139,27 +139,27 @@ function(dynabridge_configure_napi_module target)
     endif()
 endfunction()
 
-if(DYNABRIDGE_BUILD_TESTS)
+if(PORTAL_BUILD_TESTS)
     enable_testing()
 
-    if(TARGET dynabridge_ff_python_executor_demo)
-        add_test(NAME ff_python_executor COMMAND dynabridge_ff_python_executor_demo)
-        add_executable(dynabridge_ff_python_executor_lifetime tests/python_executor_lifetime.cpp)
-        set_property(TARGET dynabridge_ff_python_executor_lifetime PROPERTY CXX_STANDARD 17)
-        target_include_directories(dynabridge_ff_python_executor_lifetime SYSTEM PRIVATE "${FLUX_FOUNDRY_INCLUDE_DIR}")
-        target_link_libraries(dynabridge_ff_python_executor_lifetime PRIVATE
-            dynabridge::dynabridge Python3::Python Threads::Threads)
-        add_test(NAME ff_python_executor_lifetime COMMAND dynabridge_ff_python_executor_lifetime)
+    if(TARGET portal_ff_python_executor_demo)
+        add_test(NAME ff_python_executor COMMAND portal_ff_python_executor_demo)
+        add_executable(portal_ff_python_executor_lifetime tests/python_executor_lifetime.cpp)
+        set_property(TARGET portal_ff_python_executor_lifetime PROPERTY CXX_STANDARD 17)
+        target_include_directories(portal_ff_python_executor_lifetime SYSTEM PRIVATE "${FLUX_FOUNDRY_INCLUDE_DIR}")
+        target_link_libraries(portal_ff_python_executor_lifetime PRIVATE
+            portal::portal Python3::Python Threads::Threads)
+        add_test(NAME ff_python_executor_lifetime COMMAND portal_ff_python_executor_lifetime)
         set_tests_properties(ff_python_executor_lifetime PROPERTIES TIMEOUT 20)
     endif()
-    if(TARGET dynabridge_ff_uv_executor_demo)
-        add_test(NAME ff_uv_executor COMMAND dynabridge_ff_uv_executor_demo)
-        add_test(NAME ff_uv_executor_capacity1 COMMAND dynabridge_ff_uv_executor_demo 1)
+    if(TARGET portal_ff_uv_executor_demo)
+        add_test(NAME ff_uv_executor COMMAND portal_ff_uv_executor_demo)
+        add_test(NAME ff_uv_executor_capacity1 COMMAND portal_ff_uv_executor_demo 1)
         set_tests_properties(ff_uv_executor ff_uv_executor_capacity1 PROPERTIES TIMEOUT 30)
     endif()
 
-    function(dynabridge_check_interface_compilation name source should_compile)
-        set(result_var "dynabridge_${name}_compiled")
+    function(portal_check_interface_compilation name source should_compile)
+        set(result_var "portal_${name}_compiled")
         try_compile(${result_var}
             "${CMAKE_CURRENT_BINARY_DIR}/compile_checks/${name}"
             "${CMAKE_CURRENT_SOURCE_DIR}/${source}"
@@ -180,37 +180,37 @@ if(DYNABRIDGE_BUILD_TESTS)
         endif()
     endfunction()
 
-    dynabridge_check_interface_compilation(
+    portal_check_interface_compilation(
         valid_interface tests/compile_fail/valid_interface.cpp TRUE)
-    dynabridge_check_interface_compilation(
+    portal_check_interface_compilation(
         duplicate_interface tests/compile_fail/duplicate_interface.cpp FALSE)
-    dynabridge_check_interface_compilation(
+    portal_check_interface_compilation(
         duplicate_method tests/compile_fail/duplicate_method.cpp FALSE)
 
     add_executable(fake_backend_callable_group_test tests/fake_backend_callable_group.cpp)
-    target_link_libraries(fake_backend_callable_group_test PRIVATE dynabridge::dynabridge)
+    target_link_libraries(fake_backend_callable_group_test PRIVATE portal::portal)
     add_test(NAME fake_backend_callable_group COMMAND fake_backend_callable_group_test)
 
     add_executable(custom_def_config_test tests/custom_def_config_test.cpp)
-    target_link_libraries(custom_def_config_test PRIVATE dynabridge::dynabridge)
+    target_link_libraries(custom_def_config_test PRIVATE portal::portal)
     add_test(NAME custom_def_config COMMAND custom_def_config_test)
 
     add_executable(optional_test tests/optional_test.cpp)
-    target_link_libraries(optional_test PRIVATE dynabridge::dynabridge)
+    target_link_libraries(optional_test PRIVATE portal::portal)
     add_test(NAME optional COMMAND optional_test)
 
     add_executable(return_value_test tests/return_value_test.cpp)
-    target_link_libraries(return_value_test PRIVATE dynabridge::dynabridge)
+    target_link_libraries(return_value_test PRIVATE portal::portal)
     add_test(NAME return_value COMMAND return_value_test)
 
     # C++17 guaranteed elision must still support non-copyable, non-movable
     # prvalue results when the converter can consume an rvalue reference.
     add_executable(return_value_compatibility_test tests/compile_fail/return_value_compatibility.cpp)
-    target_link_libraries(return_value_compatibility_test PRIVATE dynabridge::dynabridge)
+    target_link_libraries(return_value_compatibility_test PRIVATE portal::portal)
     set_property(TARGET return_value_compatibility_test PROPERTY CXX_STANDARD 17)
     add_test(NAME return_value_compatibility COMMAND return_value_compatibility_test)
 
-    function(dynabridge_check_reference_return name source)
+    function(portal_check_reference_return name source)
         try_compile(compiled
             "${CMAKE_CURRENT_BINARY_DIR}/compile_checks/${name}"
             "${CMAKE_CURRENT_SOURCE_DIR}/${source}"
@@ -225,24 +225,24 @@ if(DYNABRIDGE_BUILD_TESTS)
 
     foreach(kind 1 2 3)
         foreach(path RANGE 0 9)
-            dynabridge_check_reference_return(return_reference_${kind}_${path}
+            portal_check_reference_return(return_reference_${kind}_${path}
                 tests/compile_fail/return_reference.cpp
                 -DRETURN_KIND=${kind} -DRETURN_PATH=${path})
         endforeach()
         foreach(export 0 1)
             foreach(member 0 1)
-                dynabridge_check_reference_return(return_schema_${kind}_${export}_${member}
+                portal_check_reference_return(return_schema_${kind}_${export}_${member}
                     tests/compile_fail/return_reference_schema.cpp
                     -DRETURN_KIND=${kind} -DSCHEMA_EXPORT=${export} -DSCHEMA_MEMBER=${member})
             endforeach()
         endforeach()
-        dynabridge_check_reference_return(return_class_${kind}
+        portal_check_reference_return(return_class_${kind}
             tests/compile_fail/return_reference_schema.cpp
             -DRETURN_KIND=${kind} -DSCHEMA_EXPORT=1 -DSCHEMA_MEMBER=1 -DSCHEMA_CLASS=1)
     endforeach()
 
     foreach(class 0 1)
-        dynabridge_check_interface_compilation(return_value_schema_${class}
+        portal_check_interface_compilation(return_value_schema_${class}
             tests/compile_fail/return_reference_schema.cpp TRUE
             -DRETURN_KIND=0 -DSCHEMA_EXPORT=1 -DSCHEMA_MEMBER=1 -DSCHEMA_CLASS=${class})
     endforeach()
@@ -255,7 +255,7 @@ if(DYNABRIDGE_BUILD_TESTS)
                     "${CMAKE_CURRENT_SOURCE_DIR}/tests/compile_fail/return_materialization.cpp"
                     CMAKE_FLAGS -DCMAKE_CXX_STANDARD=14
                     COMPILE_DEFINITIONS -fno-exceptions
-                        -DDYNABRIDGE_NO_EXCEPTION_STRICT=${strict} -DRETURN_COPY=${copy}
+                        -DPORTAL_NO_EXCEPTION_STRICT=${strict} -DRETURN_COPY=${copy}
                     OUTPUT_VARIABLE compiler_output)
                 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/compile_checks/${probe}.log" "${compiler_output}")
                 if(strict AND copy)
@@ -270,17 +270,17 @@ if(DYNABRIDGE_BUILD_TESTS)
     endif()
 
     add_executable(rpc_probe_test tests/rpc_probe_test.cpp)
-    target_link_libraries(rpc_probe_test PRIVATE dynabridge::dynabridge)
+    target_link_libraries(rpc_probe_test PRIVATE portal::portal)
     add_test(NAME rpc_probe COMMAND rpc_probe_test)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         foreach(strict 0 1)
             add_executable(rpc_probe_noexceptions_${strict} tests/rpc_probe_test.cpp)
-            target_link_libraries(rpc_probe_noexceptions_${strict} PRIVATE dynabridge::dynabridge)
+            target_link_libraries(rpc_probe_noexceptions_${strict} PRIVATE portal::portal)
             target_compile_options(rpc_probe_noexceptions_${strict} PRIVATE -fno-exceptions)
-            target_compile_definitions(rpc_probe_noexceptions_${strict} PRIVATE DYNABRIDGE_NO_EXCEPTION_STRICT=${strict})
+            target_compile_definitions(rpc_probe_noexceptions_${strict} PRIVATE PORTAL_NO_EXCEPTION_STRICT=${strict})
             add_test(NAME rpc_probe_noexceptions_${strict} COMMAND rpc_probe_noexceptions_${strict})
             foreach(probe_case VALID MISSING WRONG_RETURN NOT_NOEXCEPT)
-                set(probe_definitions -fno-exceptions -DDYNABRIDGE_NO_EXCEPTION_STRICT=${strict})
+                set(probe_definitions -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=${strict})
                 if(NOT probe_case STREQUAL "VALID")
                     list(APPEND probe_definitions -DPROBE_${probe_case}=1)
                 endif()
@@ -308,22 +308,22 @@ if(DYNABRIDGE_BUILD_TESTS)
     endif()
 
     add_executable(rpc_backend_test tests/rpc_backend_test.cpp)
-    target_link_libraries(rpc_backend_test PRIVATE dynabridge::dynabridge)
+    target_link_libraries(rpc_backend_test PRIVATE portal::portal)
     add_test(NAME rpc_backend COMMAND rpc_backend_test)
 
     add_executable(rpc_checked_test tests/rpc_checked_test.cpp)
-    target_link_libraries(rpc_checked_test PRIVATE dynabridge::dynabridge)
+    target_link_libraries(rpc_checked_test PRIVATE portal::portal)
     add_test(NAME rpc_checked COMMAND rpc_checked_test)
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         foreach(strict 0 1)
             add_executable(rpc_noexceptions_${strict} tests/rpc_checked_test.cpp)
-            target_link_libraries(rpc_noexceptions_${strict} PRIVATE dynabridge::dynabridge)
+            target_link_libraries(rpc_noexceptions_${strict} PRIVATE portal::portal)
             target_compile_options(rpc_noexceptions_${strict} PRIVATE -fno-exceptions)
-            target_compile_definitions(rpc_noexceptions_${strict} PRIVATE DYNABRIDGE_NO_EXCEPTION_STRICT=${strict})
+            target_compile_definitions(rpc_noexceptions_${strict} PRIVATE PORTAL_NO_EXCEPTION_STRICT=${strict})
             add_test(NAME rpc_noexceptions_${strict} COMMAND rpc_noexceptions_${strict})
             foreach(annotated 0 1)
                 foreach(direction from to)
-                    set(probe_definitions -fno-exceptions -DDYNABRIDGE_NO_EXCEPTION_STRICT=${strict})
+                    set(probe_definitions -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=${strict})
                     if(annotated)
                         list(APPEND probe_definitions -DANNOTATED_CONVERTER=1)
                     endif()
@@ -353,22 +353,22 @@ if(DYNABRIDGE_BUILD_TESTS)
     if(Python3_Development_FOUND)
         add_executable(python_backend_test tests/python_backend_test.cpp)
         target_link_libraries(python_backend_test PRIVATE
-            dynabridge::dynabridge
+            portal::portal
             Python3::Python
         )
         add_test(NAME python_backend COMMAND python_backend_test)
 
         add_executable(python_exception_test tests/python_exception_test.cpp)
         target_link_libraries(python_exception_test PRIVATE
-            dynabridge::dynabridge
+            portal::portal
             Python3::Python
         )
         add_test(NAME python_exception COMMAND python_exception_test)
 
         add_library(python_runtime_addon MODULE tests/python_runtime_addon.cpp)
-        dynabridge_configure_python_module(
+        portal_configure_python_module(
             python_runtime_addon
-            dynabridge_python_runtime_addon
+            portal_python_runtime_addon
         )
         add_test(
             NAME python_runtime
@@ -379,7 +379,7 @@ if(DYNABRIDGE_BUILD_TESTS)
     endif()
 
     add_executable(napi_backend_test tests/napi_backend_test.cpp)
-    target_link_libraries(napi_backend_test PRIVATE dynabridge::dynabridge)
+    target_link_libraries(napi_backend_test PRIVATE portal::portal)
     target_include_directories(napi_backend_test PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/napi_stub"
     )
@@ -387,16 +387,16 @@ if(DYNABRIDGE_BUILD_TESTS)
 
     if(NodeApi_INCLUDE_DIR)
         add_executable(napi_backend_real_header_test tests/napi_backend_real_header_test.cpp)
-        target_link_libraries(napi_backend_real_header_test PRIVATE dynabridge::dynabridge)
+        target_link_libraries(napi_backend_real_header_test PRIVATE portal::portal)
         target_include_directories(napi_backend_real_header_test PRIVATE
             "${NodeApi_INCLUDE_DIR}"
         )
         add_test(NAME napi_backend_real_header COMMAND napi_backend_real_header_test)
     endif()
 
-    if(DYNABRIDGE_CAN_BUILD_NAPI_RUNTIME)
+    if(PORTAL_CAN_BUILD_NAPI_RUNTIME)
         add_library(napi_runtime_addon MODULE tests/napi_runtime_addon.cpp)
-        dynabridge_configure_napi_module(napi_runtime_addon)
+        portal_configure_napi_module(napi_runtime_addon)
         add_test(
             NAME napi_runtime
             COMMAND "${Node_EXECUTABLE}"
@@ -407,52 +407,52 @@ if(DYNABRIDGE_BUILD_TESTS)
     endif()
 endif()
 
-if(DYNABRIDGE_BUILD_EXAMPLES)
+if(PORTAL_BUILD_EXAMPLES)
     if(Python3_Development_FOUND)
-        add_library(dynabridge_python_example MODULE examples/python/module.cpp)
-        dynabridge_configure_python_module(
-            dynabridge_python_example
-            dynabridge_python_example
+        add_library(portal_python_example MODULE examples/python/module.cpp)
+        portal_configure_python_module(
+            portal_python_example
+            portal_python_example
         )
-        if(DYNABRIDGE_BUILD_TESTS)
+        if(PORTAL_BUILD_TESTS)
             add_test(
                 NAME python_example
                 COMMAND "${Python3_EXECUTABLE}"
                     "${CMAKE_CURRENT_SOURCE_DIR}/examples/python/smoke.py"
-                    "$<TARGET_FILE:dynabridge_python_example>"
+                    "$<TARGET_FILE:portal_python_example>"
             )
         endif()
     endif()
 
-    if(DYNABRIDGE_CAN_BUILD_NAPI_RUNTIME)
-        add_library(dynabridge_napi_example MODULE examples/napi/addon.cpp)
-        dynabridge_configure_napi_module(dynabridge_napi_example)
-        if(DYNABRIDGE_BUILD_TESTS)
+    if(PORTAL_CAN_BUILD_NAPI_RUNTIME)
+        add_library(portal_napi_example MODULE examples/napi/addon.cpp)
+        portal_configure_napi_module(portal_napi_example)
+        if(PORTAL_BUILD_TESTS)
             add_test(
                 NAME napi_example
                 COMMAND "${Node_EXECUTABLE}"
                     "${CMAKE_CURRENT_SOURCE_DIR}/examples/napi/smoke.js"
-                    "$<TARGET_FILE:dynabridge_napi_example>"
+                    "$<TARGET_FILE:portal_napi_example>"
             )
             add_test(
                 NAME napi_example_workers
                 COMMAND "${Node_EXECUTABLE}"
                     "${CMAKE_CURRENT_SOURCE_DIR}/tests/napi_worker_smoke.js"
-                    "$<TARGET_FILE:dynabridge_napi_example>"
+                    "$<TARGET_FILE:portal_napi_example>"
             )
             set_tests_properties(napi_example_workers PROPERTIES TIMEOUT 30)
         endif()
     endif()
 endif()
 
-if(DYNABRIDGE_BUILD_BENCHMARKS)
+if(PORTAL_BUILD_BENCHMARKS)
     find_package(Threads REQUIRED)
     add_executable(rpc_call_benchmark benchmarks/rpc_call_benchmark.cpp)
     target_link_libraries(rpc_call_benchmark PRIVATE
-        dynabridge::dynabridge
+        portal::portal
         Threads::Threads
     )
-    if(DYNABRIDGE_BUILD_TESTS)
+    if(PORTAL_BUILD_TESTS)
         # Multiple calls must complete after each FF asynchronous handoff.
         add_test(NAME rpc_benchmark_smoke COMMAND rpc_call_benchmark 100)
         set_tests_properties(rpc_benchmark_smoke PROPERTIES TIMEOUT 30)
@@ -460,7 +460,7 @@ if(DYNABRIDGE_BUILD_BENCHMARKS)
 
     if(FLUX_FOUNDRY_INCLUDE_DIR)
         target_compile_definitions(rpc_call_benchmark PRIVATE
-            DYNABRIDGE_HAS_FLUX_FOUNDRY=1
+            PORTAL_HAS_FLUX_FOUNDRY=1
         )
         target_include_directories(rpc_call_benchmark SYSTEM PRIVATE
             "${FLUX_FOUNDRY_INCLUDE_DIR}"
@@ -478,7 +478,7 @@ if(DYNABRIDGE_BUILD_BENCHMARKS)
                 pkg_check_modules(GIO2 QUIET IMPORTED_TARGET gio-2.0)
             endif()
             if(GIO2_FOUND)
-                target_compile_definitions(rpc_call_benchmark PRIVATE DYNABRIDGE_HAS_GLIB=1)
+                target_compile_definitions(rpc_call_benchmark PRIVATE PORTAL_HAS_GLIB=1)
                 target_link_libraries(rpc_call_benchmark PRIVATE PkgConfig::GIO2)
             endif()
         endif()
@@ -487,7 +487,7 @@ if(DYNABRIDGE_BUILD_BENCHMARKS)
     find_path(RPCLIB_INCLUDE_DIR rpc/client.h)
     find_library(RPCLIB_LIBRARY NAMES rpc rpclib)
     if(RPCLIB_INCLUDE_DIR AND RPCLIB_LIBRARY)
-        target_compile_definitions(rpc_call_benchmark PRIVATE DYNABRIDGE_HAS_RPCLIB=1)
+        target_compile_definitions(rpc_call_benchmark PRIVATE PORTAL_HAS_RPCLIB=1)
         target_include_directories(rpc_call_benchmark SYSTEM PRIVATE "${RPCLIB_INCLUDE_DIR}")
         target_link_libraries(rpc_call_benchmark PRIVATE "${RPCLIB_LIBRARY}")
     endif()
@@ -495,13 +495,13 @@ if(DYNABRIDGE_BUILD_BENCHMARKS)
     if(Python3_Development_FOUND)
         add_executable(python_call_benchmark benchmarks/python_call_benchmark.cpp)
         target_link_libraries(python_call_benchmark PRIVATE
-            dynabridge::dynabridge
+            portal::portal
             Python3::Python
         )
 
         find_package(pybind11 CONFIG QUIET)
         if(pybind11_FOUND)
-            target_compile_definitions(python_call_benchmark PRIVATE DYNABRIDGE_HAS_PYBIND11=1)
+            target_compile_definitions(python_call_benchmark PRIVATE PORTAL_HAS_PYBIND11=1)
             target_link_libraries(python_call_benchmark PRIVATE pybind11::headers)
         endif()
 
@@ -509,14 +509,14 @@ if(DYNABRIDGE_BUILD_BENCHMARKS)
         if(Python_FOUND)
             execute_process(
                 COMMAND "${Python_EXECUTABLE}" -m nanobind --cmake_dir
-                RESULT_VARIABLE DYNABRIDGE_NANOBIND_CMAKE_DIR_RESULT
-                OUTPUT_VARIABLE DYNABRIDGE_NANOBIND_CMAKE_DIR
+                RESULT_VARIABLE PORTAL_NANOBIND_CMAKE_DIR_RESULT
+                OUTPUT_VARIABLE PORTAL_NANOBIND_CMAKE_DIR
                 OUTPUT_STRIP_TRAILING_WHITESPACE
                 ERROR_QUIET
             )
-            if(DYNABRIDGE_NANOBIND_CMAKE_DIR_RESULT EQUAL 0)
+            if(PORTAL_NANOBIND_CMAKE_DIR_RESULT EQUAL 0)
                 find_package(nanobind CONFIG QUIET
-                    PATHS "${DYNABRIDGE_NANOBIND_CMAKE_DIR}"
+                    PATHS "${PORTAL_NANOBIND_CMAKE_DIR}"
                     NO_DEFAULT_PATH
                 )
             endif()
@@ -524,18 +524,18 @@ if(DYNABRIDGE_BUILD_BENCHMARKS)
         if(nanobind_FOUND)
             nanobind_build_library(nanobind-static)
             set_property(TARGET python_call_benchmark PROPERTY CXX_STANDARD 17)
-            target_compile_definitions(python_call_benchmark PRIVATE DYNABRIDGE_HAS_NANOBIND=1)
+            target_compile_definitions(python_call_benchmark PRIVATE PORTAL_HAS_NANOBIND=1)
             target_link_libraries(python_call_benchmark PRIVATE nanobind-static)
         endif()
     endif()
 
-    if(DYNABRIDGE_CAN_BUILD_NAPI_RUNTIME)
+    if(PORTAL_CAN_BUILD_NAPI_RUNTIME)
         add_library(node_call_benchmark_addon MODULE benchmarks/node_call_benchmark_addon.cpp)
-        dynabridge_configure_napi_module(node_call_benchmark_addon)
+        portal_configure_napi_module(node_call_benchmark_addon)
         if(NodeAddonApi_INCLUDE_DIR)
             set_property(TARGET node_call_benchmark_addon PROPERTY CXX_STANDARD 17)
             target_compile_definitions(node_call_benchmark_addon PRIVATE
-                DYNABRIDGE_HAS_NODE_ADDON_API=1
+                PORTAL_HAS_NODE_ADDON_API=1
             )
             target_include_directories(node_call_benchmark_addon PRIVATE
                 "${NodeAddonApi_INCLUDE_DIR}"
@@ -544,43 +544,43 @@ if(DYNABRIDGE_BUILD_BENCHMARKS)
     endif()
 endif()
 
-install(TARGETS dynabridge EXPORT dynabridgeTargets)
-install(DIRECTORY dynabridge DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-install(EXPORT dynabridgeTargets
-    FILE dynabridgeTargets.cmake
-    NAMESPACE dynabridge::
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynabridge"
+install(TARGETS portal EXPORT portalTargets)
+install(DIRECTORY portal DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+install(EXPORT portalTargets
+    FILE portalTargets.cmake
+    NAMESPACE portal::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/portal"
 )
 
 configure_package_config_file(
-    cmake/dynabridgeConfig.cmake.in
-    "${CMAKE_CURRENT_BINARY_DIR}/dynabridgeConfig.cmake"
-    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynabridge"
+    cmake/portalConfig.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/portalConfig.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/portal"
 )
 write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/dynabridgeConfigVersion.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/portalConfigVersion.cmake"
     VERSION "${PROJECT_VERSION}"
     COMPATIBILITY SameMajorVersion
 )
 install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/dynabridgeConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/dynabridgeConfigVersion.cmake"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/dynabridge"
+    "${CMAKE_CURRENT_BINARY_DIR}/portalConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/portalConfigVersion.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/portal"
 )
-install(FILES README.md LICENSE DESTINATION "${CMAKE_INSTALL_DATADIR}/dynabridge")
+install(FILES README.md LICENSE DESTINATION "${CMAKE_INSTALL_DATADIR}/portal")
 
-if(DYNABRIDGE_BUILD_TESTS)
+if(PORTAL_BUILD_TESTS)
     find_package(Threads REQUIRED)
     foreach(test async_contract async_projection)
         add_executable(${test}_test tests/${test}.cpp)
-        target_link_libraries(${test}_test PRIVATE dynabridge::dynabridge Threads::Threads)
+        target_link_libraries(${test}_test PRIVATE portal::portal Threads::Threads)
         add_test(NAME ${test} COMMAND ${test}_test)
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
             foreach(strict 0 1)
                 add_executable(${test}_noexceptions_${strict} tests/${test}.cpp)
-                target_link_libraries(${test}_noexceptions_${strict} PRIVATE dynabridge::dynabridge Threads::Threads)
+                target_link_libraries(${test}_noexceptions_${strict} PRIVATE portal::portal Threads::Threads)
                 target_compile_options(${test}_noexceptions_${strict} PRIVATE -fno-exceptions)
-                target_compile_definitions(${test}_noexceptions_${strict} PRIVATE DYNABRIDGE_NO_EXCEPTION_STRICT=${strict})
+                target_compile_definitions(${test}_noexceptions_${strict} PRIVATE PORTAL_NO_EXCEPTION_STRICT=${strict})
                 add_test(NAME ${test}_noexceptions_${strict} COMMAND ${test}_noexceptions_${strict})
             endforeach()
         endif()
@@ -588,28 +588,28 @@ if(DYNABRIDGE_BUILD_TESTS)
     if(FLUX_FOUNDRY_INCLUDE_DIR)
         add_executable(ff_async_test tests/ff_async.cpp)
         target_include_directories(ff_async_test PRIVATE "${FLUX_FOUNDRY_INCLUDE_DIR}")
-        target_link_libraries(ff_async_test PRIVATE dynabridge::dynabridge Threads::Threads)
+        target_link_libraries(ff_async_test PRIVATE portal::portal Threads::Threads)
         add_test(NAME ff_async COMMAND ff_async_test)
         if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
             foreach(strict 0 1)
                 add_executable(ff_async_noexceptions_${strict} tests/ff_async.cpp)
                 target_include_directories(ff_async_noexceptions_${strict} PRIVATE "${FLUX_FOUNDRY_INCLUDE_DIR}")
-                target_link_libraries(ff_async_noexceptions_${strict} PRIVATE dynabridge::dynabridge Threads::Threads)
+                target_link_libraries(ff_async_noexceptions_${strict} PRIVATE portal::portal Threads::Threads)
                 target_compile_options(ff_async_noexceptions_${strict} PRIVATE -fno-exceptions)
-                target_compile_definitions(ff_async_noexceptions_${strict} PRIVATE DYNABRIDGE_NO_EXCEPTION_STRICT=${strict} FLUX_FOUNDRY_NO_EXCEPTION_STRICT=${strict})
+                target_compile_definitions(ff_async_noexceptions_${strict} PRIVATE PORTAL_NO_EXCEPTION_STRICT=${strict} FLUX_FOUNDRY_NO_EXCEPTION_STRICT=${strict})
                 add_test(NAME ff_async_noexceptions_${strict} COMMAND ff_async_noexceptions_${strict})
             endforeach()
         endif()
     endif()
 endif()
-if(DYNABRIDGE_BUILD_TESTS AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+if(PORTAL_BUILD_TESTS AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     foreach(strict 0 1)
         foreach(case 0 1 2 3 4 5 6 7 8)
             try_compile(async_probe_${strict}_${case}
                 "${CMAKE_CURRENT_BINARY_DIR}/async_compile_checks/${strict}_${case}"
                 "${CMAKE_CURRENT_SOURCE_DIR}/tests/compile_fail/async_contract.cpp"
                 CMAKE_FLAGS "-DCMAKE_CXX_STANDARD=14"
-                COMPILE_DEFINITIONS -fno-exceptions -DDYNABRIDGE_NO_EXCEPTION_STRICT=${strict} -DASYNC_CASE=${case}
+                COMPILE_DEFINITIONS -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=${strict} -DASYNC_CASE=${case}
                 OUTPUT_VARIABLE async_probe_output)
             if(case EQUAL 1 OR case EQUAL 4 OR case EQUAL 6 OR (strict EQUAL 1 AND (case EQUAL 2 OR case EQUAL 3 OR case EQUAL 5 OR case EQUAL 7 OR case EQUAL 8)))
                 if(async_probe_${strict}_${case})
@@ -621,9 +621,9 @@ if(DYNABRIDGE_BUILD_TESTS AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
         endforeach()
     endforeach()
 endif()
-if(DYNABRIDGE_BUILD_BENCHMARKS AND FLUX_FOUNDRY_INCLUDE_DIR)
+if(PORTAL_BUILD_BENCHMARKS AND FLUX_FOUNDRY_INCLUDE_DIR)
     find_package(Threads REQUIRED)
     add_executable(async_invocation_benchmark benchmarks/async_invocation.cpp)
     target_include_directories(async_invocation_benchmark PRIVATE "${FLUX_FOUNDRY_INCLUDE_DIR}")
-    target_link_libraries(async_invocation_benchmark PRIVATE dynabridge::dynabridge Threads::Threads)
+    target_link_libraries(async_invocation_benchmark PRIVATE portal::portal Threads::Threads)
 endif()

@@ -1,12 +1,12 @@
-#include "dynabridge/backends/python_api.h"
+#include "portal/backends/python_api.h"
 
 #include <stdexcept>
 #include <string>
 
-#define DYNABRIDGE_IMPORT_DEF "tests/import.def"
-#define DYNABRIDGE_EXPORT_DEF "tests/export.def"
-#include "dynabridge/bridge.h"
-#include "dynabridge/backends/python.h"
+#define PORTAL_IMPORT_DEF "tests/import.def"
+#define PORTAL_EXPORT_DEF "tests/export.def"
+#include "portal/bridge.h"
+#include "portal/backends/python.h"
 
 struct conversion_probe {
     PyObject* value;
@@ -14,7 +14,7 @@ struct conversion_probe {
     int fail_at;
 };
 
-namespace dynabridge {
+namespace portal {
     template <>
     struct py_backend::converter<conversion_probe> {
         static PyObject* to(context_t&, conversion_probe probe) {
@@ -27,7 +27,7 @@ namespace dynabridge {
     };
 }
 
-namespace dynabridge {
+namespace portal {
     namespace native {
         class counter {
         public:
@@ -61,7 +61,7 @@ namespace dynabridge {
 
             template <typename Callback>
             consumer(counter& source, Callback& callback)
-                : base_(dynabridge::call_callback(callback, source.value())) {
+                : base_(portal::call_callback(callback, source.value())) {
                 ++constructed;
             }
 
@@ -75,7 +75,7 @@ namespace dynabridge {
 
             template <typename Callback>
             int apply(Callback& callback, int value) const {
-                return base_ + dynabridge::call_callback(callback, value);
+                return base_ + portal::call_callback(callback, value);
             }
 
         private:
@@ -84,15 +84,15 @@ namespace dynabridge {
     }
 }
 
-int dynabridge::native::counter::constructed = 0;
-int dynabridge::native::counter::destroyed = 0;
-int dynabridge::native::consumer::constructed = 0;
-int dynabridge::native::consumer::destroyed = 0;
+int portal::native::counter::constructed = 0;
+int portal::native::counter::destroyed = 0;
+int portal::native::consumer::constructed = 0;
+int portal::native::consumer::destroyed = 0;
 
 namespace {
-    using py_context_t = dynabridge::py_backend::context_t;
-    using py_export_context_t = dynabridge::py_backend::export_context_t;
-    using owned_counter = dynabridge::native::counter;
+    using py_context_t = portal::py_backend::context_t;
+    using py_export_context_t = portal::py_backend::export_context_t;
+    using owned_counter = portal::native::counter;
 
     int stored_value = 0;
 
@@ -121,10 +121,10 @@ namespace {
         }
     };
 
-    dynabridge::py_backend::object_ref object_attr(PyObject* object, const char* name) {
-        dynabridge::py_backend::object_ref value(
+    portal::py_backend::object_ref object_attr(PyObject* object, const char* name) {
+        portal::py_backend::object_ref value(
             PyObject_GetAttrString(object, name),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (!value) {
             throw std::runtime_error("missing Python attribute");
         }
@@ -137,10 +137,10 @@ namespace {
     }
 
     int call_int(PyObject* callable, int a) {
-        dynabridge::py_backend::object_ref args(Py_BuildValue("(i)", a),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref result(PyObject_CallObject(callable, args.get()),
-            dynabridge::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref args(Py_BuildValue("(i)", a),
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref result(PyObject_CallObject(callable, args.get()),
+            portal::py_backend::ref_policy::owned);
         if (!result) {
             throw std::runtime_error("Python call failed");
         }
@@ -148,10 +148,10 @@ namespace {
     }
 
     int call_int_int(PyObject* callable, int a, int b) {
-        dynabridge::py_backend::object_ref args(Py_BuildValue("(ii)", a, b),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref result(PyObject_CallObject(callable, args.get()),
-            dynabridge::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref args(Py_BuildValue("(ii)", a, b),
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref result(PyObject_CallObject(callable, args.get()),
+            portal::py_backend::ref_policy::owned);
         if (!result) {
             throw std::runtime_error("Python call failed");
         }
@@ -159,12 +159,12 @@ namespace {
     }
 
     std::string call_string(PyObject* callable, const std::string& a) {
-        dynabridge::py_backend::object_ref arg(
+        portal::py_backend::object_ref arg(
             PyUnicode_FromStringAndSize(a.data(), static_cast<Py_ssize_t>(a.size())),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref result(
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref result(
             PyObject_CallFunctionObjArgs(callable, arg.get(), nullptr),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (!result) {
             throw std::runtime_error("Python call failed");
         }
@@ -178,8 +178,8 @@ namespace {
     }
 
     int call_noarg(PyObject* callable) {
-        dynabridge::py_backend::object_ref result(PyObject_CallObject(callable, nullptr),
-            dynabridge::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref result(PyObject_CallObject(callable, nullptr),
+            portal::py_backend::ref_policy::owned);
         if (!result) {
             throw std::runtime_error("Python call failed");
         }
@@ -187,10 +187,10 @@ namespace {
     }
 
     void call_void_int(PyObject* callable, int a) {
-        dynabridge::py_backend::object_ref args(Py_BuildValue("(i)", a),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref result(PyObject_CallObject(callable, args.get()),
-            dynabridge::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref args(Py_BuildValue("(i)", a),
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref result(PyObject_CallObject(callable, args.get()),
+            portal::py_backend::ref_policy::owned);
         if (!result) {
             throw std::runtime_error("Python call failed");
         }
@@ -202,7 +202,7 @@ int main() {
 
     try {
         {
-            using backend = dynabridge::py_backend;
+            using backend = portal::py_backend;
             backend::object_ref tracked(PyList_New(0), backend::ref_policy::owned);
             backend::context_t ctx;
             // Both the first and a later conversion failure must leave no
@@ -212,9 +212,9 @@ int main() {
                 conversion_probe probe{tracked.get(), &calls, fail_at};
                 bool threw = false;
                 try {
-                    backend::invoke_contract<dynabridge::free_callable<void(
+                    backend::invoke_contract<portal::free_callable<void(
                         conversion_probe, conversion_probe)>>(
-                            ctx, dynabridge::no_receiver_t{}, probe, probe);
+                            ctx, portal::no_receiver_t{}, probe, probe);
                 } catch (const std::runtime_error&) {
                     threw = true;
                 }
@@ -226,9 +226,9 @@ int main() {
             int calls = 0;
             conversion_probe probe{tracked.get(), &calls, 0};
             try {
-                backend::invoke_contract<dynabridge::free_callable<void(
+                backend::invoke_contract<portal::free_callable<void(
                     conversion_probe, conversion_probe)>>(
-                        ctx, dynabridge::no_receiver_t{}, probe, probe);
+                        ctx, portal::no_receiver_t{}, probe, probe);
                 return 71;
             } catch (const std::runtime_error&) {
                 PyErr_Clear();
@@ -279,119 +279,119 @@ int main() {
             return 1;
         }
 
-        dynabridge::py_backend::module_t main_module(
+        portal::py_backend::module_t main_module(
             PyImport_AddModule("__main__"),
-            dynabridge::py_backend::ref_policy::borrowed);
+            portal::py_backend::ref_policy::borrowed);
 
-        auto record_ctx = dynabridge::import_from<dynabridge::import_symbols::foo, py_context_t>(
+        auto record_ctx = portal::import_from<portal::import_symbols::foo, py_context_t>(
             main_module);
-        dynabridge::call_foo(record_ctx, 1, 2);
+        portal::call_foo(record_ctx, 1, 2);
         if (object_long_attr(main_module.get(), "last_argc") != 2
                 || object_long_attr(main_module.get(), "last_first") != 1
                 || object_long_attr(main_module.get(), "last_second") != 2) {
             return 2;
         }
 
-        auto bar_ctx = dynabridge::import_from<dynabridge::import_symbols::bar, py_context_t>(
+        auto bar_ctx = portal::import_from<portal::import_symbols::bar, py_context_t>(
             main_module);
-        dynabridge::bar(bar_ctx)(7);
+        portal::bar(bar_ctx)(7);
         if (object_long_attr(main_module.get(), "last_argc") != 1
                 || object_long_attr(main_module.get(), "last_first") != 7) {
             return 3;
         }
 
-        auto calc_ctx = dynabridge::import_from<dynabridge::import_symbols::calc, py_context_t>(
+        auto calc_ctx = portal::import_from<portal::import_symbols::calc, py_context_t>(
             "__main__");
-        if (dynabridge::call_calc(calc_ctx, 3, 4u) != 7) {
+        if (portal::call_calc(calc_ctx, 3, 4u) != 7) {
             return 4;
         }
 
-        auto echo_ctx = dynabridge::import_from<dynabridge::import_symbols::echo, py_context_t>(
+        auto echo_ctx = portal::import_from<portal::import_symbols::echo, py_context_t>(
             main_module);
         const std::string utf8_text = "h\xC3\xA9llo \xE4\xB8\xAD";
         const std::string embedded_text(std::string("a\0b", 3) + utf8_text);
-        if (dynabridge::call_echo(echo_ctx, utf8_text) != "[" + utf8_text + "]"
-                || dynabridge::call_echo(echo_ctx, embedded_text) != "[" + embedded_text + "]") {
+        if (portal::call_echo(echo_ctx, utf8_text) != "[" + utf8_text + "]"
+                || portal::call_echo(echo_ctx, embedded_text) != "[" + embedded_text + "]") {
             return 60;
         }
 
-        auto counter_ctx = dynabridge::import_from<dynabridge::import_symbols::counter, py_context_t>(
+        auto counter_ctx = portal::import_from<portal::import_symbols::counter, py_context_t>(
             main_module);
         auto receiver = object_attr(main_module.get(), "receiver");
-        auto counter = dynabridge::bind_receiver<dynabridge::counter>(
+        auto counter = portal::bind_receiver<portal::counter>(
             counter_ctx,
             receiver.get(),
-            dynabridge::py_backend::ref_policy::borrowed);
+            portal::py_backend::ref_policy::borrowed);
         if (counter.add(29) != 42 || counter.value() != 13) {
             return 5;
         }
 
-        auto constructed_counter = dynabridge::construct<dynabridge::counter>(counter_ctx, 21u);
+        auto constructed_counter = portal::construct<portal::counter>(counter_ctx, 21u);
         if (constructed_counter.value() != 21 || constructed_counter.add(21) != 42) {
             return 12;
         }
 
-        auto pass_counter_ctx = dynabridge::import_from<
-            dynabridge::import_symbols::pass_counter, py_context_t>(main_module);
-        if (dynabridge::call_pass_counter(pass_counter_ctx, counter, 29) != 42) {
+        auto pass_counter_ctx = portal::import_from<
+            portal::import_symbols::pass_counter, py_context_t>(main_module);
+        if (portal::call_pass_counter(pass_counter_ctx, counter, 29) != 42) {
             return 41;
         }
 
-        auto pass_transform_ctx = dynabridge::import_from<
-            dynabridge::import_symbols::pass_transform, py_context_t>(main_module);
-        if (dynabridge::call_pass_transform(
+        auto pass_transform_ctx = portal::import_from<
+            portal::import_symbols::pass_transform, py_context_t>(main_module);
+        if (portal::call_pass_transform(
                 pass_transform_ctx, transform_function{}, 4) != 40) {
             return 42;
         }
-        auto built_transform = dynabridge::bind_transform()
+        auto built_transform = portal::bind_transform()
             .bind<int(int)>(scale_by_ten_function)
             .bind<int(int, unsigned)>([](int value, unsigned extra) {
                 return value * static_cast<int>(extra);
             })
             .build();
-        if (dynabridge::call_pass_transform(
+        if (portal::call_pass_transform(
                 pass_transform_ctx, std::move(built_transform), 6) != 60) {
             return 43;
         }
 
         py_export_context_t export_ctx;
-        dynabridge::py_backend::module_t module(
-            PyModule_New("dynabridge_py_backend_test"),
-            dynabridge::py_backend::ref_policy::owned);
+        portal::py_backend::module_t module(
+            PyModule_New("portal_py_backend_test"),
+            portal::py_backend::ref_policy::owned);
 
-        dynabridge::py_backend::object_ref bad_int(PyUnicode_FromString("not an int"),
-            dynabridge::py_backend::ref_policy::owned);
-        auto maybe_int = dynabridge::from_optional<int>(export_ctx, bad_int.get());
+        portal::py_backend::object_ref bad_int(PyUnicode_FromString("not an int"),
+            portal::py_backend::ref_policy::owned);
+        auto maybe_int = portal::from_optional<int>(export_ctx, bad_int.get());
         if (maybe_int || PyErr_Occurred()) {
             return 34;
         }
 
-        dynabridge::py_backend::object_ref negative_int(PyLong_FromLong(-1),
-            dynabridge::py_backend::ref_policy::owned);
-        auto maybe_unsigned = dynabridge::from_optional<unsigned>(export_ctx, negative_int.get());
+        portal::py_backend::object_ref negative_int(PyLong_FromLong(-1),
+            portal::py_backend::ref_policy::owned);
+        auto maybe_unsigned = portal::from_optional<unsigned>(export_ctx, negative_int.get());
         if (maybe_unsigned || PyErr_Occurred()) {
             return 35;
         }
 
         bool caught_bad_conversion = false;
         try {
-            (void)dynabridge::from_cast<int>(export_ctx, bad_int.get());
-        } catch (const dynabridge::bad_conversion&) {
+            (void)portal::from_cast<int>(export_ctx, bad_int.get());
+        } catch (const portal::bad_conversion&) {
             caught_bad_conversion = true;
         }
         if (!caught_bad_conversion || PyErr_Occurred()) {
             return 30;
         }
 
-        dynabridge::py_backend::object_ref not_a_string(PyLong_FromLong(7),
-            dynabridge::py_backend::ref_policy::owned);
-        auto maybe_string = dynabridge::from_optional<std::string>(
+        portal::py_backend::object_ref not_a_string(PyLong_FromLong(7),
+            portal::py_backend::ref_policy::owned);
+        auto maybe_string = portal::from_optional<std::string>(
             export_ctx, not_a_string.get());
         if (maybe_string || PyErr_Occurred()) {
             return 62;
         }
         // bad_int holds a str, so the string channel accepts its bytes.
-        auto maybe_bad_int_text = dynabridge::from_optional<std::string>(
+        auto maybe_bad_int_text = portal::from_optional<std::string>(
             export_ctx, bad_int.get());
         if (!maybe_bad_int_text || maybe_bad_int_text.value() != std::string("not an int")
                 || PyErr_Occurred()) {
@@ -399,18 +399,18 @@ int main() {
         }
         bool caught_string_conversion = false;
         try {
-            (void)dynabridge::from_cast<std::string>(export_ctx, not_a_string.get());
-        } catch (const dynabridge::bad_conversion&) {
+            (void)portal::from_cast<std::string>(export_ctx, not_a_string.get());
+        } catch (const portal::bad_conversion&) {
             caught_string_conversion = true;
         }
         if (!caught_string_conversion || PyErr_Occurred()) {
             return 64;
         }
 
-        dynabridge::py_backend::object_ref lone_surrogate(
+        portal::py_backend::object_ref lone_surrogate(
             PyUnicode_FromOrdinal(0xD800),
-            dynabridge::py_backend::ref_policy::owned);
-        auto maybe_surrogate = dynabridge::from_optional<std::string>(
+            portal::py_backend::ref_policy::owned);
+        auto maybe_surrogate = portal::from_optional<std::string>(
             export_ctx, lone_surrogate.get());
         if (maybe_surrogate || PyErr_Occurred()) {
             return 69;
@@ -418,7 +418,7 @@ int main() {
 
         bool caught_invalid_utf8 = false;
         try {
-            (void)dynabridge::py_backend::converter<std::string>::to(
+            (void)portal::py_backend::converter<std::string>::to(
                 export_ctx, std::string("\xFF", 1));
         } catch (const std::runtime_error&) {
             caught_invalid_utf8 = true;
@@ -428,28 +428,28 @@ int main() {
         }
         PyErr_Clear();
 
-        dynabridge::export_free_callable(export_ctx, module, "add", add_function);
-        dynabridge::export_calc(export_ctx, module, add_function);
-        dynabridge::export_free_callable(export_ctx, module, "store", store_function);
-        dynabridge::export_calc<int(int, unsigned)>(
+        portal::export_free_callable(export_ctx, module, "add", add_function);
+        portal::export_calc(export_ctx, module, add_function);
+        portal::export_free_callable(export_ctx, module, "store", store_function);
+        portal::export_calc<int(int, unsigned)>(
             export_ctx,
             module,
             [](int a, unsigned b) {
                 return a * static_cast<int>(b);
             });
-        dynabridge::export_calc(export_ctx, module)
+        portal::export_calc(export_ctx, module)
             .bind<int(int)>(scale_by_ten_function)
             .bind<int(int, unsigned)>(multiply_function{})
             .commit();
-        dynabridge::py_backend::object_ref calc_function_functor(
+        portal::py_backend::object_ref calc_function_functor(
             PyObject_GetAttrString(module.get(), "calc"),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (call_int(calc_function_functor.get(), 6) != 60
                 || call_int_int(calc_function_functor.get(), 6, 7) != 42) {
             return 40;
         }
 
-        dynabridge::export_calc(export_ctx, module)
+        portal::export_calc(export_ctx, module)
             .bind<int(int)>([](int a) {
                 return a * 11;
             })
@@ -458,12 +458,12 @@ int main() {
             })
             .commit();
 
-        dynabridge::py_backend::object_ref add(PyObject_GetAttrString(module.get(), "add"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref calc(PyObject_GetAttrString(module.get(), "calc"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref store(PyObject_GetAttrString(module.get(), "store"),
-            dynabridge::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref add(PyObject_GetAttrString(module.get(), "add"),
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref calc(PyObject_GetAttrString(module.get(), "calc"),
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref store(PyObject_GetAttrString(module.get(), "store"),
+            portal::py_backend::ref_policy::owned);
 
 #if PY_VERSION_HEX >= 0x03080000
         if (PyVectorcall_Function(add.get()) == nullptr
@@ -479,7 +479,7 @@ int main() {
             return 14;
         }
 
-        dynabridge::export_echo(export_ctx, module)
+        portal::export_echo(export_ctx, module)
             .bind<std::string(std::string)>([](std::string text) {
                 return "<" + text + ">";
             })
@@ -487,9 +487,9 @@ int main() {
                 return value * 2;
             })
             .commit();
-        dynabridge::py_backend::object_ref echo_function(
+        portal::py_backend::object_ref echo_function(
             PyObject_GetAttrString(module.get(), "echo"),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (call_string(echo_function.get(), utf8_text) != "<" + utf8_text + ">") {
             return 65;
         }
@@ -499,21 +499,21 @@ int main() {
         if (call_int(echo_function.get(), 21) != 42) {
             return 68;
         }
-        dynabridge::py_backend::object_ref none_args(Py_BuildValue("(O)", Py_None),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref none_result(
+        portal::py_backend::object_ref none_args(Py_BuildValue("(O)", Py_None),
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref none_result(
             PyObject_CallObject(echo_function.get(), none_args.get()),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (none_result || !PyErr_ExceptionMatches(PyExc_TypeError)) {
             return 66;
         }
         PyErr_Clear();
 
-        dynabridge::py_backend::object_ref bad_add_args(Py_BuildValue("(Oi)", bad_int.get(), 1),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref bad_add_result(
+        portal::py_backend::object_ref bad_add_args(Py_BuildValue("(Oi)", bad_int.get(), 1),
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref bad_add_result(
             PyObject_CallObject(add.get(), bad_add_args.get()),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (bad_add_result || !PyErr_ExceptionMatches(PyExc_TypeError)) {
             return 31;
         }
@@ -525,33 +525,33 @@ int main() {
             return 15;
         }
 
-        dynabridge::exports::counter::register_all(export_ctx, module);
+        portal::exports::counter::register_all(export_ctx, module);
 
-        dynabridge::py_backend::object_ref counter_class(PyObject_GetAttrString(module.get(), "counter"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref missing_constructor_args(
-            PyTuple_New(0), dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref missing_constructor_result(
+        portal::py_backend::object_ref counter_class(PyObject_GetAttrString(module.get(), "counter"),
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref missing_constructor_args(
+            PyTuple_New(0), portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref missing_constructor_result(
             PyObject_CallObject(counter_class.get(), missing_constructor_args.get()),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (missing_constructor_result || !PyErr_ExceptionMatches(PyExc_TypeError)
                 || owned_counter::constructed != 0 || owned_counter::destroyed != 0) {
             return 52;
         }
         PyErr_Clear();
 
-        dynabridge::py_backend::object_ref constructor_args(Py_BuildValue("(I)", 13u),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref instance(PyObject_CallObject(counter_class.get(), constructor_args.get()),
-            dynabridge::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref constructor_args(Py_BuildValue("(I)", 13u),
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref instance(PyObject_CallObject(counter_class.get(), constructor_args.get()),
+            portal::py_backend::ref_policy::owned);
         if (!instance || owned_counter::constructed != 1 || owned_counter::destroyed != 0) {
             return 16;
         }
 
-        dynabridge::py_backend::object_ref member_add(PyObject_GetAttrString(instance.get(), "add"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref member_value(PyObject_GetAttrString(instance.get(), "value"),
-            dynabridge::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref member_add(PyObject_GetAttrString(instance.get(), "add"),
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref member_value(PyObject_GetAttrString(instance.get(), "value"),
+            portal::py_backend::ref_policy::owned);
 
 #if PY_VERSION_HEX >= 0x03080000
         if (PyVectorcall_Function(member_add.get()) == nullptr
@@ -572,98 +572,98 @@ int main() {
         }
 
         owned_counter borrowed_counter(31u);
-        auto borrowed_object = dynabridge::make_exported<
-            dynabridge::exports::counter>(
+        auto borrowed_object = portal::make_exported<
+            portal::exports::counter>(
             export_ctx,
-            dynabridge::borrow(borrowed_counter));
-        dynabridge::py_backend::object_ref borrowed_value(
+            portal::borrow(borrowed_counter));
+        portal::py_backend::object_ref borrowed_value(
             PyObject_GetAttrString(borrowed_object.get(), "value"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref borrowed_add(
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref borrowed_add(
             PyObject_GetAttrString(borrowed_object.get(), "add"),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (call_noarg(borrowed_value.get()) != 31 || call_int(borrowed_add.get(), 11) != 42) {
             return 32;
         }
 
         using consume_counter_sig = int(
-            dynabridge::object_param<dynabridge::export_classes::counter, dynabridge::export_t>,
+            portal::object_param<portal::export_classes::counter, portal::export_t>,
             int);
-        dynabridge::export_consume_counter<consume_counter_sig>(
+        portal::export_consume_counter<consume_counter_sig>(
             export_ctx,
             module,
             [](owned_counter& counter, int value) {
                 return counter.add(value);
             });
-        dynabridge::py_backend::object_ref consume_counter(
+        portal::py_backend::object_ref consume_counter(
             PyObject_GetAttrString(module.get(), "consume_counter"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref eleven(PyLong_FromLong(11),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref consumed(PyObject_CallFunctionObjArgs(
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref eleven(PyLong_FromLong(11),
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref consumed(PyObject_CallFunctionObjArgs(
             consume_counter.get(), borrowed_object.get(), eleven.get(), nullptr),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (!consumed || PyLong_AsLong(consumed.get()) != 42) {
             return 44;
         }
 
         using use_callback_sig = int(
-            dynabridge::callable_param<dynabridge::import_symbols::callback, dynabridge::import_t>,
+            portal::callable_param<portal::import_symbols::callback, portal::import_t>,
             int);
-        dynabridge::export_use_callback<use_callback_sig>(
+        portal::export_use_callback<use_callback_sig>(
             export_ctx,
             module,
             [](auto& callback, int value) {
-                return dynabridge::call_callback(callback, value) + 1;
+                return portal::call_callback(callback, value) + 1;
             });
-        dynabridge::py_backend::object_ref use_callback(
+        portal::py_backend::object_ref use_callback(
             PyObject_GetAttrString(module.get(), "use_callback"),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         auto callback = object_attr(main_module.get(), "callback");
-        dynabridge::py_backend::object_ref seven(PyLong_FromLong(7),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref callback_result(PyObject_CallFunctionObjArgs(
+        portal::py_backend::object_ref seven(PyLong_FromLong(7),
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref callback_result(PyObject_CallFunctionObjArgs(
             use_callback.get(), callback.get(), seven.get(), nullptr),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (!callback_result || PyLong_AsLong(callback_result.get()) != 22) {
             return 45;
         }
 
-        dynabridge::py_backend::object_ref wrong_object_result(PyObject_CallFunctionObjArgs(
+        portal::py_backend::object_ref wrong_object_result(PyObject_CallFunctionObjArgs(
             consume_counter.get(), seven.get(), seven.get(), nullptr),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (wrong_object_result || !PyErr_ExceptionMatches(PyExc_TypeError)) {
             return 46;
         }
         PyErr_Clear();
 
-        dynabridge::exports::consumer::register_all(export_ctx, module);
-        dynabridge::py_backend::object_ref consumer_class(
+        portal::exports::consumer::register_all(export_ctx, module);
+        portal::py_backend::object_ref consumer_class(
             PyObject_GetAttrString(module.get(), "consumer"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref consumer_instance(PyObject_CallFunctionObjArgs(
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref consumer_instance(PyObject_CallFunctionObjArgs(
             consumer_class.get(), borrowed_object.get(), callback.get(), nullptr),
-            dynabridge::py_backend::ref_policy::owned);
-        if (!consumer_instance || dynabridge::native::consumer::constructed != 1) {
+            portal::py_backend::ref_policy::owned);
+        if (!consumer_instance || portal::native::consumer::constructed != 1) {
             return 48;
         }
 
-        dynabridge::py_backend::object_ref combine(
+        portal::py_backend::object_ref combine(
             PyObject_GetAttrString(consumer_instance.get(), "combine"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref combine_result(PyObject_CallFunctionObjArgs(
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref combine_result(PyObject_CallFunctionObjArgs(
             combine.get(), borrowed_object.get(), eleven.get(), nullptr),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (!combine_result || PyLong_AsLong(combine_result.get()) != 135) {
             return 49;
         }
 
-        dynabridge::py_backend::object_ref apply(
+        portal::py_backend::object_ref apply(
             PyObject_GetAttrString(consumer_instance.get(), "apply"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref apply_result(PyObject_CallFunctionObjArgs(
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref apply_result(PyObject_CallFunctionObjArgs(
             apply.get(), callback.get(), seven.get(), nullptr),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (!apply_result || PyLong_AsLong(apply_result.get()) != 114) {
             return 50;
         }
@@ -671,30 +671,30 @@ int main() {
         combine.reset();
         apply.reset();
         consumer_instance.reset();
-        if (dynabridge::native::consumer::destroyed != 1) {
+        if (portal::native::consumer::destroyed != 1) {
             return 51;
         }
 
-        dynabridge::py_backend::object_ref wrong_callable_result(PyObject_CallFunctionObjArgs(
+        portal::py_backend::object_ref wrong_callable_result(PyObject_CallFunctionObjArgs(
             use_callback.get(), seven.get(), seven.get(), nullptr),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (wrong_callable_result || !PyErr_ExceptionMatches(PyExc_TypeError)) {
             return 47;
         }
         PyErr_Clear();
 
-        dynabridge::export_instance<
-            dynabridge::exports::counter>(
+        portal::export_instance<
+            portal::exports::counter>(
             export_ctx,
             module,
             "globalCounter",
-            dynabridge::borrow(borrowed_counter));
-        dynabridge::py_backend::object_ref global_counter(
+            portal::borrow(borrowed_counter));
+        portal::py_backend::object_ref global_counter(
             PyObject_GetAttrString(module.get(), "globalCounter"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref global_add(
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref global_add(
             PyObject_GetAttrString(global_counter.get(), "add"),
-            dynabridge::py_backend::ref_policy::owned);
+            portal::py_backend::ref_policy::owned);
         if (call_int(global_add.get(), 11) != 42) {
             return 33;
         }

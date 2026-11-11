@@ -3,7 +3,7 @@
 The RPC export backend opts into two-phase argument conversion with:
 
 ```cpp
-using export_probe_policy = dynabridge::rpc_export_probe_policy;
+using export_probe_policy = portal::rpc_export_probe_policy;
 ```
 
 A custom RPC-like backend must opt in explicitly. Sharing `rpc::value` or

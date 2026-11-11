@@ -1,6 +1,6 @@
 #include <type_traits>
 
-#include "dynabridge/optional.h"
+#include "portal/optional.h"
 
 namespace {
     struct tracked_value {
@@ -34,27 +34,27 @@ namespace {
 
 int main() {
     static_assert(
-        std::is_trivially_destructible<dynabridge::optional<int>>::value,
+        std::is_trivially_destructible<portal::optional<int>>::value,
         "optional<int> should preserve trivial destruction");
     static_assert(
-        std::is_trivially_copy_constructible<dynabridge::optional<int>>::value,
+        std::is_trivially_copy_constructible<portal::optional<int>>::value,
         "optional<int> should preserve trivial copy construction");
     static_assert(
-        std::is_trivially_move_constructible<dynabridge::optional<int>>::value,
+        std::is_trivially_move_constructible<portal::optional<int>>::value,
         "optional<int> should preserve trivial move construction");
     static_assert(
-        std::is_trivially_copy_assignable<dynabridge::optional<int>>::value,
+        std::is_trivially_copy_assignable<portal::optional<int>>::value,
         "optional<int> should preserve trivial copy assignment");
     static_assert(
-        std::is_trivially_move_assignable<dynabridge::optional<int>>::value,
+        std::is_trivially_move_assignable<portal::optional<int>>::value,
         "optional<int> should preserve trivial move assignment");
 
-    dynabridge::optional<int> empty;
+    portal::optional<int> empty;
     if (empty) {
         return 1;
     }
 
-    dynabridge::optional<int> value(42);
+    portal::optional<int> value(42);
     if (!value || *value != 42 || value.value() != 42) {
         return 2;
     }
@@ -70,17 +70,17 @@ int main() {
     }
 
     {
-        dynabridge::optional<tracked_value> tracked(dynabridge::in_place, 11);
+        portal::optional<tracked_value> tracked(portal::in_place, 11);
         if (!tracked || tracked->value != 11 || tracked_value::alive != 1) {
             return 5;
         }
 
-        dynabridge::optional<tracked_value> moved(std::move(tracked));
+        portal::optional<tracked_value> moved(std::move(tracked));
         if (!tracked || !moved || moved->value != 11 || tracked_value::alive != 2) {
             return 6;
         }
 
-        dynabridge::optional<tracked_value> copied(moved);
+        portal::optional<tracked_value> copied(moved);
         if (!copied || copied->value != 11 || tracked_value::alive != 3) {
             return 7;
         }

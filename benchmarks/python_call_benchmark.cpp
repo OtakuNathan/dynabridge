@@ -1,4 +1,4 @@
-#include "dynabridge/backends/python_api.h"
+#include "portal/backends/python_api.h"
 
 #include <chrono>
 #include <cstdlib>
@@ -9,7 +9,7 @@
 #include <utility>
 #include <vector>
 
-namespace dynabridge {
+namespace portal {
     namespace native {
         class counter {
         public:
@@ -29,16 +29,16 @@ namespace dynabridge {
     }
 }
 
-#define DYNABRIDGE_IMPORT_DEF "tests/import.def"
-#define DYNABRIDGE_EXPORT_DEF "tests/export.def"
-#include "dynabridge/bridge.h"
-#include "dynabridge/backends/python.h"
+#define PORTAL_IMPORT_DEF "tests/import.def"
+#define PORTAL_EXPORT_DEF "tests/export.def"
+#include "portal/bridge.h"
+#include "portal/backends/python.h"
 
-#if defined(DYNABRIDGE_HAS_PYBIND11)
+#if defined(PORTAL_HAS_PYBIND11)
 #include <pybind11/pybind11.h>
 #endif
 
-#if defined(DYNABRIDGE_HAS_NANOBIND)
+#if defined(PORTAL_HAS_NANOBIND)
 #include <nanobind/nanobind.h>
 #endif
 
@@ -77,7 +77,7 @@ namespace {
     };
 
     std::size_t iterations_from_env() {
-        const char* value = std::getenv("DYNABRIDGE_BENCH_ITERS");
+        const char* value = std::getenv("PORTAL_BENCH_ITERS");
         if (value == nullptr) {
             return 200000;
         }
@@ -244,7 +244,7 @@ namespace {
 #endif
     }
 
-#if defined(DYNABRIDGE_HAS_PYBIND11) && PY_VERSION_HEX >= 0x03080000
+#if defined(PORTAL_HAS_PYBIND11) && PY_VERSION_HEX >= 0x03080000
     int pybind11_manual_vectorcall(pybind11::function& callable) {
         namespace py = pybind11;
 
@@ -264,7 +264,7 @@ namespace {
     }
 #endif
 
-#if defined(DYNABRIDGE_HAS_NANOBIND) && PY_VERSION_HEX >= 0x03080000
+#if defined(PORTAL_HAS_NANOBIND) && PY_VERSION_HEX >= 0x03080000
     int nanobind_manual_vectorcall(nanobind::object& callable) {
         namespace nb = nanobind;
 
@@ -314,12 +314,12 @@ namespace {
 
     void print_results(const std::vector<bench_result>& results, std::size_t iterations) {
         std::cout << "iterations: " << iterations << '\n';
-#if defined(DYNABRIDGE_HAS_PYBIND11)
+#if defined(PORTAL_HAS_PYBIND11)
         std::cout << "pybind11: enabled\n";
 #else
         std::cout << "pybind11: not found at configure time\n";
 #endif
-#if defined(DYNABRIDGE_HAS_NANOBIND)
+#if defined(PORTAL_HAS_NANOBIND)
         std::cout << "nanobind: enabled\n";
 #else
         std::cout << "nanobind: not found at configure time\n";
@@ -345,7 +345,7 @@ namespace {
 
 int main() {
     Py_Initialize();
-#if defined(DYNABRIDGE_HAS_NANOBIND)
+#if defined(PORTAL_HAS_NANOBIND)
     // This benchmark embeds Python directly instead of entering through NB_MODULE.
     nanobind::detail::nb_module_exec(nullptr, nullptr);
 #endif
@@ -392,24 +392,24 @@ int main() {
             throw_python_error("missing Python channel benchmark values");
         }
 
-        dynabridge::py_backend::context_t ctx(calc, dynabridge::py_backend::ref_policy::borrowed);
-        dynabridge::py_backend::module_t import_module(main);
-        auto object_ctx = dynabridge::import_from<
-            dynabridge::import_symbols::pass_counter,
-            dynabridge::py_backend::import_context_t>(import_module);
-        auto imported_counter = dynabridge::bind_receiver<dynabridge::counter>(
+        portal::py_backend::context_t ctx(calc, portal::py_backend::ref_policy::borrowed);
+        portal::py_backend::module_t import_module(main);
+        auto object_ctx = portal::import_from<
+            portal::import_symbols::pass_counter,
+            portal::py_backend::import_context_t>(import_module);
+        auto imported_counter = portal::bind_receiver<portal::counter>(
             object_ctx,
             foreign_counter,
-            dynabridge::py_backend::ref_policy::borrowed);
-        auto callable_ctx = dynabridge::import_from<
-            dynabridge::import_symbols::pass_transform,
-            dynabridge::py_backend::import_context_t>(import_module);
-        dynabridge::py_backend::export_context_t export_ctx;
-        dynabridge::py_backend::module_t module(
-            PyModule_New("dynabridge_python_call_benchmark"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::export_free_callable(export_ctx, module, "add", add_function);
-        dynabridge::export_calc(export_ctx, module)
+            portal::py_backend::ref_policy::borrowed);
+        auto callable_ctx = portal::import_from<
+            portal::import_symbols::pass_transform,
+            portal::py_backend::import_context_t>(import_module);
+        portal::py_backend::export_context_t export_ctx;
+        portal::py_backend::module_t module(
+            PyModule_New("portal_python_call_benchmark"),
+            portal::py_backend::ref_policy::owned);
+        portal::export_free_callable(export_ctx, module, "add", add_function);
+        portal::export_calc(export_ctx, module)
             .bind<int(int)>([](int a) {
                 return a * 10;
             })
@@ -417,87 +417,87 @@ int main() {
                 return add_function(a, b);
             })
             .commit();
-        dynabridge::exports::counter::register_all(export_ctx, module);
-        auto exported_counter = dynabridge::make_exported<dynabridge::exports::counter>(
-            export_ctx, dynabridge::native::counter(2u));
+        portal::exports::counter::register_all(export_ctx, module);
+        auto exported_counter = portal::make_exported<portal::exports::counter>(
+            export_ctx, portal::native::counter(2u));
         using object_signature = int(
-            dynabridge::object_param<
-                dynabridge::export_classes::counter,
-                dynabridge::export_t>,
+            portal::object_param<
+                portal::export_classes::counter,
+                portal::export_t>,
             int);
-        dynabridge::export_consume_counter<object_signature>(
+        portal::export_consume_counter<object_signature>(
             export_ctx,
             module,
-            [](dynabridge::native::counter& counter, int value) {
+            [](portal::native::counter& counter, int value) {
                 return counter.add(value);
             });
         using callback_signature = int(
-            dynabridge::callable_param<
-                dynabridge::import_symbols::callback,
-                dynabridge::import_t>,
+            portal::callable_param<
+                portal::import_symbols::callback,
+                portal::import_t>,
             int);
-        dynabridge::export_use_callback<callback_signature>(
+        portal::export_use_callback<callback_signature>(
             export_ctx,
             module,
             [](auto& callback_ctx, int value) {
-                return dynabridge::call_callback(callback_ctx, value);
+                return portal::call_callback(callback_ctx, value);
             });
 
-        using select_overloads_t = dynabridge::type_list<
-            dynabridge::free_callable<int(unsigned)>,
-            dynabridge::free_callable<int(int)>,
-            dynabridge::free_callable<
-                dynabridge::unmatched_callable_t(dynabridge::unmatched_callable_t)>>;
-        dynabridge::export_free_callable_overloads_impl<select_overloads_t>(
+        using select_overloads_t = portal::type_list<
+            portal::free_callable<int(unsigned)>,
+            portal::free_callable<int(int)>,
+            portal::free_callable<
+                portal::unmatched_callable_t(portal::unmatched_callable_t)>>;
+        portal::export_free_callable_overloads_impl<select_overloads_t>(
             export_ctx,
             module,
             "select",
             select_overload_function{});
 
-        dynabridge::py_backend::object_ref dynabridge_add(
+        portal::py_backend::object_ref portal_add(
             PyObject_GetAttrString(module.get(), "add"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref dynabridge_calc(
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref portal_calc(
             PyObject_GetAttrString(module.get(), "calc"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref dynabridge_select(
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref portal_select(
             PyObject_GetAttrString(module.get(), "select"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref consume_counter(
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref consume_counter(
             PyObject_GetAttrString(module.get(), "consume_counter"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref use_callback(
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref use_callback(
             PyObject_GetAttrString(module.get(), "use_callback"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref counter_class(
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref counter_class(
             PyObject_GetAttrString(module.get(), "counter"),
-            dynabridge::py_backend::ref_policy::owned);
-        dynabridge::py_backend::object_ref counter_add(
+            portal::py_backend::ref_policy::owned);
+        portal::py_backend::object_ref counter_add(
             PyObject_GetAttrString(exported_counter.get(), "add"),
-            dynabridge::py_backend::ref_policy::owned);
-        if (!dynabridge_add) {
-            throw_python_error("missing dynabridge exported add callable");
+            portal::py_backend::ref_policy::owned);
+        if (!portal_add) {
+            throw_python_error("missing portal exported add callable");
         }
-        if (!dynabridge_calc || !dynabridge_select) {
-            throw_python_error("missing dynabridge exported overload callable");
+        if (!portal_calc || !portal_select) {
+            throw_python_error("missing portal exported overload callable");
         }
         if (!consume_counter || !use_callback || !counter_class || !counter_add) {
-            throw_python_error("missing dynabridge channel benchmark callable");
+            throw_python_error("missing portal channel benchmark callable");
         }
 
         const std::size_t iterations = iterations_from_env();
 
         std::vector<bench_result> results;
-        results.push_back(run_benchmark("dynabridge import", iterations, 3, [&ctx]() {
-            return dynabridge::call_calc(ctx, 1, 2u);
+        results.push_back(run_benchmark("portal import", iterations, 3, [&ctx]() {
+            return portal::call_calc(ctx, 1, 2u);
         }));
-        results.push_back(run_benchmark("dynabridge import object", iterations, 3,
+        results.push_back(run_benchmark("portal import object", iterations, 3,
             [&object_ctx, &imported_counter]() {
-                return dynabridge::call_pass_counter(object_ctx, imported_counter, 1);
+                return portal::call_pass_counter(object_ctx, imported_counter, 1);
             }));
-        results.push_back(run_benchmark("dynabridge import callback", iterations, 3,
+        results.push_back(run_benchmark("portal import callback", iterations, 3,
             [&callable_ctx]() {
-                return dynabridge::call_pass_transform(
+                return portal::call_pass_transform(
                     callable_ctx, transform_function{}, 1);
             }));
         results.push_back(run_benchmark("raw C API import object", iterations, 3,
@@ -519,69 +519,69 @@ int main() {
         }));
 #endif
 
-        results.push_back(run_benchmark("dynabridge export tuple", iterations, 3, [&dynabridge_add]() {
-            return raw_tuple_call(dynabridge_add.get());
+        results.push_back(run_benchmark("portal export tuple", iterations, 3, [&portal_add]() {
+            return raw_tuple_call(portal_add.get());
         }));
-        results.push_back(run_benchmark("dynabridge export class argument", iterations, 3,
+        results.push_back(run_benchmark("portal export class argument", iterations, 3,
             [&consume_counter, &exported_counter]() {
                 return call_object_int(consume_counter.get(), exported_counter.get(), 1);
             }));
-        results.push_back(run_benchmark("dynabridge export class member", iterations, 3,
+        results.push_back(run_benchmark("portal export class member", iterations, 3,
             [&counter_add]() {
                 return call_int_argument(counter_add.get(), 1);
             }));
-        results.push_back(run_benchmark("dynabridge export callback", iterations, 3,
+        results.push_back(run_benchmark("portal export callback", iterations, 3,
             [&use_callback, callback]() {
                 return call_object_int(use_callback.get(), callback, 1);
             }));
-        results.push_back(run_benchmark("dynabridge export construct", iterations, 3,
+        results.push_back(run_benchmark("portal export construct", iterations, 3,
             [&counter_class]() {
                 return construct_counter(counter_class.get(), 2);
             }));
-        results.push_back(run_benchmark("dynabridge overload tuple 1", iterations, 10, [&dynabridge_calc]() {
-            return raw_tuple_call1(dynabridge_calc.get(), 1);
+        results.push_back(run_benchmark("portal overload tuple 1", iterations, 10, [&portal_calc]() {
+            return raw_tuple_call1(portal_calc.get(), 1);
         }));
-        results.push_back(run_benchmark("dynabridge overload tuple 2", iterations, 3, [&dynabridge_calc]() {
-            return raw_tuple_call(dynabridge_calc.get());
+        results.push_back(run_benchmark("portal overload tuple 2", iterations, 3, [&portal_calc]() {
+            return raw_tuple_call(portal_calc.get());
         }));
-        results.push_back(run_benchmark("dynabridge overload fallback tuple", iterations, -10, [&dynabridge_select]() {
-            return raw_tuple_call1(dynabridge_select.get(), -1);
+        results.push_back(run_benchmark("portal overload fallback tuple", iterations, -10, [&portal_select]() {
+            return raw_tuple_call1(portal_select.get(), -1);
         }));
 
 #if PY_VERSION_HEX >= 0x03080000
-        if (PyVectorcall_Function(dynabridge_add.get()) != nullptr) {
-            results.push_back(run_benchmark("dynabridge export vectorcall", iterations, 3, [&dynabridge_add]() {
-                return raw_vectorcall(dynabridge_add.get());
+        if (PyVectorcall_Function(portal_add.get()) != nullptr) {
+            results.push_back(run_benchmark("portal export vectorcall", iterations, 3, [&portal_add]() {
+                return raw_vectorcall(portal_add.get());
             }));
         }
-        if (PyVectorcall_Function(dynabridge_calc.get()) != nullptr) {
-            results.push_back(run_benchmark("dynabridge overload vectorcall 1", iterations, 10, [&dynabridge_calc]() {
-                return raw_vectorcall1(dynabridge_calc.get(), 1);
+        if (PyVectorcall_Function(portal_calc.get()) != nullptr) {
+            results.push_back(run_benchmark("portal overload vectorcall 1", iterations, 10, [&portal_calc]() {
+                return raw_vectorcall1(portal_calc.get(), 1);
             }));
-            results.push_back(run_benchmark("dynabridge overload vectorcall 2", iterations, 3, [&dynabridge_calc]() {
-                return raw_vectorcall(dynabridge_calc.get());
+            results.push_back(run_benchmark("portal overload vectorcall 2", iterations, 3, [&portal_calc]() {
+                return raw_vectorcall(portal_calc.get());
             }));
         }
-        if (PyVectorcall_Function(dynabridge_select.get()) != nullptr) {
-            results.push_back(run_benchmark("dynabridge overload fallback vc", iterations, -10, [&dynabridge_select]() {
-                return raw_vectorcall1(dynabridge_select.get(), -1);
+        if (PyVectorcall_Function(portal_select.get()) != nullptr) {
+            results.push_back(run_benchmark("portal overload fallback vc", iterations, -10, [&portal_select]() {
+                return raw_vectorcall1(portal_select.get(), -1);
             }));
         }
 #endif
 
-#if defined(DYNABRIDGE_HAS_PYBIND11)
+#if defined(PORTAL_HAS_PYBIND11)
         namespace py = pybind11;
         py::function py_calc = py::reinterpret_borrow<py::function>(calc);
         py::cpp_function py_add([](int a, unsigned b) {
             return add_function(a, b);
         });
         py::module_ main_module = py::module_::import("__main__");
-        py::class_<dynabridge::native::counter> py_counter_class(
+        py::class_<portal::native::counter> py_counter_class(
             main_module, "PybindCounter");
         py_counter_class
             .def(py::init<unsigned>())
-            .def("add", &dynabridge::native::counter::add)
-            .def("value", &dynabridge::native::counter::value);
+            .def("add", &portal::native::counter::add)
+            .def("value", &portal::native::counter::value);
         main_module.def("pybind11_calc_overload", [](int a) {
             return a * 10;
         });
@@ -591,7 +591,7 @@ int main() {
         py::function pybind11_calc_overload =
             main_module.attr("pybind11_calc_overload").cast<py::function>();
         main_module.def("pybind11_consume_counter",
-            [](dynabridge::native::counter& counter, int value) {
+            [](portal::native::counter& counter, int value) {
                 return counter.add(value);
             });
         main_module.def("pybind11_use_callback", [](py::function fn, int value) {
@@ -665,19 +665,19 @@ int main() {
 #endif
 #endif
 
-#if defined(DYNABRIDGE_HAS_NANOBIND)
+#if defined(PORTAL_HAS_NANOBIND)
         namespace nb = nanobind;
         nb::object nb_calc = nb::borrow<nb::object>(calc);
         nb::object nb_add = nb::cpp_function([](int a, unsigned b) {
             return add_function(a, b);
         });
         nb::module_ nb_main_module = nb::module_::import_("__main__");
-        nb::class_<dynabridge::native::counter> nb_counter_class(
+        nb::class_<portal::native::counter> nb_counter_class(
             nb_main_module, "NanobindCounter");
         nb_counter_class
             .def(nb::init<unsigned>())
-            .def("add", &dynabridge::native::counter::add)
-            .def("value", &dynabridge::native::counter::value);
+            .def("add", &portal::native::counter::add)
+            .def("value", &portal::native::counter::value);
         nb_main_module.def("nanobind_calc_overload", [](int a) {
             return a * 10;
         });
@@ -686,7 +686,7 @@ int main() {
         });
         nb::object nanobind_calc_overload = nb_main_module.attr("nanobind_calc_overload");
         nb_main_module.def("nanobind_consume_counter",
-            [](dynabridge::native::counter& counter, int value) {
+            [](portal::native::counter& counter, int value) {
                 return counter.add(value);
             });
         nb_main_module.def("nanobind_use_callback", [](nb::callable fn, int value) {

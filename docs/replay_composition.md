@@ -1,10 +1,10 @@
-# Replay composition: Dyna Bridge, FF, and lease
+# Replay composition: Portal, FF, and lease
 
 This complete example demonstrates three separate responsibilities:
 
 ```text
 Python call
-  -> Dyna Bridge: declared callable, CPython operations, string conversion
+  -> Portal: declared callable, CPython operations, string conversion
   -> FF: validate/fill/mark, then calculate the next decision
   -> lease: coordinator retains write authority and lends read authority to policy
   -> JSON string back to Python
@@ -12,7 +12,7 @@ Python call
 
 The policy is an ordinary calculation callable. There is no runtime callback per
 observation, executor handoff, or cancellation requirement. FF uses a borrowed
-fast runner; lease uses bare, single-threaded access. Dyna Bridge does not own
+fast runner; lease uses bare, single-threaded access. Portal does not own
 scheduling or state-access policy, and neither FF nor lease depends on Python.
 
 ## Sources and semantics
@@ -48,8 +48,8 @@ error. The final JSON is created after replay, not once per event.
 
 ## Build a no-exception core and a separate Python boundary
 
-The following Linux commands assume checkouts named `bridge`, `flux_foundry`,
-and `lease` under the same parent directory. Run from the **bridge repository
+The following Linux commands assume checkouts named `portal`, `flux_foundry`,
+and `lease` under the same parent directory. Run from the **Portal repository
 root**, adjusting include paths for your layout. CPython development headers
 and the matching `python3-config` are required.
 
@@ -102,7 +102,7 @@ interpreter reinitialization. Calls retain the Python GIL.
 
 ## Related selection guides
 
-- [Dyna Bridge callable exports](callable_exports.md)
+- [Portal callable exports](callable_exports.md)
 - [FF runner/node selection and synchronous status-code example](https://github.com/OtakuNathan/flux_foundry/blob/main/docs/synchronous_hot_path.md)
 - [lease component handoff and guarantee boundary](https://github.com/OtakuNathan/lease/blob/main/docs/component_handoff.md)
 

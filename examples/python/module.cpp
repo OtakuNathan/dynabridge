@@ -1,35 +1,35 @@
 #include "examples/common/native.h"
 
-#define DYNABRIDGE_EXPORT_DEF "examples/common/export.def"
-#include "dynabridge/bridge.h"
-#include "dynabridge/backends/python.h"
+#define PORTAL_EXPORT_DEF "examples/common/export.def"
+#include "portal/bridge.h"
+#include "portal/backends/python.h"
 
 #include <exception>
 
 namespace {
     PyModuleDef module_definition = {
         PyModuleDef_HEAD_INIT,
-        "dynabridge_python_example",
+        "portal_python_example",
         nullptr,
         -1,
         nullptr
     };
 }
 
-PyMODINIT_FUNC PyInit_dynabridge_python_example() {
+PyMODINIT_FUNC PyInit_portal_python_example() {
     PyObject* module_object = PyModule_Create(&module_definition);
     if (module_object == nullptr) {
         return nullptr;
     }
 
     try {
-        static dynabridge::py_backend::export_context_t ctx;
-        dynabridge::py_backend::module_t module(
+        static portal::py_backend::export_context_t ctx;
+        portal::py_backend::module_t module(
             module_object,
-            dynabridge::py_backend::ref_policy::borrowed);
+            portal::py_backend::ref_policy::borrowed);
 
-        dynabridge::export_add(ctx, module, dynabridge::example_native::add);
-        dynabridge::exports::counter::register_all(ctx, module);
+        portal::export_add(ctx, module, portal::example_native::add);
+        portal::exports::counter::register_all(ctx, module);
         return module_object;
     } catch (const std::exception& error) {
         Py_DECREF(module_object);
@@ -37,7 +37,7 @@ PyMODINIT_FUNC PyInit_dynabridge_python_example() {
         return nullptr;
     } catch (...) {
         Py_DECREF(module_object);
-        PyErr_SetString(PyExc_RuntimeError, "dynabridge example initialization failed");
+        PyErr_SetString(PyExc_RuntimeError, "portal example initialization failed");
         return nullptr;
     }
 }

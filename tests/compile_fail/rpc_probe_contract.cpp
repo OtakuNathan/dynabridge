@@ -1,7 +1,7 @@
-#include "../../dynabridge/bridge.h"
-#include "../../dynabridge/backends/rpc.h"
+#include "../../portal/bridge.h"
+#include "../../portal/backends/rpc.h"
 struct payload { int n; };
-namespace dynabridge {
+namespace portal {
 template<> struct rpc_backend::converter<payload> {
 #if defined(PROBE_WRONG_RETURN)
     template<class C> static int probe(C&, const rpc::value&) noexcept { return 1; }
@@ -14,7 +14,7 @@ template<> struct rpc_backend::converter<payload> {
 };
 }
 int main() {
-    dynabridge::rpc_backend::export_context_t ctx;
-    auto binder = dynabridge::create_export_callable_binder<int(payload)>(ctx, [](payload p) noexcept { return p.n; });
-    return int(binder(dynabridge::rpc::value::signed_integer(1)).as_signed()) - 1;
+    portal::rpc_backend::export_context_t ctx;
+    auto binder = portal::create_export_callable_binder<int(payload)>(ctx, [](payload p) noexcept { return p.n; });
+    return int(binder(portal::rpc::value::signed_integer(1)).as_signed()) - 1;
 }

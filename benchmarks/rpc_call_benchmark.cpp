@@ -23,28 +23,28 @@
 #include <unistd.h>
 #endif
 
-#if defined(DYNABRIDGE_HAS_RPCLIB)
+#if defined(PORTAL_HAS_RPCLIB)
 #include <rpc/client.h>
 #include <rpc/server.h>
 #endif
 
-#if defined(DYNABRIDGE_HAS_FLUX_FOUNDRY)
+#if defined(PORTAL_HAS_FLUX_FOUNDRY)
 #include "extension/external_async_awaitable.h"
 #include "flow/flow.h"
 #endif
 
-#if defined(DYNABRIDGE_HAS_GLIB)
+#if defined(PORTAL_HAS_GLIB)
 #include <gio/gio.h>
 #include "executor/gsource_executor.h"
 #endif
 
-#define DYNABRIDGE_IMPORT_DEF "tests/rpc_import.def"
-#define DYNABRIDGE_EXPORT_DEF "tests/rpc_export.def"
-#include "dynabridge/bridge.h"
-#undef DYNABRIDGE_EXPORT_DEF
-#undef DYNABRIDGE_IMPORT_DEF
+#define PORTAL_IMPORT_DEF "tests/rpc_import.def"
+#define PORTAL_EXPORT_DEF "tests/rpc_export.def"
+#include "portal/bridge.h"
+#undef PORTAL_EXPORT_DEF
+#undef PORTAL_IMPORT_DEF
 
-#include "dynabridge/backends/rpc.h"
+#include "portal/backends/rpc.h"
 
 namespace {
     int add(int left, unsigned right) {
@@ -155,7 +155,7 @@ namespace {
         }
     }
 
-    void write_frame(int socket, const dynabridge::rpc::bytes& payload) {
+    void write_frame(int socket, const portal::rpc::bytes& payload) {
         if (payload.size() > std::numeric_limits<std::uint32_t>::max()) {
             throw std::runtime_error("TCP frame is too large");
         }
@@ -182,7 +182,7 @@ namespace {
 
     class tcp_server {
     public:
-        explicit tcp_server(dynabridge::rpc::router& router)
+        explicit tcp_server(portal::rpc::router& router)
             : router_(&router) {
             listen_ = ::socket(AF_INET, SOCK_STREAM, 0);
             if (listen_ < 0) {
@@ -233,7 +233,7 @@ namespace {
                         if (!read_all(client, &network_size, sizeof(network_size))) {
                             break;
                         }
-                        dynabridge::rpc::bytes request(ntohl(network_size));
+                        portal::rpc::bytes request(ntohl(network_size));
                         if (!read_all(client, request.data(), request.size())) {
                             break;
                         }
@@ -246,7 +246,7 @@ namespace {
             }
         }
 
-        dynabridge::rpc::router* router_;
+        portal::rpc::router* router_;
         int listen_ = -1;
         std::uint16_t port_ = 0;
         std::thread worker_;
@@ -278,13 +278,13 @@ namespace {
             ::close(socket_);
         }
 
-        dynabridge::rpc::bytes round_trip(const dynabridge::rpc::bytes& request) {
+        portal::rpc::bytes round_trip(const portal::rpc::bytes& request) {
             write_frame(socket_, request);
             std::uint32_t network_size = 0;
             if (!read_all(socket_, &network_size, sizeof(network_size))) {
                 throw std::runtime_error("TCP server closed the connection");
             }
-            dynabridge::rpc::bytes response(ntohl(network_size));
+            portal::rpc::bytes response(ntohl(network_size));
             if (!read_all(socket_, response.data(), response.size())) {
                 throw std::runtime_error("truncated TCP response");
             }
@@ -295,19 +295,19 @@ namespace {
         int socket_ = -1;
     };
 
-#if defined(DYNABRIDGE_HAS_FLUX_FOUNDRY)
+#if defined(PORTAL_HAS_FLUX_FOUNDRY)
     namespace ff = flux_foundry;
     using flow_error_t = ff::extension::external_async_error_t;
 
     struct web_io_request {
         tcp_transport* transport;
-        dynabridge::rpc::bytes frame;
+        portal::rpc::bytes frame;
     };
 
     struct web_io_state {
         tcp_transport* transport;
-        dynabridge::rpc::bytes request;
-        dynabridge::rpc::bytes response;
+        portal::rpc::bytes request;
+        portal::rpc::bytes response;
         std::exception_ptr error;
     };
 
@@ -388,10 +388,10 @@ namespace {
                     ff::value_tag,
                     web_io_request{
                         ctx.transport_,
-                        dynabridge::rpc::detail::encode_request_values(
+                        portal::rpc::detail::encode_request_values(
                             ctx.method_,
-                            dynabridge::to_cast<int>(ctx, std::move(input).value()),
-                            dynabridge::to_cast<unsigned>(ctx, 7u))});
+                            portal::to_cast<int>(ctx, std::move(input).value()),
+                            portal::to_cast<unsigned>(ctx, 7u))});
             })
             | ff::await_external_async<web_io>()
             | ff::then([&ctx](web_io_result_t&& input) -> int_flow_result_t {
@@ -401,9 +401,9 @@ namespace {
                 }
                 return int_flow_result_t(
                     ff::value_tag,
-                    dynabridge::from_cast<int>(
+                    portal::from_cast<int>(
                         ctx,
-                        dynabridge::rpc::detail::decode_response(operation->response)));
+                        portal::rpc::detail::decode_response(operation->response)));
             })
             | ff::end();
     }
@@ -418,9 +418,9 @@ namespace {
                     ff::value_tag,
                     web_io_request{
                         ctx.transport_,
-                        dynabridge::rpc::detail::encode_request_values(
+                        portal::rpc::detail::encode_request_values(
                             ctx.method_,
-                            dynabridge::to_cast<std::string>(ctx, *value))});
+                            portal::to_cast<std::string>(ctx, *value))});
             })
             | ff::await_external_async<web_io>()
             | ff::then([&ctx](web_io_result_t&& input) -> string_flow_result_t {
@@ -430,9 +430,9 @@ namespace {
                 }
                 return string_flow_result_t(
                     ff::value_tag,
-                    dynabridge::from_cast<std::string>(
+                    portal::from_cast<std::string>(
                         ctx,
-                        dynabridge::rpc::detail::decode_response(operation->response)));
+                        portal::rpc::detail::decode_response(operation->response)));
             })
             | ff::end();
     }
@@ -477,7 +477,7 @@ namespace {
         return std::move(state.value);
     }
 
-#if defined(DYNABRIDGE_HAS_GLIB)
+#if defined(PORTAL_HAS_GLIB)
     class glib_runtime {
     public:
         glib_runtime()
@@ -541,20 +541,20 @@ namespace {
 
     struct glib_web_io_request {
         glib_tcp_transport* transport;
-        dynabridge::rpc::bytes frame;
+        portal::rpc::bytes frame;
     };
 
     struct glib_web_io_state {
         glib_web_io_state(
             glib_tcp_transport* transport_value,
-            dynabridge::rpc::bytes request_value)
+            portal::rpc::bytes request_value)
             : transport(transport_value),
               request(std::move(request_value)) {
         }
 
         glib_tcp_transport* transport;
-        dynabridge::rpc::bytes request;
-        dynabridge::rpc::bytes response;
+        portal::rpc::bytes request;
+        portal::rpc::bytes response;
         std::exception_ptr error;
         web_io_callback_t callback;
         web_io_callback_param_t user;
@@ -876,10 +876,10 @@ namespace {
             true, std::memory_order_release);
     }
 
-    dynabridge::rpc::bytes run_manual_glib_io(
+    portal::rpc::bytes run_manual_glib_io(
         glib_runtime& runtime,
         glib_tcp_transport& transport,
-        dynabridge::rpc::bytes request)
+        portal::rpc::bytes request)
     {
         if (request.size() > std::numeric_limits<std::uint32_t>::max()) {
             throw std::runtime_error("manual GLib RPC request is too large");
@@ -908,12 +908,12 @@ namespace {
         auto response = run_manual_glib_io(
             runtime,
             *ctx.transport_,
-            dynabridge::rpc::detail::encode_request_values(
+            portal::rpc::detail::encode_request_values(
                 ctx.method_,
-                dynabridge::to_cast<int>(ctx, value),
-                dynabridge::to_cast<unsigned>(ctx, 7u)));
-        return dynabridge::from_cast<int>(
-            ctx, dynabridge::rpc::detail::decode_response(response));
+                portal::to_cast<int>(ctx, value),
+                portal::to_cast<unsigned>(ctx, 7u)));
+        return portal::from_cast<int>(
+            ctx, portal::rpc::detail::decode_response(response));
     }
 
     template <typename Context>
@@ -925,10 +925,10 @@ namespace {
         auto response = run_manual_glib_io(
             runtime,
             *ctx.transport_,
-            dynabridge::rpc::detail::encode_request_values(
-                ctx.method_, dynabridge::to_cast<std::string>(ctx, value)));
-        return dynabridge::from_cast<std::string>(
-            ctx, dynabridge::rpc::detail::decode_response(response));
+            portal::rpc::detail::encode_request_values(
+                ctx.method_, portal::to_cast<std::string>(ctx, value)));
+        return portal::from_cast<std::string>(
+            ctx, portal::rpc::detail::decode_response(response));
     }
 
     template <typename Context>
@@ -940,10 +940,10 @@ namespace {
                     ff::value_tag,
                     glib_web_io_request{
                         ctx.transport_,
-                        dynabridge::rpc::detail::encode_request_values(
+                        portal::rpc::detail::encode_request_values(
                             ctx.method_,
-                            dynabridge::to_cast<int>(ctx, std::move(input).value()),
-                            dynabridge::to_cast<unsigned>(ctx, 7u))});
+                            portal::to_cast<int>(ctx, std::move(input).value()),
+                            portal::to_cast<unsigned>(ctx, 7u))});
             })
             | ff::await_external_async<glib_web_io>()
             | ff::then([&ctx](glib_web_io_result_t&& input) -> int_flow_result_t {
@@ -953,9 +953,9 @@ namespace {
                 }
                 return int_flow_result_t(
                     ff::value_tag,
-                    dynabridge::from_cast<int>(
+                    portal::from_cast<int>(
                         ctx,
-                        dynabridge::rpc::detail::decode_response(operation->response)));
+                        portal::rpc::detail::decode_response(operation->response)));
             })
             | ff::end();
     }
@@ -970,9 +970,9 @@ namespace {
                     ff::value_tag,
                     glib_web_io_request{
                         ctx.transport_,
-                        dynabridge::rpc::detail::encode_request_values(
+                        portal::rpc::detail::encode_request_values(
                             ctx.method_,
-                            dynabridge::to_cast<std::string>(ctx, *value))});
+                            portal::to_cast<std::string>(ctx, *value))});
             })
             | ff::await_external_async<glib_web_io>()
             | ff::then([&ctx](glib_web_io_result_t&& input) -> string_flow_result_t {
@@ -982,16 +982,16 @@ namespace {
                 }
                 return string_flow_result_t(
                     ff::value_tag,
-                    dynabridge::from_cast<std::string>(
+                    portal::from_cast<std::string>(
                         ctx,
-                        dynabridge::rpc::detail::decode_response(operation->response)));
+                        portal::rpc::detail::decode_response(operation->response)));
             })
             | ff::end();
     }
 #endif
 #endif
 
-#if defined(DYNABRIDGE_HAS_RPCLIB)
+#if defined(PORTAL_HAS_RPCLIB)
     std::uint16_t unused_loopback_port() {
         const int socket = ::socket(AF_INET, SOCK_STREAM, 0);
         sockaddr_in address{};
@@ -1019,86 +1019,86 @@ int main(int argc, char** argv) {
     const std::size_t tcp_iterations = local_iterations / 10 == 0
         ? 1 : local_iterations / 10;
 
-    dynabridge::rpc_backend::export_context_t export_ctx;
-    dynabridge::rpc::router module;
-    dynabridge::export_rpc_add(export_ctx, module, &add);
-    dynabridge::export_rpc_echo(export_ctx, module, &echo);
-    dynabridge::rpc::loopback_transport loopback(module);
-    using loopback_context_t = dynabridge::rpc_backend::import_context_t<
-        dynabridge::rpc::loopback_transport>;
-    auto loopback_ctx = dynabridge::import_from<
-        dynabridge::import_symbols::rpc_add, loopback_context_t>(loopback);
+    portal::rpc_backend::export_context_t export_ctx;
+    portal::rpc::router module;
+    portal::export_rpc_add(export_ctx, module, &add);
+    portal::export_rpc_echo(export_ctx, module, &echo);
+    portal::rpc::loopback_transport loopback(module);
+    using loopback_context_t = portal::rpc_backend::import_context_t<
+        portal::rpc::loopback_transport>;
+    auto loopback_ctx = portal::import_from<
+        portal::import_symbols::rpc_add, loopback_context_t>(loopback);
 
     volatile int sink = 0;
     volatile std::size_t payload_sink = 0;
     print_result("direct C++", measure(local_iterations,
         [](int value) { return add(value, 7u); }, sink));
-    print_result("dynabridge framed loopback", measure(local_iterations,
-        [&loopback_ctx](int value) { return dynabridge::call_rpc_add(loopback_ctx, value, 7u); }, sink));
+    print_result("portal framed loopback", measure(local_iterations,
+        [&loopback_ctx](int value) { return portal::call_rpc_add(loopback_ctx, value, 7u); }, sink));
 
-    auto loopback_echo_ctx = dynabridge::import_from<
-        dynabridge::import_symbols::rpc_echo, loopback_context_t>(loopback);
+    auto loopback_echo_ctx = portal::import_from<
+        portal::import_symbols::rpc_echo, loopback_context_t>(loopback);
     const std::string payload_16(16, 'x');
     const std::string payload_1k(1024, 'x');
     const std::string payload_64k(64 * 1024, 'x');
-    if (dynabridge::call_rpc_echo(loopback_echo_ctx, payload_16) != payload_16
-            || dynabridge::call_rpc_echo(loopback_echo_ctx, payload_1k) != payload_1k
-            || dynabridge::call_rpc_echo(loopback_echo_ctx, payload_64k) != payload_64k) {
-        throw std::runtime_error("dynabridge loopback payload verification failed");
+    if (portal::call_rpc_echo(loopback_echo_ctx, payload_16) != payload_16
+            || portal::call_rpc_echo(loopback_echo_ctx, payload_1k) != payload_1k
+            || portal::call_rpc_echo(loopback_echo_ctx, payload_64k) != payload_64k) {
+        throw std::runtime_error("portal loopback payload verification failed");
     }
-    print_result("dynabridge loopback 16 B", measure_payload(local_iterations,
+    print_result("portal loopback 16 B", measure_payload(local_iterations,
         payload_16,
         [&loopback_echo_ctx](const std::string& value) {
-            return dynabridge::call_rpc_echo(loopback_echo_ctx, value);
+            return portal::call_rpc_echo(loopback_echo_ctx, value);
         }, payload_sink));
-    print_result("dynabridge loopback 1 KiB", measure_payload(
+    print_result("portal loopback 1 KiB", measure_payload(
         local_iterations / 2 == 0 ? 1 : local_iterations / 2,
         payload_1k,
         [&loopback_echo_ctx](const std::string& value) {
-            return dynabridge::call_rpc_echo(loopback_echo_ctx, value);
+            return portal::call_rpc_echo(loopback_echo_ctx, value);
         }, payload_sink));
-    print_result("dynabridge loopback 64 KiB", measure_payload(
+    print_result("portal loopback 64 KiB", measure_payload(
         local_iterations / 100 == 0 ? 1 : local_iterations / 100,
         payload_64k,
         [&loopback_echo_ctx](const std::string& value) {
-            return dynabridge::call_rpc_echo(loopback_echo_ctx, value);
+            return portal::call_rpc_echo(loopback_echo_ctx, value);
         }, payload_sink));
 
 #if !defined(_WIN32)
     tcp_server server(module);
     {
         tcp_transport transport(server.port());
-        using tcp_context_t = dynabridge::rpc_backend::import_context_t<tcp_transport>;
-        auto tcp_ctx = dynabridge::import_from<
-            dynabridge::import_symbols::rpc_add, tcp_context_t>(transport);
-        auto tcp_echo_ctx = dynabridge::import_from<
-            dynabridge::import_symbols::rpc_echo, tcp_context_t>(transport);
-        if (dynabridge::call_rpc_echo(tcp_echo_ctx, payload_16) != payload_16
-                || dynabridge::call_rpc_echo(tcp_echo_ctx, payload_1k) != payload_1k
-                || dynabridge::call_rpc_echo(tcp_echo_ctx, payload_64k) != payload_64k) {
-            throw std::runtime_error("dynabridge TCP payload verification failed");
+        using tcp_context_t = portal::rpc_backend::import_context_t<tcp_transport>;
+        auto tcp_ctx = portal::import_from<
+            portal::import_symbols::rpc_add, tcp_context_t>(transport);
+        auto tcp_echo_ctx = portal::import_from<
+            portal::import_symbols::rpc_echo, tcp_context_t>(transport);
+        if (portal::call_rpc_echo(tcp_echo_ctx, payload_16) != payload_16
+                || portal::call_rpc_echo(tcp_echo_ctx, payload_1k) != payload_1k
+                || portal::call_rpc_echo(tcp_echo_ctx, payload_64k) != payload_64k) {
+            throw std::runtime_error("portal TCP payload verification failed");
         }
-        print_result("dynabridge TCP loopback", measure(tcp_iterations,
-            [&tcp_ctx](int value) { return dynabridge::call_rpc_add(tcp_ctx, value, 7u); }, sink));
-        print_result("dynabridge TCP 16 B", measure_payload(tcp_iterations,
+        print_result("portal TCP loopback", measure(tcp_iterations,
+            [&tcp_ctx](int value) { return portal::call_rpc_add(tcp_ctx, value, 7u); }, sink));
+        print_result("portal TCP 16 B", measure_payload(tcp_iterations,
             payload_16,
             [&tcp_echo_ctx](const std::string& value) {
-                return dynabridge::call_rpc_echo(tcp_echo_ctx, value);
+                return portal::call_rpc_echo(tcp_echo_ctx, value);
             }, payload_sink));
-        print_result("dynabridge TCP 1 KiB", measure_payload(
+        print_result("portal TCP 1 KiB", measure_payload(
             tcp_iterations / 2 == 0 ? 1 : tcp_iterations / 2,
             payload_1k,
             [&tcp_echo_ctx](const std::string& value) {
-                return dynabridge::call_rpc_echo(tcp_echo_ctx, value);
+                return portal::call_rpc_echo(tcp_echo_ctx, value);
             }, payload_sink));
-        print_result("dynabridge TCP 64 KiB", measure_payload(
+        print_result("portal TCP 64 KiB", measure_payload(
             tcp_iterations / 20 == 0 ? 1 : tcp_iterations / 20,
             payload_64k,
             [&tcp_echo_ctx](const std::string& value) {
-                return dynabridge::call_rpc_echo(tcp_echo_ctx, value);
+                return portal::call_rpc_echo(tcp_echo_ctx, value);
             }, payload_sink));
 
-#if defined(DYNABRIDGE_HAS_FLUX_FOUNDRY)
+#if defined(PORTAL_HAS_FLUX_FOUNDRY)
         auto scalar_flow = make_scalar_rpc_flow(tcp_ctx);
         auto string_flow = make_string_rpc_flow(tcp_echo_ctx);
 
@@ -1110,35 +1110,35 @@ int main(int argc, char** argv) {
         if (run_flow(string_blueprint, string_state, string_input{&payload_16}) != payload_16
                 || run_flow(string_blueprint, string_state, string_input{&payload_1k}) != payload_1k
                 || run_flow(string_blueprint, string_state, string_input{&payload_64k}) != payload_64k) {
-            throw std::runtime_error("dynabridge + Flux Foundry payload verification failed");
+            throw std::runtime_error("portal + Flux Foundry payload verification failed");
         }
-        print_result("dynabridge + FF TCP", measure(tcp_iterations,
+        print_result("portal + FF TCP", measure(tcp_iterations,
             [&scalar_blueprint, &scalar_state](int value) {
                 return run_flow(scalar_blueprint, scalar_state, value);
             }, sink));
-        print_result("dynabridge + FF TCP 16 B", measure_payload(tcp_iterations,
+        print_result("portal + FF TCP 16 B", measure_payload(tcp_iterations,
             payload_16,
             [&string_blueprint, &string_state](const std::string& value) {
                 return run_flow(string_blueprint, string_state, string_input{&value});
             }, payload_sink));
-        print_result("dynabridge + FF TCP 1 KiB", measure_payload(
+        print_result("portal + FF TCP 1 KiB", measure_payload(
             tcp_iterations / 2 == 0 ? 1 : tcp_iterations / 2,
             payload_1k,
             [&string_blueprint, &string_state](const std::string& value) {
                 return run_flow(string_blueprint, string_state, string_input{&value});
             }, payload_sink));
-        print_result("dynabridge + FF TCP 64 KiB", measure_payload(
+        print_result("portal + FF TCP 64 KiB", measure_payload(
             tcp_iterations / 20 == 0 ? 1 : tcp_iterations / 20,
             payload_64k,
             [&string_blueprint, &string_state](const std::string& value) {
                 return run_flow(string_blueprint, string_state, string_input{&value});
             }, payload_sink));
 #else
-        std::cout << "dynabridge + FF TCP           not built (Flux Foundry not found)\n";
+        std::cout << "portal + FF TCP           not built (Flux Foundry not found)\n";
 #endif
     }
 
-#if defined(DYNABRIDGE_HAS_GLIB)
+#if defined(PORTAL_HAS_GLIB)
     {
         glib_runtime runtime;
         bool ingress_dispatched = false;
@@ -1149,11 +1149,11 @@ int main(int argc, char** argv) {
             runtime.iterate();
         }
         glib_tcp_transport transport(runtime.context(), server.port());
-        using glib_context_t = dynabridge::rpc_backend::import_context_t<glib_tcp_transport>;
-        auto glib_ctx = dynabridge::import_from<
-            dynabridge::import_symbols::rpc_add, glib_context_t>(transport);
-        auto glib_echo_ctx = dynabridge::import_from<
-            dynabridge::import_symbols::rpc_echo, glib_context_t>(transport);
+        using glib_context_t = portal::rpc_backend::import_context_t<glib_tcp_transport>;
+        auto glib_ctx = portal::import_from<
+            portal::import_symbols::rpc_add, glib_context_t>(transport);
+        auto glib_echo_ctx = portal::import_from<
+            portal::import_symbols::rpc_echo, glib_context_t>(transport);
         auto scalar_flow = make_glib_scalar_rpc_flow(glib_ctx);
         auto string_flow = make_glib_string_rpc_flow(glib_echo_ctx);
         flow_result_state<int> scalar_state;
@@ -1172,7 +1172,7 @@ int main(int argc, char** argv) {
                     string_input{&payload_1k}) != payload_1k
                 || run_glib_flow(runtime, string_blueprint, string_state,
                     string_input{&payload_64k}) != payload_64k) {
-            throw std::runtime_error("dynabridge + Flux Foundry GLib payload verification failed");
+            throw std::runtime_error("portal + Flux Foundry GLib payload verification failed");
         }
         const auto scalar_times = measure_pair(tcp_iterations,
             [&runtime, &glib_ctx, &sink](std::size_t i) {
@@ -1182,8 +1182,8 @@ int main(int argc, char** argv) {
                 sink = run_glib_flow(
                     runtime, scalar_blueprint, scalar_state, static_cast<int>(i));
             });
-        print_result("dynabridge manual GLib TCP", scalar_times.first);
-        print_result("dynabridge + FF GLib TCP", scalar_times.second);
+        print_result("portal manual GLib TCP", scalar_times.first);
+        print_result("portal + FF GLib TCP", scalar_times.second);
 
         const auto measure_glib_payload = [
             &runtime,
@@ -1209,18 +1209,18 @@ int main(int argc, char** argv) {
             tcp_iterations / 2 == 0 ? 1 : tcp_iterations / 2, payload_1k);
         const auto payload_64k_times = measure_glib_payload(
             tcp_iterations / 20 == 0 ? 1 : tcp_iterations / 20, payload_64k);
-        print_result("dynabridge manual GLib 16 B", payload_16_times.first);
-        print_result("dynabridge + FF GLib 16 B", payload_16_times.second);
-        print_result("dynabridge manual GLib 1 KiB", payload_1k_times.first);
-        print_result("dynabridge + FF GLib 1 KiB", payload_1k_times.second);
-        print_result("dynabridge manual GLib 64 KiB", payload_64k_times.first);
-        print_result("dynabridge + FF GLib 64 KiB", payload_64k_times.second);
+        print_result("portal manual GLib 16 B", payload_16_times.first);
+        print_result("portal + FF GLib 16 B", payload_16_times.second);
+        print_result("portal manual GLib 1 KiB", payload_1k_times.first);
+        print_result("portal + FF GLib 1 KiB", payload_1k_times.second);
+        print_result("portal manual GLib 64 KiB", payload_64k_times.first);
+        print_result("portal + FF GLib 64 KiB", payload_64k_times.second);
     }
 #else
-    std::cout << "dynabridge + FF GLib          not built (GLib/GIO not found)\n";
+    std::cout << "portal + FF GLib          not built (GLib/GIO not found)\n";
 #endif
 
-#if defined(DYNABRIDGE_HAS_RPCLIB)
+#if defined(PORTAL_HAS_RPCLIB)
     const auto rpc_port = unused_loopback_port();
     rpc::server rpc_server(rpc_port);
     rpc_server.bind("rpc_add", &add);
