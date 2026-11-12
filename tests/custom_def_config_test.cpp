@@ -5,19 +5,19 @@
 
 #define PORTAL_IMPORT_DEF "tests/custom_import.def"
 #define PORTAL_EXPORT_DEF "tests/custom_export.def"
-#include "portal/bridge.h"
+#include "portal/portal.h"
 #undef PORTAL_IMPORT_DEF
 #undef PORTAL_EXPORT_DEF
 
 #define PORTAL_IMPORT_DEF "tests/custom_second_import.def"
 #define PORTAL_EXPORT_DEF "tests/custom_second_export.def"
-#include "portal/bridge.h"
+#include "portal/portal.h"
 #undef PORTAL_IMPORT_DEF
 #undef PORTAL_EXPORT_DEF
 
 #define PORTAL_IMPORT_DEF "tests/import.def"
 #define PORTAL_EXPORT_DEF "tests/export.def"
-#include "portal/bridge.h"
+#include "portal/portal.h"
 #undef PORTAL_IMPORT_DEF
 #undef PORTAL_EXPORT_DEF
 

@@ -1,5 +1,5 @@
-#ifndef PORTAL_BRIDGE_ARG_H
-#define PORTAL_BRIDGE_ARG_H
+#ifndef PORTAL_ARGUMENT_H
+#define PORTAL_ARGUMENT_H
 
 #include <type_traits>
 
@@ -110,4 +110,4 @@ namespace portal {
     using import_parameter_t = typename import_parameter<Declared, Context>::type;
 }
 
-#endif // PORTAL_BRIDGE_ARG_H
+#endif // PORTAL_ARGUMENT_H

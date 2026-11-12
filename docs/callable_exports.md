@@ -86,7 +86,7 @@ The runnable template has two source files:
 The registration path is:
 
 1. Make declaration types visible (`<string>` here), select
-   `PORTAL_EXPORT_DEF`, and include `portal/bridge.h`. Default import and
+   `PORTAL_EXPORT_DEF`, and include `portal/portal.h`. Default import and
    export tables are empty; no import table is needed for this module.
 2. Include `portal/backends/python.h`. This selects CPython operations and
    includes its built-in `int`, `unsigned`, and `std::string` converters. Include

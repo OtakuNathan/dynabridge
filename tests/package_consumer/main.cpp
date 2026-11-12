@@ -1,5 +1,5 @@
 #define PORTAL_EXPORT_DEF "export.def"
-#include <portal/bridge.h>
+#include <portal/portal.h>
 
 #include <type_traits>
 

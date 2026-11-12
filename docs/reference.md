@@ -228,13 +228,13 @@ before including the bridge:
 ```cpp
 #define PORTAL_IMPORT_DEF "my_module_import.def"
 #define PORTAL_EXPORT_DEF "my_module_export.def"
-#include "portal/bridge.h"
+#include "portal/portal.h"
 ```
 
 This lets each module or domain own its import/export table while keeping the
 same core headers. The core headers are guarded, but the X-macro generation
 wrappers are intentionally repeatable, so one translation unit can include
-`bridge.h` multiple times with different def macros. Generated C++ names still
+`portal.h` multiple times with different def macros. Generated C++ names still
 share the selected namespace, so use distinct group and class names when
 multiple domains are expanded together.
 

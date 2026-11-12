@@ -1,4 +1,4 @@
-#include "../../portal/bridge.h"
+#include "../../portal/portal.h"
 #include "../../portal/backends/rpc.h"
 struct payload { int n; };
 namespace portal {

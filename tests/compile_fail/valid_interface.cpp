@@ -1,6 +1,6 @@
 #define PORTAL_METHOD_INDEX __LINE__
 #define PORTAL_IMPORT_DEF "../tests/compile_fail/valid_interface.def"
-#include "../../portal/bridge.h"
+#include "../../portal/portal.h"
 
 struct compile_context {
     struct backend_t {

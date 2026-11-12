@@ -16,6 +16,8 @@ RPC backend, and a fake backend used by the core tests.
 
 Portal was previously named Dyna Bridge. The public API now uses
 `<portal/...>` headers, the `portal::` namespace and `PORTAL_*` macros.
+The declaration entry point is `<portal/portal.h>`; parameter helpers live in
+`<portal/argument.h>`.
 CMake consumers use `find_package(portal CONFIG REQUIRED)` and link
 `portal::portal`. Update consumers together; the former names are not aliases.
 
@@ -98,7 +100,7 @@ Select module-local declaration tables before including the bridge:
 ```cpp
 #define PORTAL_IMPORT_DEF "my_module/import.def"
 #define PORTAL_EXPORT_DEF "my_module/export.def"
-#include <portal/bridge.h>
+#include <portal/portal.h>
 ```
 
 An export table can declare a free function and a native class:
@@ -166,7 +168,7 @@ written, but it would not remove the need for one contract to produce several
 consistent projections.
 
 Different modules select different import and export tables. The defaults are
-empty, so including `bridge.h` does not expose repository test declarations.
+empty, so including `portal.h` does not expose repository test declarations.
 
 ## Why C++14
 

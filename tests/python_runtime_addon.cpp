@@ -1,6 +1,6 @@
 #define PORTAL_IMPORT_DEF "tests/import.def"
 #define PORTAL_EXPORT_DEF "tests/export.def"
-#include "portal/bridge.h"
+#include "portal/portal.h"
 #include "portal/backends/python.h"
 
 #include <exception>

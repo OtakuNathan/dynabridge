@@ -119,7 +119,7 @@ namespace portal {
     }
 
 // Native export types are deliberately completed by user code after including
-// bridge.h. Forward declarations keep the generated proxy lazy until use.
+// portal.h. Forward declarations keep the generated proxy lazy until use.
 #define BEGIN_CALLABLE_GROUP(name)
 #define DECL_CALLABLE(...)
 #define DECL_FUNCTION(sig)

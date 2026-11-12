@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <type_traits>
 
-#include "bridge_arg.h"
+#include "argument.h"
 
 namespace portal {
     template <typename Receiver, typename Signature>

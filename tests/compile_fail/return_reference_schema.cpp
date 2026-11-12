@@ -12,5 +12,5 @@ using result_t = int&&;
 #else
 #define PORTAL_IMPORT_DEF "../tests/compile_fail/return_reference_schema.def"
 #endif
-#include "../../portal/bridge.h"
+#include "../../portal/portal.h"
 int main() {}

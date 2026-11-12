@@ -2,7 +2,7 @@
 #include <string>
 
 #define PORTAL_EXPORT_DEF "docs/examples/callable_module/exports.def"
-#include <portal/bridge.h>
+#include <portal/portal.h>
 #include <portal/backends/python.h>
 
 namespace arena {

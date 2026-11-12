@@ -1,7 +1,7 @@
 #include "examples/common/native.h"
 
 #define PORTAL_EXPORT_DEF "examples/common/export.def"
-#include "portal/bridge.h"
+#include "portal/portal.h"
 #include "portal/backends/napi.h"
 
 #include <exception>

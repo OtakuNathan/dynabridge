@@ -21,7 +21,7 @@ namespace portal {
     }
 }
 
-#include "portal/bridge.h"
+#include "portal/portal.h"
 #include "portal/backends/napi.h"
 
 #include <node_api.h>

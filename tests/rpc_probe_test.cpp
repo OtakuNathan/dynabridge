@@ -1,6 +1,6 @@
 // Standalone: g++ -std=c++14 -I. tests/rpc_probe_test.cpp -o /tmp/probe-contract && /tmp/probe-contract
 // Repeat with -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=0 and =1.
-#include "portal/bridge.h"
+#include "portal/portal.h"
 #include "portal/backends/rpc.h"
 #include <cstdio>
 #include <cstdlib>

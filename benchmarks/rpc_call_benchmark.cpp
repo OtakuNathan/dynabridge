@@ -40,7 +40,7 @@
 
 #define PORTAL_IMPORT_DEF "tests/rpc_import.def"
 #define PORTAL_EXPORT_DEF "tests/rpc_export.def"
-#include "portal/bridge.h"
+#include "portal/portal.h"
 #undef PORTAL_EXPORT_DEF
 #undef PORTAL_IMPORT_DEF
 

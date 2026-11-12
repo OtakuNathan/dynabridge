@@ -1,5 +1,5 @@
 #define PORTAL_IMPORT_DEF "examples/flux_foundry/import.def"
-#include "portal/bridge.h"
+#include "portal/portal.h"
 #include "portal/backends/python.h"
 #include "portal/extensions/flux_foundry/python_interpreter_executor.h"
 

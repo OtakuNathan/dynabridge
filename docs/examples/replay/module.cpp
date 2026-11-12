@@ -2,7 +2,7 @@
 #include <exception>
 
 #define PORTAL_EXPORT_DEF "docs/examples/replay/exports.def"
-#include <portal/bridge.h>
+#include <portal/portal.h>
 #include <portal/backends/python.h>
 
 namespace {

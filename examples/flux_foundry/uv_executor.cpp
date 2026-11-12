@@ -1,6 +1,6 @@
 #define PORTAL_IMPORT_DEF "examples/flux_foundry/import.def"
 #define PORTAL_EXPORT_DEF "examples/flux_foundry/import.def"
-#include "portal/bridge.h"
+#include "portal/portal.h"
 #include "portal/backends/rpc.h"
 #include <executor/uv_executor.h>
 
