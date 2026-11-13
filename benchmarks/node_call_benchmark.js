@@ -9,6 +9,7 @@ if (!addonPath) {
 
 const addon = require(addonPath);
 const iterations = Number.parseInt(process.env.PORTAL_BENCH_ITERS || '1000000', 10);
+const largeStringIterations = Math.max(1, Math.floor(iterations / 64));
 
 function jsAdd(a, b) {
   return a + b;
@@ -63,6 +64,29 @@ function runJsLoop2(name, fn, a, b, expected) {
     ns: Number(stop - start),
     checksum,
     expectedChecksum: expected * (iterations + 1000),
+  };
+}
+
+function runJsStringLoop(name, fn, text, count = iterations) {
+  let checksum = 0;
+  let result;
+  for (let i = 0; i < 1000; ++i) {
+    result = fn(text);
+    checksum += result.length;
+  }
+  const start = process.hrtime.bigint();
+  for (let i = 0; i < count; ++i) {
+    result = fn(text);
+    checksum += result.length;
+  }
+  const stop = process.hrtime.bigint();
+  assert.equal(result, text);
+  return {
+    name,
+    ns: Number(stop - start),
+    iterations: count,
+    checksum,
+    expectedChecksum: text.length * (count + 1000),
   };
 }
 
@@ -138,19 +162,20 @@ function runConstructLoop(name, Constructor) {
 
 function printResults(results) {
   console.log(`iterations: ${iterations}`);
+  console.log(`64 KiB string iterations: ${largeStringIterations}`);
   console.log(`node: ${process.version}`);
   console.log(`node-addon-api: ${addon.hasNodeAddonApi ? 'enabled' : 'not found at configure time'}`);
   console.log();
-  console.log(`${'case'.padEnd(40)}${'ns/call'.padStart(14)}${'calls/sec'.padStart(14)}${'checksum'.padStart(14)}`);
+  console.log(`${'case'.padEnd(40)}${'ns/call'.padStart(14)}${'calls/sec'.padStart(14)}${'checksum'.padStart(22)}`);
 
   for (const result of results) {
-    const nsPerCall = result.ns / iterations;
+    const nsPerCall = result.ns / (result.iterations || iterations);
     const callsPerSec = 1_000_000_000 / nsPerCall;
     console.log(
       `${result.name.padEnd(40)}` +
       `${nsPerCall.toFixed(1).padStart(14)}` +
       `${callsPerSec.toFixed(0).padStart(14)}` +
-      `${String(result.checksum).padStart(14)}`
+      `${String(result.checksum).padStart(22)}`
     );
   }
 }
@@ -192,6 +217,16 @@ const exportResults = [
   runConstructLoop('portal export construct', addon.counter),
   runJsLoop1('portal overload export 1', addon.calc, 1, 10),
   runJsLoop2('portal overload export 2', addon.calc, 1, 2, 3),
+  runJsLoop1('portal strict int small', addon.portalIdentityInt, 1, 1),
+  runJsLoop1('portal strict int wide', addon.portalIdentityInt, 2147483647, 2147483647),
+  runJsLoop1('portal strict unsigned wide', addon.portalIdentityUnsigned, 4294967295, 4294967295),
+  runJsLoop1('portal overload string miss', addon.echo, 1, 1),
+  runJsStringLoop('portal UTF-8 empty', addon.portalIdentityString, ''),
+  runJsStringLoop('portal UTF-8 16 B', addon.portalIdentityString, 'x'.repeat(16)),
+  runJsStringLoop('portal UTF-8 Unicode + NUL', addon.portalIdentityString, 'héllo\0中😀'),
+  runJsStringLoop('portal UTF-8 1 KiB', addon.portalIdentityString, 'x'.repeat(1024)),
+  runJsStringLoop(
+    'portal UTF-8 64 KiB', addon.portalIdentityString, 'x'.repeat(65536), largeStringIterations),
 ];
 
 if (addon.hasNodeAddonApi) {

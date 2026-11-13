@@ -1,0 +1,23 @@
+{
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "cpu_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "compiler": "c++ (Debian 14.2.0-19) 14.2.0",
+  "python": "3.12.14",
+  "node": "v24.22.1",
+  "ff_revision": "a93d246981a49648949c489a1918f5ccb61ed15d",
+  "portal_baseline": "7a6f53bbc30d3b4159e36de138486bffe90f3e62",
+  "python_include": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12",
+  "node_headers": "v24.22.1",
+  "node_headers_archive_sha256": "322e0a27db9088093ab8347bdc8c7e0aaa21dc9ed548390bf06b394494c09267",
+  "cpu_model": "AMD EPYC 7763 64-Core Processor"
+}

@@ -1,0 +1,76 @@
+RPC focused validation against candidate source, November 13, 2026. No performance timings run.
+Previously completed with exit 0: g++ -std=c++14 -O2 -pthread -I. tests/rpc_storage_test.cpp; g++ -std=c++14 -O2 -I. tests/rpc_checked_test.cpp; both run successfully.
+Previously completed with exit 0: storage and checked tests compiled and run with -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=1.
+
+strict0 storage build
+g++ -std=c++14 -O2 -pthread -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=0 -I. tests/rpc_storage_test.cpp -o /tmp/portal-rpc-storage-noexcept0-test
+Exit status: 0
+
+strict0 storage run
+/tmp/portal-rpc-storage-noexcept0-test
+RPC storage, legacy, nested and concurrent tests passed
+Exit status: 0
+
+strict0 checked build
+g++ -std=c++14 -O2 -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=0 -I. tests/rpc_checked_test.cpp -o /tmp/portal-rpc-checked-noexcept0-test
+Exit status: 0
+
+strict0 checked run
+/tmp/portal-rpc-checked-noexcept0-test
+Exit status: 0
+
+ASAN UBSAN storage build
+g++ -std=c++14 -O1 -g -pthread -fno-omit-frame-pointer -fsanitize=address,undefined -I. tests/rpc_storage_test.cpp -o /tmp/portal-rpc-storage-asan-test
+Exit status: 0
+
+ASAN UBSAN storage run
+/tmp/portal-rpc-storage-asan-test
+Environment: {'ASAN_OPTIONS': 'detect_leaks=1:halt_on_error=1', 'UBSAN_OPTIONS': 'halt_on_error=1'}
+==27==LeakSanitizer has encountered a fatal error.
+==27==HINT: For debugging, try setting environment variable LSAN_OPTIONS=verbosity=1:log_threads=1
+==27==HINT: LeakSanitizer does not work under ptrace (strace, gdb, etc)
+Exit status: 1
+
+ASAN UBSAN storage run, leak detector disabled due to ptrace environment
+/tmp/portal-rpc-storage-asan-test
+Environment: {'ASAN_OPTIONS': 'detect_leaks=0:halt_on_error=1', 'UBSAN_OPTIONS': 'halt_on_error=1'}
+RPC storage, legacy, nested and concurrent tests passed
+Exit status: 0
+
+TSAN storage build
+g++ -std=c++14 -O1 -g -pthread -fno-omit-frame-pointer -fsanitize=thread -I. tests/rpc_storage_test.cpp -o /tmp/portal-rpc-storage-tsan-test
+Exit status: 0
+
+TSAN storage run
+/tmp/portal-rpc-storage-tsan-test
+Environment: {'TSAN_OPTIONS': 'halt_on_error=1'}
+RPC storage, legacy, nested and concurrent tests passed
+Exit status: 0
+
+Baseline allocation-only probe
+/tmp/portal-rpc-probe-baseline --allocations-only
+case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum
+scalar_0,0,0.000,2.00,33.00,0,0,0
+scalar_1,0,0.000,3.00,114.00,0,4950,261120
+scalar_2,0,0.000,3.00,195.00,0,10000,524288
+scalar_4,0,0.000,3.00,357.00,0,20400,1056768
+scalar_5,0,0.000,3.00,438.00,0,25750,1326080
+scalar_8,0,0.000,3.00,681.00,0,42400,2146304
+string_16,0,0.000,5.00,172.00,0,23500,481280
+string_1024,0,0.000,5.00,4204.00,0,124300,2545664
+string_65536,0,0.000,5.00,262252.00,0,6575500,134666240
+Exit status: 0
+
+Candidate allocation-only probe
+/tmp/portal-rpc-probe-candidate --allocations-only
+case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum
+scalar_0,0,0.000,2.00,33.00,0,0,0
+scalar_1,0,0.000,2.00,42.00,0,4950,261120
+scalar_2,0,0.000,2.00,51.00,0,10000,524288
+scalar_4,0,0.000,2.00,69.00,0,20400,1056768
+scalar_5,0,0.000,3.00,438.00,0,25750,1326080
+scalar_8,0,0.000,3.00,681.00,0,42400,2146304
+string_16,0,0.000,4.00,100.00,0,23500,481280
+string_1024,0,0.000,4.00,4132.00,0,124300,2545664
+string_65536,0,0.000,4.00,262180.00,0,6575500,134666240
+Exit status: 0

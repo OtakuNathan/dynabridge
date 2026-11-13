@@ -1,0 +1,492 @@
+{
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "compiler": "c++ (Debian 14.2.0-19) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "flags": [
+    "-std=c++14",
+    "-O3",
+    "-DNDEBUG",
+    "-pthread",
+    "-Wall",
+    "-Wextra"
+  ],
+  "roots": {
+    "before": "/tmp/portal-opt-pass/baseline",
+    "after": "/workspace/scratch/650ce06b9036/portal"
+  },
+  "ff_include": null,
+  "node_include": "/tmp/portal-opt-pass/deps/node-v24.22.1/include/node",
+  "build_commands": [
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/tmp/portal-opt-pass/baseline",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/rpc_probe.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-before"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12",
+        "-I/tmp/portal-opt-pass/baseline",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/python_call_benchmark.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/acceptance/binaries/python-before",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/libpython3.12.so",
+        "-Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib",
+        "-lpthread",
+        "-ldl",
+        "-lutil",
+        "-lm"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-fPIC",
+        "-shared",
+        "-I/tmp/portal-opt-pass/deps/node-v24.22.1/include/node",
+        "-I/tmp/portal-opt-pass/baseline",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark_addon.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/acceptance/binaries/node.node-before"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/rpc_probe.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-after"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/python_call_benchmark.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/acceptance/binaries/python-after",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/libpython3.12.so",
+        "-Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib",
+        "-lpthread",
+        "-ldl",
+        "-lutil",
+        "-lm"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-fPIC",
+        "-shared",
+        "-I/tmp/portal-opt-pass/deps/node-v24.22.1/include/node",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark_addon.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/acceptance/binaries/node.node-after"
+      ],
+      "returncode": 0
+    }
+  ],
+  "binary_sha256": {
+    "rpc-before": "a607cfe01aac4801598fad06538eda37321db5e61b5267a4224eea287478c34a",
+    "python-before": "d2293b92b71c7e1f03dadda651185565c4ad539e5d50c8c13774a3a4f293f5b6",
+    "node.node-before": "222a7e79e6e156f0fe2b4f5babdcf30a1bbfe66d940cc97bf0c164935d180407",
+    "rpc-after": "3470b1fa1e4145cd152e4d9703a4287af43d1910d109df860f4b78f82ec5fae0",
+    "python-after": "d8fab0bb667fb0da712a1b98bb5ed555c418f781330cb73995b47aa56a8fc22c",
+    "node.node-after": "222a7e79e6e156f0fe2b4f5babdcf30a1bbfe66d940cc97bf0c164935d180407"
+  },
+  "source_sha256": {
+    "before": {
+      "portal/argument.h": "4ca9fbe288a5c62045e4d1e66d6a599aeac9dee628483f9ee644a3e44306188b",
+      "portal/async.h": "17bc4294805e086d1da172a8fd6e4f56ca9705978bbb2a2d83ff080243064f6a",
+      "portal/async_generate.h": "10f2f30fe20a1f45d034ca433a09ed5973f5fdc056a71d0ca27328cb25b3af6d",
+      "portal/async_import.h": "f0dee4d84e6417d83ee750cb51a6d4df1b4d58283e3c62e6767a8e4603e89655",
+      "portal/backend_base.h": "c016f0ba9873e1084ca2fd47ff57b5e681344948378dbe9e4d8abb10b72a20eb",
+      "portal/backends/napi.h": "ec8fcd5f4be8abfa5e506ad3f494d48483ebf83d5b8d32e0efda5761d5fc1b14",
+      "portal/backends/napi_converters.h": "694d4ed071db610945b9ddb04e702480c5600f74cef0009859dbc0877464ad13",
+      "portal/backends/python.h": "ea4f92c0cf877214bb06a6ec1c9d4f320a3df4c8bef477947941578e61de2d83",
+      "portal/backends/python_api.h": "0a7eff31d762d4efc8bd050d0a15e3bd38d160f47a1b66679f94894efe0d1db5",
+      "portal/backends/python_converters.h": "5f0790fdd9bcc33e2f5d0794654c14d02f34487e710ede1d7ffdf6cff9dda701",
+      "portal/backends/rpc.h": "dc4ced1b15bdb43bba0a10fa371d97cf8e3beaa30d7363a40ac4f50b84adbe12",
+      "portal/callable.h": "57b2d42d4ba14295ccab3df2e32696ddf57247f7af896ec182db4f9914ca2210",
+      "portal/config.h": "e3dfe7c339ceca7ce434381efa97b9548ca954245e0662884d7f7a721de43cd0",
+      "portal/error_policy.h": "0df8ac3caba4d4dba5801ebe9710d4dacbd07864acb34df33e754b8e88e40504",
+      "portal/export.h": "d0c009f39b0f1db6fdfc1cc88942de02b787586e4491eb2215ac3e916f6aa234",
+      "portal/export_callable.h": "fca65566edc030b088c3af3ad64d5b1495193d03625bb49b011d32276623226e",
+      "portal/export_core.h": "6b16ff334daf541ffbae29c531df03849e5c64b5d73cda00ee6e6a30ee642229",
+      "portal/export_generate.h": "ed2c6af14a051ffc750d1bc968fd66eccf07a83e8e33e3e33ad5665d41aa36bb",
+      "portal/extensions/flux_foundry/async.h": "8bd9699ce2fe545b79bf5f8a9738fa3ae701c4676381a3e6e0ea745fdec46c3d",
+      "portal/extensions/flux_foundry/python_interpreter_executor.h": "65da945b841e08fcb2ec2a2b37a7ca513e339e9af38a53af8099430c6930bd3b",
+      "portal/import.h": "332ef748ad1f51030c31792b156a9e0eee46889421aad4234d0773ee2b666450",
+      "portal/import_callable.h": "e9e2cee7d8e4353febfd928092950ed2721e43d92b2cfa6e23ac2cca8fe68724",
+      "portal/import_core.h": "5d60419403498f205318b8885a2d0671a6f6f0329ce1a804f5c529b41747a372",
+      "portal/import_generate.h": "4d4dba1966d1e82b29f8a7ea2ec549bb6d07b08377ec64a347e084b5779147b9",
+      "portal/inplace.h": "68ecb34f0ffe3981e8dfdda81bb12dab16fb4687e76a764f936aa874076bf178",
+      "portal/interface.h": "770dde7c0de947e6a1d4b52a831db87deccf0e9a9d771743277a8ea0e1361016",
+      "portal/optional.h": "fca2cc9abb21eb37063e21bf3461dbfa1e60cf64b97d6bb2666e360ada6e5536",
+      "portal/portal.h": "14b4fe94439446d02eaad39b7db5382bef03a901b9b7579d1cdfa392890ecfff",
+      "portal/traits.h": "11eed05b2234f0c0e6690d15fff77707c89b724aaae9c33030c3d24601243365",
+      "portal/type_list.h": "e7edd9e7c6132402a53261dbf81cd7b2d0f1bf0e29fdfacb95221f69e4b4c655",
+      "tests/async_import.def": "23fa230a0481e1d965dfa1d274b98a007adf84aceb0ed7a63ba3003e2acae6d2",
+      "tests/compile_fail/duplicate_interface.def": "4b7b86b921550d269e5b22cf91e1230f2601d2565033fc9b425a8f6233f275b5",
+      "tests/compile_fail/duplicate_method.def": "fcc847a8732bb4343c14b6b310c60c69ef4cc60ec3d297ae62aaaeccc53f5561",
+      "tests/compile_fail/return_reference_schema.def": "a584bcb1caaa4ed1201be087112b8b7bc5cf3c924c90ff9dbf418d245d4faaf6",
+      "tests/compile_fail/valid_interface.def": "b48a802357232907d3f4f989ea1470aa8632b870dbdc1dc0a5a8fe24566190bb",
+      "tests/custom_export.def": "0f1f0e35b83ee1953f683288a1e57235766cb43587e0d8ac39089bbc40434ca0",
+      "tests/custom_import.def": "d4285a9fb7d9cdfada3b4ef3a1d625b86ad01c22ce0cb16a16d3167d9ccbc7a5",
+      "tests/custom_second_export.def": "7f010310c0c99e8d3eb0abb5f5eee6fb7334340a31429a18f9c48b1c84b3fb9e",
+      "tests/custom_second_import.def": "e175f618bc5078dd6d03a29a226882175d5d3c1686dbcb8264af00838db3226d",
+      "tests/export.def": "a867acfd8c0dcf436d864d760c5bcfd4c7b96caa3b35b44ded86b1f3fefeeacb",
+      "tests/import.def": "79134a4c5d4146d141b0ee904793e2d1e959447e0fa6acf237b91cb66348ebc0",
+      "tests/package_consumer/export.def": "5dbcf0a1e57c628c483720b1d9e99d169728237e41ab2a733a1a78609c93f0a3",
+      "tests/rpc_export.def": "bc566756faaeeae7a477d9d2bdfa1d184d828fa1c50405f2ce44f38ef14fb109",
+      "tests/rpc_import.def": "e4b517c5536b718bdfcb5805ca858ffaa788326dbd00cfeb340611c178111458"
+    },
+    "after": {
+      "portal/argument.h": "4ca9fbe288a5c62045e4d1e66d6a599aeac9dee628483f9ee644a3e44306188b",
+      "portal/async.h": "128eec2e3e1708d03892ebd3c52dbba8f9e7490e17c420ae4a33509808da4efc",
+      "portal/async_generate.h": "10f2f30fe20a1f45d034ca433a09ed5973f5fdc056a71d0ca27328cb25b3af6d",
+      "portal/async_import.h": "f0dee4d84e6417d83ee750cb51a6d4df1b4d58283e3c62e6767a8e4603e89655",
+      "portal/backend_base.h": "c016f0ba9873e1084ca2fd47ff57b5e681344948378dbe9e4d8abb10b72a20eb",
+      "portal/backends/napi.h": "ec8fcd5f4be8abfa5e506ad3f494d48483ebf83d5b8d32e0efda5761d5fc1b14",
+      "portal/backends/napi_converters.h": "694d4ed071db610945b9ddb04e702480c5600f74cef0009859dbc0877464ad13",
+      "portal/backends/python.h": "791d3b3dd71a613754d83e9b11c6dc56ef54e09867e525440facc967aad237d9",
+      "portal/backends/python_api.h": "0a7eff31d762d4efc8bd050d0a15e3bd38d160f47a1b66679f94894efe0d1db5",
+      "portal/backends/python_converters.h": "5f0790fdd9bcc33e2f5d0794654c14d02f34487e710ede1d7ffdf6cff9dda701",
+      "portal/backends/rpc.h": "1acbd94803d71040f23d9fdd515f65100120241da41737ffb7e67919881ce93c",
+      "portal/callable.h": "57b2d42d4ba14295ccab3df2e32696ddf57247f7af896ec182db4f9914ca2210",
+      "portal/config.h": "e3dfe7c339ceca7ce434381efa97b9548ca954245e0662884d7f7a721de43cd0",
+      "portal/error_policy.h": "0df8ac3caba4d4dba5801ebe9710d4dacbd07864acb34df33e754b8e88e40504",
+      "portal/export.h": "d0c009f39b0f1db6fdfc1cc88942de02b787586e4491eb2215ac3e916f6aa234",
+      "portal/export_callable.h": "25c3056b41477e5c34055e3543aaabb75a671b87184e9a57602231dca88a6a7f",
+      "portal/export_core.h": "6b16ff334daf541ffbae29c531df03849e5c64b5d73cda00ee6e6a30ee642229",
+      "portal/export_generate.h": "ed2c6af14a051ffc750d1bc968fd66eccf07a83e8e33e3e33ad5665d41aa36bb",
+      "portal/extensions/flux_foundry/async.h": "8bd9699ce2fe545b79bf5f8a9738fa3ae701c4676381a3e6e0ea745fdec46c3d",
+      "portal/extensions/flux_foundry/python_interpreter_executor.h": "65da945b841e08fcb2ec2a2b37a7ca513e339e9af38a53af8099430c6930bd3b",
+      "portal/import.h": "332ef748ad1f51030c31792b156a9e0eee46889421aad4234d0773ee2b666450",
+      "portal/import_callable.h": "e9e2cee7d8e4353febfd928092950ed2721e43d92b2cfa6e23ac2cca8fe68724",
+      "portal/import_core.h": "5d60419403498f205318b8885a2d0671a6f6f0329ce1a804f5c529b41747a372",
+      "portal/import_generate.h": "4d4dba1966d1e82b29f8a7ea2ec549bb6d07b08377ec64a347e084b5779147b9",
+      "portal/inplace.h": "68ecb34f0ffe3981e8dfdda81bb12dab16fb4687e76a764f936aa874076bf178",
+      "portal/interface.h": "770dde7c0de947e6a1d4b52a831db87deccf0e9a9d771743277a8ea0e1361016",
+      "portal/optional.h": "fca2cc9abb21eb37063e21bf3461dbfa1e60cf64b97d6bb2666e360ada6e5536",
+      "portal/portal.h": "14b4fe94439446d02eaad39b7db5382bef03a901b9b7579d1cdfa392890ecfff",
+      "portal/traits.h": "11eed05b2234f0c0e6690d15fff77707c89b724aaae9c33030c3d24601243365",
+      "portal/type_list.h": "e7edd9e7c6132402a53261dbf81cd7b2d0f1bf0e29fdfacb95221f69e4b4c655",
+      "tests/async_import.def": "23fa230a0481e1d965dfa1d274b98a007adf84aceb0ed7a63ba3003e2acae6d2",
+      "tests/compile_fail/duplicate_interface.def": "4b7b86b921550d269e5b22cf91e1230f2601d2565033fc9b425a8f6233f275b5",
+      "tests/compile_fail/duplicate_method.def": "fcc847a8732bb4343c14b6b310c60c69ef4cc60ec3d297ae62aaaeccc53f5561",
+      "tests/compile_fail/return_reference_schema.def": "a584bcb1caaa4ed1201be087112b8b7bc5cf3c924c90ff9dbf418d245d4faaf6",
+      "tests/compile_fail/valid_interface.def": "b48a802357232907d3f4f989ea1470aa8632b870dbdc1dc0a5a8fe24566190bb",
+      "tests/custom_export.def": "0f1f0e35b83ee1953f683288a1e57235766cb43587e0d8ac39089bbc40434ca0",
+      "tests/custom_import.def": "d4285a9fb7d9cdfada3b4ef3a1d625b86ad01c22ce0cb16a16d3167d9ccbc7a5",
+      "tests/custom_second_export.def": "7f010310c0c99e8d3eb0abb5f5eee6fb7334340a31429a18f9c48b1c84b3fb9e",
+      "tests/custom_second_import.def": "e175f618bc5078dd6d03a29a226882175d5d3c1686dbcb8264af00838db3226d",
+      "tests/export.def": "a867acfd8c0dcf436d864d760c5bcfd4c7b96caa3b35b44ded86b1f3fefeeacb",
+      "tests/import.def": "79134a4c5d4146d141b0ee904793e2d1e959447e0fa6acf237b91cb66348ebc0",
+      "tests/package_consumer/export.def": "5dbcf0a1e57c628c483720b1d9e99d169728237e41ab2a733a1a78609c93f0a3",
+      "tests/rpc_export.def": "bc566756faaeeae7a477d9d2bdfa1d184d828fa1c50405f2ce44f38ef14fb109",
+      "tests/rpc_import.def": "e4b517c5536b718bdfcb5805ca858ffaa788326dbd00cfeb340611c178111458"
+    },
+    "harness": {
+      "benchmarks/async_invocation.cpp": "a2f83e8d7e7cdb8023b0c826fafdc61cf2deb90aee5fa9d1f9611bf62e78cf88",
+      "benchmarks/flow_composition_benchmark.cpp": "122977e63684acfe210f26199a19883a629f08ead45f516b8b9715a063cc116c",
+      "benchmarks/node_call_benchmark.js": "d0c469f9d6722660e022897fc95953b1b96ecce0c881bb52affbbe846066a4f5",
+      "benchmarks/node_call_benchmark_addon.cpp": "4c2e46fffa3f10e9b2231a12cc7ef4ecb2ac7aded17696a19f02156b95d7e816",
+      "benchmarks/node_constructor_benchmark.js": "947592ec3da28e0a3a709ef0e5a5b662899cc7196904509009c8fc966d04bca1",
+      "benchmarks/optimization_pass/core_probe.cpp": "7d43b1279afe000846990f1d9bfeffb9cffa7bc0cc71442bd3b8ca3c611f3c42",
+      "benchmarks/optimization_pass/node_focus.js": "f1ccb61d7b2392bf0c4436376429ec06a75f12dd9b09c8a75b9986de6725d11c",
+      "benchmarks/optimization_pass/rpc_probe.cpp": "042f95564673ed6ae145bf4b651a6c5967c91b1993dc759af90385673509a7dd",
+      "benchmarks/optimization_pass/run.py": "018ba37874a4e6ffb0d0f53b98b3222bab68d75a7fa644b5b3969e1b47e045f1",
+      "benchmarks/optimization_pass/run_matrix.py": "d491f0f94fac9fcff4491643b0af0008fedbc2e4c55b68f93f9f1b07fd05ea2f",
+      "benchmarks/optimization_pass/summarize.py": "d04e6c51f16c5f92e88504013308242732565e09c09d8152dd657d871d534371",
+      "benchmarks/python_call_benchmark.cpp": "16ba3fbed9a36d24d3acad09cec975c9dc452290999b8852434d134b53e47df9",
+      "benchmarks/rpc_call_benchmark.cpp": "d36f72f17d9dbf80d240e671851dedb4392af5188caa6c62e2fda15a6888ce36"
+    }
+  },
+  "runner_sha256": "018ba37874a4e6ffb0d0f53b98b3222bab68d75a7fa644b5b3969e1b47e045f1",
+  "cpu": 0,
+  "available_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "pairs": 7,
+  "iterations": 1000000,
+  "runtime_iterations": 1000000,
+  "node_iterations": 100000,
+  "tcp_iterations": 20000,
+  "run_commands": [
+    {
+      "family": "rpc",
+      "pair": 1,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585117.4449904,
+      "stop_epoch": 1794585122.2116103,
+      "returncode": 0,
+      "stdout": "logs/rpc-01-before.stdout",
+      "stderr": "logs/rpc-01-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 1,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585122.2139003,
+      "stop_epoch": 1794585126.0109792,
+      "returncode": 0,
+      "stdout": "logs/rpc-01-after.stdout",
+      "stderr": "logs/rpc-01-after.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 2,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585126.0125418,
+      "stop_epoch": 1794585129.7973776,
+      "returncode": 0,
+      "stdout": "logs/rpc-02-after.stdout",
+      "stderr": "logs/rpc-02-after.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 2,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585129.7986493,
+      "stop_epoch": 1794585135.3522906,
+      "returncode": 0,
+      "stdout": "logs/rpc-02-before.stdout",
+      "stderr": "logs/rpc-02-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 3,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585135.3654997,
+      "stop_epoch": 1794585141.3581834,
+      "returncode": 0,
+      "stdout": "logs/rpc-03-before.stdout",
+      "stderr": "logs/rpc-03-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 3,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585141.3590658,
+      "stop_epoch": 1794585145.859173,
+      "returncode": 0,
+      "stdout": "logs/rpc-03-after.stdout",
+      "stderr": "logs/rpc-03-after.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 4,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585145.8597083,
+      "stop_epoch": 1794585150.043541,
+      "returncode": 0,
+      "stdout": "logs/rpc-04-after.stdout",
+      "stderr": "logs/rpc-04-after.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 4,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585150.0440402,
+      "stop_epoch": 1794585155.022027,
+      "returncode": 0,
+      "stdout": "logs/rpc-04-before.stdout",
+      "stderr": "logs/rpc-04-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 5,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585155.0225925,
+      "stop_epoch": 1794585159.8645175,
+      "returncode": 0,
+      "stdout": "logs/rpc-05-before.stdout",
+      "stderr": "logs/rpc-05-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 5,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585159.8695495,
+      "stop_epoch": 1794585164.0797756,
+      "returncode": 0,
+      "stdout": "logs/rpc-05-after.stdout",
+      "stderr": "logs/rpc-05-after.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 6,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585164.080422,
+      "stop_epoch": 1794585168.6938972,
+      "returncode": 0,
+      "stdout": "logs/rpc-06-after.stdout",
+      "stderr": "logs/rpc-06-after.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 6,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585168.6944926,
+      "stop_epoch": 1794585173.8472915,
+      "returncode": 0,
+      "stdout": "logs/rpc-06-before.stdout",
+      "stderr": "logs/rpc-06-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 7,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585173.8479447,
+      "stop_epoch": 1794585179.4997966,
+      "returncode": 0,
+      "stdout": "logs/rpc-07-before.stdout",
+      "stderr": "logs/rpc-07-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 7,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/acceptance/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794585179.5063543,
+      "stop_epoch": 1794585184.209183,
+      "returncode": 0,
+      "stdout": "logs/rpc-07-after.stdout",
+      "stderr": "logs/rpc-07-after.stderr"
+    }
+  ],
+  "started_utc": "2026-11-13T15:51:57Z",
+  "finished_utc": "2026-11-13T15:53:04Z"
+}

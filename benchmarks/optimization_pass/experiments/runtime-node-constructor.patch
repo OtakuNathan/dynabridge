@@ -1,0 +1,149 @@
+--- a/portal/backends/napi.h
++++ b/portal/backends/napi.h
+@@ -204,7 +204,14 @@
+         };
+
+     private:
+-        using class_state_holder = erased_backend_holder<void(napi_env, napi_callback_info, napi_value)>;
++        struct constructor_call_info {
++            napi_callback_info info;
++            napi_value self;
++            napi_value first_arg;
++            std::size_t argc;
++        };
++
++        using class_state_holder = erased_backend_holder<void(napi_env, const constructor_call_info&)>;
+
+         template <typename Receiver, typename Context>
+         struct class_state;
+@@ -663,7 +670,7 @@
+
+         template <typename Receiver, typename Context>
+         struct class_state : class_state_holder {
+-            using construct_fn_t = void (*)(class_state*, napi_env, napi_callback_info, napi_value);
++            using construct_fn_t = void (*)(class_state*, napi_env, const constructor_call_info&);
+
+             struct external_proxy_handoff {
+                 static std::uintptr_t magic_value() noexcept {
+@@ -685,12 +692,13 @@
+                 construct_ = typed_construct_entry<Signature>;
+             }
+
+-            static void construct_entry(class_state_holder* state, napi_env env, napi_callback_info info, napi_value self) {
++            static void construct_entry(
++                class_state_holder* state, napi_env env, const constructor_call_info& call) {
+                 auto* typed_state = static_cast<class_state*>(state);
+-                if (typed_state->try_construct_external_proxy(env, info, self)) {
++                if (typed_state->try_construct_external_proxy(env, call)) {
+                     return;
+                 }
+-                typed_state->construct_(typed_state, env, info, self);
++                typed_state->construct_(typed_state, env, call);
+             }
+
+             static void manage_entry(class_state_holder* state, backend_lifecycle_op op) noexcept {
+@@ -699,25 +707,36 @@
+                 }
+             }
+
+-            static void missing_constructor_entry(class_state*, napi_env, napi_callback_info, napi_value) {
++            static void missing_constructor_entry(class_state*, napi_env, const constructor_call_info&) {
+                 throw std::runtime_error("portal N-API class has no exported constructor");
+             }
+
+             template <typename Signature>
+-            static void typed_construct_entry(class_state* state, napi_env env, napi_callback_info info, napi_value self) {
+-                state->construct_signature(type_identity<Signature>{}, env, info, self);
++            static void typed_construct_entry(
++                class_state* state, napi_env env, const constructor_call_info& call) {
++                state->construct_signature(type_identity<Signature>{}, env, call);
+             }
+
+             template <typename... Args>
+-            void construct_signature(type_identity<void(Args...)>, napi_env env, napi_callback_info info, napi_value self) {
+-                napi_value argv[sizeof...(Args) == 0 ? 1 : sizeof...(Args)] = {};
+-                std::size_t argc = sizeof...(Args);
+-                if (napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr) != napi_ok
+-                        || argc != sizeof...(Args)) {
++            void construct_signature(
++                type_identity<void(Args...)>, napi_env env, const constructor_call_info& call) {
++                if (call.argc != sizeof...(Args)) {
+                     throw std::runtime_error("portal N-API constructor received invalid call info");
+                 }
+
+-                construct_indices<Args...>(env, self, argv, std::index_sequence_for<Args...>{});
++                napi_value argv[sizeof...(Args) == 0 ? 1 : sizeof...(Args)] = {call.first_arg};
++                // The initial callback-info read already captured the full
++                // count and first argument. Only larger signatures need a
++                // second read; no shared scratch state survives re-entrancy.
++                if (sizeof...(Args) > 1) {
++                    std::size_t argc = sizeof...(Args);
++                    if (napi_get_cb_info(env, call.info, &argc, argv, nullptr, nullptr) != napi_ok
++                            || argc != sizeof...(Args)) {
++                        throw std::runtime_error("portal N-API constructor received invalid call info");
++                    }
++                }
++
++                construct_indices<Args...>(env, call.self, argv, std::index_sequence_for<Args...>{});
+             }
+
+             template <typename... Args, std::size_t... Indices>
+@@ -726,15 +745,13 @@
+                     *ctx_, self, argv[Indices]...);
+             }
+
+-            bool try_construct_external_proxy(napi_env env, napi_callback_info info, napi_value self) {
+-                napi_value argv[1] = {};
+-                std::size_t argc = 1;
+-                if (napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr) != napi_ok || argc != 1) {
++            bool try_construct_external_proxy(napi_env env, const constructor_call_info& call) {
++                if (call.argc != 1) {
+                     return false;
+                 }
+
+                 void* data = nullptr;
+-                if (napi_get_value_external(env, argv[0], &data) != napi_ok || data == nullptr) {
++                if (napi_get_value_external(env, call.first_arg, &data) != napi_ok || data == nullptr) {
+                     return false;
+                 }
+
+@@ -745,7 +762,7 @@
+                 }
+
+                 object_t<Receiver, export_t> object;
+-                object.construct_export_object_from_native(*ctx_, self, handoff->receiver);
++                object.construct_export_object_from_native(*ctx_, call.self, handoff->receiver);
+                 handoff->receiver = nullptr;
+                 return true;
+             }
+@@ -1055,22 +1072,22 @@
+         }
+
+         static napi_value class_constructor(napi_env env, napi_callback_info info) {
+-            napi_value self = nullptr;
+-            std::size_t argc = 0;
++            constructor_call_info call{info, nullptr, nullptr, 1};
+             void* data = nullptr;
+-            if (napi_get_cb_info(env, info, &argc, nullptr, &self, &data) != napi_ok) {
++            if (napi_get_cb_info(
++                    env, info, &call.argc, &call.first_arg, &call.self, &data) != napi_ok) {
+                 return nullptr;
+             }
+
+-            if (self == nullptr) {
+-                napi_create_object(env, &self);
++            if (call.self == nullptr) {
++                napi_create_object(env, &call.self);
+             }
+
+             try {
+                 if (data != nullptr) {
+-                    static_cast<class_state_holder*>(data)->invoke(env, info, self);
+-                }
+-                return self;
++                    static_cast<class_state_holder*>(data)->invoke(env, call);
++                }
++                return call.self;
+             } catch (const bad_conversion& error) {
+                 napi_throw_error(env, nullptr, error.what());
+                 return nullptr;

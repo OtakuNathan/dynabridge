@@ -1,0 +1,1247 @@
+family,case,pair,variant,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,dynamic_copies_per_call,checksum,source
+core,static_inline,1,before,1000000,71.694,1.000,,0.000,42000000,logs/core-01-before.stdout
+core,static_deferred,1,before,1000000,74.610,1.000,,0.000,42000000,logs/core-01-before.stdout
+core,erased_inline,1,before,1000000,122.395,2.000,,0.000,42000000,logs/core-01-before.stdout
+core,erased_deferred,1,before,1000000,100.391,2.000,,0.000,42000000,logs/core-01-before.stdout
+core,direct_overload_64k,1,before,31250,34017.141,3.000,,3.000,2048000000,logs/core-01-before.stdout
+core,optional_overload_64k,1,before,31250,7726.804,2.000,,2.000,2048000000,logs/core-01-before.stdout
+core,static_inline,1,after,1000000,43.636,1.000,,0.000,42000000,logs/core-01-after.stdout
+core,static_deferred,1,after,1000000,52.166,1.000,,0.000,42000000,logs/core-01-after.stdout
+core,erased_inline,1,after,1000000,71.079,2.000,,0.000,42000000,logs/core-01-after.stdout
+core,erased_deferred,1,after,1000000,77.488,2.000,,0.000,42000000,logs/core-01-after.stdout
+core,direct_overload_64k,1,after,31250,3054.226,1.000,,1.000,2048000000,logs/core-01-after.stdout
+core,optional_overload_64k,1,after,31250,3234.334,1.000,,1.000,2048000000,logs/core-01-after.stdout
+core,static_inline,2,after,1000000,94.320,1.000,,0.000,42000000,logs/core-02-after.stdout
+core,static_deferred,2,after,1000000,57.361,1.000,,0.000,42000000,logs/core-02-after.stdout
+core,erased_inline,2,after,1000000,84.411,2.000,,0.000,42000000,logs/core-02-after.stdout
+core,erased_deferred,2,after,1000000,119.155,2.000,,0.000,42000000,logs/core-02-after.stdout
+core,direct_overload_64k,2,after,31250,3118.989,1.000,,1.000,2048000000,logs/core-02-after.stdout
+core,optional_overload_64k,2,after,31250,3005.064,1.000,,1.000,2048000000,logs/core-02-after.stdout
+core,static_inline,2,before,1000000,69.227,1.000,,0.000,42000000,logs/core-02-before.stdout
+core,static_deferred,2,before,1000000,71.998,1.000,,0.000,42000000,logs/core-02-before.stdout
+core,erased_inline,2,before,1000000,103.616,2.000,,0.000,42000000,logs/core-02-before.stdout
+core,erased_deferred,2,before,1000000,106.524,2.000,,0.000,42000000,logs/core-02-before.stdout
+core,direct_overload_64k,2,before,31250,35640.849,3.000,,3.000,2048000000,logs/core-02-before.stdout
+core,optional_overload_64k,2,before,31250,5499.569,2.000,,2.000,2048000000,logs/core-02-before.stdout
+core,static_inline,3,before,1000000,79.562,1.000,,0.000,42000000,logs/core-03-before.stdout
+core,static_deferred,3,before,1000000,79.242,1.000,,0.000,42000000,logs/core-03-before.stdout
+core,erased_inline,3,before,1000000,108.991,2.000,,0.000,42000000,logs/core-03-before.stdout
+core,erased_deferred,3,before,1000000,97.620,2.000,,0.000,42000000,logs/core-03-before.stdout
+core,direct_overload_64k,3,before,31250,35227.634,3.000,,3.000,2048000000,logs/core-03-before.stdout
+core,optional_overload_64k,3,before,31250,5817.837,2.000,,2.000,2048000000,logs/core-03-before.stdout
+core,static_inline,3,after,1000000,67.061,1.000,,0.000,42000000,logs/core-03-after.stdout
+core,static_deferred,3,after,1000000,68.360,1.000,,0.000,42000000,logs/core-03-after.stdout
+core,erased_inline,3,after,1000000,86.003,2.000,,0.000,42000000,logs/core-03-after.stdout
+core,erased_deferred,3,after,1000000,110.996,2.000,,0.000,42000000,logs/core-03-after.stdout
+core,direct_overload_64k,3,after,31250,4027.923,1.000,,1.000,2048000000,logs/core-03-after.stdout
+core,optional_overload_64k,3,after,31250,4094.334,1.000,,1.000,2048000000,logs/core-03-after.stdout
+core,static_inline,4,after,1000000,67.459,1.000,,0.000,42000000,logs/core-04-after.stdout
+core,static_deferred,4,after,1000000,59.588,1.000,,0.000,42000000,logs/core-04-after.stdout
+core,erased_inline,4,after,1000000,86.279,2.000,,0.000,42000000,logs/core-04-after.stdout
+core,erased_deferred,4,after,1000000,104.427,2.000,,0.000,42000000,logs/core-04-after.stdout
+core,direct_overload_64k,4,after,31250,3831.434,1.000,,1.000,2048000000,logs/core-04-after.stdout
+core,optional_overload_64k,4,after,31250,3758.486,1.000,,1.000,2048000000,logs/core-04-after.stdout
+core,static_inline,4,before,1000000,75.316,1.000,,0.000,42000000,logs/core-04-before.stdout
+core,static_deferred,4,before,1000000,107.915,1.000,,0.000,42000000,logs/core-04-before.stdout
+core,erased_inline,4,before,1000000,107.031,2.000,,0.000,42000000,logs/core-04-before.stdout
+core,erased_deferred,4,before,1000000,127.509,2.000,,0.000,42000000,logs/core-04-before.stdout
+core,direct_overload_64k,4,before,31250,38337.688,3.000,,3.000,2048000000,logs/core-04-before.stdout
+core,optional_overload_64k,4,before,31250,5872.695,2.000,,2.000,2048000000,logs/core-04-before.stdout
+core,static_inline,5,before,1000000,79.323,1.000,,0.000,42000000,logs/core-05-before.stdout
+core,static_deferred,5,before,1000000,82.048,1.000,,0.000,42000000,logs/core-05-before.stdout
+core,erased_inline,5,before,1000000,103.670,2.000,,0.000,42000000,logs/core-05-before.stdout
+core,erased_deferred,5,before,1000000,110.377,2.000,,0.000,42000000,logs/core-05-before.stdout
+core,direct_overload_64k,5,before,31250,34985.616,3.000,,3.000,2048000000,logs/core-05-before.stdout
+core,optional_overload_64k,5,before,31250,5444.275,2.000,,2.000,2048000000,logs/core-05-before.stdout
+core,static_inline,5,after,1000000,53.287,1.000,,0.000,42000000,logs/core-05-after.stdout
+core,static_deferred,5,after,1000000,59.982,1.000,,0.000,42000000,logs/core-05-after.stdout
+core,erased_inline,5,after,1000000,80.398,2.000,,0.000,42000000,logs/core-05-after.stdout
+core,erased_deferred,5,after,1000000,87.804,2.000,,0.000,42000000,logs/core-05-after.stdout
+core,direct_overload_64k,5,after,31250,3353.222,1.000,,1.000,2048000000,logs/core-05-after.stdout
+core,optional_overload_64k,5,after,31250,3300.321,1.000,,1.000,2048000000,logs/core-05-after.stdout
+core,static_inline,6,after,1000000,80.254,1.000,,0.000,42000000,logs/core-06-after.stdout
+core,static_deferred,6,after,1000000,62.300,1.000,,0.000,42000000,logs/core-06-after.stdout
+core,erased_inline,6,after,1000000,84.605,2.000,,0.000,42000000,logs/core-06-after.stdout
+core,erased_deferred,6,after,1000000,95.422,2.000,,0.000,42000000,logs/core-06-after.stdout
+core,direct_overload_64k,6,after,31250,4683.661,1.000,,1.000,2048000000,logs/core-06-after.stdout
+core,optional_overload_64k,6,after,31250,5444.153,1.000,,1.000,2048000000,logs/core-06-after.stdout
+core,static_inline,6,before,1000000,85.634,1.000,,0.000,42000000,logs/core-06-before.stdout
+core,static_deferred,6,before,1000000,88.025,1.000,,0.000,42000000,logs/core-06-before.stdout
+core,erased_inline,6,before,1000000,125.054,2.000,,0.000,42000000,logs/core-06-before.stdout
+core,erased_deferred,6,before,1000000,110.755,2.000,,0.000,42000000,logs/core-06-before.stdout
+core,direct_overload_64k,6,before,31250,39081.409,3.000,,3.000,2048000000,logs/core-06-before.stdout
+core,optional_overload_64k,6,before,31250,6677.974,2.000,,2.000,2048000000,logs/core-06-before.stdout
+core,static_inline,7,before,1000000,78.608,1.000,,0.000,42000000,logs/core-07-before.stdout
+core,static_deferred,7,before,1000000,91.531,1.000,,0.000,42000000,logs/core-07-before.stdout
+core,erased_inline,7,before,1000000,111.550,2.000,,0.000,42000000,logs/core-07-before.stdout
+core,erased_deferred,7,before,1000000,119.489,2.000,,0.000,42000000,logs/core-07-before.stdout
+core,direct_overload_64k,7,before,31250,38025.377,3.000,,3.000,2048000000,logs/core-07-before.stdout
+core,optional_overload_64k,7,before,31250,6075.840,2.000,,2.000,2048000000,logs/core-07-before.stdout
+core,static_inline,7,after,1000000,55.684,1.000,,0.000,42000000,logs/core-07-after.stdout
+core,static_deferred,7,after,1000000,62.524,1.000,,0.000,42000000,logs/core-07-after.stdout
+core,erased_inline,7,after,1000000,91.855,2.000,,0.000,42000000,logs/core-07-after.stdout
+core,erased_deferred,7,after,1000000,92.994,2.000,,0.000,42000000,logs/core-07-after.stdout
+core,direct_overload_64k,7,after,31250,3698.344,1.000,,1.000,2048000000,logs/core-07-after.stdout
+core,optional_overload_64k,7,after,31250,4471.455,1.000,,1.000,2048000000,logs/core-07-after.stdout
+core_threaded,static_inline,1,before,1000000,81.771,1.000,,0.000,42000000,logs/core_threaded-01-before.stdout
+core_threaded,static_deferred,1,before,1000000,86.447,1.000,,0.000,42000000,logs/core_threaded-01-before.stdout
+core_threaded,erased_inline,1,before,1000000,124.941,2.000,,0.000,42000000,logs/core_threaded-01-before.stdout
+core_threaded,erased_deferred,1,before,1000000,112.321,2.000,,0.000,42000000,logs/core_threaded-01-before.stdout
+core_threaded,direct_overload_64k,1,before,31250,33167.000,3.000,,3.000,2048000000,logs/core_threaded-01-before.stdout
+core_threaded,optional_overload_64k,1,before,31250,4939.050,2.000,,2.000,2048000000,logs/core_threaded-01-before.stdout
+core_threaded,static_inline,1,after,1000000,98.249,1.000,,0.000,42000000,logs/core_threaded-01-after.stdout
+core_threaded,static_deferred,1,after,1000000,95.162,1.000,,0.000,42000000,logs/core_threaded-01-after.stdout
+core_threaded,erased_inline,1,after,1000000,140.980,2.000,,0.000,42000000,logs/core_threaded-01-after.stdout
+core_threaded,erased_deferred,1,after,1000000,115.192,2.000,,0.000,42000000,logs/core_threaded-01-after.stdout
+core_threaded,direct_overload_64k,1,after,31250,3308.617,1.000,,1.000,2048000000,logs/core_threaded-01-after.stdout
+core_threaded,optional_overload_64k,1,after,31250,3635.390,1.000,,1.000,2048000000,logs/core_threaded-01-after.stdout
+core_threaded,static_inline,2,after,1000000,72.134,1.000,,0.000,42000000,logs/core_threaded-02-after.stdout
+core_threaded,static_deferred,2,after,1000000,80.026,1.000,,0.000,42000000,logs/core_threaded-02-after.stdout
+core_threaded,erased_inline,2,after,1000000,140.804,2.000,,0.000,42000000,logs/core_threaded-02-after.stdout
+core_threaded,erased_deferred,2,after,1000000,113.181,2.000,,0.000,42000000,logs/core_threaded-02-after.stdout
+core_threaded,direct_overload_64k,2,after,31250,3035.021,1.000,,1.000,2048000000,logs/core_threaded-02-after.stdout
+core_threaded,optional_overload_64k,2,after,31250,2997.885,1.000,,1.000,2048000000,logs/core_threaded-02-after.stdout
+core_threaded,static_inline,2,before,1000000,77.195,1.000,,0.000,42000000,logs/core_threaded-02-before.stdout
+core_threaded,static_deferred,2,before,1000000,94.679,1.000,,0.000,42000000,logs/core_threaded-02-before.stdout
+core_threaded,erased_inline,2,before,1000000,107.417,2.000,,0.000,42000000,logs/core_threaded-02-before.stdout
+core_threaded,erased_deferred,2,before,1000000,123.599,2.000,,0.000,42000000,logs/core_threaded-02-before.stdout
+core_threaded,direct_overload_64k,2,before,31250,35780.371,3.000,,3.000,2048000000,logs/core_threaded-02-before.stdout
+core_threaded,optional_overload_64k,2,before,31250,5546.455,2.000,,2.000,2048000000,logs/core_threaded-02-before.stdout
+core_threaded,static_inline,3,before,1000000,80.714,1.000,,0.000,42000000,logs/core_threaded-03-before.stdout
+core_threaded,static_deferred,3,before,1000000,81.268,1.000,,0.000,42000000,logs/core_threaded-03-before.stdout
+core_threaded,erased_inline,3,before,1000000,112.044,2.000,,0.000,42000000,logs/core_threaded-03-before.stdout
+core_threaded,erased_deferred,3,before,1000000,106.727,2.000,,0.000,42000000,logs/core_threaded-03-before.stdout
+core_threaded,direct_overload_64k,3,before,31250,32817.696,3.000,,3.000,2048000000,logs/core_threaded-03-before.stdout
+core_threaded,optional_overload_64k,3,before,31250,5222.212,2.000,,2.000,2048000000,logs/core_threaded-03-before.stdout
+core_threaded,static_inline,3,after,1000000,113.121,1.000,,0.000,42000000,logs/core_threaded-03-after.stdout
+core_threaded,static_deferred,3,after,1000000,120.713,1.000,,0.000,42000000,logs/core_threaded-03-after.stdout
+core_threaded,erased_inline,3,after,1000000,162.904,2.000,,0.000,42000000,logs/core_threaded-03-after.stdout
+core_threaded,erased_deferred,3,after,1000000,188.654,2.000,,0.000,42000000,logs/core_threaded-03-after.stdout
+core_threaded,direct_overload_64k,3,after,31250,5042.225,1.000,,1.000,2048000000,logs/core_threaded-03-after.stdout
+core_threaded,optional_overload_64k,3,after,31250,4923.077,1.000,,1.000,2048000000,logs/core_threaded-03-after.stdout
+core_threaded,static_inline,4,after,1000000,96.360,1.000,,0.000,42000000,logs/core_threaded-04-after.stdout
+core_threaded,static_deferred,4,after,1000000,92.384,1.000,,0.000,42000000,logs/core_threaded-04-after.stdout
+core_threaded,erased_inline,4,after,1000000,167.668,2.000,,0.000,42000000,logs/core_threaded-04-after.stdout
+core_threaded,erased_deferred,4,after,1000000,153.578,2.000,,0.000,42000000,logs/core_threaded-04-after.stdout
+core_threaded,direct_overload_64k,4,after,31250,4112.364,1.000,,1.000,2048000000,logs/core_threaded-04-after.stdout
+core_threaded,optional_overload_64k,4,after,31250,4133.736,1.000,,1.000,2048000000,logs/core_threaded-04-after.stdout
+core_threaded,static_inline,4,before,1000000,147.821,1.000,,0.000,42000000,logs/core_threaded-04-before.stdout
+core_threaded,static_deferred,4,before,1000000,128.710,1.000,,0.000,42000000,logs/core_threaded-04-before.stdout
+core_threaded,erased_inline,4,before,1000000,147.231,2.000,,0.000,42000000,logs/core_threaded-04-before.stdout
+core_threaded,erased_deferred,4,before,1000000,238.421,2.000,,0.000,42000000,logs/core_threaded-04-before.stdout
+core_threaded,direct_overload_64k,4,before,31250,57761.273,3.000,,3.000,2048000000,logs/core_threaded-04-before.stdout
+core_threaded,optional_overload_64k,4,before,31250,8273.705,2.000,,2.000,2048000000,logs/core_threaded-04-before.stdout
+core_threaded,static_inline,5,before,1000000,121.275,1.000,,0.000,42000000,logs/core_threaded-05-before.stdout
+core_threaded,static_deferred,5,before,1000000,131.046,1.000,,0.000,42000000,logs/core_threaded-05-before.stdout
+core_threaded,erased_inline,5,before,1000000,143.921,2.000,,0.000,42000000,logs/core_threaded-05-before.stdout
+core_threaded,erased_deferred,5,before,1000000,146.113,2.000,,0.000,42000000,logs/core_threaded-05-before.stdout
+core_threaded,direct_overload_64k,5,before,31250,43952.885,3.000,,3.000,2048000000,logs/core_threaded-05-before.stdout
+core_threaded,optional_overload_64k,5,before,31250,5997.500,2.000,,2.000,2048000000,logs/core_threaded-05-before.stdout
+core_threaded,static_inline,5,after,1000000,104.342,1.000,,0.000,42000000,logs/core_threaded-05-after.stdout
+core_threaded,static_deferred,5,after,1000000,93.407,1.000,,0.000,42000000,logs/core_threaded-05-after.stdout
+core_threaded,erased_inline,5,after,1000000,104.429,2.000,,0.000,42000000,logs/core_threaded-05-after.stdout
+core_threaded,erased_deferred,5,after,1000000,100.240,2.000,,0.000,42000000,logs/core_threaded-05-after.stdout
+core_threaded,direct_overload_64k,5,after,31250,2910.070,1.000,,1.000,2048000000,logs/core_threaded-05-after.stdout
+core_threaded,optional_overload_64k,5,after,31250,3748.853,1.000,,1.000,2048000000,logs/core_threaded-05-after.stdout
+core_threaded,static_inline,6,after,1000000,81.043,1.000,,0.000,42000000,logs/core_threaded-06-after.stdout
+core_threaded,static_deferred,6,after,1000000,88.702,1.000,,0.000,42000000,logs/core_threaded-06-after.stdout
+core_threaded,erased_inline,6,after,1000000,122.216,2.000,,0.000,42000000,logs/core_threaded-06-after.stdout
+core_threaded,erased_deferred,6,after,1000000,110.111,2.000,,0.000,42000000,logs/core_threaded-06-after.stdout
+core_threaded,direct_overload_64k,6,after,31250,4491.217,1.000,,1.000,2048000000,logs/core_threaded-06-after.stdout
+core_threaded,optional_overload_64k,6,after,31250,2979.954,1.000,,1.000,2048000000,logs/core_threaded-06-after.stdout
+core_threaded,static_inline,6,before,1000000,69.569,1.000,,0.000,42000000,logs/core_threaded-06-before.stdout
+core_threaded,static_deferred,6,before,1000000,74.645,1.000,,0.000,42000000,logs/core_threaded-06-before.stdout
+core_threaded,erased_inline,6,before,1000000,157.572,2.000,,0.000,42000000,logs/core_threaded-06-before.stdout
+core_threaded,erased_deferred,6,before,1000000,107.811,2.000,,0.000,42000000,logs/core_threaded-06-before.stdout
+core_threaded,direct_overload_64k,6,before,31250,32535.759,3.000,,3.000,2048000000,logs/core_threaded-06-before.stdout
+core_threaded,optional_overload_64k,6,before,31250,5109.417,2.000,,2.000,2048000000,logs/core_threaded-06-before.stdout
+core_threaded,static_inline,7,before,1000000,86.981,1.000,,0.000,42000000,logs/core_threaded-07-before.stdout
+core_threaded,static_deferred,7,before,1000000,83.457,1.000,,0.000,42000000,logs/core_threaded-07-before.stdout
+core_threaded,erased_inline,7,before,1000000,131.186,2.000,,0.000,42000000,logs/core_threaded-07-before.stdout
+core_threaded,erased_deferred,7,before,1000000,120.587,2.000,,0.000,42000000,logs/core_threaded-07-before.stdout
+core_threaded,direct_overload_64k,7,before,31250,33705.158,3.000,,3.000,2048000000,logs/core_threaded-07-before.stdout
+core_threaded,optional_overload_64k,7,before,31250,6019.499,2.000,,2.000,2048000000,logs/core_threaded-07-before.stdout
+core_threaded,static_inline,7,after,1000000,67.084,1.000,,0.000,42000000,logs/core_threaded-07-after.stdout
+core_threaded,static_deferred,7,after,1000000,66.172,1.000,,0.000,42000000,logs/core_threaded-07-after.stdout
+core_threaded,erased_inline,7,after,1000000,114.575,2.000,,0.000,42000000,logs/core_threaded-07-after.stdout
+core_threaded,erased_deferred,7,after,1000000,110.689,2.000,,0.000,42000000,logs/core_threaded-07-after.stdout
+core_threaded,direct_overload_64k,7,after,31250,5189.714,1.000,,1.000,2048000000,logs/core_threaded-07-after.stdout
+core_threaded,optional_overload_64k,7,after,31250,3198.495,1.000,,1.000,2048000000,logs/core_threaded-07-after.stdout
+rpc,scalar_0,1,before,1000000,157.230,2.00,33.00,,0,logs/rpc-01-before.stdout
+rpc,scalar_1,1,before,1000000,264.936,3.00,114.00,,127493856,logs/rpc-01-before.stdout
+rpc,scalar_2,1,before,1000000,342.332,3.00,195.00,,255987712,logs/rpc-01-before.stdout
+rpc,scalar_4,1,before,1000000,409.817,3.00,357.00,,515975424,logs/rpc-01-before.stdout
+rpc,scalar_5,1,before,1000000,491.288,3.00,438.00,,647469280,logs/rpc-01-before.stdout
+rpc,scalar_8,1,before,1000000,687.196,3.00,681.00,,1047950848,logs/rpc-01-before.stdout
+rpc,string_16,1,before,1000000,326.634,5.00,172.00,,235000000,logs/rpc-01-before.stdout
+rpc,string_1024,1,before,500000,454.375,5.00,4204.00,,621500000,logs/rpc-01-before.stdout
+rpc,string_65536,1,before,31250,33782.567,5.00,262252.00,,2054843750,logs/rpc-01-before.stdout
+rpc,scalar_0,1,after,1000000,178.760,2.00,33.00,,0,logs/rpc-01-after.stdout
+rpc,scalar_1,1,after,1000000,187.772,2.00,42.00,,127493856,logs/rpc-01-after.stdout
+rpc,scalar_2,1,after,1000000,238.690,2.00,51.00,,255987712,logs/rpc-01-after.stdout
+rpc,scalar_4,1,after,1000000,296.321,2.00,69.00,,515975424,logs/rpc-01-after.stdout
+rpc,scalar_5,1,after,1000000,351.429,3.00,438.00,,647469280,logs/rpc-01-after.stdout
+rpc,scalar_8,1,after,1000000,481.540,3.00,681.00,,1047950848,logs/rpc-01-after.stdout
+rpc,string_16,1,after,1000000,299.363,4.00,100.00,,235000000,logs/rpc-01-after.stdout
+rpc,string_1024,1,after,500000,543.911,4.00,4132.00,,621500000,logs/rpc-01-after.stdout
+rpc,string_65536,1,after,31250,41646.713,4.00,262180.00,,2054843750,logs/rpc-01-after.stdout
+rpc,scalar_0,2,after,1000000,147.403,2.00,33.00,,0,logs/rpc-02-after.stdout
+rpc,scalar_1,2,after,1000000,236.104,2.00,42.00,,127493856,logs/rpc-02-after.stdout
+rpc,scalar_2,2,after,1000000,245.712,2.00,51.00,,255987712,logs/rpc-02-after.stdout
+rpc,scalar_4,2,after,1000000,311.889,2.00,69.00,,515975424,logs/rpc-02-after.stdout
+rpc,scalar_5,2,after,1000000,459.479,3.00,438.00,,647469280,logs/rpc-02-after.stdout
+rpc,scalar_8,2,after,1000000,568.476,3.00,681.00,,1047950848,logs/rpc-02-after.stdout
+rpc,string_16,2,after,1000000,391.686,4.00,100.00,,235000000,logs/rpc-02-after.stdout
+rpc,string_1024,2,after,500000,590.777,4.00,4132.00,,621500000,logs/rpc-02-after.stdout
+rpc,string_65536,2,after,31250,45535.232,4.00,262180.00,,2054843750,logs/rpc-02-after.stdout
+rpc,scalar_0,2,before,1000000,221.912,2.00,33.00,,0,logs/rpc-02-before.stdout
+rpc,scalar_1,2,before,1000000,323.680,3.00,114.00,,127493856,logs/rpc-02-before.stdout
+rpc,scalar_2,2,before,1000000,402.398,3.00,195.00,,255987712,logs/rpc-02-before.stdout
+rpc,scalar_4,2,before,1000000,485.687,3.00,357.00,,515975424,logs/rpc-02-before.stdout
+rpc,scalar_5,2,before,1000000,613.016,3.00,438.00,,647469280,logs/rpc-02-before.stdout
+rpc,scalar_8,2,before,1000000,733.359,3.00,681.00,,1047950848,logs/rpc-02-before.stdout
+rpc,string_16,2,before,1000000,376.120,5.00,172.00,,235000000,logs/rpc-02-before.stdout
+rpc,string_1024,2,before,500000,504.125,5.00,4204.00,,621500000,logs/rpc-02-before.stdout
+rpc,string_65536,2,before,31250,49126.680,5.00,262252.00,,2054843750,logs/rpc-02-before.stdout
+rpc,scalar_0,3,before,1000000,153.259,2.00,33.00,,0,logs/rpc-03-before.stdout
+rpc,scalar_1,3,before,1000000,360.978,3.00,114.00,,127493856,logs/rpc-03-before.stdout
+rpc,scalar_2,3,before,1000000,418.193,3.00,195.00,,255987712,logs/rpc-03-before.stdout
+rpc,scalar_4,3,before,1000000,480.285,3.00,357.00,,515975424,logs/rpc-03-before.stdout
+rpc,scalar_5,3,before,1000000,587.914,3.00,438.00,,647469280,logs/rpc-03-before.stdout
+rpc,scalar_8,3,before,1000000,665.919,3.00,681.00,,1047950848,logs/rpc-03-before.stdout
+rpc,string_16,3,before,1000000,362.447,5.00,172.00,,235000000,logs/rpc-03-before.stdout
+rpc,string_1024,3,before,500000,512.617,5.00,4204.00,,621500000,logs/rpc-03-before.stdout
+rpc,string_65536,3,before,31250,36204.480,5.00,262252.00,,2054843750,logs/rpc-03-before.stdout
+rpc,scalar_0,3,after,1000000,149.331,2.00,33.00,,0,logs/rpc-03-after.stdout
+rpc,scalar_1,3,after,1000000,203.092,2.00,42.00,,127493856,logs/rpc-03-after.stdout
+rpc,scalar_2,3,after,1000000,248.459,2.00,51.00,,255987712,logs/rpc-03-after.stdout
+rpc,scalar_4,3,after,1000000,362.740,2.00,69.00,,515975424,logs/rpc-03-after.stdout
+rpc,scalar_5,3,after,1000000,388.552,3.00,438.00,,647469280,logs/rpc-03-after.stdout
+rpc,scalar_8,3,after,1000000,588.218,3.00,681.00,,1047950848,logs/rpc-03-after.stdout
+rpc,string_16,3,after,1000000,390.904,4.00,100.00,,235000000,logs/rpc-03-after.stdout
+rpc,string_1024,3,after,500000,566.820,4.00,4132.00,,621500000,logs/rpc-03-after.stdout
+rpc,string_65536,3,after,31250,45351.385,4.00,262180.00,,2054843750,logs/rpc-03-after.stdout
+rpc,scalar_0,4,after,1000000,149.530,2.00,33.00,,0,logs/rpc-04-after.stdout
+rpc,scalar_1,4,after,1000000,186.151,2.00,42.00,,127493856,logs/rpc-04-after.stdout
+rpc,scalar_2,4,after,1000000,256.163,2.00,51.00,,255987712,logs/rpc-04-after.stdout
+rpc,scalar_4,4,after,1000000,328.980,2.00,69.00,,515975424,logs/rpc-04-after.stdout
+rpc,scalar_5,4,after,1000000,359.504,3.00,438.00,,647469280,logs/rpc-04-after.stdout
+rpc,scalar_8,4,after,1000000,571.431,3.00,681.00,,1047950848,logs/rpc-04-after.stdout
+rpc,string_16,4,after,1000000,471.033,4.00,100.00,,235000000,logs/rpc-04-after.stdout
+rpc,string_1024,4,after,500000,675.262,4.00,4132.00,,621500000,logs/rpc-04-after.stdout
+rpc,string_65536,4,after,31250,52402.091,4.00,262180.00,,2054843750,logs/rpc-04-after.stdout
+rpc,scalar_0,4,before,1000000,191.083,2.00,33.00,,0,logs/rpc-04-before.stdout
+rpc,scalar_1,4,before,1000000,316.663,3.00,114.00,,127493856,logs/rpc-04-before.stdout
+rpc,scalar_2,4,before,1000000,396.451,3.00,195.00,,255987712,logs/rpc-04-before.stdout
+rpc,scalar_4,4,before,1000000,510.497,3.00,357.00,,515975424,logs/rpc-04-before.stdout
+rpc,scalar_5,4,before,1000000,711.398,3.00,438.00,,647469280,logs/rpc-04-before.stdout
+rpc,scalar_8,4,before,1000000,692.975,3.00,681.00,,1047950848,logs/rpc-04-before.stdout
+rpc,string_16,4,before,1000000,359.496,5.00,172.00,,235000000,logs/rpc-04-before.stdout
+rpc,string_1024,4,before,500000,541.828,5.00,4204.00,,621500000,logs/rpc-04-before.stdout
+rpc,string_65536,4,before,31250,39887.532,5.00,262252.00,,2054843750,logs/rpc-04-before.stdout
+rpc,scalar_0,5,before,1000000,159.611,2.00,33.00,,0,logs/rpc-05-before.stdout
+rpc,scalar_1,5,before,1000000,281.999,3.00,114.00,,127493856,logs/rpc-05-before.stdout
+rpc,scalar_2,5,before,1000000,400.158,3.00,195.00,,255987712,logs/rpc-05-before.stdout
+rpc,scalar_4,5,before,1000000,533.249,3.00,357.00,,515975424,logs/rpc-05-before.stdout
+rpc,scalar_5,5,before,1000000,572.053,3.00,438.00,,647469280,logs/rpc-05-before.stdout
+rpc,scalar_8,5,before,1000000,769.128,3.00,681.00,,1047950848,logs/rpc-05-before.stdout
+rpc,string_16,5,before,1000000,369.367,5.00,172.00,,235000000,logs/rpc-05-before.stdout
+rpc,string_1024,5,before,500000,658.242,5.00,4204.00,,621500000,logs/rpc-05-before.stdout
+rpc,string_65536,5,before,31250,57033.574,5.00,262252.00,,2054843750,logs/rpc-05-before.stdout
+rpc,scalar_0,5,after,1000000,270.188,2.00,33.00,,0,logs/rpc-05-after.stdout
+rpc,scalar_1,5,after,1000000,270.164,2.00,42.00,,127493856,logs/rpc-05-after.stdout
+rpc,scalar_2,5,after,1000000,252.718,2.00,51.00,,255987712,logs/rpc-05-after.stdout
+rpc,scalar_4,5,after,1000000,386.363,2.00,69.00,,515975424,logs/rpc-05-after.stdout
+rpc,scalar_5,5,after,1000000,464.180,3.00,438.00,,647469280,logs/rpc-05-after.stdout
+rpc,scalar_8,5,after,1000000,617.758,3.00,681.00,,1047950848,logs/rpc-05-after.stdout
+rpc,string_16,5,after,1000000,452.398,4.00,100.00,,235000000,logs/rpc-05-after.stdout
+rpc,string_1024,5,after,500000,579.875,4.00,4132.00,,621500000,logs/rpc-05-after.stdout
+rpc,string_65536,5,after,31250,52226.264,4.00,262180.00,,2054843750,logs/rpc-05-after.stdout
+rpc,scalar_0,6,after,1000000,182.228,2.00,33.00,,0,logs/rpc-06-after.stdout
+rpc,scalar_1,6,after,1000000,274.187,2.00,42.00,,127493856,logs/rpc-06-after.stdout
+rpc,scalar_2,6,after,1000000,345.742,2.00,51.00,,255987712,logs/rpc-06-after.stdout
+rpc,scalar_4,6,after,1000000,463.708,2.00,69.00,,515975424,logs/rpc-06-after.stdout
+rpc,scalar_5,6,after,1000000,479.275,3.00,438.00,,647469280,logs/rpc-06-after.stdout
+rpc,scalar_8,6,after,1000000,694.433,3.00,681.00,,1047950848,logs/rpc-06-after.stdout
+rpc,string_16,6,after,1000000,514.122,4.00,100.00,,235000000,logs/rpc-06-after.stdout
+rpc,string_1024,6,after,500000,654.469,4.00,4132.00,,621500000,logs/rpc-06-after.stdout
+rpc,string_65536,6,after,31250,57691.231,4.00,262180.00,,2054843750,logs/rpc-06-after.stdout
+rpc,scalar_0,6,before,1000000,189.227,2.00,33.00,,0,logs/rpc-06-before.stdout
+rpc,scalar_1,6,before,1000000,384.668,3.00,114.00,,127493856,logs/rpc-06-before.stdout
+rpc,scalar_2,6,before,1000000,512.112,3.00,195.00,,255987712,logs/rpc-06-before.stdout
+rpc,scalar_4,6,before,1000000,488.096,3.00,357.00,,515975424,logs/rpc-06-before.stdout
+rpc,scalar_5,6,before,1000000,558.099,3.00,438.00,,647469280,logs/rpc-06-before.stdout
+rpc,scalar_8,6,before,1000000,732.303,3.00,681.00,,1047950848,logs/rpc-06-before.stdout
+rpc,string_16,6,before,1000000,448.029,5.00,172.00,,235000000,logs/rpc-06-before.stdout
+rpc,string_1024,6,before,500000,603.341,5.00,4204.00,,621500000,logs/rpc-06-before.stdout
+rpc,string_65536,6,before,31250,44970.034,5.00,262252.00,,2054843750,logs/rpc-06-before.stdout
+rpc,scalar_0,7,before,1000000,192.007,2.00,33.00,,0,logs/rpc-07-before.stdout
+rpc,scalar_1,7,before,1000000,312.696,3.00,114.00,,127493856,logs/rpc-07-before.stdout
+rpc,scalar_2,7,before,1000000,413.985,3.00,195.00,,255987712,logs/rpc-07-before.stdout
+rpc,scalar_4,7,before,1000000,498.262,3.00,357.00,,515975424,logs/rpc-07-before.stdout
+rpc,scalar_5,7,before,1000000,582.756,3.00,438.00,,647469280,logs/rpc-07-before.stdout
+rpc,scalar_8,7,before,1000000,865.779,3.00,681.00,,1047950848,logs/rpc-07-before.stdout
+rpc,string_16,7,before,1000000,563.668,5.00,172.00,,235000000,logs/rpc-07-before.stdout
+rpc,string_1024,7,before,500000,616.257,5.00,4204.00,,621500000,logs/rpc-07-before.stdout
+rpc,string_65536,7,before,31250,48285.195,5.00,262252.00,,2054843750,logs/rpc-07-before.stdout
+rpc,scalar_0,7,after,1000000,167.351,2.00,33.00,,0,logs/rpc-07-after.stdout
+rpc,scalar_1,7,after,1000000,225.273,2.00,42.00,,127493856,logs/rpc-07-after.stdout
+rpc,scalar_2,7,after,1000000,375.314,2.00,51.00,,255987712,logs/rpc-07-after.stdout
+rpc,scalar_4,7,after,1000000,407.741,2.00,69.00,,515975424,logs/rpc-07-after.stdout
+rpc,scalar_5,7,after,1000000,551.040,3.00,438.00,,647469280,logs/rpc-07-after.stdout
+rpc,scalar_8,7,after,1000000,632.345,3.00,681.00,,1047950848,logs/rpc-07-after.stdout
+rpc,string_16,7,after,1000000,392.857,4.00,100.00,,235000000,logs/rpc-07-after.stdout
+rpc,string_1024,7,after,500000,629.132,4.00,4132.00,,621500000,logs/rpc-07-after.stdout
+rpc,string_65536,7,after,31250,48444.826,4.00,262180.00,,2054843750,logs/rpc-07-after.stdout
+python,portal import,1,before,,66.4,,,,3003000,logs/python-01-before.stdout
+python,portal import bound method,1,before,,87.4,,,,3003000,logs/python-01-before.stdout
+python,portal import object,1,before,,81.9,,,,3003000,logs/python-01-before.stdout
+python,portal import callback,1,before,,171.5,,,,3003000,logs/python-01-before.stdout
+python,raw C API import object,1,before,,80.4,,,,3003000,logs/python-01-before.stdout
+python,raw C API import callback,1,before,,151.9,,,,3003000,logs/python-01-before.stdout
+python,raw C API tuple,1,before,,107.6,,,,3003000,logs/python-01-before.stdout
+python,raw C API vectorcall,1,before,,80.5,,,,3003000,logs/python-01-before.stdout
+python,raw C API bound method,1,before,,85.5,,,,3003000,logs/python-01-before.stdout
+python,raw C API bound method offset,1,before,,89.5,,,,3003000,logs/python-01-before.stdout
+python,portal export tuple,1,before,,77.4,,,,3003000,logs/python-01-before.stdout
+python,portal export class argument,1,before,,46.1,,,,3003000,logs/python-01-before.stdout
+python,portal export class member,1,before,,46.0,,,,3003000,logs/python-01-before.stdout
+python,portal export callback,1,before,,102.6,,,,3003000,logs/python-01-before.stdout
+python,portal export construct,1,before,,225.2,,,,3003000,logs/python-01-before.stdout
+python,portal overload tuple 1,1,before,,63.5,,,,10010000,logs/python-01-before.stdout
+python,portal overload tuple 2,1,before,,76.5,,,,3003000,logs/python-01-before.stdout
+python,portal overload fallback tuple,1,before,,110.9,,,,-10010000,logs/python-01-before.stdout
+python,portal export vectorcall,1,before,,49.8,,,,3003000,logs/python-01-before.stdout
+python,portal overload vectorcall 1,1,before,,36.0,,,,10010000,logs/python-01-before.stdout
+python,portal overload vectorcall 2,1,before,,59.8,,,,3003000,logs/python-01-before.stdout
+python,portal overload fallback vc,1,before,,94.7,,,,-10010000,logs/python-01-before.stdout
+python,portal import,1,after,,116.0,,,,3003000,logs/python-01-after.stdout
+python,portal import bound method,1,after,,133.8,,,,3003000,logs/python-01-after.stdout
+python,portal import object,1,after,,80.7,,,,3003000,logs/python-01-after.stdout
+python,portal import callback,1,after,,150.2,,,,3003000,logs/python-01-after.stdout
+python,raw C API import object,1,after,,102.6,,,,3003000,logs/python-01-after.stdout
+python,raw C API import callback,1,after,,191.2,,,,3003000,logs/python-01-after.stdout
+python,raw C API tuple,1,after,,188.2,,,,3003000,logs/python-01-after.stdout
+python,raw C API vectorcall,1,after,,216.5,,,,3003000,logs/python-01-after.stdout
+python,raw C API bound method,1,after,,396.1,,,,3003000,logs/python-01-after.stdout
+python,raw C API bound method offset,1,after,,306.3,,,,3003000,logs/python-01-after.stdout
+python,portal export tuple,1,after,,66.0,,,,3003000,logs/python-01-after.stdout
+python,portal export class argument,1,after,,41.6,,,,3003000,logs/python-01-after.stdout
+python,portal export class member,1,after,,43.6,,,,3003000,logs/python-01-after.stdout
+python,portal export callback,1,after,,101.3,,,,3003000,logs/python-01-after.stdout
+python,portal export construct,1,after,,277.5,,,,3003000,logs/python-01-after.stdout
+python,portal overload tuple 1,1,after,,118.7,,,,10010000,logs/python-01-after.stdout
+python,portal overload tuple 2,1,after,,117.9,,,,3003000,logs/python-01-after.stdout
+python,portal overload fallback tuple,1,after,,311.2,,,,-10010000,logs/python-01-after.stdout
+python,portal export vectorcall,1,after,,133.6,,,,3003000,logs/python-01-after.stdout
+python,portal overload vectorcall 1,1,after,,110.2,,,,10010000,logs/python-01-after.stdout
+python,portal overload vectorcall 2,1,after,,106.0,,,,3003000,logs/python-01-after.stdout
+python,portal overload fallback vc,1,after,,176.2,,,,-10010000,logs/python-01-after.stdout
+python,portal import,2,after,,161.8,,,,3003000,logs/python-02-after.stdout
+python,portal import bound method,2,after,,283.6,,,,3003000,logs/python-02-after.stdout
+python,portal import object,2,after,,192.4,,,,3003000,logs/python-02-after.stdout
+python,portal import callback,2,after,,257.8,,,,3003000,logs/python-02-after.stdout
+python,raw C API import object,2,after,,116.9,,,,3003000,logs/python-02-after.stdout
+python,raw C API import callback,2,after,,449.2,,,,3003000,logs/python-02-after.stdout
+python,raw C API tuple,2,after,,200.9,,,,3003000,logs/python-02-after.stdout
+python,raw C API vectorcall,2,after,,128.6,,,,3003000,logs/python-02-after.stdout
+python,raw C API bound method,2,after,,115.8,,,,3003000,logs/python-02-after.stdout
+python,raw C API bound method offset,2,after,,118.1,,,,3003000,logs/python-02-after.stdout
+python,portal export tuple,2,after,,97.0,,,,3003000,logs/python-02-after.stdout
+python,portal export class argument,2,after,,72.2,,,,3003000,logs/python-02-after.stdout
+python,portal export class member,2,after,,64.4,,,,3003000,logs/python-02-after.stdout
+python,portal export callback,2,after,,208.7,,,,3003000,logs/python-02-after.stdout
+python,portal export construct,2,after,,277.2,,,,3003000,logs/python-02-after.stdout
+python,portal overload tuple 1,2,after,,99.3,,,,10010000,logs/python-02-after.stdout
+python,portal overload tuple 2,2,after,,109.4,,,,3003000,logs/python-02-after.stdout
+python,portal overload fallback tuple,2,after,,148.0,,,,-10010000,logs/python-02-after.stdout
+python,portal export vectorcall,2,after,,57.0,,,,3003000,logs/python-02-after.stdout
+python,portal overload vectorcall 1,2,after,,51.0,,,,10010000,logs/python-02-after.stdout
+python,portal overload vectorcall 2,2,after,,66.0,,,,3003000,logs/python-02-after.stdout
+python,portal overload fallback vc,2,after,,82.7,,,,-10010000,logs/python-02-after.stdout
+python,portal import,2,before,,120.6,,,,3003000,logs/python-02-before.stdout
+python,portal import bound method,2,before,,103.0,,,,3003000,logs/python-02-before.stdout
+python,portal import object,2,before,,80.4,,,,3003000,logs/python-02-before.stdout
+python,portal import callback,2,before,,194.6,,,,3003000,logs/python-02-before.stdout
+python,raw C API import object,2,before,,117.5,,,,3003000,logs/python-02-before.stdout
+python,raw C API import callback,2,before,,199.8,,,,3003000,logs/python-02-before.stdout
+python,raw C API tuple,2,before,,127.1,,,,3003000,logs/python-02-before.stdout
+python,raw C API vectorcall,2,before,,94.1,,,,3003000,logs/python-02-before.stdout
+python,raw C API bound method,2,before,,126.6,,,,3003000,logs/python-02-before.stdout
+python,raw C API bound method offset,2,before,,181.6,,,,3003000,logs/python-02-before.stdout
+python,portal export tuple,2,before,,101.3,,,,3003000,logs/python-02-before.stdout
+python,portal export class argument,2,before,,65.1,,,,3003000,logs/python-02-before.stdout
+python,portal export class member,2,before,,47.4,,,,3003000,logs/python-02-before.stdout
+python,portal export callback,2,before,,109.8,,,,3003000,logs/python-02-before.stdout
+python,portal export construct,2,before,,144.6,,,,3003000,logs/python-02-before.stdout
+python,portal overload tuple 1,2,before,,79.3,,,,10010000,logs/python-02-before.stdout
+python,portal overload tuple 2,2,before,,94.8,,,,3003000,logs/python-02-before.stdout
+python,portal overload fallback tuple,2,before,,124.5,,,,-10010000,logs/python-02-before.stdout
+python,portal export vectorcall,2,before,,43.8,,,,3003000,logs/python-02-before.stdout
+python,portal overload vectorcall 1,2,before,,45.4,,,,10010000,logs/python-02-before.stdout
+python,portal overload vectorcall 2,2,before,,55.1,,,,3003000,logs/python-02-before.stdout
+python,portal overload fallback vc,2,before,,125.2,,,,-10010000,logs/python-02-before.stdout
+python,portal import,3,before,,73.7,,,,3003000,logs/python-03-before.stdout
+python,portal import bound method,3,before,,123.8,,,,3003000,logs/python-03-before.stdout
+python,portal import object,3,before,,76.5,,,,3003000,logs/python-03-before.stdout
+python,portal import callback,3,before,,223.9,,,,3003000,logs/python-03-before.stdout
+python,raw C API import object,3,before,,111.4,,,,3003000,logs/python-03-before.stdout
+python,raw C API import callback,3,before,,184.2,,,,3003000,logs/python-03-before.stdout
+python,raw C API tuple,3,before,,128.2,,,,3003000,logs/python-03-before.stdout
+python,raw C API vectorcall,3,before,,74.8,,,,3003000,logs/python-03-before.stdout
+python,raw C API bound method,3,before,,87.5,,,,3003000,logs/python-03-before.stdout
+python,raw C API bound method offset,3,before,,99.9,,,,3003000,logs/python-03-before.stdout
+python,portal export tuple,3,before,,67.7,,,,3003000,logs/python-03-before.stdout
+python,portal export class argument,3,before,,45.7,,,,3003000,logs/python-03-before.stdout
+python,portal export class member,3,before,,57.5,,,,3003000,logs/python-03-before.stdout
+python,portal export callback,3,before,,131.7,,,,3003000,logs/python-03-before.stdout
+python,portal export construct,3,before,,178.8,,,,3003000,logs/python-03-before.stdout
+python,portal overload tuple 1,3,before,,96.1,,,,10010000,logs/python-03-before.stdout
+python,portal overload tuple 2,3,before,,74.9,,,,3003000,logs/python-03-before.stdout
+python,portal overload fallback tuple,3,before,,118.4,,,,-10010000,logs/python-03-before.stdout
+python,portal export vectorcall,3,before,,37.8,,,,3003000,logs/python-03-before.stdout
+python,portal overload vectorcall 1,3,before,,41.5,,,,10010000,logs/python-03-before.stdout
+python,portal overload vectorcall 2,3,before,,57.3,,,,3003000,logs/python-03-before.stdout
+python,portal overload fallback vc,3,before,,83.3,,,,-10010000,logs/python-03-before.stdout
+python,portal import,3,after,,88.5,,,,3003000,logs/python-03-after.stdout
+python,portal import bound method,3,after,,121.1,,,,3003000,logs/python-03-after.stdout
+python,portal import object,3,after,,97.1,,,,3003000,logs/python-03-after.stdout
+python,portal import callback,3,after,,199.9,,,,3003000,logs/python-03-after.stdout
+python,raw C API import object,3,after,,87.1,,,,3003000,logs/python-03-after.stdout
+python,raw C API import callback,3,after,,185.6,,,,3003000,logs/python-03-after.stdout
+python,raw C API tuple,3,after,,104.9,,,,3003000,logs/python-03-after.stdout
+python,raw C API vectorcall,3,after,,75.5,,,,3003000,logs/python-03-after.stdout
+python,raw C API bound method,3,after,,92.6,,,,3003000,logs/python-03-after.stdout
+python,raw C API bound method offset,3,after,,84.9,,,,3003000,logs/python-03-after.stdout
+python,portal export tuple,3,after,,82.9,,,,3003000,logs/python-03-after.stdout
+python,portal export class argument,3,after,,64.4,,,,3003000,logs/python-03-after.stdout
+python,portal export class member,3,after,,49.7,,,,3003000,logs/python-03-after.stdout
+python,portal export callback,3,after,,125.8,,,,3003000,logs/python-03-after.stdout
+python,portal export construct,3,after,,177.5,,,,3003000,logs/python-03-after.stdout
+python,portal overload tuple 1,3,after,,80.2,,,,10010000,logs/python-03-after.stdout
+python,portal overload tuple 2,3,after,,80.6,,,,3003000,logs/python-03-after.stdout
+python,portal overload fallback tuple,3,after,,103.4,,,,-10010000,logs/python-03-after.stdout
+python,portal export vectorcall,3,after,,46.6,,,,3003000,logs/python-03-after.stdout
+python,portal overload vectorcall 1,3,after,,47.3,,,,10010000,logs/python-03-after.stdout
+python,portal overload vectorcall 2,3,after,,62.6,,,,3003000,logs/python-03-after.stdout
+python,portal overload fallback vc,3,after,,91.5,,,,-10010000,logs/python-03-after.stdout
+python,portal import,4,after,,74.7,,,,3003000,logs/python-04-after.stdout
+python,portal import bound method,4,after,,87.0,,,,3003000,logs/python-04-after.stdout
+python,portal import object,4,after,,87.6,,,,3003000,logs/python-04-after.stdout
+python,portal import callback,4,after,,140.5,,,,3003000,logs/python-04-after.stdout
+python,raw C API import object,4,after,,97.1,,,,3003000,logs/python-04-after.stdout
+python,raw C API import callback,4,after,,169.6,,,,3003000,logs/python-04-after.stdout
+python,raw C API tuple,4,after,,115.5,,,,3003000,logs/python-04-after.stdout
+python,raw C API vectorcall,4,after,,79.9,,,,3003000,logs/python-04-after.stdout
+python,raw C API bound method,4,after,,102.8,,,,3003000,logs/python-04-after.stdout
+python,raw C API bound method offset,4,after,,95.8,,,,3003000,logs/python-04-after.stdout
+python,portal export tuple,4,after,,86.6,,,,3003000,logs/python-04-after.stdout
+python,portal export class argument,4,after,,50.2,,,,3003000,logs/python-04-after.stdout
+python,portal export class member,4,after,,53.3,,,,3003000,logs/python-04-after.stdout
+python,portal export callback,4,after,,106.6,,,,3003000,logs/python-04-after.stdout
+python,portal export construct,4,after,,221.8,,,,3003000,logs/python-04-after.stdout
+python,portal overload tuple 1,4,after,,69.2,,,,10010000,logs/python-04-after.stdout
+python,portal overload tuple 2,4,after,,84.1,,,,3003000,logs/python-04-after.stdout
+python,portal overload fallback tuple,4,after,,106.1,,,,-10010000,logs/python-04-after.stdout
+python,portal export vectorcall,4,after,,71.4,,,,3003000,logs/python-04-after.stdout
+python,portal overload vectorcall 1,4,after,,52.8,,,,10010000,logs/python-04-after.stdout
+python,portal overload vectorcall 2,4,after,,58.4,,,,3003000,logs/python-04-after.stdout
+python,portal overload fallback vc,4,after,,82.5,,,,-10010000,logs/python-04-after.stdout
+python,portal import,4,before,,106.9,,,,3003000,logs/python-04-before.stdout
+python,portal import bound method,4,before,,120.5,,,,3003000,logs/python-04-before.stdout
+python,portal import object,4,before,,80.0,,,,3003000,logs/python-04-before.stdout
+python,portal import callback,4,before,,197.0,,,,3003000,logs/python-04-before.stdout
+python,raw C API import object,4,before,,74.0,,,,3003000,logs/python-04-before.stdout
+python,raw C API import callback,4,before,,198.4,,,,3003000,logs/python-04-before.stdout
+python,raw C API tuple,4,before,,123.8,,,,3003000,logs/python-04-before.stdout
+python,raw C API vectorcall,4,before,,93.3,,,,3003000,logs/python-04-before.stdout
+python,raw C API bound method,4,before,,117.6,,,,3003000,logs/python-04-before.stdout
+python,raw C API bound method offset,4,before,,123.0,,,,3003000,logs/python-04-before.stdout
+python,portal export tuple,4,before,,81.6,,,,3003000,logs/python-04-before.stdout
+python,portal export class argument,4,before,,64.2,,,,3003000,logs/python-04-before.stdout
+python,portal export class member,4,before,,56.6,,,,3003000,logs/python-04-before.stdout
+python,portal export callback,4,before,,110.4,,,,3003000,logs/python-04-before.stdout
+python,portal export construct,4,before,,172.5,,,,3003000,logs/python-04-before.stdout
+python,portal overload tuple 1,4,before,,72.1,,,,10010000,logs/python-04-before.stdout
+python,portal overload tuple 2,4,before,,84.0,,,,3003000,logs/python-04-before.stdout
+python,portal overload fallback tuple,4,before,,118.3,,,,-10010000,logs/python-04-before.stdout
+python,portal export vectorcall,4,before,,38.0,,,,3003000,logs/python-04-before.stdout
+python,portal overload vectorcall 1,4,before,,48.2,,,,10010000,logs/python-04-before.stdout
+python,portal overload vectorcall 2,4,before,,57.2,,,,3003000,logs/python-04-before.stdout
+python,portal overload fallback vc,4,before,,79.9,,,,-10010000,logs/python-04-before.stdout
+python,portal import,5,before,,78.1,,,,3003000,logs/python-05-before.stdout
+python,portal import bound method,5,before,,126.9,,,,3003000,logs/python-05-before.stdout
+python,portal import object,5,before,,88.9,,,,3003000,logs/python-05-before.stdout
+python,portal import callback,5,before,,222.9,,,,3003000,logs/python-05-before.stdout
+python,raw C API import object,5,before,,118.7,,,,3003000,logs/python-05-before.stdout
+python,raw C API import callback,5,before,,183.2,,,,3003000,logs/python-05-before.stdout
+python,raw C API tuple,5,before,,112.0,,,,3003000,logs/python-05-before.stdout
+python,raw C API vectorcall,5,before,,135.7,,,,3003000,logs/python-05-before.stdout
+python,raw C API bound method,5,before,,87.3,,,,3003000,logs/python-05-before.stdout
+python,raw C API bound method offset,5,before,,110.4,,,,3003000,logs/python-05-before.stdout
+python,portal export tuple,5,before,,84.7,,,,3003000,logs/python-05-before.stdout
+python,portal export class argument,5,before,,52.3,,,,3003000,logs/python-05-before.stdout
+python,portal export class member,5,before,,44.5,,,,3003000,logs/python-05-before.stdout
+python,portal export callback,5,before,,142.3,,,,3003000,logs/python-05-before.stdout
+python,portal export construct,5,before,,163.0,,,,3003000,logs/python-05-before.stdout
+python,portal overload tuple 1,5,before,,67.1,,,,10010000,logs/python-05-before.stdout
+python,portal overload tuple 2,5,before,,81.8,,,,3003000,logs/python-05-before.stdout
+python,portal overload fallback tuple,5,before,,118.2,,,,-10010000,logs/python-05-before.stdout
+python,portal export vectorcall,5,before,,59.9,,,,3003000,logs/python-05-before.stdout
+python,portal overload vectorcall 1,5,before,,38.1,,,,10010000,logs/python-05-before.stdout
+python,portal overload vectorcall 2,5,before,,53.7,,,,3003000,logs/python-05-before.stdout
+python,portal overload fallback vc,5,before,,93.6,,,,-10010000,logs/python-05-before.stdout
+python,portal import,5,after,,85.4,,,,3003000,logs/python-05-after.stdout
+python,portal import bound method,5,after,,84.4,,,,3003000,logs/python-05-after.stdout
+python,portal import object,5,after,,87.4,,,,3003000,logs/python-05-after.stdout
+python,portal import callback,5,after,,228.3,,,,3003000,logs/python-05-after.stdout
+python,raw C API import object,5,after,,132.4,,,,3003000,logs/python-05-after.stdout
+python,raw C API import callback,5,after,,200.7,,,,3003000,logs/python-05-after.stdout
+python,raw C API tuple,5,after,,119.8,,,,3003000,logs/python-05-after.stdout
+python,raw C API vectorcall,5,after,,97.7,,,,3003000,logs/python-05-after.stdout
+python,raw C API bound method,5,after,,121.8,,,,3003000,logs/python-05-after.stdout
+python,raw C API bound method offset,5,after,,108.9,,,,3003000,logs/python-05-after.stdout
+python,portal export tuple,5,after,,77.6,,,,3003000,logs/python-05-after.stdout
+python,portal export class argument,5,after,,57.0,,,,3003000,logs/python-05-after.stdout
+python,portal export class member,5,after,,64.2,,,,3003000,logs/python-05-after.stdout
+python,portal export callback,5,after,,150.1,,,,3003000,logs/python-05-after.stdout
+python,portal export construct,5,after,,184.7,,,,3003000,logs/python-05-after.stdout
+python,portal overload tuple 1,5,after,,81.8,,,,10010000,logs/python-05-after.stdout
+python,portal overload tuple 2,5,after,,87.3,,,,3003000,logs/python-05-after.stdout
+python,portal overload fallback tuple,5,after,,149.2,,,,-10010000,logs/python-05-after.stdout
+python,portal export vectorcall,5,after,,60.4,,,,3003000,logs/python-05-after.stdout
+python,portal overload vectorcall 1,5,after,,46.9,,,,10010000,logs/python-05-after.stdout
+python,portal overload vectorcall 2,5,after,,77.9,,,,3003000,logs/python-05-after.stdout
+python,portal overload fallback vc,5,after,,70.3,,,,-10010000,logs/python-05-after.stdout
+python,portal import,6,after,,68.7,,,,3003000,logs/python-06-after.stdout
+python,portal import bound method,6,after,,77.7,,,,3003000,logs/python-06-after.stdout
+python,portal import object,6,after,,73.3,,,,3003000,logs/python-06-after.stdout
+python,portal import callback,6,after,,142.0,,,,3003000,logs/python-06-after.stdout
+python,raw C API import object,6,after,,83.9,,,,3003000,logs/python-06-after.stdout
+python,raw C API import callback,6,after,,164.1,,,,3003000,logs/python-06-after.stdout
+python,raw C API tuple,6,after,,145.7,,,,3003000,logs/python-06-after.stdout
+python,raw C API vectorcall,6,after,,130.2,,,,3003000,logs/python-06-after.stdout
+python,raw C API bound method,6,after,,117.3,,,,3003000,logs/python-06-after.stdout
+python,raw C API bound method offset,6,after,,111.6,,,,3003000,logs/python-06-after.stdout
+python,portal export tuple,6,after,,60.6,,,,3003000,logs/python-06-after.stdout
+python,portal export class argument,6,after,,39.1,,,,3003000,logs/python-06-after.stdout
+python,portal export class member,6,after,,38.5,,,,3003000,logs/python-06-after.stdout
+python,portal export callback,6,after,,96.2,,,,3003000,logs/python-06-after.stdout
+python,portal export construct,6,after,,125.8,,,,3003000,logs/python-06-after.stdout
+python,portal overload tuple 1,6,after,,72.2,,,,10010000,logs/python-06-after.stdout
+python,portal overload tuple 2,6,after,,81.4,,,,3003000,logs/python-06-after.stdout
+python,portal overload fallback tuple,6,after,,105.0,,,,-10010000,logs/python-06-after.stdout
+python,portal export vectorcall,6,after,,37.9,,,,3003000,logs/python-06-after.stdout
+python,portal overload vectorcall 1,6,after,,32.0,,,,10010000,logs/python-06-after.stdout
+python,portal overload vectorcall 2,6,after,,50.1,,,,3003000,logs/python-06-after.stdout
+python,portal overload fallback vc,6,after,,73.1,,,,-10010000,logs/python-06-after.stdout
+python,portal import,6,before,,95.8,,,,3003000,logs/python-06-before.stdout
+python,portal import bound method,6,before,,100.6,,,,3003000,logs/python-06-before.stdout
+python,portal import object,6,before,,79.5,,,,3003000,logs/python-06-before.stdout
+python,portal import callback,6,before,,151.6,,,,3003000,logs/python-06-before.stdout
+python,raw C API import object,6,before,,71.5,,,,3003000,logs/python-06-before.stdout
+python,raw C API import callback,6,before,,178.2,,,,3003000,logs/python-06-before.stdout
+python,raw C API tuple,6,before,,143.8,,,,3003000,logs/python-06-before.stdout
+python,raw C API vectorcall,6,before,,190.0,,,,3003000,logs/python-06-before.stdout
+python,raw C API bound method,6,before,,141.9,,,,3003000,logs/python-06-before.stdout
+python,raw C API bound method offset,6,before,,111.8,,,,3003000,logs/python-06-before.stdout
+python,portal export tuple,6,before,,112.6,,,,3003000,logs/python-06-before.stdout
+python,portal export class argument,6,before,,76.5,,,,3003000,logs/python-06-before.stdout
+python,portal export class member,6,before,,51.4,,,,3003000,logs/python-06-before.stdout
+python,portal export callback,6,before,,97.2,,,,3003000,logs/python-06-before.stdout
+python,portal export construct,6,before,,140.6,,,,3003000,logs/python-06-before.stdout
+python,portal overload tuple 1,6,before,,70.3,,,,10010000,logs/python-06-before.stdout
+python,portal overload tuple 2,6,before,,85.3,,,,3003000,logs/python-06-before.stdout
+python,portal overload fallback tuple,6,before,,102.3,,,,-10010000,logs/python-06-before.stdout
+python,portal export vectorcall,6,before,,58.7,,,,3003000,logs/python-06-before.stdout
+python,portal overload vectorcall 1,6,before,,40.7,,,,10010000,logs/python-06-before.stdout
+python,portal overload vectorcall 2,6,before,,74.3,,,,3003000,logs/python-06-before.stdout
+python,portal overload fallback vc,6,before,,74.4,,,,-10010000,logs/python-06-before.stdout
+python,portal import,7,before,,79.2,,,,3003000,logs/python-07-before.stdout
+python,portal import bound method,7,before,,74.5,,,,3003000,logs/python-07-before.stdout
+python,portal import object,7,before,,64.7,,,,3003000,logs/python-07-before.stdout
+python,portal import callback,7,before,,167.8,,,,3003000,logs/python-07-before.stdout
+python,raw C API import object,7,before,,95.0,,,,3003000,logs/python-07-before.stdout
+python,raw C API import callback,7,before,,159.2,,,,3003000,logs/python-07-before.stdout
+python,raw C API tuple,7,before,,118.0,,,,3003000,logs/python-07-before.stdout
+python,raw C API vectorcall,7,before,,80.4,,,,3003000,logs/python-07-before.stdout
+python,raw C API bound method,7,before,,79.8,,,,3003000,logs/python-07-before.stdout
+python,raw C API bound method offset,7,before,,102.4,,,,3003000,logs/python-07-before.stdout
+python,portal export tuple,7,before,,66.6,,,,3003000,logs/python-07-before.stdout
+python,portal export class argument,7,before,,43.1,,,,3003000,logs/python-07-before.stdout
+python,portal export class member,7,before,,45.5,,,,3003000,logs/python-07-before.stdout
+python,portal export callback,7,before,,100.2,,,,3003000,logs/python-07-before.stdout
+python,portal export construct,7,before,,210.8,,,,3003000,logs/python-07-before.stdout
+python,portal overload tuple 1,7,before,,91.9,,,,10010000,logs/python-07-before.stdout
+python,portal overload tuple 2,7,before,,111.0,,,,3003000,logs/python-07-before.stdout
+python,portal overload fallback tuple,7,before,,161.5,,,,-10010000,logs/python-07-before.stdout
+python,portal export vectorcall,7,before,,47.1,,,,3003000,logs/python-07-before.stdout
+python,portal overload vectorcall 1,7,before,,49.9,,,,10010000,logs/python-07-before.stdout
+python,portal overload vectorcall 2,7,before,,105.9,,,,3003000,logs/python-07-before.stdout
+python,portal overload fallback vc,7,before,,86.6,,,,-10010000,logs/python-07-before.stdout
+python,portal import,7,after,,70.9,,,,3003000,logs/python-07-after.stdout
+python,portal import bound method,7,after,,92.5,,,,3003000,logs/python-07-after.stdout
+python,portal import object,7,after,,114.0,,,,3003000,logs/python-07-after.stdout
+python,portal import callback,7,after,,195.3,,,,3003000,logs/python-07-after.stdout
+python,raw C API import object,7,after,,88.6,,,,3003000,logs/python-07-after.stdout
+python,raw C API import callback,7,after,,171.7,,,,3003000,logs/python-07-after.stdout
+python,raw C API tuple,7,after,,186.9,,,,3003000,logs/python-07-after.stdout
+python,raw C API vectorcall,7,after,,147.9,,,,3003000,logs/python-07-after.stdout
+python,raw C API bound method,7,after,,112.4,,,,3003000,logs/python-07-after.stdout
+python,raw C API bound method offset,7,after,,99.8,,,,3003000,logs/python-07-after.stdout
+python,portal export tuple,7,after,,112.4,,,,3003000,logs/python-07-after.stdout
+python,portal export class argument,7,after,,52.7,,,,3003000,logs/python-07-after.stdout
+python,portal export class member,7,after,,43.0,,,,3003000,logs/python-07-after.stdout
+python,portal export callback,7,after,,139.3,,,,3003000,logs/python-07-after.stdout
+python,portal export construct,7,after,,286.0,,,,3003000,logs/python-07-after.stdout
+python,portal overload tuple 1,7,after,,88.0,,,,10010000,logs/python-07-after.stdout
+python,portal overload tuple 2,7,after,,97.2,,,,3003000,logs/python-07-after.stdout
+python,portal overload fallback tuple,7,after,,237.4,,,,-10010000,logs/python-07-after.stdout
+python,portal export vectorcall,7,after,,68.7,,,,3003000,logs/python-07-after.stdout
+python,portal overload vectorcall 1,7,after,,59.1,,,,10010000,logs/python-07-after.stdout
+python,portal overload vectorcall 2,7,after,,66.7,,,,3003000,logs/python-07-after.stdout
+python,portal overload fallback vc,7,after,,123.4,,,,-10010000,logs/python-07-after.stdout
+node,raw N-API export,1,before,,541.9,,,,303000,logs/node-01-before.stdout
+node,raw N-API export class argument,1,before,,427.4,,,,303000,logs/node-01-before.stdout
+node,raw N-API export class member,1,before,,252.8,,,,303000,logs/node-01-before.stdout
+node,raw N-API export callback,1,before,,112.6,,,,303000,logs/node-01-before.stdout
+node,raw N-API export construct,1,before,,2454.0,,,,303000,logs/node-01-before.stdout
+node,raw N-API overload export 1,1,before,,127.4,,,,1010000,logs/node-01-before.stdout
+node,raw N-API overload export 2,1,before,,60.7,,,,303000,logs/node-01-before.stdout
+node,portal export,1,before,,68.3,,,,303000,logs/node-01-before.stdout
+node,portal export class argument,1,before,,292.7,,,,303000,logs/node-01-before.stdout
+node,portal export class member,1,before,,374.4,,,,303000,logs/node-01-before.stdout
+node,portal trusted class member,1,before,,202.1,,,,303000,logs/node-01-before.stdout
+node,portal export callback,1,before,,181.9,,,,303000,logs/node-01-before.stdout
+node,portal export construct,1,before,,2828.0,,,,303000,logs/node-01-before.stdout
+node,portal overload export 1,1,before,,104.3,,,,1010000,logs/node-01-before.stdout
+node,portal overload export 2,1,before,,103.6,,,,303000,logs/node-01-before.stdout
+node,portal strict int small,1,before,,66.3,,,,101000,logs/node-01-before.stdout
+node,portal strict int wide,1,before,,113.2,,,,216895848347000,logs/node-01-before.stdout
+node,portal strict unsigned wide,1,before,,157.3,,,,433791696795000,logs/node-01-before.stdout
+node,portal overload string miss,1,before,,160.1,,,,101000,logs/node-01-before.stdout
+node,portal UTF-8 empty,1,before,,168.2,,,,0,logs/node-01-before.stdout
+node,portal UTF-8 16 B,1,before,,191.3,,,,1616000,logs/node-01-before.stdout
+node,portal UTF-8 Unicode + NUL,1,before,,279.3,,,,909000,logs/node-01-before.stdout
+node,portal UTF-8 1 KiB,1,before,,1471.3,,,,103424000,logs/node-01-before.stdout
+node,portal UTF-8 64 KiB,1,before,,65254.4,,,,167903232,logs/node-01-before.stdout
+node,raw N-API import,1,before,,246.0,,,,300000,logs/node-01-before.stdout
+node,raw N-API import object,1,before,,139.0,,,,300000,logs/node-01-before.stdout
+node,raw N-API import callback,1,before,,14302.1,,,,300000,logs/node-01-before.stdout
+node,portal import,1,before,,152.8,,,,300000,logs/node-01-before.stdout
+node,portal import object,1,before,,144.1,,,,300000,logs/node-01-before.stdout
+node,portal import callback,1,before,,9734.6,,,,300000,logs/node-01-before.stdout
+node,raw N-API export,1,after,,99.9,,,,303000,logs/node-01-after.stdout
+node,raw N-API export class argument,1,after,,288.4,,,,303000,logs/node-01-after.stdout
+node,raw N-API export class member,1,after,,222.3,,,,303000,logs/node-01-after.stdout
+node,raw N-API export callback,1,after,,171.1,,,,303000,logs/node-01-after.stdout
+node,raw N-API export construct,1,after,,1192.8,,,,303000,logs/node-01-after.stdout
+node,raw N-API overload export 1,1,after,,115.7,,,,1010000,logs/node-01-after.stdout
+node,raw N-API overload export 2,1,after,,83.6,,,,303000,logs/node-01-after.stdout
+node,portal export,1,after,,58.1,,,,303000,logs/node-01-after.stdout
+node,portal export class argument,1,after,,314.7,,,,303000,logs/node-01-after.stdout
+node,portal export class member,1,after,,349.0,,,,303000,logs/node-01-after.stdout
+node,portal trusted class member,1,after,,156.8,,,,303000,logs/node-01-after.stdout
+node,portal export callback,1,after,,351.6,,,,303000,logs/node-01-after.stdout
+node,portal export construct,1,after,,1299.4,,,,303000,logs/node-01-after.stdout
+node,portal overload export 1,1,after,,93.5,,,,1010000,logs/node-01-after.stdout
+node,portal overload export 2,1,after,,96.0,,,,303000,logs/node-01-after.stdout
+node,portal strict int small,1,after,,90.1,,,,101000,logs/node-01-after.stdout
+node,portal strict int wide,1,after,,122.2,,,,216895848347000,logs/node-01-after.stdout
+node,portal strict unsigned wide,1,after,,115.7,,,,433791696795000,logs/node-01-after.stdout
+node,portal overload string miss,1,after,,122.0,,,,101000,logs/node-01-after.stdout
+node,portal UTF-8 empty,1,after,,148.2,,,,0,logs/node-01-after.stdout
+node,portal UTF-8 16 B,1,after,,184.2,,,,1616000,logs/node-01-after.stdout
+node,portal UTF-8 Unicode + NUL,1,after,,311.9,,,,909000,logs/node-01-after.stdout
+node,portal UTF-8 1 KiB,1,after,,1067.0,,,,103424000,logs/node-01-after.stdout
+node,portal UTF-8 64 KiB,1,after,,82925.5,,,,167903232,logs/node-01-after.stdout
+node,raw N-API import,1,after,,274.7,,,,300000,logs/node-01-after.stdout
+node,raw N-API import object,1,after,,264.5,,,,300000,logs/node-01-after.stdout
+node,raw N-API import callback,1,after,,5438.1,,,,300000,logs/node-01-after.stdout
+node,portal import,1,after,,202.6,,,,300000,logs/node-01-after.stdout
+node,portal import object,1,after,,633.7,,,,300000,logs/node-01-after.stdout
+node,portal import callback,1,after,,5860.8,,,,300000,logs/node-01-after.stdout
+node,raw N-API export,2,after,,96.8,,,,303000,logs/node-02-after.stdout
+node,raw N-API export class argument,2,after,,208.1,,,,303000,logs/node-02-after.stdout
+node,raw N-API export class member,2,after,,186.6,,,,303000,logs/node-02-after.stdout
+node,raw N-API export callback,2,after,,164.6,,,,303000,logs/node-02-after.stdout
+node,raw N-API export construct,2,after,,1046.8,,,,303000,logs/node-02-after.stdout
+node,raw N-API overload export 1,2,after,,78.7,,,,1010000,logs/node-02-after.stdout
+node,raw N-API overload export 2,2,after,,55.9,,,,303000,logs/node-02-after.stdout
+node,portal export,2,after,,57.4,,,,303000,logs/node-02-after.stdout
+node,portal export class argument,2,after,,280.2,,,,303000,logs/node-02-after.stdout
+node,portal export class member,2,after,,281.0,,,,303000,logs/node-02-after.stdout
+node,portal trusted class member,2,after,,252.4,,,,303000,logs/node-02-after.stdout
+node,portal export callback,2,after,,285.3,,,,303000,logs/node-02-after.stdout
+node,portal export construct,2,after,,1477.1,,,,303000,logs/node-02-after.stdout
+node,portal overload export 1,2,after,,84.2,,,,1010000,logs/node-02-after.stdout
+node,portal overload export 2,2,after,,86.7,,,,303000,logs/node-02-after.stdout
+node,portal strict int small,2,after,,102.8,,,,101000,logs/node-02-after.stdout
+node,portal strict int wide,2,after,,209.5,,,,216895848347000,logs/node-02-after.stdout
+node,portal strict unsigned wide,2,after,,165.9,,,,433791696795000,logs/node-02-after.stdout
+node,portal overload string miss,2,after,,154.5,,,,101000,logs/node-02-after.stdout
+node,portal UTF-8 empty,2,after,,144.3,,,,0,logs/node-02-after.stdout
+node,portal UTF-8 16 B,2,after,,191.8,,,,1616000,logs/node-02-after.stdout
+node,portal UTF-8 Unicode + NUL,2,after,,279.1,,,,909000,logs/node-02-after.stdout
+node,portal UTF-8 1 KiB,2,after,,1407.2,,,,103424000,logs/node-02-after.stdout
+node,portal UTF-8 64 KiB,2,after,,64614.9,,,,167903232,logs/node-02-after.stdout
+node,raw N-API import,2,after,,193.2,,,,300000,logs/node-02-after.stdout
+node,raw N-API import object,2,after,,120.7,,,,300000,logs/node-02-after.stdout
+node,raw N-API import callback,2,after,,8872.2,,,,300000,logs/node-02-after.stdout
+node,portal import,2,after,,196.1,,,,300000,logs/node-02-after.stdout
+node,portal import object,2,after,,131.2,,,,300000,logs/node-02-after.stdout
+node,portal import callback,2,after,,6596.4,,,,300000,logs/node-02-after.stdout
+node,raw N-API export,2,before,,89.6,,,,303000,logs/node-02-before.stdout
+node,raw N-API export class argument,2,before,,195.7,,,,303000,logs/node-02-before.stdout
+node,raw N-API export class member,2,before,,213.2,,,,303000,logs/node-02-before.stdout
+node,raw N-API export callback,2,before,,142.0,,,,303000,logs/node-02-before.stdout
+node,raw N-API export construct,2,before,,947.5,,,,303000,logs/node-02-before.stdout
+node,raw N-API overload export 1,2,before,,200.1,,,,1010000,logs/node-02-before.stdout
+node,raw N-API overload export 2,2,before,,43.2,,,,303000,logs/node-02-before.stdout
+node,portal export,2,before,,46.9,,,,303000,logs/node-02-before.stdout
+node,portal export class argument,2,before,,219.9,,,,303000,logs/node-02-before.stdout
+node,portal export class member,2,before,,219.2,,,,303000,logs/node-02-before.stdout
+node,portal trusted class member,2,before,,129.9,,,,303000,logs/node-02-before.stdout
+node,portal export callback,2,before,,580.9,,,,303000,logs/node-02-before.stdout
+node,portal export construct,2,before,,1406.1,,,,303000,logs/node-02-before.stdout
+node,portal overload export 1,2,before,,483.6,,,,1010000,logs/node-02-before.stdout
+node,portal overload export 2,2,before,,555.5,,,,303000,logs/node-02-before.stdout
+node,portal strict int small,2,before,,122.1,,,,101000,logs/node-02-before.stdout
+node,portal strict int wide,2,before,,460.5,,,,216895848347000,logs/node-02-before.stdout
+node,portal strict unsigned wide,2,before,,652.0,,,,433791696795000,logs/node-02-before.stdout
+node,portal overload string miss,2,before,,182.9,,,,101000,logs/node-02-before.stdout
+node,portal UTF-8 empty,2,before,,297.0,,,,0,logs/node-02-before.stdout
+node,portal UTF-8 16 B,2,before,,182.2,,,,1616000,logs/node-02-before.stdout
+node,portal UTF-8 Unicode + NUL,2,before,,427.6,,,,909000,logs/node-02-before.stdout
+node,portal UTF-8 1 KiB,2,before,,1589.0,,,,103424000,logs/node-02-before.stdout
+node,portal UTF-8 64 KiB,2,before,,146925.1,,,,167903232,logs/node-02-before.stdout
+node,raw N-API import,2,before,,371.0,,,,300000,logs/node-02-before.stdout
+node,raw N-API import object,2,before,,382.1,,,,300000,logs/node-02-before.stdout
+node,raw N-API import callback,2,before,,6331.6,,,,300000,logs/node-02-before.stdout
+node,portal import,2,before,,187.0,,,,300000,logs/node-02-before.stdout
+node,portal import object,2,before,,153.7,,,,300000,logs/node-02-before.stdout
+node,portal import callback,2,before,,10438.0,,,,300000,logs/node-02-before.stdout
+node,raw N-API export,3,before,,113.5,,,,303000,logs/node-03-before.stdout
+node,raw N-API export class argument,3,before,,244.5,,,,303000,logs/node-03-before.stdout
+node,raw N-API export class member,3,before,,228.1,,,,303000,logs/node-03-before.stdout
+node,raw N-API export callback,3,before,,158.5,,,,303000,logs/node-03-before.stdout
+node,raw N-API export construct,3,before,,1344.9,,,,303000,logs/node-03-before.stdout
+node,raw N-API overload export 1,3,before,,87.4,,,,1010000,logs/node-03-before.stdout
+node,raw N-API overload export 2,3,before,,184.2,,,,303000,logs/node-03-before.stdout
+node,portal export,3,before,,151.6,,,,303000,logs/node-03-before.stdout
+node,portal export class argument,3,before,,440.6,,,,303000,logs/node-03-before.stdout
+node,portal export class member,3,before,,341.3,,,,303000,logs/node-03-before.stdout
+node,portal trusted class member,3,before,,173.0,,,,303000,logs/node-03-before.stdout
+node,portal export callback,3,before,,208.6,,,,303000,logs/node-03-before.stdout
+node,portal export construct,3,before,,6473.2,,,,303000,logs/node-03-before.stdout
+node,portal overload export 1,3,before,,91.7,,,,1010000,logs/node-03-before.stdout
+node,portal overload export 2,3,before,,186.1,,,,303000,logs/node-03-before.stdout
+node,portal strict int small,3,before,,103.9,,,,101000,logs/node-03-before.stdout
+node,portal strict int wide,3,before,,426.3,,,,216895848347000,logs/node-03-before.stdout
+node,portal strict unsigned wide,3,before,,202.3,,,,433791696795000,logs/node-03-before.stdout
+node,portal overload string miss,3,before,,130.0,,,,101000,logs/node-03-before.stdout
+node,portal UTF-8 empty,3,before,,116.4,,,,0,logs/node-03-before.stdout
+node,portal UTF-8 16 B,3,before,,275.7,,,,1616000,logs/node-03-before.stdout
+node,portal UTF-8 Unicode + NUL,3,before,,558.2,,,,909000,logs/node-03-before.stdout
+node,portal UTF-8 1 KiB,3,before,,1310.9,,,,103424000,logs/node-03-before.stdout
+node,portal UTF-8 64 KiB,3,before,,69533.9,,,,167903232,logs/node-03-before.stdout
+node,raw N-API import,3,before,,268.7,,,,300000,logs/node-03-before.stdout
+node,raw N-API import object,3,before,,134.3,,,,300000,logs/node-03-before.stdout
+node,raw N-API import callback,3,before,,6263.9,,,,300000,logs/node-03-before.stdout
+node,portal import,3,before,,201.5,,,,300000,logs/node-03-before.stdout
+node,portal import object,3,before,,149.6,,,,300000,logs/node-03-before.stdout
+node,portal import callback,3,before,,4877.4,,,,300000,logs/node-03-before.stdout
+node,raw N-API export,3,after,,99.6,,,,303000,logs/node-03-after.stdout
+node,raw N-API export class argument,3,after,,226.6,,,,303000,logs/node-03-after.stdout
+node,raw N-API export class member,3,after,,217.5,,,,303000,logs/node-03-after.stdout
+node,raw N-API export callback,3,after,,135.6,,,,303000,logs/node-03-after.stdout
+node,raw N-API export construct,3,after,,1023.2,,,,303000,logs/node-03-after.stdout
+node,raw N-API overload export 1,3,after,,114.2,,,,1010000,logs/node-03-after.stdout
+node,raw N-API overload export 2,3,after,,77.1,,,,303000,logs/node-03-after.stdout
+node,portal export,3,after,,76.3,,,,303000,logs/node-03-after.stdout
+node,portal export class argument,3,after,,364.7,,,,303000,logs/node-03-after.stdout
+node,portal export class member,3,after,,389.5,,,,303000,logs/node-03-after.stdout
+node,portal trusted class member,3,after,,140.5,,,,303000,logs/node-03-after.stdout
+node,portal export callback,3,after,,174.7,,,,303000,logs/node-03-after.stdout
+node,portal export construct,3,after,,1530.3,,,,303000,logs/node-03-after.stdout
+node,portal overload export 1,3,after,,84.9,,,,1010000,logs/node-03-after.stdout
+node,portal overload export 2,3,after,,142.5,,,,303000,logs/node-03-after.stdout
+node,portal strict int small,3,after,,69.7,,,,101000,logs/node-03-after.stdout
+node,portal strict int wide,3,after,,116.9,,,,216895848347000,logs/node-03-after.stdout
+node,portal strict unsigned wide,3,after,,101.5,,,,433791696795000,logs/node-03-after.stdout
+node,portal overload string miss,3,after,,99.1,,,,101000,logs/node-03-after.stdout
+node,portal UTF-8 empty,3,after,,165.1,,,,0,logs/node-03-after.stdout
+node,portal UTF-8 16 B,3,after,,314.5,,,,1616000,logs/node-03-after.stdout
+node,portal UTF-8 Unicode + NUL,3,after,,270.1,,,,909000,logs/node-03-after.stdout
+node,portal UTF-8 1 KiB,3,after,,1432.9,,,,103424000,logs/node-03-after.stdout
+node,portal UTF-8 64 KiB,3,after,,61037.5,,,,167903232,logs/node-03-after.stdout
+node,raw N-API import,3,after,,169.2,,,,300000,logs/node-03-after.stdout
+node,raw N-API import object,3,after,,176.7,,,,300000,logs/node-03-after.stdout
+node,raw N-API import callback,3,after,,5732.4,,,,300000,logs/node-03-after.stdout
+node,portal import,3,after,,211.4,,,,300000,logs/node-03-after.stdout
+node,portal import object,3,after,,170.6,,,,300000,logs/node-03-after.stdout
+node,portal import callback,3,after,,8188.5,,,,300000,logs/node-03-after.stdout
+node,raw N-API export,4,after,,242.9,,,,303000,logs/node-04-after.stdout
+node,raw N-API export class argument,4,after,,321.6,,,,303000,logs/node-04-after.stdout
+node,raw N-API export class member,4,after,,325.8,,,,303000,logs/node-04-after.stdout
+node,raw N-API export callback,4,after,,216.9,,,,303000,logs/node-04-after.stdout
+node,raw N-API export construct,4,after,,1250.8,,,,303000,logs/node-04-after.stdout
+node,raw N-API overload export 1,4,after,,99.8,,,,1010000,logs/node-04-after.stdout
+node,raw N-API overload export 2,4,after,,79.5,,,,303000,logs/node-04-after.stdout
+node,portal export,4,after,,53.3,,,,303000,logs/node-04-after.stdout
+node,portal export class argument,4,after,,231.5,,,,303000,logs/node-04-after.stdout
+node,portal export class member,4,after,,301.1,,,,303000,logs/node-04-after.stdout
+node,portal trusted class member,4,after,,322.3,,,,303000,logs/node-04-after.stdout
+node,portal export callback,4,after,,301.5,,,,303000,logs/node-04-after.stdout
+node,portal export construct,4,after,,1490.1,,,,303000,logs/node-04-after.stdout
+node,portal overload export 1,4,after,,113.1,,,,1010000,logs/node-04-after.stdout
+node,portal overload export 2,4,after,,71.9,,,,303000,logs/node-04-after.stdout
+node,portal strict int small,4,after,,81.6,,,,101000,logs/node-04-after.stdout
+node,portal strict int wide,4,after,,130.0,,,,216895848347000,logs/node-04-after.stdout
+node,portal strict unsigned wide,4,after,,83.6,,,,433791696795000,logs/node-04-after.stdout
+node,portal overload string miss,4,after,,92.1,,,,101000,logs/node-04-after.stdout
+node,portal UTF-8 empty,4,after,,98.4,,,,0,logs/node-04-after.stdout
+node,portal UTF-8 16 B,4,after,,167.5,,,,1616000,logs/node-04-after.stdout
+node,portal UTF-8 Unicode + NUL,4,after,,259.7,,,,909000,logs/node-04-after.stdout
+node,portal UTF-8 1 KiB,4,after,,1039.2,,,,103424000,logs/node-04-after.stdout
+node,portal UTF-8 64 KiB,4,after,,243219.7,,,,167903232,logs/node-04-after.stdout
+node,raw N-API import,4,after,,240.2,,,,300000,logs/node-04-after.stdout
+node,raw N-API import object,4,after,,109.3,,,,300000,logs/node-04-after.stdout
+node,raw N-API import callback,4,after,,4292.0,,,,300000,logs/node-04-after.stdout
+node,portal import,4,after,,139.9,,,,300000,logs/node-04-after.stdout
+node,portal import object,4,after,,170.0,,,,300000,logs/node-04-after.stdout
+node,portal import callback,4,after,,5136.5,,,,300000,logs/node-04-after.stdout
+node,raw N-API export,4,before,,86.2,,,,303000,logs/node-04-before.stdout
+node,raw N-API export class argument,4,before,,183.6,,,,303000,logs/node-04-before.stdout
+node,raw N-API export class member,4,before,,203.8,,,,303000,logs/node-04-before.stdout
+node,raw N-API export callback,4,before,,123.2,,,,303000,logs/node-04-before.stdout
+node,raw N-API export construct,4,before,,875.7,,,,303000,logs/node-04-before.stdout
+node,raw N-API overload export 1,4,before,,96.8,,,,1010000,logs/node-04-before.stdout
+node,raw N-API overload export 2,4,before,,66.0,,,,303000,logs/node-04-before.stdout
+node,portal export,4,before,,71.4,,,,303000,logs/node-04-before.stdout
+node,portal export class argument,4,before,,268.9,,,,303000,logs/node-04-before.stdout
+node,portal export class member,4,before,,236.1,,,,303000,logs/node-04-before.stdout
+node,portal trusted class member,4,before,,187.5,,,,303000,logs/node-04-before.stdout
+node,portal export callback,4,before,,327.7,,,,303000,logs/node-04-before.stdout
+node,portal export construct,4,before,,4826.0,,,,303000,logs/node-04-before.stdout
+node,portal overload export 1,4,before,,62.4,,,,1010000,logs/node-04-before.stdout
+node,portal overload export 2,4,before,,102.2,,,,303000,logs/node-04-before.stdout
+node,portal strict int small,4,before,,40.9,,,,101000,logs/node-04-before.stdout
+node,portal strict int wide,4,before,,88.5,,,,216895848347000,logs/node-04-before.stdout
+node,portal strict unsigned wide,4,before,,103.1,,,,433791696795000,logs/node-04-before.stdout
+node,portal overload string miss,4,before,,88.7,,,,101000,logs/node-04-before.stdout
+node,portal UTF-8 empty,4,before,,141.3,,,,0,logs/node-04-before.stdout
+node,portal UTF-8 16 B,4,before,,160.1,,,,1616000,logs/node-04-before.stdout
+node,portal UTF-8 Unicode + NUL,4,before,,333.3,,,,909000,logs/node-04-before.stdout
+node,portal UTF-8 1 KiB,4,before,,988.0,,,,103424000,logs/node-04-before.stdout
+node,portal UTF-8 64 KiB,4,before,,64867.4,,,,167903232,logs/node-04-before.stdout
+node,raw N-API import,4,before,,181.3,,,,300000,logs/node-04-before.stdout
+node,raw N-API import object,4,before,,148.3,,,,300000,logs/node-04-before.stdout
+node,raw N-API import callback,4,before,,4427.6,,,,300000,logs/node-04-before.stdout
+node,portal import,4,before,,126.1,,,,300000,logs/node-04-before.stdout
+node,portal import object,4,before,,194.5,,,,300000,logs/node-04-before.stdout
+node,portal import callback,4,before,,4326.7,,,,300000,logs/node-04-before.stdout
+node,raw N-API export,5,before,,165.7,,,,303000,logs/node-05-before.stdout
+node,raw N-API export class argument,5,before,,369.6,,,,303000,logs/node-05-before.stdout
+node,raw N-API export class member,5,before,,313.4,,,,303000,logs/node-05-before.stdout
+node,raw N-API export callback,5,before,,215.9,,,,303000,logs/node-05-before.stdout
+node,raw N-API export construct,5,before,,3420.0,,,,303000,logs/node-05-before.stdout
+node,raw N-API overload export 1,5,before,,187.6,,,,1010000,logs/node-05-before.stdout
+node,raw N-API overload export 2,5,before,,231.2,,,,303000,logs/node-05-before.stdout
+node,portal export,5,before,,166.7,,,,303000,logs/node-05-before.stdout
+node,portal export class argument,5,before,,338.5,,,,303000,logs/node-05-before.stdout
+node,portal export class member,5,before,,359.6,,,,303000,logs/node-05-before.stdout
+node,portal trusted class member,5,before,,228.8,,,,303000,logs/node-05-before.stdout
+node,portal export callback,5,before,,320.5,,,,303000,logs/node-05-before.stdout
+node,portal export construct,5,before,,1522.5,,,,303000,logs/node-05-before.stdout
+node,portal overload export 1,5,before,,117.1,,,,1010000,logs/node-05-before.stdout
+node,portal overload export 2,5,before,,122.9,,,,303000,logs/node-05-before.stdout
+node,portal strict int small,5,before,,101.4,,,,101000,logs/node-05-before.stdout
+node,portal strict int wide,5,before,,153.8,,,,216895848347000,logs/node-05-before.stdout
+node,portal strict unsigned wide,5,before,,135.4,,,,433791696795000,logs/node-05-before.stdout
+node,portal overload string miss,5,before,,98.4,,,,101000,logs/node-05-before.stdout
+node,portal UTF-8 empty,5,before,,176.2,,,,0,logs/node-05-before.stdout
+node,portal UTF-8 16 B,5,before,,170.5,,,,1616000,logs/node-05-before.stdout
+node,portal UTF-8 Unicode + NUL,5,before,,385.5,,,,909000,logs/node-05-before.stdout
+node,portal UTF-8 1 KiB,5,before,,1288.3,,,,103424000,logs/node-05-before.stdout
+node,portal UTF-8 64 KiB,5,before,,58737.1,,,,167903232,logs/node-05-before.stdout
+node,raw N-API import,5,before,,227.2,,,,300000,logs/node-05-before.stdout
+node,raw N-API import object,5,before,,208.2,,,,300000,logs/node-05-before.stdout
+node,raw N-API import callback,5,before,,4470.8,,,,300000,logs/node-05-before.stdout
+node,portal import,5,before,,314.8,,,,300000,logs/node-05-before.stdout
+node,portal import object,5,before,,344.4,,,,300000,logs/node-05-before.stdout
+node,portal import callback,5,before,,4666.5,,,,300000,logs/node-05-before.stdout
+node,raw N-API export,5,after,,490.6,,,,303000,logs/node-05-after.stdout
+node,raw N-API export class argument,5,after,,177.7,,,,303000,logs/node-05-after.stdout
+node,raw N-API export class member,5,after,,214.5,,,,303000,logs/node-05-after.stdout
+node,raw N-API export callback,5,after,,322.7,,,,303000,logs/node-05-after.stdout
+node,raw N-API export construct,5,after,,1090.8,,,,303000,logs/node-05-after.stdout
+node,raw N-API overload export 1,5,after,,219.1,,,,1010000,logs/node-05-after.stdout
+node,raw N-API overload export 2,5,after,,740.9,,,,303000,logs/node-05-after.stdout
+node,portal export,5,after,,123.7,,,,303000,logs/node-05-after.stdout
+node,portal export class argument,5,after,,349.7,,,,303000,logs/node-05-after.stdout
+node,portal export class member,5,after,,433.1,,,,303000,logs/node-05-after.stdout
+node,portal trusted class member,5,after,,231.7,,,,303000,logs/node-05-after.stdout
+node,portal export callback,5,after,,266.2,,,,303000,logs/node-05-after.stdout
+node,portal export construct,5,after,,1549.3,,,,303000,logs/node-05-after.stdout
+node,portal overload export 1,5,after,,72.7,,,,1010000,logs/node-05-after.stdout
+node,portal overload export 2,5,after,,137.3,,,,303000,logs/node-05-after.stdout
+node,portal strict int small,5,after,,59.4,,,,101000,logs/node-05-after.stdout
+node,portal strict int wide,5,after,,151.3,,,,216895848347000,logs/node-05-after.stdout
+node,portal strict unsigned wide,5,after,,69.2,,,,433791696795000,logs/node-05-after.stdout
+node,portal overload string miss,5,after,,95.0,,,,101000,logs/node-05-after.stdout
+node,portal UTF-8 empty,5,after,,106.7,,,,0,logs/node-05-after.stdout
+node,portal UTF-8 16 B,5,after,,197.4,,,,1616000,logs/node-05-after.stdout
+node,portal UTF-8 Unicode + NUL,5,after,,319.5,,,,909000,logs/node-05-after.stdout
+node,portal UTF-8 1 KiB,5,after,,1118.6,,,,103424000,logs/node-05-after.stdout
+node,portal UTF-8 64 KiB,5,after,,87773.7,,,,167903232,logs/node-05-after.stdout
+node,raw N-API import,5,after,,237.8,,,,300000,logs/node-05-after.stdout
+node,raw N-API import object,5,after,,198.8,,,,300000,logs/node-05-after.stdout
+node,raw N-API import callback,5,after,,7682.5,,,,300000,logs/node-05-after.stdout
+node,portal import,5,after,,230.5,,,,300000,logs/node-05-after.stdout
+node,portal import object,5,after,,138.4,,,,300000,logs/node-05-after.stdout
+node,portal import callback,5,after,,5631.7,,,,300000,logs/node-05-after.stdout
+node,raw N-API export,6,after,,97.0,,,,303000,logs/node-06-after.stdout
+node,raw N-API export class argument,6,after,,218.3,,,,303000,logs/node-06-after.stdout
+node,raw N-API export class member,6,after,,187.7,,,,303000,logs/node-06-after.stdout
+node,raw N-API export callback,6,after,,156.3,,,,303000,logs/node-06-after.stdout
+node,raw N-API export construct,6,after,,936.5,,,,303000,logs/node-06-after.stdout
+node,raw N-API overload export 1,6,after,,86.4,,,,1010000,logs/node-06-after.stdout
+node,raw N-API overload export 2,6,after,,57.9,,,,303000,logs/node-06-after.stdout
+node,portal export,6,after,,61.8,,,,303000,logs/node-06-after.stdout
+node,portal export class argument,6,after,,447.8,,,,303000,logs/node-06-after.stdout
+node,portal export class member,6,after,,344.5,,,,303000,logs/node-06-after.stdout
+node,portal trusted class member,6,after,,178.2,,,,303000,logs/node-06-after.stdout
+node,portal export callback,6,after,,256.2,,,,303000,logs/node-06-after.stdout
+node,portal export construct,6,after,,1517.6,,,,303000,logs/node-06-after.stdout
+node,portal overload export 1,6,after,,129.0,,,,1010000,logs/node-06-after.stdout
+node,portal overload export 2,6,after,,89.6,,,,303000,logs/node-06-after.stdout
+node,portal strict int small,6,after,,47.9,,,,101000,logs/node-06-after.stdout
+node,portal strict int wide,6,after,,113.2,,,,216895848347000,logs/node-06-after.stdout
+node,portal strict unsigned wide,6,after,,55.6,,,,433791696795000,logs/node-06-after.stdout
+node,portal overload string miss,6,after,,91.3,,,,101000,logs/node-06-after.stdout
+node,portal UTF-8 empty,6,after,,93.7,,,,0,logs/node-06-after.stdout
+node,portal UTF-8 16 B,6,after,,145.5,,,,1616000,logs/node-06-after.stdout
+node,portal UTF-8 Unicode + NUL,6,after,,283.0,,,,909000,logs/node-06-after.stdout
+node,portal UTF-8 1 KiB,6,after,,870.3,,,,103424000,logs/node-06-after.stdout
+node,portal UTF-8 64 KiB,6,after,,43158.5,,,,167903232,logs/node-06-after.stdout
+node,raw N-API import,6,after,,249.1,,,,300000,logs/node-06-after.stdout
+node,raw N-API import object,6,after,,268.9,,,,300000,logs/node-06-after.stdout
+node,raw N-API import callback,6,after,,10427.9,,,,300000,logs/node-06-after.stdout
+node,portal import,6,after,,166.8,,,,300000,logs/node-06-after.stdout
+node,portal import object,6,after,,175.7,,,,300000,logs/node-06-after.stdout
+node,portal import callback,6,after,,6032.9,,,,300000,logs/node-06-after.stdout
+node,raw N-API export,6,before,,97.5,,,,303000,logs/node-06-before.stdout
+node,raw N-API export class argument,6,before,,181.3,,,,303000,logs/node-06-before.stdout
+node,raw N-API export class member,6,before,,150.0,,,,303000,logs/node-06-before.stdout
+node,raw N-API export callback,6,before,,175.3,,,,303000,logs/node-06-before.stdout
+node,raw N-API export construct,6,before,,4403.3,,,,303000,logs/node-06-before.stdout
+node,raw N-API overload export 1,6,before,,106.1,,,,1010000,logs/node-06-before.stdout
+node,raw N-API overload export 2,6,before,,47.3,,,,303000,logs/node-06-before.stdout
+node,portal export,6,before,,59.9,,,,303000,logs/node-06-before.stdout
+node,portal export class argument,6,before,,303.6,,,,303000,logs/node-06-before.stdout
+node,portal export class member,6,before,,306.8,,,,303000,logs/node-06-before.stdout
+node,portal trusted class member,6,before,,174.8,,,,303000,logs/node-06-before.stdout
+node,portal export callback,6,before,,197.8,,,,303000,logs/node-06-before.stdout
+node,portal export construct,6,before,,1544.7,,,,303000,logs/node-06-before.stdout
+node,portal overload export 1,6,before,,98.2,,,,1010000,logs/node-06-before.stdout
+node,portal overload export 2,6,before,,77.1,,,,303000,logs/node-06-before.stdout
+node,portal strict int small,6,before,,50.8,,,,101000,logs/node-06-before.stdout
+node,portal strict int wide,6,before,,106.8,,,,216895848347000,logs/node-06-before.stdout
+node,portal strict unsigned wide,6,before,,79.9,,,,433791696795000,logs/node-06-before.stdout
+node,portal overload string miss,6,before,,91.5,,,,101000,logs/node-06-before.stdout
+node,portal UTF-8 empty,6,before,,182.5,,,,0,logs/node-06-before.stdout
+node,portal UTF-8 16 B,6,before,,174.9,,,,1616000,logs/node-06-before.stdout
+node,portal UTF-8 Unicode + NUL,6,before,,319.1,,,,909000,logs/node-06-before.stdout
+node,portal UTF-8 1 KiB,6,before,,1216.8,,,,103424000,logs/node-06-before.stdout
+node,portal UTF-8 64 KiB,6,before,,56251.0,,,,167903232,logs/node-06-before.stdout
+node,raw N-API import,6,before,,159.8,,,,300000,logs/node-06-before.stdout
+node,raw N-API import object,6,before,,162.1,,,,300000,logs/node-06-before.stdout
+node,raw N-API import callback,6,before,,4643.9,,,,300000,logs/node-06-before.stdout
+node,portal import,6,before,,223.7,,,,300000,logs/node-06-before.stdout
+node,portal import object,6,before,,191.8,,,,300000,logs/node-06-before.stdout
+node,portal import callback,6,before,,7536.9,,,,300000,logs/node-06-before.stdout
+node,raw N-API export,7,before,,105.7,,,,303000,logs/node-07-before.stdout
+node,raw N-API export class argument,7,before,,210.1,,,,303000,logs/node-07-before.stdout
+node,raw N-API export class member,7,before,,170.0,,,,303000,logs/node-07-before.stdout
+node,raw N-API export callback,7,before,,174.1,,,,303000,logs/node-07-before.stdout
+node,raw N-API export construct,7,before,,1172.9,,,,303000,logs/node-07-before.stdout
+node,raw N-API overload export 1,7,before,,75.1,,,,1010000,logs/node-07-before.stdout
+node,raw N-API overload export 2,7,before,,67.2,,,,303000,logs/node-07-before.stdout
+node,portal export,7,before,,79.4,,,,303000,logs/node-07-before.stdout
+node,portal export class argument,7,before,,570.4,,,,303000,logs/node-07-before.stdout
+node,portal export class member,7,before,,279.0,,,,303000,logs/node-07-before.stdout
+node,portal trusted class member,7,before,,209.7,,,,303000,logs/node-07-before.stdout
+node,portal export callback,7,before,,209.6,,,,303000,logs/node-07-before.stdout
+node,portal export construct,7,before,,1681.9,,,,303000,logs/node-07-before.stdout
+node,portal overload export 1,7,before,,160.1,,,,1010000,logs/node-07-before.stdout
+node,portal overload export 2,7,before,,185.5,,,,303000,logs/node-07-before.stdout
+node,portal strict int small,7,before,,126.1,,,,101000,logs/node-07-before.stdout
+node,portal strict int wide,7,before,,155.3,,,,216895848347000,logs/node-07-before.stdout
+node,portal strict unsigned wide,7,before,,90.5,,,,433791696795000,logs/node-07-before.stdout
+node,portal overload string miss,7,before,,166.6,,,,101000,logs/node-07-before.stdout
+node,portal UTF-8 empty,7,before,,121.6,,,,0,logs/node-07-before.stdout
+node,portal UTF-8 16 B,7,before,,183.2,,,,1616000,logs/node-07-before.stdout
+node,portal UTF-8 Unicode + NUL,7,before,,284.7,,,,909000,logs/node-07-before.stdout
+node,portal UTF-8 1 KiB,7,before,,1179.7,,,,103424000,logs/node-07-before.stdout
+node,portal UTF-8 64 KiB,7,before,,60145.1,,,,167903232,logs/node-07-before.stdout
+node,raw N-API import,7,before,,291.6,,,,300000,logs/node-07-before.stdout
+node,raw N-API import object,7,before,,125.5,,,,300000,logs/node-07-before.stdout
+node,raw N-API import callback,7,before,,11611.0,,,,300000,logs/node-07-before.stdout
+node,portal import,7,before,,149.2,,,,300000,logs/node-07-before.stdout
+node,portal import object,7,before,,196.9,,,,300000,logs/node-07-before.stdout
+node,portal import callback,7,before,,5215.5,,,,300000,logs/node-07-before.stdout
+node,raw N-API export,7,after,,118.0,,,,303000,logs/node-07-after.stdout
+node,raw N-API export class argument,7,after,,191.7,,,,303000,logs/node-07-after.stdout
+node,raw N-API export class member,7,after,,139.7,,,,303000,logs/node-07-after.stdout
+node,raw N-API export callback,7,after,,173.3,,,,303000,logs/node-07-after.stdout
+node,raw N-API export construct,7,after,,961.7,,,,303000,logs/node-07-after.stdout
+node,raw N-API overload export 1,7,after,,86.7,,,,1010000,logs/node-07-after.stdout
+node,raw N-API overload export 2,7,after,,66.4,,,,303000,logs/node-07-after.stdout
+node,portal export,7,after,,48.1,,,,303000,logs/node-07-after.stdout
+node,portal export class argument,7,after,,295.6,,,,303000,logs/node-07-after.stdout
+node,portal export class member,7,after,,294.1,,,,303000,logs/node-07-after.stdout
+node,portal trusted class member,7,after,,189.4,,,,303000,logs/node-07-after.stdout
+node,portal export callback,7,after,,214.4,,,,303000,logs/node-07-after.stdout
+node,portal export construct,7,after,,1377.2,,,,303000,logs/node-07-after.stdout
+node,portal overload export 1,7,after,,79.6,,,,1010000,logs/node-07-after.stdout
+node,portal overload export 2,7,after,,111.5,,,,303000,logs/node-07-after.stdout
+node,portal strict int small,7,after,,129.7,,,,101000,logs/node-07-after.stdout
+node,portal strict int wide,7,after,,212.6,,,,216895848347000,logs/node-07-after.stdout
+node,portal strict unsigned wide,7,after,,81.6,,,,433791696795000,logs/node-07-after.stdout
+node,portal overload string miss,7,after,,109.2,,,,101000,logs/node-07-after.stdout
+node,portal UTF-8 empty,7,after,,87.1,,,,0,logs/node-07-after.stdout
+node,portal UTF-8 16 B,7,after,,122.1,,,,1616000,logs/node-07-after.stdout
+node,portal UTF-8 Unicode + NUL,7,after,,214.7,,,,909000,logs/node-07-after.stdout
+node,portal UTF-8 1 KiB,7,after,,982.7,,,,103424000,logs/node-07-after.stdout
+node,portal UTF-8 64 KiB,7,after,,244063.1,,,,167903232,logs/node-07-after.stdout
+node,raw N-API import,7,after,,288.0,,,,300000,logs/node-07-after.stdout
+node,raw N-API import object,7,after,,181.5,,,,300000,logs/node-07-after.stdout
+node,raw N-API import callback,7,after,,4111.1,,,,300000,logs/node-07-after.stdout
+node,portal import,7,after,,172.0,,,,300000,logs/node-07-after.stdout
+node,portal import object,7,after,,118.2,,,,300000,logs/node-07-after.stdout
+node,portal import callback,7,after,,3767.3,,,,300000,logs/node-07-after.stdout
+constructor,raw,1,before,100000,1238.88275,,,,,logs/constructor-01-before.stdout
+constructor,portal,1,before,100000,3105.36196,,,,,logs/constructor-01-before.stdout
+constructor,export control,1,before,2000000,59.5393835,,,,,logs/constructor-01-before.stdout
+constructor,raw,1,after,100000,1139.11984,,,,,logs/constructor-01-after.stdout
+constructor,portal,1,after,100000,1223.65068,,,,,logs/constructor-01-after.stdout
+constructor,export control,1,after,2000000,64.148079,,,,,logs/constructor-01-after.stdout
+constructor,raw,2,after,100000,1026.97826,,,,,logs/constructor-02-after.stdout
+constructor,portal,2,after,100000,1268.99453,,,,,logs/constructor-02-after.stdout
+constructor,export control,2,after,2000000,65.8676835,,,,,logs/constructor-02-after.stdout
+constructor,raw,2,before,100000,1428.88625,,,,,logs/constructor-02-before.stdout
+constructor,portal,2,before,100000,1474.71634,,,,,logs/constructor-02-before.stdout
+constructor,export control,2,before,2000000,67.639349,,,,,logs/constructor-02-before.stdout
+constructor,raw,3,before,100000,1011.80748,,,,,logs/constructor-03-before.stdout
+constructor,portal,3,before,100000,1257.37628,,,,,logs/constructor-03-before.stdout
+constructor,export control,3,before,2000000,83.353316,,,,,logs/constructor-03-before.stdout
+constructor,raw,3,after,100000,1316.57166,,,,,logs/constructor-03-after.stdout
+constructor,portal,3,after,100000,1337.78121,,,,,logs/constructor-03-after.stdout
+constructor,export control,3,after,2000000,63.2168755,,,,,logs/constructor-03-after.stdout
+constructor,raw,4,after,100000,885.08575,,,,,logs/constructor-04-after.stdout
+constructor,portal,4,after,100000,1963.65815,,,,,logs/constructor-04-after.stdout
+constructor,export control,4,after,2000000,86.836215,,,,,logs/constructor-04-after.stdout
+constructor,raw,4,before,100000,1402.47225,,,,,logs/constructor-04-before.stdout
+constructor,portal,4,before,100000,1303.5178,,,,,logs/constructor-04-before.stdout
+constructor,export control,4,before,2000000,117.888572,,,,,logs/constructor-04-before.stdout
+constructor,raw,5,before,100000,1137.5305,,,,,logs/constructor-05-before.stdout
+constructor,portal,5,before,100000,1700.47804,,,,,logs/constructor-05-before.stdout
+constructor,export control,5,before,2000000,68.818558,,,,,logs/constructor-05-before.stdout
+constructor,raw,5,after,100000,1427.61178,,,,,logs/constructor-05-after.stdout
+constructor,portal,5,after,100000,1888.34037,,,,,logs/constructor-05-after.stdout
+constructor,export control,5,after,2000000,75.0294335,,,,,logs/constructor-05-after.stdout
+constructor,raw,6,after,100000,1452.90634,,,,,logs/constructor-06-after.stdout
+constructor,portal,6,after,100000,2251.04416,,,,,logs/constructor-06-after.stdout
+constructor,export control,6,after,2000000,104.99595,,,,,logs/constructor-06-after.stdout
+constructor,raw,6,before,100000,1028.5702,,,,,logs/constructor-06-before.stdout
+constructor,portal,6,before,100000,1530.19868,,,,,logs/constructor-06-before.stdout
+constructor,export control,6,before,2000000,78.961894,,,,,logs/constructor-06-before.stdout
+constructor,raw,7,before,100000,1199.97989,,,,,logs/constructor-07-before.stdout
+constructor,portal,7,before,100000,3934.76547,,,,,logs/constructor-07-before.stdout
+constructor,export control,7,before,2000000,67.008455,,,,,logs/constructor-07-before.stdout
+constructor,raw,7,after,100000,939.0655,,,,,logs/constructor-07-after.stdout
+constructor,portal,7,after,100000,1169.02547,,,,,logs/constructor-07-after.stdout
+constructor,export control,7,after,2000000,79.041995,,,,,logs/constructor-07-after.stdout
+tcp,direct C++,1,before,,0.3,,,,,logs/tcp-01-before.stdout
+tcp,portal framed loopback,1,before,,450.3,,,,,logs/tcp-01-before.stdout
+tcp,portal loopback 16 B,1,before,,293.7,,,,,logs/tcp-01-before.stdout
+tcp,portal loopback 1 KiB,1,before,,569.7,,,,,logs/tcp-01-before.stdout
+tcp,portal loopback 64 KiB,1,before,,58467.4,,,,,logs/tcp-01-before.stdout
+tcp,portal TCP loopback,1,before,,17939.5,,,,,logs/tcp-01-before.stdout
+tcp,portal TCP 16 B,1,before,,13260.2,,,,,logs/tcp-01-before.stdout
+tcp,portal TCP 1 KiB,1,before,,10278.3,,,,,logs/tcp-01-before.stdout
+tcp,portal TCP 64 KiB,1,before,,95175.8,,,,,logs/tcp-01-before.stdout
+tcp,portal + FF TCP,1,before,,11091.3,,,,,logs/tcp-01-before.stdout
+tcp,portal + FF TCP 16 B,1,before,,10759.3,,,,,logs/tcp-01-before.stdout
+tcp,portal + FF TCP 1 KiB,1,before,,11502.7,,,,,logs/tcp-01-before.stdout
+tcp,portal + FF TCP 64 KiB,1,before,,104536.0,,,,,logs/tcp-01-before.stdout
+tcp,direct C++,1,after,,0.8,,,,,logs/tcp-01-after.stdout
+tcp,portal framed loopback,1,after,,266.5,,,,,logs/tcp-01-after.stdout
+tcp,portal loopback 16 B,1,after,,332.9,,,,,logs/tcp-01-after.stdout
+tcp,portal loopback 1 KiB,1,after,,454.6,,,,,logs/tcp-01-after.stdout
+tcp,portal loopback 64 KiB,1,after,,125221.7,,,,,logs/tcp-01-after.stdout
+tcp,portal TCP loopback,1,after,,31460.5,,,,,logs/tcp-01-after.stdout
+tcp,portal TCP 16 B,1,after,,54051.2,,,,,logs/tcp-01-after.stdout
+tcp,portal TCP 1 KiB,1,after,,11886.0,,,,,logs/tcp-01-after.stdout
+tcp,portal TCP 64 KiB,1,after,,166520.3,,,,,logs/tcp-01-after.stdout
+tcp,portal + FF TCP,1,after,,12436.4,,,,,logs/tcp-01-after.stdout
+tcp,portal + FF TCP 16 B,1,after,,12856.0,,,,,logs/tcp-01-after.stdout
+tcp,portal + FF TCP 1 KiB,1,after,,20447.6,,,,,logs/tcp-01-after.stdout
+tcp,portal + FF TCP 64 KiB,1,after,,155057.5,,,,,logs/tcp-01-after.stdout
+tcp,direct C++,2,after,,0.3,,,,,logs/tcp-02-after.stdout
+tcp,portal framed loopback,2,after,,205.0,,,,,logs/tcp-02-after.stdout
+tcp,portal loopback 16 B,2,after,,267.2,,,,,logs/tcp-02-after.stdout
+tcp,portal loopback 1 KiB,2,after,,476.3,,,,,logs/tcp-02-after.stdout
+tcp,portal loopback 64 KiB,2,after,,76127.4,,,,,logs/tcp-02-after.stdout
+tcp,portal TCP loopback,2,after,,12097.2,,,,,logs/tcp-02-after.stdout
+tcp,portal TCP 16 B,2,after,,12916.5,,,,,logs/tcp-02-after.stdout
+tcp,portal TCP 1 KiB,2,after,,25571.3,,,,,logs/tcp-02-after.stdout
+tcp,portal TCP 64 KiB,2,after,,126087.9,,,,,logs/tcp-02-after.stdout
+tcp,portal + FF TCP,2,after,,15606.4,,,,,logs/tcp-02-after.stdout
+tcp,portal + FF TCP 16 B,2,after,,16112.5,,,,,logs/tcp-02-after.stdout
+tcp,portal + FF TCP 1 KiB,2,after,,18228.7,,,,,logs/tcp-02-after.stdout
+tcp,portal + FF TCP 64 KiB,2,after,,183234.2,,,,,logs/tcp-02-after.stdout
+tcp,direct C++,2,before,,0.3,,,,,logs/tcp-02-before.stdout
+tcp,portal framed loopback,2,before,,234.3,,,,,logs/tcp-02-before.stdout
+tcp,portal loopback 16 B,2,before,,244.1,,,,,logs/tcp-02-before.stdout
+tcp,portal loopback 1 KiB,2,before,,417.6,,,,,logs/tcp-02-before.stdout
+tcp,portal loopback 64 KiB,2,before,,44975.2,,,,,logs/tcp-02-before.stdout
+tcp,portal TCP loopback,2,before,,11493.1,,,,,logs/tcp-02-before.stdout
+tcp,portal TCP 16 B,2,before,,13621.0,,,,,logs/tcp-02-before.stdout
+tcp,portal TCP 1 KiB,2,before,,14498.2,,,,,logs/tcp-02-before.stdout
+tcp,portal TCP 64 KiB,2,before,,121937.4,,,,,logs/tcp-02-before.stdout
+tcp,portal + FF TCP,2,before,,11707.4,,,,,logs/tcp-02-before.stdout
+tcp,portal + FF TCP 16 B,2,before,,13699.0,,,,,logs/tcp-02-before.stdout
+tcp,portal + FF TCP 1 KiB,2,before,,15458.2,,,,,logs/tcp-02-before.stdout
+tcp,portal + FF TCP 64 KiB,2,before,,128979.4,,,,,logs/tcp-02-before.stdout
+tcp,direct C++,3,before,,0.3,,,,,logs/tcp-03-before.stdout
+tcp,portal framed loopback,3,before,,160.0,,,,,logs/tcp-03-before.stdout
+tcp,portal loopback 16 B,3,before,,247.8,,,,,logs/tcp-03-before.stdout
+tcp,portal loopback 1 KiB,3,before,,588.4,,,,,logs/tcp-03-before.stdout
+tcp,portal loopback 64 KiB,3,before,,41301.5,,,,,logs/tcp-03-before.stdout
+tcp,portal TCP loopback,3,before,,10309.5,,,,,logs/tcp-03-before.stdout
+tcp,portal TCP 16 B,3,before,,10894.3,,,,,logs/tcp-03-before.stdout
+tcp,portal TCP 1 KiB,3,before,,11119.9,,,,,logs/tcp-03-before.stdout
+tcp,portal TCP 64 KiB,3,before,,97453.1,,,,,logs/tcp-03-before.stdout
+tcp,portal + FF TCP,3,before,,11485.9,,,,,logs/tcp-03-before.stdout
+tcp,portal + FF TCP 16 B,3,before,,19792.6,,,,,logs/tcp-03-before.stdout
+tcp,portal + FF TCP 1 KiB,3,before,,15809.2,,,,,logs/tcp-03-before.stdout
+tcp,portal + FF TCP 64 KiB,3,before,,132854.4,,,,,logs/tcp-03-before.stdout
+tcp,direct C++,3,after,,0.3,,,,,logs/tcp-03-after.stdout
+tcp,portal framed loopback,3,after,,352.6,,,,,logs/tcp-03-after.stdout
+tcp,portal loopback 16 B,3,after,,428.3,,,,,logs/tcp-03-after.stdout
+tcp,portal loopback 1 KiB,3,after,,488.8,,,,,logs/tcp-03-after.stdout
+tcp,portal loopback 64 KiB,3,after,,80480.6,,,,,logs/tcp-03-after.stdout
+tcp,portal TCP loopback,3,after,,16501.0,,,,,logs/tcp-03-after.stdout
+tcp,portal TCP 16 B,3,after,,15071.2,,,,,logs/tcp-03-after.stdout
+tcp,portal TCP 1 KiB,3,after,,10870.4,,,,,logs/tcp-03-after.stdout
+tcp,portal TCP 64 KiB,3,after,,83265.8,,,,,logs/tcp-03-after.stdout
+tcp,portal + FF TCP,3,after,,11171.5,,,,,logs/tcp-03-after.stdout
+tcp,portal + FF TCP 16 B,3,after,,10144.9,,,,,logs/tcp-03-after.stdout
+tcp,portal + FF TCP 1 KiB,3,after,,10981.5,,,,,logs/tcp-03-after.stdout
+tcp,portal + FF TCP 64 KiB,3,after,,121725.5,,,,,logs/tcp-03-after.stdout
+tcp,direct C++,4,after,,0.3,,,,,logs/tcp-04-after.stdout
+tcp,portal framed loopback,4,after,,278.4,,,,,logs/tcp-04-after.stdout
+tcp,portal loopback 16 B,4,after,,291.2,,,,,logs/tcp-04-after.stdout
+tcp,portal loopback 1 KiB,4,after,,436.0,,,,,logs/tcp-04-after.stdout
+tcp,portal loopback 64 KiB,4,after,,65866.6,,,,,logs/tcp-04-after.stdout
+tcp,portal TCP loopback,4,after,,15491.9,,,,,logs/tcp-04-after.stdout
+tcp,portal TCP 16 B,4,after,,11015.6,,,,,logs/tcp-04-after.stdout
+tcp,portal TCP 1 KiB,4,after,,12584.9,,,,,logs/tcp-04-after.stdout
+tcp,portal TCP 64 KiB,4,after,,99665.2,,,,,logs/tcp-04-after.stdout
+tcp,portal + FF TCP,4,after,,11888.0,,,,,logs/tcp-04-after.stdout
+tcp,portal + FF TCP 16 B,4,after,,12552.7,,,,,logs/tcp-04-after.stdout
+tcp,portal + FF TCP 1 KiB,4,after,,17399.2,,,,,logs/tcp-04-after.stdout
+tcp,portal + FF TCP 64 KiB,4,after,,151143.2,,,,,logs/tcp-04-after.stdout
+tcp,direct C++,4,before,,0.3,,,,,logs/tcp-04-before.stdout
+tcp,portal framed loopback,4,before,,178.3,,,,,logs/tcp-04-before.stdout
+tcp,portal loopback 16 B,4,before,,252.5,,,,,logs/tcp-04-before.stdout
+tcp,portal loopback 1 KiB,4,before,,358.6,,,,,logs/tcp-04-before.stdout
+tcp,portal loopback 64 KiB,4,before,,60326.0,,,,,logs/tcp-04-before.stdout
+tcp,portal TCP loopback,4,before,,14881.2,,,,,logs/tcp-04-before.stdout
+tcp,portal TCP 16 B,4,before,,12195.5,,,,,logs/tcp-04-before.stdout
+tcp,portal TCP 1 KiB,4,before,,16260.4,,,,,logs/tcp-04-before.stdout
+tcp,portal TCP 64 KiB,4,before,,93729.9,,,,,logs/tcp-04-before.stdout
+tcp,portal + FF TCP,4,before,,11808.1,,,,,logs/tcp-04-before.stdout
+tcp,portal + FF TCP 16 B,4,before,,19637.1,,,,,logs/tcp-04-before.stdout
+tcp,portal + FF TCP 1 KiB,4,before,,14927.5,,,,,logs/tcp-04-before.stdout
+tcp,portal + FF TCP 64 KiB,4,before,,144013.3,,,,,logs/tcp-04-before.stdout
+tcp,direct C++,5,before,,0.3,,,,,logs/tcp-05-before.stdout
+tcp,portal framed loopback,5,before,,217.1,,,,,logs/tcp-05-before.stdout
+tcp,portal loopback 16 B,5,before,,323.4,,,,,logs/tcp-05-before.stdout
+tcp,portal loopback 1 KiB,5,before,,343.3,,,,,logs/tcp-05-before.stdout
+tcp,portal loopback 64 KiB,5,before,,57732.9,,,,,logs/tcp-05-before.stdout
+tcp,portal TCP loopback,5,before,,15684.2,,,,,logs/tcp-05-before.stdout
+tcp,portal TCP 16 B,5,before,,15228.0,,,,,logs/tcp-05-before.stdout
+tcp,portal TCP 1 KiB,5,before,,18133.6,,,,,logs/tcp-05-before.stdout
+tcp,portal TCP 64 KiB,5,before,,111957.9,,,,,logs/tcp-05-before.stdout
+tcp,portal + FF TCP,5,before,,12247.3,,,,,logs/tcp-05-before.stdout
+tcp,portal + FF TCP 16 B,5,before,,13545.8,,,,,logs/tcp-05-before.stdout
+tcp,portal + FF TCP 1 KiB,5,before,,14668.0,,,,,logs/tcp-05-before.stdout
+tcp,portal + FF TCP 64 KiB,5,before,,121169.6,,,,,logs/tcp-05-before.stdout
+tcp,direct C++,5,after,,0.3,,,,,logs/tcp-05-after.stdout
+tcp,portal framed loopback,5,after,,477.9,,,,,logs/tcp-05-after.stdout
+tcp,portal loopback 16 B,5,after,,240.4,,,,,logs/tcp-05-after.stdout
+tcp,portal loopback 1 KiB,5,after,,328.6,,,,,logs/tcp-05-after.stdout
+tcp,portal loopback 64 KiB,5,after,,33967.8,,,,,logs/tcp-05-after.stdout
+tcp,portal TCP loopback,5,after,,10419.1,,,,,logs/tcp-05-after.stdout
+tcp,portal TCP 16 B,5,after,,14952.2,,,,,logs/tcp-05-after.stdout
+tcp,portal TCP 1 KiB,5,after,,9610.8,,,,,logs/tcp-05-after.stdout
+tcp,portal TCP 64 KiB,5,after,,83527.9,,,,,logs/tcp-05-after.stdout
+tcp,portal + FF TCP,5,after,,11054.7,,,,,logs/tcp-05-after.stdout
+tcp,portal + FF TCP 16 B,5,after,,17994.6,,,,,logs/tcp-05-after.stdout
+tcp,portal + FF TCP 1 KiB,5,after,,17750.6,,,,,logs/tcp-05-after.stdout
+tcp,portal + FF TCP 64 KiB,5,after,,270413.8,,,,,logs/tcp-05-after.stdout
+tcp,direct C++,6,after,,5.0,,,,,logs/tcp-06-after.stdout
+tcp,portal framed loopback,6,after,,400.7,,,,,logs/tcp-06-after.stdout
+tcp,portal loopback 16 B,6,after,,345.2,,,,,logs/tcp-06-after.stdout
+tcp,portal loopback 1 KiB,6,after,,561.1,,,,,logs/tcp-06-after.stdout
+tcp,portal loopback 64 KiB,6,after,,91040.9,,,,,logs/tcp-06-after.stdout
+tcp,portal TCP loopback,6,after,,14132.3,,,,,logs/tcp-06-after.stdout
+tcp,portal TCP 16 B,6,after,,15864.1,,,,,logs/tcp-06-after.stdout
+tcp,portal TCP 1 KiB,6,after,,17361.7,,,,,logs/tcp-06-after.stdout
+tcp,portal TCP 64 KiB,6,after,,80898.7,,,,,logs/tcp-06-after.stdout
+tcp,portal + FF TCP,6,after,,12705.4,,,,,logs/tcp-06-after.stdout
+tcp,portal + FF TCP 16 B,6,after,,13891.7,,,,,logs/tcp-06-after.stdout
+tcp,portal + FF TCP 1 KiB,6,after,,19958.5,,,,,logs/tcp-06-after.stdout
+tcp,portal + FF TCP 64 KiB,6,after,,602203.9,,,,,logs/tcp-06-after.stdout
+tcp,direct C++,6,before,,0.3,,,,,logs/tcp-06-before.stdout
+tcp,portal framed loopback,6,before,,900.2,,,,,logs/tcp-06-before.stdout
+tcp,portal loopback 16 B,6,before,,407.9,,,,,logs/tcp-06-before.stdout
+tcp,portal loopback 1 KiB,6,before,,665.8,,,,,logs/tcp-06-before.stdout
+tcp,portal loopback 64 KiB,6,before,,403605.4,,,,,logs/tcp-06-before.stdout
+tcp,portal TCP loopback,6,before,,64311.1,,,,,logs/tcp-06-before.stdout
+tcp,portal TCP 16 B,6,before,,19473.9,,,,,logs/tcp-06-before.stdout
+tcp,portal TCP 1 KiB,6,before,,23671.8,,,,,logs/tcp-06-before.stdout
+tcp,portal TCP 64 KiB,6,before,,266406.0,,,,,logs/tcp-06-before.stdout
+tcp,portal + FF TCP,6,before,,15893.6,,,,,logs/tcp-06-before.stdout
+tcp,portal + FF TCP 16 B,6,before,,17140.1,,,,,logs/tcp-06-before.stdout
+tcp,portal + FF TCP 1 KiB,6,before,,13936.7,,,,,logs/tcp-06-before.stdout
+tcp,portal + FF TCP 64 KiB,6,before,,184977.7,,,,,logs/tcp-06-before.stdout
+tcp,direct C++,7,before,,0.3,,,,,logs/tcp-07-before.stdout
+tcp,portal framed loopback,7,before,,173.2,,,,,logs/tcp-07-before.stdout
+tcp,portal loopback 16 B,7,before,,292.8,,,,,logs/tcp-07-before.stdout
+tcp,portal loopback 1 KiB,7,before,,508.7,,,,,logs/tcp-07-before.stdout
+tcp,portal loopback 64 KiB,7,before,,39699.7,,,,,logs/tcp-07-before.stdout
+tcp,portal TCP loopback,7,before,,15180.7,,,,,logs/tcp-07-before.stdout
+tcp,portal TCP 16 B,7,before,,13071.3,,,,,logs/tcp-07-before.stdout
+tcp,portal TCP 1 KiB,7,before,,14217.0,,,,,logs/tcp-07-before.stdout
+tcp,portal TCP 64 KiB,7,before,,82187.7,,,,,logs/tcp-07-before.stdout
+tcp,portal + FF TCP,7,before,,11370.0,,,,,logs/tcp-07-before.stdout
+tcp,portal + FF TCP 16 B,7,before,,16635.6,,,,,logs/tcp-07-before.stdout
+tcp,portal + FF TCP 1 KiB,7,before,,12237.7,,,,,logs/tcp-07-before.stdout
+tcp,portal + FF TCP 64 KiB,7,before,,144127.0,,,,,logs/tcp-07-before.stdout
+tcp,direct C++,7,after,,0.6,,,,,logs/tcp-07-after.stdout
+tcp,portal framed loopback,7,after,,247.2,,,,,logs/tcp-07-after.stdout
+tcp,portal loopback 16 B,7,after,,709.0,,,,,logs/tcp-07-after.stdout
+tcp,portal loopback 1 KiB,7,after,,480.8,,,,,logs/tcp-07-after.stdout
+tcp,portal loopback 64 KiB,7,after,,84680.3,,,,,logs/tcp-07-after.stdout
+tcp,portal TCP loopback,7,after,,17955.4,,,,,logs/tcp-07-after.stdout
+tcp,portal TCP 16 B,7,after,,15752.0,,,,,logs/tcp-07-after.stdout
+tcp,portal TCP 1 KiB,7,after,,10610.3,,,,,logs/tcp-07-after.stdout
+tcp,portal TCP 64 KiB,7,after,,70387.3,,,,,logs/tcp-07-after.stdout
+tcp,portal + FF TCP,7,after,,11052.7,,,,,logs/tcp-07-after.stdout
+tcp,portal + FF TCP 16 B,7,after,,9906.1,,,,,logs/tcp-07-after.stdout
+tcp,portal + FF TCP 1 KiB,7,after,,9950.9,,,,,logs/tcp-07-after.stdout
+tcp,portal + FF TCP 64 KiB,7,after,,109582.6,,,,,logs/tcp-07-after.stdout

@@ -1,0 +1,54 @@
+['c++', '-std=c++17', '-O2', '-pthread', '-I.', '-I/workspace/scratch/650ce06b9036/flux_foundry', '-I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12', 'examples/flux_foundry/python_executor.cpp', '/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/libpython3.12.so', '-Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib', '-o', '/tmp/portal-opt-pass/ff_python_newff_final']
+exit=0
+['/tmp/portal-opt-pass/ff_python_newff_final']
+Python executor: portal + FF result=42, 260.6 ns/task
+exit=0
+['/tmp/ff-opt-deps/python/cmake/data/bin/cmake', '--install', '/tmp/portal-opt-pass/build-release', '--prefix', '/tmp/portal-opt-pass/install']
+-- Install configuration: "Release"
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/async_generate.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/backend_base.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/import.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/inplace.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/export_generate.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/traits.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/interface.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/import_callable.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/async_import.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/async.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/extensions
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/extensions/flux_foundry
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/extensions/flux_foundry/async.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/extensions/flux_foundry/python_interpreter_executor.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/portal.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/callable.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/import_generate.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/empty_export.def
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/empty_import.def
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/export.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/error_policy.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/type_list.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/config.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/argument.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/optional.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/import_core.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/export_core.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/backends
+-- Installing: /tmp/portal-opt-pass/install/include/portal/backends/napi.h
+-- Installing: /tmp/portal-opt-pass/install/include/portal/backends/napi_converters.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/backends/python_api.h
+-- Installing: /tmp/portal-opt-pass/install/include/portal/backends/rpc.h
+-- Installing: /tmp/portal-opt-pass/install/include/portal/backends/python.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/backends/python_converters.h
+-- Up-to-date: /tmp/portal-opt-pass/install/include/portal/export_callable.h
+-- Up-to-date: /tmp/portal-opt-pass/install/lib/cmake/portal/portalTargets.cmake
+-- Up-to-date: /tmp/portal-opt-pass/install/lib/cmake/portal/portalConfig.cmake
+-- Up-to-date: /tmp/portal-opt-pass/install/lib/cmake/portal/portalConfigVersion.cmake
+-- Up-to-date: /tmp/portal-opt-pass/install/share/portal/README.md
+-- Up-to-date: /tmp/portal-opt-pass/install/share/portal/LICENSE
+exit=0
+['/tmp/ff-opt-deps/python/cmake/data/bin/cmake', '--build', '/tmp/portal-opt-pass/package-consumer', '--parallel', '2']
+[100%] Built target portal_package_consumer
+exit=0
+['/tmp/portal-opt-pass/package-consumer/portal_package_consumer']
+exit=0

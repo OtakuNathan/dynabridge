@@ -851,7 +851,7 @@ namespace portal {
             auto result = export_overload_dispatch<ContractList, Context, Callable>::call_optional(
                 ctx, callable, argc, accessor);
             if (result) {
-                return *result;
+                return std::move_if_noexcept(*result);
             }
             PORTAL_RAISE(bad_conversion("portal export overload has no matching signature"));
         }
@@ -891,7 +891,9 @@ namespace portal {
 
         template <typename... DynamicArgs>
         optional<dynamic_value_t> call_optional(DynamicArgs... args) {
-            auto tuple = std::make_tuple(args...);
+            // These arguments already belong to this invocation. Preserve the
+            // original copy fallback for custom values with throwing moves.
+            auto tuple = std::make_tuple(std::move_if_noexcept(args)...);
             return export_overload_dispatch<
                 Overloads,
                 Context,
@@ -904,7 +906,7 @@ namespace portal {
 
         template <typename... DynamicArgs>
         dynamic_value_t operator()(DynamicArgs... args) {
-            auto tuple = std::make_tuple(args...);
+            auto tuple = std::make_tuple(std::move_if_noexcept(args)...);
             return export_overload_required_dispatch<
                 Overloads,
                 Context,

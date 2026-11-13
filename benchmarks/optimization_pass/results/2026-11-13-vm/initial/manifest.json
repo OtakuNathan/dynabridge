@@ -1,0 +1,1986 @@
+{
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "compiler": "c++ (Debian 14.2.0-19) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "flags": [
+    "-std=c++14",
+    "-O3",
+    "-DNDEBUG",
+    "-pthread",
+    "-Wall",
+    "-Wextra"
+  ],
+  "roots": {
+    "before": "/tmp/portal-opt-pass/baseline",
+    "after": "/workspace/scratch/650ce06b9036/portal"
+  },
+  "ff_include": "/tmp/ff-opt-pass/measurements/baseline",
+  "node_include": "/tmp/portal-opt-pass/deps/node-v24.22.1/include/node",
+  "build_commands": [
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/tmp/ff-opt-pass/measurements/baseline",
+        "-I/tmp/portal-opt-pass/baseline",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/core_probe.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/tmp/portal-opt-pass/baseline",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/rpc_probe.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-before"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12",
+        "-I/tmp/portal-opt-pass/baseline",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/python_call_benchmark.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-before",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/libpython3.12.so",
+        "-Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib",
+        "-lpthread",
+        "-ldl",
+        "-lutil",
+        "-lm"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-fPIC",
+        "-shared",
+        "-I/tmp/portal-opt-pass/deps/node-v24.22.1/include/node",
+        "-I/tmp/portal-opt-pass/baseline",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark_addon.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/measurements-final/binaries/node.node-before"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/tmp/ff-opt-pass/measurements/baseline",
+        "-DPORTAL_HAS_FLUX_FOUNDRY=1",
+        "-I/tmp/portal-opt-pass/baseline",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/rpc_call_benchmark.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-before"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/tmp/ff-opt-pass/measurements/baseline",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/core_probe.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/rpc_probe.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-after"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/python_call_benchmark.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-after",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/libpython3.12.so",
+        "-Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib",
+        "-lpthread",
+        "-ldl",
+        "-lutil",
+        "-lm"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-fPIC",
+        "-shared",
+        "-I/tmp/portal-opt-pass/deps/node-v24.22.1/include/node",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark_addon.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/measurements-final/binaries/node.node-after"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/tmp/ff-opt-pass/measurements/baseline",
+        "-DPORTAL_HAS_FLUX_FOUNDRY=1",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/rpc_call_benchmark.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-after"
+      ],
+      "returncode": 0
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/python_call_benchmark.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-after",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/libpython3.12.so",
+        "-Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib",
+        "-lpthread",
+        "-ldl",
+        "-lutil",
+        "-lm"
+      ],
+      "returncode": 0,
+      "reason": "Rebuild after separately reproduced Python borrowed-reference reset lifetime fix; no measurements have run."
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/tmp/ff-opt-pass/measurements/baseline",
+        "-I/tmp/portal-opt-pass/baseline",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/core_probe.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before"
+      ],
+      "returncode": 0,
+      "reason": "Same core harness gains optional process-threading mode before any measurements."
+    },
+    {
+      "command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/tmp/ff-opt-pass/measurements/baseline",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/core_probe.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after"
+      ],
+      "returncode": 0,
+      "reason": "Same core harness gains optional process-threading mode before any measurements."
+    }
+  ],
+  "binary_sha256": {
+    "core-before": "fc5ee22ec0d2e698e386fe9737f5a7b99cb769623a2a81fed9b91ec69144cdfe",
+    "rpc-before": "a607cfe01aac4801598fad06538eda37321db5e61b5267a4224eea287478c34a",
+    "python-before": "d2293b92b71c7e1f03dadda651185565c4ad539e5d50c8c13774a3a4f293f5b6",
+    "node.node-before": "222a7e79e6e156f0fe2b4f5babdcf30a1bbfe66d940cc97bf0c164935d180407",
+    "tcp-before": "02f02ed6f4ab5e0dcd06a585404ee5814959907e22f76f1a085e2e255d62fd46",
+    "core-after": "866e5ec15b9d94f6be8c2cd2bbe112d683a3abd671b91fa7992b735ea3dc9c95",
+    "rpc-after": "e4e0a733f9460fad24729736b1fd0b230358436f8c970c904e4c94cbb98bc34a",
+    "python-after": "ed7908c882a06852608f69ef0429cca592a54976e664b563fbabcec173730d55",
+    "node.node-after": "5e5f66fbc6cc742c962102a66db597c7e6b1dc5b73f08fab98739e6dffa07bb4",
+    "tcp-after": "8d40f9e10b62770fa25b498d60866b67c73003b90f4e32e2d5b7d78acd38c473"
+  },
+  "source_sha256": {
+    "before": {
+      "portal/argument.h": "4ca9fbe288a5c62045e4d1e66d6a599aeac9dee628483f9ee644a3e44306188b",
+      "portal/async.h": "17bc4294805e086d1da172a8fd6e4f56ca9705978bbb2a2d83ff080243064f6a",
+      "portal/async_generate.h": "10f2f30fe20a1f45d034ca433a09ed5973f5fdc056a71d0ca27328cb25b3af6d",
+      "portal/async_import.h": "f0dee4d84e6417d83ee750cb51a6d4df1b4d58283e3c62e6767a8e4603e89655",
+      "portal/backend_base.h": "c016f0ba9873e1084ca2fd47ff57b5e681344948378dbe9e4d8abb10b72a20eb",
+      "portal/backends/napi.h": "ec8fcd5f4be8abfa5e506ad3f494d48483ebf83d5b8d32e0efda5761d5fc1b14",
+      "portal/backends/napi_converters.h": "694d4ed071db610945b9ddb04e702480c5600f74cef0009859dbc0877464ad13",
+      "portal/backends/python.h": "ea4f92c0cf877214bb06a6ec1c9d4f320a3df4c8bef477947941578e61de2d83",
+      "portal/backends/python_api.h": "0a7eff31d762d4efc8bd050d0a15e3bd38d160f47a1b66679f94894efe0d1db5",
+      "portal/backends/python_converters.h": "5f0790fdd9bcc33e2f5d0794654c14d02f34487e710ede1d7ffdf6cff9dda701",
+      "portal/backends/rpc.h": "dc4ced1b15bdb43bba0a10fa371d97cf8e3beaa30d7363a40ac4f50b84adbe12",
+      "portal/callable.h": "57b2d42d4ba14295ccab3df2e32696ddf57247f7af896ec182db4f9914ca2210",
+      "portal/config.h": "e3dfe7c339ceca7ce434381efa97b9548ca954245e0662884d7f7a721de43cd0",
+      "portal/error_policy.h": "0df8ac3caba4d4dba5801ebe9710d4dacbd07864acb34df33e754b8e88e40504",
+      "portal/export.h": "d0c009f39b0f1db6fdfc1cc88942de02b787586e4491eb2215ac3e916f6aa234",
+      "portal/export_callable.h": "fca65566edc030b088c3af3ad64d5b1495193d03625bb49b011d32276623226e",
+      "portal/export_core.h": "6b16ff334daf541ffbae29c531df03849e5c64b5d73cda00ee6e6a30ee642229",
+      "portal/export_generate.h": "ed2c6af14a051ffc750d1bc968fd66eccf07a83e8e33e3e33ad5665d41aa36bb",
+      "portal/extensions/flux_foundry/async.h": "8bd9699ce2fe545b79bf5f8a9738fa3ae701c4676381a3e6e0ea745fdec46c3d",
+      "portal/extensions/flux_foundry/python_interpreter_executor.h": "65da945b841e08fcb2ec2a2b37a7ca513e339e9af38a53af8099430c6930bd3b",
+      "portal/import.h": "332ef748ad1f51030c31792b156a9e0eee46889421aad4234d0773ee2b666450",
+      "portal/import_callable.h": "e9e2cee7d8e4353febfd928092950ed2721e43d92b2cfa6e23ac2cca8fe68724",
+      "portal/import_core.h": "5d60419403498f205318b8885a2d0671a6f6f0329ce1a804f5c529b41747a372",
+      "portal/import_generate.h": "4d4dba1966d1e82b29f8a7ea2ec549bb6d07b08377ec64a347e084b5779147b9",
+      "portal/inplace.h": "68ecb34f0ffe3981e8dfdda81bb12dab16fb4687e76a764f936aa874076bf178",
+      "portal/interface.h": "770dde7c0de947e6a1d4b52a831db87deccf0e9a9d771743277a8ea0e1361016",
+      "portal/optional.h": "fca2cc9abb21eb37063e21bf3461dbfa1e60cf64b97d6bb2666e360ada6e5536",
+      "portal/portal.h": "14b4fe94439446d02eaad39b7db5382bef03a901b9b7579d1cdfa392890ecfff",
+      "portal/traits.h": "11eed05b2234f0c0e6690d15fff77707c89b724aaae9c33030c3d24601243365",
+      "portal/type_list.h": "e7edd9e7c6132402a53261dbf81cd7b2d0f1bf0e29fdfacb95221f69e4b4c655",
+      "tests/async_import.def": "23fa230a0481e1d965dfa1d274b98a007adf84aceb0ed7a63ba3003e2acae6d2",
+      "tests/compile_fail/duplicate_interface.def": "4b7b86b921550d269e5b22cf91e1230f2601d2565033fc9b425a8f6233f275b5",
+      "tests/compile_fail/duplicate_method.def": "fcc847a8732bb4343c14b6b310c60c69ef4cc60ec3d297ae62aaaeccc53f5561",
+      "tests/compile_fail/return_reference_schema.def": "a584bcb1caaa4ed1201be087112b8b7bc5cf3c924c90ff9dbf418d245d4faaf6",
+      "tests/compile_fail/valid_interface.def": "b48a802357232907d3f4f989ea1470aa8632b870dbdc1dc0a5a8fe24566190bb",
+      "tests/custom_export.def": "0f1f0e35b83ee1953f683288a1e57235766cb43587e0d8ac39089bbc40434ca0",
+      "tests/custom_import.def": "d4285a9fb7d9cdfada3b4ef3a1d625b86ad01c22ce0cb16a16d3167d9ccbc7a5",
+      "tests/custom_second_export.def": "7f010310c0c99e8d3eb0abb5f5eee6fb7334340a31429a18f9c48b1c84b3fb9e",
+      "tests/custom_second_import.def": "e175f618bc5078dd6d03a29a226882175d5d3c1686dbcb8264af00838db3226d",
+      "tests/export.def": "a867acfd8c0dcf436d864d760c5bcfd4c7b96caa3b35b44ded86b1f3fefeeacb",
+      "tests/import.def": "79134a4c5d4146d141b0ee904793e2d1e959447e0fa6acf237b91cb66348ebc0",
+      "tests/package_consumer/export.def": "5dbcf0a1e57c628c483720b1d9e99d169728237e41ab2a733a1a78609c93f0a3",
+      "tests/rpc_export.def": "bc566756faaeeae7a477d9d2bdfa1d184d828fa1c50405f2ce44f38ef14fb109",
+      "tests/rpc_import.def": "e4b517c5536b718bdfcb5805ca858ffaa788326dbd00cfeb340611c178111458"
+    },
+    "after": {
+      "portal/argument.h": "4ca9fbe288a5c62045e4d1e66d6a599aeac9dee628483f9ee644a3e44306188b",
+      "portal/async.h": "128eec2e3e1708d03892ebd3c52dbba8f9e7490e17c420ae4a33509808da4efc",
+      "portal/async_generate.h": "10f2f30fe20a1f45d034ca433a09ed5973f5fdc056a71d0ca27328cb25b3af6d",
+      "portal/async_import.h": "f0dee4d84e6417d83ee750cb51a6d4df1b4d58283e3c62e6767a8e4603e89655",
+      "portal/backend_base.h": "c016f0ba9873e1084ca2fd47ff57b5e681344948378dbe9e4d8abb10b72a20eb",
+      "portal/backends/napi.h": "492606e8bd5371125f9af9d255db89bee62c2cce2c75927fd03a621aa889812e",
+      "portal/backends/napi_converters.h": "4e83d755933e8ee398596b3c039f73dc5ac73fe20deeb8aa5470825ec091acff",
+      "portal/backends/python.h": "f0d127fafb6de7d3bc3633c6a77c83b35c551d5f8290563f0751f23a9dad0fb0",
+      "portal/backends/python_api.h": "0a7eff31d762d4efc8bd050d0a15e3bd38d160f47a1b66679f94894efe0d1db5",
+      "portal/backends/python_converters.h": "5f0790fdd9bcc33e2f5d0794654c14d02f34487e710ede1d7ffdf6cff9dda701",
+      "portal/backends/rpc.h": "e458466e959ec493a47ec24b97b7cb40d9c1ae24bf847323896abb7cbe9a1812",
+      "portal/callable.h": "57b2d42d4ba14295ccab3df2e32696ddf57247f7af896ec182db4f9914ca2210",
+      "portal/config.h": "e3dfe7c339ceca7ce434381efa97b9548ca954245e0662884d7f7a721de43cd0",
+      "portal/error_policy.h": "0df8ac3caba4d4dba5801ebe9710d4dacbd07864acb34df33e754b8e88e40504",
+      "portal/export.h": "d0c009f39b0f1db6fdfc1cc88942de02b787586e4491eb2215ac3e916f6aa234",
+      "portal/export_callable.h": "25c3056b41477e5c34055e3543aaabb75a671b87184e9a57602231dca88a6a7f",
+      "portal/export_core.h": "6b16ff334daf541ffbae29c531df03849e5c64b5d73cda00ee6e6a30ee642229",
+      "portal/export_generate.h": "ed2c6af14a051ffc750d1bc968fd66eccf07a83e8e33e3e33ad5665d41aa36bb",
+      "portal/extensions/flux_foundry/async.h": "8bd9699ce2fe545b79bf5f8a9738fa3ae701c4676381a3e6e0ea745fdec46c3d",
+      "portal/extensions/flux_foundry/python_interpreter_executor.h": "65da945b841e08fcb2ec2a2b37a7ca513e339e9af38a53af8099430c6930bd3b",
+      "portal/import.h": "332ef748ad1f51030c31792b156a9e0eee46889421aad4234d0773ee2b666450",
+      "portal/import_callable.h": "e9e2cee7d8e4353febfd928092950ed2721e43d92b2cfa6e23ac2cca8fe68724",
+      "portal/import_core.h": "5d60419403498f205318b8885a2d0671a6f6f0329ce1a804f5c529b41747a372",
+      "portal/import_generate.h": "4d4dba1966d1e82b29f8a7ea2ec549bb6d07b08377ec64a347e084b5779147b9",
+      "portal/inplace.h": "68ecb34f0ffe3981e8dfdda81bb12dab16fb4687e76a764f936aa874076bf178",
+      "portal/interface.h": "770dde7c0de947e6a1d4b52a831db87deccf0e9a9d771743277a8ea0e1361016",
+      "portal/optional.h": "fca2cc9abb21eb37063e21bf3461dbfa1e60cf64b97d6bb2666e360ada6e5536",
+      "portal/portal.h": "14b4fe94439446d02eaad39b7db5382bef03a901b9b7579d1cdfa392890ecfff",
+      "portal/traits.h": "11eed05b2234f0c0e6690d15fff77707c89b724aaae9c33030c3d24601243365",
+      "portal/type_list.h": "e7edd9e7c6132402a53261dbf81cd7b2d0f1bf0e29fdfacb95221f69e4b4c655",
+      "tests/async_import.def": "23fa230a0481e1d965dfa1d274b98a007adf84aceb0ed7a63ba3003e2acae6d2",
+      "tests/compile_fail/duplicate_interface.def": "4b7b86b921550d269e5b22cf91e1230f2601d2565033fc9b425a8f6233f275b5",
+      "tests/compile_fail/duplicate_method.def": "fcc847a8732bb4343c14b6b310c60c69ef4cc60ec3d297ae62aaaeccc53f5561",
+      "tests/compile_fail/return_reference_schema.def": "a584bcb1caaa4ed1201be087112b8b7bc5cf3c924c90ff9dbf418d245d4faaf6",
+      "tests/compile_fail/valid_interface.def": "b48a802357232907d3f4f989ea1470aa8632b870dbdc1dc0a5a8fe24566190bb",
+      "tests/custom_export.def": "0f1f0e35b83ee1953f683288a1e57235766cb43587e0d8ac39089bbc40434ca0",
+      "tests/custom_import.def": "d4285a9fb7d9cdfada3b4ef3a1d625b86ad01c22ce0cb16a16d3167d9ccbc7a5",
+      "tests/custom_second_export.def": "7f010310c0c99e8d3eb0abb5f5eee6fb7334340a31429a18f9c48b1c84b3fb9e",
+      "tests/custom_second_import.def": "e175f618bc5078dd6d03a29a226882175d5d3c1686dbcb8264af00838db3226d",
+      "tests/export.def": "a867acfd8c0dcf436d864d760c5bcfd4c7b96caa3b35b44ded86b1f3fefeeacb",
+      "tests/import.def": "79134a4c5d4146d141b0ee904793e2d1e959447e0fa6acf237b91cb66348ebc0",
+      "tests/package_consumer/export.def": "5dbcf0a1e57c628c483720b1d9e99d169728237e41ab2a733a1a78609c93f0a3",
+      "tests/rpc_export.def": "bc566756faaeeae7a477d9d2bdfa1d184d828fa1c50405f2ce44f38ef14fb109",
+      "tests/rpc_import.def": "e4b517c5536b718bdfcb5805ca858ffaa788326dbd00cfeb340611c178111458"
+    },
+    "harness": {
+      "benchmarks/async_invocation.cpp": "a2f83e8d7e7cdb8023b0c826fafdc61cf2deb90aee5fa9d1f9611bf62e78cf88",
+      "benchmarks/flow_composition_benchmark.cpp": "122977e63684acfe210f26199a19883a629f08ead45f516b8b9715a063cc116c",
+      "benchmarks/node_call_benchmark.js": "d0c469f9d6722660e022897fc95953b1b96ecce0c881bb52affbbe846066a4f5",
+      "benchmarks/node_call_benchmark_addon.cpp": "4c2e46fffa3f10e9b2231a12cc7ef4ecb2ac7aded17696a19f02156b95d7e816",
+      "benchmarks/node_constructor_benchmark.js": "947592ec3da28e0a3a709ef0e5a5b662899cc7196904509009c8fc966d04bca1",
+      "benchmarks/optimization_pass/core_probe.cpp": "7d43b1279afe000846990f1d9bfeffb9cffa7bc0cc71442bd3b8ca3c611f3c42",
+      "benchmarks/optimization_pass/rpc_probe.cpp": "042f95564673ed6ae145bf4b651a6c5967c91b1993dc759af90385673509a7dd",
+      "benchmarks/optimization_pass/run.py": "018ba37874a4e6ffb0d0f53b98b3222bab68d75a7fa644b5b3969e1b47e045f1",
+      "benchmarks/optimization_pass/summarize.py": "b79b4d90e08e2fdd031c5d4bebec1fb04668cde4c4c147f86e217ced865f093a",
+      "benchmarks/python_call_benchmark.cpp": "16ba3fbed9a36d24d3acad09cec975c9dc452290999b8852434d134b53e47df9",
+      "benchmarks/rpc_call_benchmark.cpp": "d36f72f17d9dbf80d240e671851dedb4392af5188caa6c62e2fda15a6888ce36"
+    },
+    "flux_foundry": {
+      "flow/flow.h": "a4abb5fa308e219ab7128eaf9b8634fdb14a4d7effc448e1eaec74bc68807378",
+      "flow/flow_aggregator.h": "c4f185876d32035151723aaa2beb89cf85dfa186ee0f6b97142cde3328a0a169",
+      "flow/flow_async_aggregator.h": "39015dbf01ce0f7288c1c2892ce813ec786525dac2386cc86048c68442bb038a",
+      "flow/flow_awaitable.h": "524ca7d2b2316e0fe5c5c131420c93878b5fae3fc9c9975d37054d8dd6a79af8",
+      "flow/flow_blueprint.h": "24e0385dec88d24507869642e289c339be5931c7026c1da7d184d5fae97586d8",
+      "flow/flow_contract.h": "2e574a1e7b7955c337452feab560856fef473877a7dd3b4da61d22fdd8d5659d",
+      "flow/flow_def.h": "ef96fe736d81ca6c9c97b677978437b9131ad6bff23e5db5aefe5a40dc26ffda",
+      "flow/flow_fork_receiver_tmp.h": "11ce6cc6b343b4c94ecddf3246742c09f9558719bc66cdd26b48865227194d62",
+      "flow/flow_node.h": "1cdb89bb0975e54706955a6073fe0401f6a12c759ea1b61425fefd2562a3a1f2",
+      "flow/flow_poison.h": "4c8f425acfbef573b5201714bbe96574710646651f80c5afb4a11e4cf8af1c60",
+      "flow/flow_receiver.h": "c475641b30ebd10e36361de649afdef7b8fa16406d6b9bce20e103ca3d349a1a",
+      "flow/flow_runner.h": "17a2d8dd98ea8bfb37126ce558dc9eb998f79328b268f082c55516c22a035220",
+      "memory/aligned_alloc.h": "ec9c9b3956a9034bbdb0af44e2831abce070e0ba3a1be2a24374c2293f5c02e4",
+      "memory/either_t.h": "ce220f9b1d64271ee6f4172faf1f43eb5e385c7f70ccabf8ca16dcf77833b291",
+      "memory/flat_storage.h": "d64d43d9c2d3af87fd661c5415575355a19878f7f6f5e65e4322970d3d4cfee5",
+      "memory/hazard_ptr.h": "23e971d80ebbe98ada5b4c9a8c330ee10496439213306eacc5bfa3f13dd3f967",
+      "memory/identity_pool.h": "b54c6e2a47027f5e13c320d473facd4c9480b667b053c2eb72cdefc044e471fb",
+      "memory/inplace_t.h": "eebbf6d07fdcf779c91bedbf7b92c7df046b45112d4ce62a413d9d6217f66721",
+      "memory/lite_ptr.h": "06873649a38dd7c12944bf6db98dae749129958d3c619b0ec04335d05c092e61",
+      "memory/padded_t.h": "109f5d1cedee012aed058e921aef99da9f3d70fde0401b40cc6ec508412073c7",
+      "memory/pooling.h": "0be2b58a90ccc93d90176dea3533b70b55789d382471f889f32be8a25cdb124c",
+      "memory/result_t.h": "1bd24005a8f34567ff26cdd35989af36e70f514322a802992caa8fad130532be",
+      "memory/static_mem_pool.h": "8df20430c62b436c46eb03f2686ee83f96145dfaaeac661b23004a74259f3f92",
+      "utility/back_off.h": "63532ae8f07c8be588c3a2d103fe74ebd8f8dfd9f0a46830aab88359b984edfb",
+      "utility/callable_wrapper.h": "ad8996462dd58af302d6d864ea7660d0e8240fddd2a62371a1a122824d2fe114",
+      "utility/close_gate.h": "68b7ae18818af25fee4afc1b63ca77134e78bb2bb330bc04e2d00b4372ac7187",
+      "utility/concurrent_queues.h": "569e18ddd2109fb48d72b16183fc3d63befdc3f7d61920f862253ae44b121674",
+      "utility/static_stack.h": "52da7321ff6c0efad29f1c96d4369741ac6c0fc592aeeb72f2a6ec9ce3db8ef0",
+      "extension/cuda_awaitable.h": "d4ef7c099ad2d0452f503bb8ca5c6733da275aa905c7ee442926a29b925b1cb3",
+      "extension/detail/io_error.h": "07544630f998f27b29d37f581c50189dcf804d1479dbc3193f1c795d9519e87d",
+      "extension/dpdk_awaitable.h": "a0dfe81a97ed34687d0aa35216cc9ab282dd18f4c70afddf7468fbb9c4dc9d89",
+      "extension/external_async_awaitable.h": "215fe20815b3267caea8855875e1150bc8cf7abb4753b9d555aa96ee19000ad1",
+      "extension/io_uring_awaitable.h": "81c2f9a0142085e8be9176daf5a7fea49adab19ed118f9ccbc80c92bd00aa6c6",
+      "executor/gsource_executor.h": "23e099c41390ff48d4ed7fa243c857e67ba36946f79aac4b17ec214ed40ebbbd",
+      "executor/simple_executor.h": "da0c5250b2e6774bdd672b18bb79bdd84d76245f722989f3e3f5230dd594fac5",
+      "executor/uv_executor.h": "db36d4e7eee405b4b118ace7c50fef1c8dd96590a5fb759b0347132a03106c2c"
+    }
+  },
+  "runner_sha256": "018ba37874a4e6ffb0d0f53b98b3222bab68d75a7fa644b5b3969e1b47e045f1",
+  "cpu": 0,
+  "available_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "pairs": 7,
+  "iterations": 1000000,
+  "runtime_iterations": 1000000,
+  "node_iterations": 100000,
+  "tcp_iterations": 20000,
+  "run_commands": [
+    {
+      "family": "core",
+      "pair": 1,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583650.676836,
+      "stop_epoch": 1794583652.45997,
+      "returncode": 0,
+      "stdout": "logs/core-01-before.stdout",
+      "stderr": "logs/core-01-before.stderr"
+    },
+    {
+      "family": "core",
+      "pair": 1,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583652.4631486,
+      "stop_epoch": 1794583652.924833,
+      "returncode": 0,
+      "stdout": "logs/core-01-after.stdout",
+      "stderr": "logs/core-01-after.stderr"
+    },
+    {
+      "family": "core",
+      "pair": 2,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583652.9257925,
+      "stop_epoch": 1794583653.4984894,
+      "returncode": 0,
+      "stdout": "logs/core-02-after.stdout",
+      "stderr": "logs/core-02-after.stderr"
+    },
+    {
+      "family": "core",
+      "pair": 2,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583653.4997213,
+      "stop_epoch": 1794583655.2364893,
+      "returncode": 0,
+      "stdout": "logs/core-02-before.stdout",
+      "stderr": "logs/core-02-before.stderr"
+    },
+    {
+      "family": "core",
+      "pair": 3,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583655.2409768,
+      "stop_epoch": 1794583656.9993286,
+      "returncode": 0,
+      "stdout": "logs/core-03-before.stdout",
+      "stderr": "logs/core-03-before.stderr"
+    },
+    {
+      "family": "core",
+      "pair": 3,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583657.0036137,
+      "stop_epoch": 1794583657.615195,
+      "returncode": 0,
+      "stdout": "logs/core-03-after.stdout",
+      "stderr": "logs/core-03-after.stderr"
+    },
+    {
+      "family": "core",
+      "pair": 4,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583657.616049,
+      "stop_epoch": 1794583658.1927054,
+      "returncode": 0,
+      "stdout": "logs/core-04-after.stdout",
+      "stderr": "logs/core-04-after.stderr"
+    },
+    {
+      "family": "core",
+      "pair": 4,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583658.1946242,
+      "stop_epoch": 1794583660.1013572,
+      "returncode": 0,
+      "stdout": "logs/core-04-before.stdout",
+      "stderr": "logs/core-04-before.stderr"
+    },
+    {
+      "family": "core",
+      "pair": 5,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583660.1062918,
+      "stop_epoch": 1794583661.862379,
+      "returncode": 0,
+      "stdout": "logs/core-05-before.stdout",
+      "stderr": "logs/core-05-before.stderr"
+    },
+    {
+      "family": "core",
+      "pair": 5,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583661.8658009,
+      "stop_epoch": 1794583662.3758066,
+      "returncode": 0,
+      "stdout": "logs/core-05-after.stdout",
+      "stderr": "logs/core-05-after.stderr"
+    },
+    {
+      "family": "core",
+      "pair": 6,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583662.376697,
+      "stop_epoch": 1794583663.07016,
+      "returncode": 0,
+      "stdout": "logs/core-06-after.stdout",
+      "stderr": "logs/core-06-after.stderr"
+    },
+    {
+      "family": "core",
+      "pair": 6,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583663.0750875,
+      "stop_epoch": 1794583665.015592,
+      "returncode": 0,
+      "stdout": "logs/core-06-before.stdout",
+      "stderr": "logs/core-06-before.stderr"
+    },
+    {
+      "family": "core",
+      "pair": 7,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583665.0162053,
+      "stop_epoch": 1794583666.9138288,
+      "returncode": 0,
+      "stdout": "logs/core-07-before.stdout",
+      "stderr": "logs/core-07-before.stderr"
+    },
+    {
+      "family": "core",
+      "pair": 7,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583666.915588,
+      "stop_epoch": 1794583667.5039499,
+      "returncode": 0,
+      "stdout": "logs/core-07-after.stdout",
+      "stderr": "logs/core-07-after.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 1,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583667.504814,
+      "stop_epoch": 1794583669.1846313,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-01-before.stdout",
+      "stderr": "logs/core_threaded-01-before.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 1,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583669.1857078,
+      "stop_epoch": 1794583669.874564,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-01-after.stdout",
+      "stderr": "logs/core_threaded-01-after.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 2,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583669.8756018,
+      "stop_epoch": 1794583670.4927716,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-02-after.stdout",
+      "stderr": "logs/core_threaded-02-after.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 2,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583670.4938068,
+      "stop_epoch": 1794583672.275574,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-02-before.stdout",
+      "stderr": "logs/core_threaded-02-before.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 3,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583672.27669,
+      "stop_epoch": 1794583673.933812,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-03-before.stdout",
+      "stderr": "logs/core_threaded-03-before.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 3,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583673.9348602,
+      "stop_epoch": 1794583674.8553605,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-03-after.stdout",
+      "stderr": "logs/core_threaded-03-after.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 4,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583674.8566203,
+      "stop_epoch": 1794583675.6519945,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-04-after.stdout",
+      "stderr": "logs/core_threaded-04-after.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 4,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583675.6540053,
+      "stop_epoch": 1794583678.5060434,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-04-before.stdout",
+      "stderr": "logs/core_threaded-04-before.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 5,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583678.5071487,
+      "stop_epoch": 1794583680.7438097,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-05-before.stdout",
+      "stderr": "logs/core_threaded-05-before.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 5,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583680.745814,
+      "stop_epoch": 1794583681.377178,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-05-after.stdout",
+      "stderr": "logs/core_threaded-05-after.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 6,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583681.3781116,
+      "stop_epoch": 1794583682.0372286,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-06-after.stdout",
+      "stderr": "logs/core_threaded-06-after.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 6,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583682.0400403,
+      "stop_epoch": 1794583683.7119184,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-06-before.stdout",
+      "stderr": "logs/core_threaded-06-before.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 7,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-before",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583683.7128212,
+      "stop_epoch": 1794583685.4695694,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-07-before.stdout",
+      "stderr": "logs/core_threaded-07-before.stderr"
+    },
+    {
+      "family": "core_threaded",
+      "pair": 7,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/core-after",
+        "1000000",
+        "--threaded-process"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583685.4704556,
+      "stop_epoch": 1794583686.1082647,
+      "returncode": 0,
+      "stdout": "logs/core_threaded-07-after.stdout",
+      "stderr": "logs/core_threaded-07-after.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 1,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583686.1098306,
+      "stop_epoch": 1794583690.1521595,
+      "returncode": 0,
+      "stdout": "logs/rpc-01-before.stdout",
+      "stderr": "logs/rpc-01-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 1,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583690.1532478,
+      "stop_epoch": 1794583693.840526,
+      "returncode": 0,
+      "stdout": "logs/rpc-01-after.stdout",
+      "stderr": "logs/rpc-01-after.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 2,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583693.8419533,
+      "stop_epoch": 1794583698.0320873,
+      "returncode": 0,
+      "stdout": "logs/rpc-02-after.stdout",
+      "stderr": "logs/rpc-02-after.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 2,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583698.0331585,
+      "stop_epoch": 1794583703.075009,
+      "returncode": 0,
+      "stdout": "logs/rpc-02-before.stdout",
+      "stderr": "logs/rpc-02-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 3,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583703.07611,
+      "stop_epoch": 1794583707.5896773,
+      "returncode": 0,
+      "stdout": "logs/rpc-03-before.stdout",
+      "stderr": "logs/rpc-03-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 3,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583707.5910249,
+      "stop_epoch": 1794583711.7653134,
+      "returncode": 0,
+      "stdout": "logs/rpc-03-after.stdout",
+      "stderr": "logs/rpc-03-after.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 4,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583711.7721496,
+      "stop_epoch": 1794583716.2060173,
+      "returncode": 0,
+      "stdout": "logs/rpc-04-after.stdout",
+      "stderr": "logs/rpc-04-after.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 4,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583716.2084506,
+      "stop_epoch": 1794583720.9991322,
+      "returncode": 0,
+      "stdout": "logs/rpc-04-before.stdout",
+      "stderr": "logs/rpc-04-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 5,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583721.0005383,
+      "stop_epoch": 1794583726.2881937,
+      "returncode": 0,
+      "stdout": "logs/rpc-05-before.stdout",
+      "stderr": "logs/rpc-05-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 5,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583726.289269,
+      "stop_epoch": 1794583731.0668359,
+      "returncode": 0,
+      "stdout": "logs/rpc-05-after.stdout",
+      "stderr": "logs/rpc-05-after.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 6,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583731.072452,
+      "stop_epoch": 1794583736.322113,
+      "returncode": 0,
+      "stdout": "logs/rpc-06-after.stdout",
+      "stderr": "logs/rpc-06-after.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 6,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583736.3267214,
+      "stop_epoch": 1794583741.4615562,
+      "returncode": 0,
+      "stdout": "logs/rpc-06-before.stdout",
+      "stderr": "logs/rpc-06-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 7,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-before",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583741.4660122,
+      "stop_epoch": 1794583746.8423345,
+      "returncode": 0,
+      "stdout": "logs/rpc-07-before.stdout",
+      "stderr": "logs/rpc-07-before.stderr"
+    },
+    {
+      "family": "rpc",
+      "pair": 7,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/rpc-after",
+        "1000000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583746.8448768,
+      "stop_epoch": 1794583751.5355227,
+      "returncode": 0,
+      "stdout": "logs/rpc-07-after.stdout",
+      "stderr": "logs/rpc-07-after.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 1,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-before"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583751.536955,
+      "stop_epoch": 1794583753.5781767,
+      "returncode": 0,
+      "stdout": "logs/python-01-before.stdout",
+      "stderr": "logs/python-01-before.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 1,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-after"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583753.5795712,
+      "stop_epoch": 1794583757.1295178,
+      "returncode": 0,
+      "stdout": "logs/python-01-after.stdout",
+      "stderr": "logs/python-01-after.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 2,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-after"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583757.133152,
+      "stop_epoch": 1794583760.564341,
+      "returncode": 0,
+      "stdout": "logs/python-02-after.stdout",
+      "stderr": "logs/python-02-after.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 2,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-before"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583760.567219,
+      "stop_epoch": 1794583763.0073318,
+      "returncode": 0,
+      "stdout": "logs/python-02-before.stdout",
+      "stderr": "logs/python-02-before.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 3,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-before"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583763.0083704,
+      "stop_epoch": 1794583765.2141693,
+      "returncode": 0,
+      "stdout": "logs/python-03-before.stdout",
+      "stderr": "logs/python-03-before.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 3,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-after"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583765.2156956,
+      "stop_epoch": 1794583767.3959854,
+      "returncode": 0,
+      "stdout": "logs/python-03-after.stdout",
+      "stderr": "logs/python-03-after.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 4,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-after"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583767.3976672,
+      "stop_epoch": 1794583769.5557842,
+      "returncode": 0,
+      "stdout": "logs/python-04-after.stdout",
+      "stderr": "logs/python-04-after.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 4,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-before"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583769.5610545,
+      "stop_epoch": 1794583771.8287287,
+      "returncode": 0,
+      "stdout": "logs/python-04-before.stdout",
+      "stderr": "logs/python-04-before.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 5,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-before"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583771.8311188,
+      "stop_epoch": 1794583774.179952,
+      "returncode": 0,
+      "stdout": "logs/python-05-before.stdout",
+      "stderr": "logs/python-05-before.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 5,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-after"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583774.185956,
+      "stop_epoch": 1794583776.6005256,
+      "returncode": 0,
+      "stdout": "logs/python-05-after.stdout",
+      "stderr": "logs/python-05-after.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 6,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-after"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583776.6027002,
+      "stop_epoch": 1794583778.5576344,
+      "returncode": 0,
+      "stdout": "logs/python-06-after.stdout",
+      "stderr": "logs/python-06-after.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 6,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-before"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583778.5589724,
+      "stop_epoch": 1794583780.8509555,
+      "returncode": 0,
+      "stdout": "logs/python-06-before.stdout",
+      "stderr": "logs/python-06-before.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 7,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-before"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583780.852373,
+      "stop_epoch": 1794583783.08946,
+      "returncode": 0,
+      "stdout": "logs/python-07-before.stdout",
+      "stderr": "logs/python-07-before.stderr"
+    },
+    {
+      "family": "python",
+      "pair": 7,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/python-after"
+      ],
+      "PORTAL_BENCH_ITERS": "1000000",
+      "start_epoch": 1794583783.0943196,
+      "stop_epoch": 1794583785.801515,
+      "returncode": 0,
+      "stdout": "logs/python-07-after.stdout",
+      "stderr": "logs/python-07-after.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 1,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583785.8088946,
+      "stop_epoch": 1794583790.2861829,
+      "returncode": 0,
+      "stdout": "logs/node-01-before.stdout",
+      "stderr": "logs/node-01-before.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 1,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583790.2915447,
+      "stop_epoch": 1794583792.9643776,
+      "returncode": 0,
+      "stdout": "logs/node-01-after.stdout",
+      "stderr": "logs/node-01-after.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 2,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583792.9673297,
+      "stop_epoch": 1794583796.0002024,
+      "returncode": 0,
+      "stdout": "logs/node-02-after.stdout",
+      "stderr": "logs/node-02-after.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 2,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583796.0151868,
+      "stop_epoch": 1794583800.033149,
+      "returncode": 0,
+      "stdout": "logs/node-02-before.stdout",
+      "stderr": "logs/node-02-before.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 3,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583800.0495327,
+      "stop_epoch": 1794583803.5490222,
+      "returncode": 0,
+      "stdout": "logs/node-03-before.stdout",
+      "stderr": "logs/node-03-before.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 3,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583803.5687418,
+      "stop_epoch": 1794583806.5423386,
+      "returncode": 0,
+      "stdout": "logs/node-03-after.stdout",
+      "stderr": "logs/node-03-after.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 4,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583806.543916,
+      "stop_epoch": 1794583809.2662005,
+      "returncode": 0,
+      "stdout": "logs/node-04-after.stdout",
+      "stderr": "logs/node-04-after.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 4,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583809.270362,
+      "stop_epoch": 1794583811.7863386,
+      "returncode": 0,
+      "stdout": "logs/node-04-before.stdout",
+      "stderr": "logs/node-04-before.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 5,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583811.7879713,
+      "stop_epoch": 1794583814.6222718,
+      "returncode": 0,
+      "stdout": "logs/node-05-before.stdout",
+      "stderr": "logs/node-05-before.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 5,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583814.6245658,
+      "stop_epoch": 1794583817.614862,
+      "returncode": 0,
+      "stdout": "logs/node-05-after.stdout",
+      "stderr": "logs/node-05-after.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 6,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583817.6174636,
+      "stop_epoch": 1794583820.62723,
+      "returncode": 0,
+      "stdout": "logs/node-06-after.stdout",
+      "stderr": "logs/node-06-after.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 6,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583820.629109,
+      "stop_epoch": 1794583823.693518,
+      "returncode": 0,
+      "stdout": "logs/node-06-before.stdout",
+      "stderr": "logs/node-06-before.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 7,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583823.6967132,
+      "stop_epoch": 1794583826.9161375,
+      "returncode": 0,
+      "stdout": "logs/node-07-before.stdout",
+      "stderr": "logs/node-07-before.stderr"
+    },
+    {
+      "family": "node",
+      "pair": 7,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583826.9196815,
+      "stop_epoch": 1794583829.2771697,
+      "returncode": 0,
+      "stdout": "logs/node-07-after.stdout",
+      "stderr": "logs/node-07-after.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 1,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583829.2829092,
+      "stop_epoch": 1794583830.7127643,
+      "returncode": 0,
+      "stdout": "logs/constructor-01-before.stdout",
+      "stderr": "logs/constructor-01-before.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 1,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583830.7205608,
+      "stop_epoch": 1794583831.9436398,
+      "returncode": 0,
+      "stdout": "logs/constructor-01-after.stdout",
+      "stderr": "logs/constructor-01-after.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 2,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583831.9492252,
+      "stop_epoch": 1794583833.4520266,
+      "returncode": 0,
+      "stdout": "logs/constructor-02-after.stdout",
+      "stderr": "logs/constructor-02-after.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 2,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583833.4556463,
+      "stop_epoch": 1794583835.2062187,
+      "returncode": 0,
+      "stdout": "logs/constructor-02-before.stdout",
+      "stderr": "logs/constructor-02-before.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 3,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583835.2087874,
+      "stop_epoch": 1794583836.5737789,
+      "returncode": 0,
+      "stdout": "logs/constructor-03-before.stdout",
+      "stderr": "logs/constructor-03-before.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 3,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583836.5761018,
+      "stop_epoch": 1794583838.2054396,
+      "returncode": 0,
+      "stdout": "logs/constructor-03-after.stdout",
+      "stderr": "logs/constructor-03-after.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 4,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583838.2079675,
+      "stop_epoch": 1794583839.920698,
+      "returncode": 0,
+      "stdout": "logs/constructor-04-after.stdout",
+      "stderr": "logs/constructor-04-after.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 4,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583839.92411,
+      "stop_epoch": 1794583841.4775455,
+      "returncode": 0,
+      "stdout": "logs/constructor-04-before.stdout",
+      "stderr": "logs/constructor-04-before.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 5,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583841.4820619,
+      "stop_epoch": 1794583842.9577432,
+      "returncode": 0,
+      "stdout": "logs/constructor-05-before.stdout",
+      "stderr": "logs/constructor-05-before.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 5,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583842.9601116,
+      "stop_epoch": 1794583844.78847,
+      "returncode": 0,
+      "stdout": "logs/constructor-05-after.stdout",
+      "stderr": "logs/constructor-05-after.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 6,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583844.792567,
+      "stop_epoch": 1794583847.2058744,
+      "returncode": 0,
+      "stdout": "logs/constructor-06-after.stdout",
+      "stderr": "logs/constructor-06-after.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 6,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583847.2096992,
+      "stop_epoch": 1794583848.9842503,
+      "returncode": 0,
+      "stdout": "logs/constructor-06-before.stdout",
+      "stderr": "logs/constructor-06-before.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 7,
+      "variant": "before",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583848.9880497,
+      "stop_epoch": 1794583850.838253,
+      "returncode": 0,
+      "stdout": "logs/constructor-07-before.stdout",
+      "stderr": "logs/constructor-07-before.stderr"
+    },
+    {
+      "family": "constructor",
+      "pair": 7,
+      "variant": "after",
+      "command": [
+        "node",
+        "--expose-gc",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+        "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+      ],
+      "PORTAL_BENCH_ITERS": "100000",
+      "start_epoch": 1794583850.8415682,
+      "stop_epoch": 1794583852.0044706,
+      "returncode": 0,
+      "stdout": "logs/constructor-07-after.stdout",
+      "stderr": "logs/constructor-07-after.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 1,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-before",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583852.0061212,
+      "stop_epoch": 1794583852.194657,
+      "returncode": 0,
+      "stdout": "logs/tcp-01-before.stdout",
+      "stderr": "logs/tcp-01-before.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 1,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-after",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583852.1967206,
+      "stop_epoch": 1794583852.5608377,
+      "returncode": 0,
+      "stdout": "logs/tcp-01-after.stdout",
+      "stderr": "logs/tcp-01-after.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 2,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-after",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583852.5734274,
+      "stop_epoch": 1794583852.8018878,
+      "returncode": 0,
+      "stdout": "logs/tcp-02-after.stdout",
+      "stderr": "logs/tcp-02-after.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 2,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-before",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583852.8085291,
+      "stop_epoch": 1794583852.996594,
+      "returncode": 0,
+      "stdout": "logs/tcp-02-before.stdout",
+      "stderr": "logs/tcp-02-before.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 3,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-before",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583853.0009499,
+      "stop_epoch": 1794583853.1858022,
+      "returncode": 0,
+      "stdout": "logs/tcp-03-before.stdout",
+      "stderr": "logs/tcp-03-before.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 3,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-after",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583853.187726,
+      "stop_epoch": 1794583853.385672,
+      "returncode": 0,
+      "stdout": "logs/tcp-03-after.stdout",
+      "stderr": "logs/tcp-03-after.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 4,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-after",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583853.3886864,
+      "stop_epoch": 1794583853.581201,
+      "returncode": 0,
+      "stdout": "logs/tcp-04-after.stdout",
+      "stderr": "logs/tcp-04-after.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 4,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-before",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583853.5839431,
+      "stop_epoch": 1794583853.7887344,
+      "returncode": 0,
+      "stdout": "logs/tcp-04-before.stdout",
+      "stderr": "logs/tcp-04-before.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 5,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-before",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583853.7923272,
+      "stop_epoch": 1794583853.9956422,
+      "returncode": 0,
+      "stdout": "logs/tcp-05-before.stdout",
+      "stderr": "logs/tcp-05-before.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 5,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-after",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583854.0015316,
+      "stop_epoch": 1794583854.2068043,
+      "returncode": 0,
+      "stdout": "logs/tcp-05-after.stdout",
+      "stderr": "logs/tcp-05-after.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 6,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-after",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583854.2105236,
+      "stop_epoch": 1794583854.4908597,
+      "returncode": 0,
+      "stdout": "logs/tcp-06-after.stdout",
+      "stderr": "logs/tcp-06-after.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 6,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-before",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583854.504301,
+      "stop_epoch": 1794583855.014987,
+      "returncode": 0,
+      "stdout": "logs/tcp-06-before.stdout",
+      "stderr": "logs/tcp-06-before.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 7,
+      "variant": "before",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-before",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583855.0254846,
+      "stop_epoch": 1794583855.220027,
+      "returncode": 0,
+      "stdout": "logs/tcp-07-before.stdout",
+      "stderr": "logs/tcp-07-before.stderr"
+    },
+    {
+      "family": "tcp",
+      "pair": 7,
+      "variant": "after",
+      "command": [
+        "/tmp/portal-opt-pass/measurements-final/binaries/tcp-after",
+        "20000"
+      ],
+      "PORTAL_BENCH_ITERS": null,
+      "start_epoch": 1794583855.2260008,
+      "stop_epoch": 1794583855.4246483,
+      "returncode": 0,
+      "stdout": "logs/tcp-07-after.stdout",
+      "stderr": "logs/tcp-07-after.stderr"
+    }
+  ],
+  "started_utc": "2026-11-13T15:27:30Z",
+  "node_version": "v24.22.1",
+  "finished_utc": "2026-11-13T15:30:55Z"
+}

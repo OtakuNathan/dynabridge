@@ -1,0 +1,21 @@
+--- a/portal/async.h
++++ b/portal/async.h
+@@ -58,8 +58,16 @@
+     using result_type = typename State::result_type;
+     explicit completion(std::shared_ptr<State> s) noexcept : state_(std::move(s)) {}
+     // A copied token owns its control state. Raw pointers are not completion tokens.
+-    void finish(result_type r) const noexcept { state_->finish(std::move(r)); }
+-    void detach(async_error e) const noexcept { state_->detach(std::move(e)); }
++    void finish(result_type r) const noexcept {
++        // A continuation may destroy the callback holding this very token.
++        // Keep the state alive until delivery and retirement have both returned.
++        auto state = state_;
++        state->finish(std::move(r));
++    }
++    void detach(async_error e) const noexcept {
++        auto state = state_;
++        state->detach(std::move(e));
++    }
+ };
+ template<class R, class Context, class Op, class Handler>
+ struct operation_state {

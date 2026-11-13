@@ -29,6 +29,7 @@ namespace portal {
 #include <cstddef>
 #include <cstdint>
 #include <stdexcept>
+#include <string>
 #include <utility>
 
 #if defined(PORTAL_HAS_NODE_ADDON_API)
@@ -596,6 +597,16 @@ namespace {
             module.define(env, "rawBenchmarkCounter", raw_benchmark_counter);
 
             portal::export_free_callable(ctx, module, "portalAdd", add_function);
+            portal::export_free_callable<int(int)>(
+                ctx, module, "portalIdentityInt", [](int value) { return value; });
+            portal::export_free_callable<unsigned(unsigned)>(
+                ctx, module, "portalIdentityUnsigned", [](unsigned value) { return value; });
+            portal::export_free_callable<std::string(std::string)>(
+                ctx, module, "portalIdentityString", [](std::string value) { return value; });
+            portal::export_echo(ctx, module)
+                .bind<std::string(std::string)>([](std::string value) { return value; })
+                .bind<int(int)>([](int value) { return value; })
+                .commit();
             portal::export_calc(ctx, module)
                 .bind<int(int)>([](int a) {
                     return a * 10;

@@ -1,0 +1,378 @@
+--- a/tests/python_backend_test.cpp
++++ b/tests/python_backend_test.cpp
+@@ -96,6 +96,179 @@
+
+     int stored_value = 0;
+
++    struct reset_probe_state {
++        int destroyed = 0;
++        portal::py_backend::object_ref* observer = nullptr;
++        PyObject* expected = nullptr;
++        portal::py_backend::object_ref* release_source = nullptr;
++        PyObject* reentrant_owned = nullptr;
++        bool saw_replacement = false;
++    };
++
++    struct reset_probe_object {
++        PyObject_HEAD
++        reset_probe_state* state;
++    };
++
++    void reset_probe_dealloc(PyObject* self) {
++        auto& state = *reinterpret_cast<reset_probe_object*>(self)->state;
++        ++state.destroyed;
++        if (state.observer != nullptr) {
++            state.saw_replacement = state.observer->get() == state.expected;
++        }
++        if (state.release_source != nullptr) {
++            state.release_source->reset();
++        }
++        if (state.reentrant_owned != nullptr) {
++            state.observer->reset(state.reentrant_owned, portal::py_backend::ref_policy::owned);
++        }
++        Py_TYPE(self)->tp_free(self);
++    }
++
++    PyObject* make_reset_probe(reset_probe_state& state) {
++        static PyTypeObject type = {PyVarObject_HEAD_INIT(nullptr, 0)};
++        if ((type.tp_flags & Py_TPFLAGS_READY) == 0) {
++            type.tp_name = "portal.ResetProbe";
++            type.tp_basicsize = sizeof(reset_probe_object);
++            type.tp_flags = Py_TPFLAGS_DEFAULT;
++            type.tp_dealloc = reset_probe_dealloc;
++            if (PyType_Ready(&type) != 0) throw std::runtime_error("reset probe type failed");
++        }
++        auto* object = PyObject_New(reset_probe_object, &type);
++        if (object == nullptr) throw std::runtime_error("reset probe allocation failed");
++        object->state = &state;
++        return reinterpret_cast<PyObject*>(object);
++    }
++
++    void check_object_ref_reset() {
++        using backend = portal::py_backend;
++        {
++            reset_probe_state state;
++            backend::object_ref owner(make_reset_probe(state), backend::ref_policy::owned);
++            owner.reset(owner.get());
++            if (state.destroyed != 0 || Py_REFCNT(owner.get()) != 1) {
++                throw std::runtime_error("borrowed self-reset released its only owner");
++            }
++            // Adopting the same pointer is valid only with a separate owned ref.
++            Py_INCREF(owner.get());
++            owner.reset(owner.get(), backend::ref_policy::owned);
++            if (state.destroyed != 0 || Py_REFCNT(owner.get()) != 1) {
++                throw std::runtime_error("owned self-reset lost its transferred reference");
++            }
++            owner.reset();
++            if (state.destroyed != 1) throw std::runtime_error("self-reset leaked a reference");
++        }
++        {
++            reset_probe_state old_state, replacement_state;
++            backend::object_ref owner(make_reset_probe(old_state), backend::ref_policy::owned);
++            backend::object_ref replacement(
++                make_reset_probe(replacement_state), backend::ref_policy::owned);
++            PyObject* const incoming = replacement.get();
++            old_state.observer = &owner;
++            old_state.expected = incoming;
++            old_state.release_source = &replacement;
++            // Releasing the old object removes the replacement's last external
++            // owner. reset() must have already retained and published it.
++            owner.reset(incoming);
++            if (!old_state.saw_replacement || old_state.destroyed != 1 || replacement
++                    || owner.get() != incoming || replacement_state.destroyed != 0
++                    || Py_REFCNT(owner.get()) != 1) {
++                throw std::runtime_error("reset did not retain/publish before old finalizer");
++            }
++            owner.reset();
++            if (replacement_state.destroyed != 1) {
++                throw std::runtime_error("borrowed replacement leaked a reference");
++            }
++        }
++        {
++            reset_probe_state old_state, replacement_state, reentrant_state;
++            backend::object_ref owner(make_reset_probe(old_state), backend::ref_policy::owned);
++            backend::object_ref replacement(
++                make_reset_probe(replacement_state), backend::ref_policy::owned);
++            backend::object_ref reentrant(
++                make_reset_probe(reentrant_state), backend::ref_policy::owned);
++            PyObject* const incoming = replacement.get();
++            PyObject* const final_value = reentrant.get();
++            old_state.observer = &owner;
++            old_state.expected = incoming;
++            old_state.reentrant_owned = reentrant.release();
++            owner.reset(replacement.release(), backend::ref_policy::owned);
++            if (!old_state.saw_replacement || owner.get() != final_value
++                    || old_state.destroyed != 1 || replacement_state.destroyed != 1
++                    || reentrant_state.destroyed != 0 || Py_REFCNT(owner.get()) != 1) {
++                throw std::runtime_error("outer reset overwrote a reentrant replacement");
++            }
++            owner.reset();
++            if (reentrant_state.destroyed != 1) {
++                throw std::runtime_error("reentrant replacement leaked a reference");
++            }
++        }
++    }
++
++#if PY_VERSION_HEX >= 0x03080000
++    struct offset_probe_object {
++        PyObject_HEAD
++        vectorcallfunc vectorcall;
++        bool nested;
++    };
++
++    PyObject* offset_probe_call(
++        PyObject* self, PyObject* const* args, std::size_t nargsf, PyObject*) {
++        auto* probe = reinterpret_cast<offset_probe_object*>(self);
++        const std::size_t count = PyVectorcall_NARGS(nargsf);
++        if ((nargsf & PY_VECTORCALL_ARGUMENTS_OFFSET) == 0
++                || count != (probe->nested ? 2u : 0u)) {
++            PyErr_SetString(PyExc_RuntimeError, "missing or incorrect vectorcall offset");
++            return nullptr;
++        }
++        struct slot_guard {
++            PyObject** slot;
++            PyObject* saved;
++            ~slot_guard() { *slot = saved; }
++        } guard{const_cast<PyObject**>(args) - 1, args[-1]};
++        *guard.slot = self;
++        if (probe->nested) {
++            return PyLong_FromLong(PyLong_AsLong(args[0]) + PyLong_AsLong(args[1]));
++        }
++
++        probe->nested = true;
++        try {
++            py_context_t ctx(self);
++            const int result = portal::call_calc(ctx, 1, 2u);
++            probe->nested = false;
++            if (result != 3 || *guard.slot != self) {
++                PyErr_SetString(PyExc_RuntimeError, "reentrant call changed outer argument slot");
++                return nullptr;
++            }
++            return PyLong_FromLong(42);
++        } catch (const portal::py_backend::python_error& error) {
++            error.restore();
++        } catch (...) {
++            PyErr_SetString(PyExc_RuntimeError, "vectorcall offset probe failed");
++        }
++        probe->nested = false;
++        return nullptr;
++    }
++
++    void check_vectorcall_offset() {
++        static PyTypeObject type = {PyVarObject_HEAD_INIT(nullptr, 0)};
++        type.tp_name = "portal.OffsetProbe";
++        type.tp_basicsize = sizeof(offset_probe_object);
++        type.tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_VECTORCALL;
++        type.tp_call = PyVectorcall_Call;
++        type.tp_vectorcall_offset = offsetof(offset_probe_object, vectorcall);
++        if (PyType_Ready(&type) != 0) throw std::runtime_error("offset probe type failed");
++        auto* object = PyObject_New(offset_probe_object, &type);
++        if (object == nullptr) throw std::runtime_error("offset probe allocation failed");
++        object->vectorcall = offset_probe_call;
++        object->nested = false;
++        py_context_t ctx(reinterpret_cast<PyObject*>(object), portal::py_backend::ref_policy::owned);
++        const int result = portal::py_backend::invoke_contract<portal::free_callable<int()>>(
++            ctx, portal::no_receiver_t{});
++        if (result != 42) throw std::runtime_error("offset probe result failed");
++    }
++#endif
++
+     int add_function(int a, unsigned b) {
+         return a + static_cast<int>(b);
+     }
+@@ -201,6 +374,10 @@
+     Py_Initialize();
+
+     try {
++        check_object_ref_reset();
++#if PY_VERSION_HEX >= 0x03080000
++        check_vectorcall_offset();
++#endif
+         {
+             using backend = portal::py_backend;
+             backend::object_ref tracked(PyList_New(0), backend::ref_policy::owned);
+--- a/tests/napi_backend_test.cpp
++++ b/tests/napi_backend_test.cpp
+@@ -60,6 +60,11 @@
+     };
+
+     int stored_value = 0;
++
++    struct noarg_receiver {
++        using native_t = noarg_receiver;
++        int value = 37;
++    };
+
+     int add_function(int a, unsigned b) {
+         return a + static_cast<int>(b);
+@@ -421,6 +426,27 @@
+     portal::napi_backend::module_t module{env, module_value};
+     napi_export_context_t export_ctx(env);
+
++    {
++        using backend = portal::napi_backend;
++        auto target = backend::define_class_impl<noarg_receiver>(
++            export_ctx, module, "noarg");
++        backend::define_constructor_impl<noarg_receiver, void()>(export_ctx, target);
++        export_ctx.store_export_class<noarg_receiver>(std::move(target));
++        napi_value noarg = get_property(env, module_value, "noarg");
++        napi_value instance = nullptr;
++        const std::size_t info_before = env->callback_info_calls;
++        napi_new_instance(env, noarg, 0, nullptr, &instance);
++        void* native = nullptr;
++        if (env->callback_info_calls != info_before + 1
++                || napi_unwrap(env, instance, &native) != napi_ok
++                || static_cast<noarg_receiver*>(native)->value != 37) return 79;
++        const std::size_t external_info_before = env->callback_info_calls;
++        auto exported = backend::make_export_object_impl<noarg_receiver>(export_ctx);
++        if (env->callback_info_calls != external_info_before + 1
++                || exported.native(export_ctx)->value != 37) return 80;
++        if (call1(env, noarg, int_value(env, 1)) != nullptr) return 81;
++    }
++
+     napi_value bad_int = nullptr;
+     napi_create_object(env, &bad_int);
+     auto maybe_int = portal::from_optional<int>(export_ctx, bad_int);
+@@ -433,8 +459,11 @@
+         return 25;
+     }
+
++    const std::size_t typeof_before_string = env->typeof_calls;
++    const std::size_t string_reads_before = env->string_reads;
+     auto maybe_string = portal::from_optional<std::string>(export_ctx, bad_int);
+-    if (maybe_string) {
++    if (maybe_string || env->typeof_calls != typeof_before_string
++            || env->string_reads != string_reads_before + 1) {
+         return 61;
+     }
+     const std::string embedded_probe(std::string("a\0b", 3));
+@@ -453,6 +482,23 @@
+     if (!caught_string_api_failure) {
+         return 65;
+     }
++
++    // API failures must not become overload misses, whether the size probe or
++    // the subsequent copy fails. A later conversion must still succeed.
++    napi_value string_probe = string_value(env, embedded_probe);
++    for (std::size_t failed_read : {1u, 2u}) {
++        env->string_read_failure_at = env->string_reads + failed_read;
++        bool caught_failure = false;
++        try {
++            (void)portal::from_optional<std::string>(export_ctx, string_probe);
++        } catch (const std::runtime_error&) {
++            caught_failure = true;
++        }
++        env->string_read_failure_at = 0;
++        if (!caught_failure) return 75;
++    }
++    const auto recovered_string = portal::from_optional<std::string>(export_ctx, string_probe);
++    if (!recovered_string || *recovered_string != embedded_probe) return 76;
+
+     bool caught_bad_conversion = false;
+     try {
+@@ -541,7 +587,9 @@
+
+     napi_value constructor_arg = int_value(env, 13);
+     napi_value instance = nullptr;
++    const std::size_t constructor_info_before = env->callback_info_calls;
+     napi_new_instance(env, counter_class, 1, &constructor_arg, &instance);
++    if (env->callback_info_calls != constructor_info_before + 1) return 77;
+
+     // Env-owned contexts are deleted by cleanup hooks before native object
+     // finalizers run. A wrapped object must not retain a context as its hint.
+@@ -607,7 +655,10 @@
+     napi_value consumer_class = get_property(env, module_value, "consumer");
+     napi_value consumer_args[] = {borrowed_object.get(), callback};
+     napi_value consumer_instance = nullptr;
++    const std::size_t consumer_info_before = env->callback_info_calls;
+     napi_new_instance(env, consumer_class, 2, consumer_args, &consumer_instance);
++    // Two constructor reads, plus the user callback called by the constructor.
++    if (env->callback_info_calls != consumer_info_before + 3) return 78;
+     napi_value consumer_prototype = get_property(env, consumer_class, "prototype");
+     napi_value combine = get_property(env, consumer_prototype, "combine");
+     napi_value apply = get_property(env, consumer_prototype, "apply");
+--- a/tests/napi_stub/node_api.h
++++ b/tests/napi_stub/node_api.h
+@@ -15,7 +15,9 @@
+
+ typedef enum napi_status {
+     napi_ok = 0,
+-    napi_generic_failure = 1
++    napi_invalid_arg = 1,
++    napi_string_expected = 3,
++    napi_generic_failure = 9
+ } napi_status;
+
+ typedef enum napi_valuetype {
+@@ -84,6 +86,10 @@
+     napi_value global = nullptr;
+     napi_value undefined = nullptr;
+     std::size_t type_tag_checks = 0;
++    std::size_t callback_info_calls = 0;
++    std::size_t string_reads = 0;
++    std::size_t string_read_failure_at = 0;
++    std::size_t typeof_calls = 0;
+     std::vector<std::pair<void (*)(void*), void*>> cleanup_hooks;
+ };
+
+@@ -220,14 +226,21 @@
+ }
+
+ inline napi_status napi_get_value_string_utf8(
+-    napi_env,
++    napi_env env,
+     napi_value value,
+     char* buf,
+     std::size_t bufsize,
+     std::size_t* result)
+ {
+-    if (value == nullptr || value->kind != napi_value__::kind_t::string) {
+-        return napi_generic_failure;
++    ++env->string_reads;
++    if (env->string_reads == env->string_read_failure_at) {
++        return napi_generic_failure;
++    }
++    if (value == nullptr) {
++        return napi_invalid_arg;
++    }
++    if (value->kind != napi_value__::kind_t::string) {
++        return napi_string_expected;
+     }
+     const std::string& text = value->text;
+     if (buf != nullptr && bufsize != 0) {
+@@ -247,7 +260,8 @@
+     return napi_ok;
+ }
+
+-inline napi_status napi_typeof(napi_env, napi_value value, napi_valuetype* result) {
++inline napi_status napi_typeof(napi_env env, napi_value value, napi_valuetype* result) {
++    ++env->typeof_calls;
+     if (value == nullptr) {
+         return napi_generic_failure;
+     }
+@@ -419,13 +433,14 @@
+ }
+
+ inline napi_status napi_get_cb_info(
+-    napi_env,
++    napi_env env,
+     napi_callback_info info,
+     std::size_t* argc,
+     napi_value* argv,
+     napi_value* this_arg,
+     void** data)
+ {
++    ++env->callback_info_calls;
+     if (argc != nullptr) {
+         const std::size_t available = info->args.size();
+         const std::size_t requested = *argc;
+@@ -434,6 +449,9 @@
+             for (std::size_t i = 0; i < count; ++i) {
+                 argv[i] = info->args[i];
+             }
++            for (std::size_t i = count; i < requested; ++i) {
++                argv[i] = env->undefined;
++            }
+         }
+         *argc = available;
+     }

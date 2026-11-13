@@ -1,4 +1,19 @@
-# Node constructor experiment — 2026-09-08
+# Performance experiments
+
+## Portal boundary-cost pass — 2026-11-13
+
+The [complete report](../benchmarks/optimization_pass/results/2026-11-13-vm/report.md)
+records the accepted core/RPC changes, two reproduced lifetime fixes, all raw
+timings and the Python/Node/inline-storage experiments removed from the default.
+The selected scalar RPC cases improved in every paired sample for arities
+1/2/4/5/8; async results include the cost of the required completion-state pin
+and remain mixed after entering multithreaded process mode. Large direct-binder
+copy savings are reported separately from ordinary RPC round trips.
+
+Reproduction scripts and baseline-applicable experimental patches are in
+[`benchmarks/optimization_pass`](../benchmarks/optimization_pass/README.md).
+
+## Node constructor experiment — 2026-09-08
 
 Status: measured candidate, **not enabled in the library**. The experimental
 implementation is preserved in
@@ -6,7 +21,7 @@ implementation is preserved in
 This historical patch retains the pre-Portal paths and applies to the baseline
 revision below, not the renamed current tree.
 
-## Change under test
+### Change under test
 
 Export construction currently creates a temporary owning `object_t`, which
 creates and immediately deletes a strong N-API reference. The candidate adds a
@@ -16,7 +31,7 @@ already rooted by the constructor callback. Type tagging, strict argument
 conversion, wrap error cleanup and finalization remain in place. Explicit C++
 object handles retain their existing persistent references.
 
-## Environment and method
+### Environment and method
 
 - Baseline commit: `0762d81175a6f3172b4a142b026d8392150fca6f`.
 - Cortex-A72, aarch64, GCC 14.2, Node 24.19.0, Release, `-O3 -DNDEBUG -std=c++14`.
@@ -28,7 +43,7 @@ object handles retain their existing persistent references.
 - A clean rebuild from a git archive reproduced the baseline binary exactly
   (SHA-256 `96ce8ec0950c92d5d3ae9c16017fd9802d8b29463fb0dbf673416e809c44f0ec`).
 
-## Results
+### Results
 
 Medians in ns/op; lower is better. These are local microbenchmarks, not an
 application-level speedup or a general framework ranking.
@@ -61,7 +76,7 @@ established cause. Since the ordinary-call regression repeated, the candidate
 was removed from the default implementation rather than reporting only its
 construction win.
 
-## Frequency and temperature checks
+### Frequency and temperature checks
 
 The governor was `ondemand`; no governor or frequency settings were changed.
 An initial 70-sample monitor observed two approximately 800 MHz readings but no
@@ -78,7 +93,7 @@ they cannot rule out sub-sample fluctuations, scheduling interference, or other
 microarchitectural effects. Monitor overhead also means this follow-up should
 not be mixed with the unmonitored samples.
 
-## Reproduction and validation
+### Reproduction and validation
 
 Build the baseline and candidate in separate checkouts with identical options,
 applying the patch only to the candidate. Preserve each addon under a distinct

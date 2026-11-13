@@ -1,0 +1,116 @@
+[
+  {
+    "path": "benchmarks/optimization_pass/experiments/core-final.patch",
+    "original_sha256": "14b7edefb1a1e9db95a42a12e3a746238d80114f398e82c48c90d030462a566c",
+    "published_sha256": "672378fa86682e1a4d0ccbaccf3137707a4e07cb679de6dd11c5bed3bb5e7003",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/rpc-full-byte-fastpath.patch",
+    "original_sha256": "87431095d39987747c4fa908482bcd6a49da5e9e67d34cdf9dc1ea56d0b3b9d3",
+    "published_sha256": "131b183b93036acafee2da439a18a9f87f8a28e22d36e31aa7ccc6253356f52e",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/rpc-full.patch",
+    "original_sha256": "eb16a16ceeb38301f5e339065dac3edf0e60d319cdfde4d8ae5467d428d76f2b",
+    "published_sha256": "30ca0092e1ffa169bcb48232d6698ae3f8da5a269d28314712cc1602195d54a7",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/rpc-storage-only.patch",
+    "original_sha256": "e6d20372057b65a91540d9340971d23abe427a73fe332b95b498d166cbff04f8",
+    "published_sha256": "c1d79adbf77581dc73b004ff03735c7a223309697cf14e0eb081f1fdab5d5d9d",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/rpc-writer-byte-only.patch",
+    "original_sha256": "b907c0cbc607747826e8579cd5ed6fdb2edc2e84761b1dbb08051966342d3b12",
+    "published_sha256": "ab7c28578d0628451af9707cb92264065e03c6b0b4e97d8b18a5dbe081bf8b81",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/rpc-writer-only.patch",
+    "original_sha256": "57d258915fdf55a6d845a35175cdac0b624f3f4a49bbf1677485be5730d39da1",
+    "published_sha256": "af8186c06d5447bc292af83c249c5ae5a11623671703cfc9fd5382f73399a504",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/runtime-napi-runtime-full.patch",
+    "original_sha256": "a70a75eeda6d0a064a021d9d1a05ba56a3a13bc4b7e840ad202111b8b1032b98",
+    "published_sha256": "b2984e230c6a0d113fe0a96ff456a04c8a29e4faea7ebbf719f9b525402a3fd2",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/runtime-node-constructor.patch",
+    "original_sha256": "7b3b1b0defc854d4dd2abb8248872ea9b12986572b58eda91bda8717daaaba29",
+    "published_sha256": "e17215c90c23d5ad7d4d406f9bb4e35a2d43fb831969cc50add20d218fb48308",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/runtime-node-converters.patch",
+    "original_sha256": "68c26d1fc7636549fca98e0c77c4c26bab8f154b3f70d72f0ea6ffaf58868c8e",
+    "published_sha256": "97fd797f578cd129fa485622099da83abbdc5cd91440d1c1ac72de281755afd8",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/runtime-python-offset-only.patch",
+    "original_sha256": "dca9247bb8a33a1ac6f84ad8812f0d3ccac14bd4351ce4ad36d4d7ae368302f3",
+    "published_sha256": "2293ed684c14b396392048554d0048c7831c5e8f3cbb09c9a2899f10787ffbc8",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/runtime-python-reset-offset.patch",
+    "original_sha256": "47c73192b41724b8e5e375f7c8fed55f351388cad4f98db2eeffca4eaebcf0e7",
+    "published_sha256": "c93c3cb656e3309738f58a754bebbb629fd496d305d4bbf7c05afc6013458452",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/runtime-python-reset-typed.patch",
+    "original_sha256": "66e040b2976c7160254bc360c077f43661802123ddfe68ea3d166523b721fd6d",
+    "published_sha256": "efb58d1ce1c95d7c787c40ed4c8ebf676304c11178a0c4a53e56f37bde8dc983",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/runtime-python-reset.patch",
+    "original_sha256": "083d4efecdedd96b457a3df31e62d580d289829cc5ba17c87a4c2d7fc2f020aa",
+    "published_sha256": "a0deb338847cc672f29814a81244fc958eac4a59408c4d715b6f2fb3f5c70217",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/runtime-python-runtime-full.patch",
+    "original_sha256": "04f3ff0dce8d625d2daef8be050a10dda963afa1feb0c8a6462e970da1dc04fd",
+    "published_sha256": "c742717892808712c5f78a1373ad863dca715385463d3706f16aca74ec3448c3",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/runtime-python-typed-only.patch",
+    "original_sha256": "1348a9228c7fbddf4e1ed21f481d2963752b3c54958a9abbd1be31205fd7e049",
+    "published_sha256": "de49861ede4b383805d27182e9fedf599068590776d66167b7c3669ea829d62f",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/experiments/runtime-runtime-candidate-probes.patch",
+    "original_sha256": "e3d4b7ad7dc306b709e38bedd4ebd32d3754c3ae128fbc744393df879613308c",
+    "published_sha256": "89545c2731f2c14dcedf274f360dbb5c79021241fe50a3e3878e279c5a6296bf",
+    "format_change": "Blank unified-diff context lines normalized; git apply --check passes against baseline."
+  },
+  {
+    "path": "benchmarks/optimization_pass/results/2026-11-13-vm/validation/python_reset_baseline_same.log",
+    "original_sha256": "3b0b6bd09e36c13ad10dfe05890ebfd39b0902bcb451addd052aff7a233274f3",
+    "published_sha256": "b0f7a5858b0798a7d4eb005b337fc8e954e90750c10afd0bb76952c0052fd55b",
+    "format_change": "Trim trailing horizontal whitespace in compiler/diagnostic text only."
+  },
+  {
+    "path": "benchmarks/optimization_pass/results/2026-11-13-vm/validation/baseline-final-token-asan.log",
+    "original_sha256": "b5b8d87b36ce87f9787a8755a65327f72ee269a9e0b062221459c4bd6868f527",
+    "published_sha256": "53df90fb0616f9b63fcf572a0ed9e06374cdc4098855570839d365a48dbb0038",
+    "format_change": "Trim trailing horizontal whitespace in compiler/diagnostic text only."
+  },
+  {
+    "path": "benchmarks/optimization_pass/results/2026-11-13-vm/validation/rpc-selected-validation.txt",
+    "original_sha256": "51c07d99d2e1b53b94d0dcd469e7d7573680f5bfa5141c65978bfa7d5acc58b3",
+    "published_sha256": "bbd05a1d29fe1f92e3112848f738501cfdb690e57a6bb2ffb7eb6a2e1d7ce06d",
+    "format_change": "Trim trailing horizontal whitespace in compiler/diagnostic text only."
+  }
+]

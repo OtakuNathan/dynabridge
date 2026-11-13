@@ -1,0 +1,116 @@
+diff --git a/portal/async.h b/portal/async.h
+index 89a62ae..8097f5b 100644
+--- a/portal/async.h
++++ b/portal/async.h
+@@ -58,8 +58,16 @@ public:
+     using result_type = typename State::result_type;
+     explicit completion(std::shared_ptr<State> s) noexcept : state_(std::move(s)) {}
+     // A copied token owns its control state. Raw pointers are not completion tokens.
+-    void finish(result_type r) const noexcept { state_->finish(std::move(r)); }
+-    void detach(async_error e) const noexcept { state_->detach(std::move(e)); }
++    void finish(result_type r) const noexcept {
++        // A continuation may destroy the callback holding this very token.
++        // Keep the state alive until delivery and retirement have both returned.
++        auto state = state_;
++        state->finish(std::move(r));
++    }
++    void detach(async_error e) const noexcept {
++        auto state = state_;
++        state->detach(std::move(e));
++    }
+ };
+ template<class R, class Context, class Op, class Handler>
+ struct operation_state {
+@@ -76,7 +84,7 @@ struct operation_state {
+           handler(in_place, std::move(h)) {}
+     void deliver(result_type r, bool retire) noexcept {
+         optional<Handler> callback;
+-        bool consume_handler=false;
++        bool consume_handler=false, clean=false;
+         std::shared_ptr<void> release_access;
+         {
+             std::lock_guard<std::mutex> lock(mutex);
+@@ -93,6 +101,7 @@ struct operation_state {
+                 delivered = true;
+                 consume_handler=true;
+             }
++            clean = claim_cleanup_locked();
+         }
+         // The delivered flag grants exclusive access to the slot. Even moved-from
+         // user callable destructors must run outside the mutex.
+@@ -109,16 +118,20 @@ struct operation_state {
+             (*callback)(std::move(r));
+ #endif
+         }
+-        cleanup();
++        cleanup(clean);
+     }
+     void finish(result_type r) noexcept { deliver(std::move(r), true); }
+     void detach(async_error e) noexcept { deliver(result_type(async_error_tag,std::move(e)), false); }
+-    void cleanup() noexcept {
+-        {
+-            std::lock_guard<std::mutex> lock(mutex);
+-            if (!retired || submitting || cleaned) return;
+-            cleaned=true;
+-        }
++    // Called only while the transition mutex is held. Claiming cleanup here
++    // avoids reacquiring it after every submission and completion, including
++    // transitions that cannot yet retire anything.
++    bool claim_cleanup_locked() noexcept {
++        if (!retired || submitting || cleaned) return false;
++        cleaned=true;
++        return true;
++    }
++    void cleanup(bool claimed) noexcept {
++        if (!claimed) return;
+         // Only the cleanup claimant touches these slots after submit returns.
+         operation.reset();
+         context.reset();
+@@ -129,10 +142,12 @@ struct operation_state {
+     }
+     void submitted() noexcept {
+         optional<async_error> deferred;
++        bool clean;
+         { std::lock_guard<std::mutex> lock(mutex); submitting = false;
+-          if (pending_detach) { deferred.emplace(std::move(*pending_detach)); pending_detach.reset(); } }
++          if (pending_detach) { deferred.emplace(std::move(*pending_detach)); pending_detach.reset(); }
++          clean = claim_cleanup_locked(); }
+         if (deferred) detach(std::move(*deferred));
+-        cleanup();
++        cleanup(clean);
+     }
+ };
+ }
+diff --git a/portal/export_callable.h b/portal/export_callable.h
+index 2dc2168..79e43af 100644
+--- a/portal/export_callable.h
++++ b/portal/export_callable.h
+@@ -851,7 +851,7 @@ namespace portal {
+             auto result = export_overload_dispatch<ContractList, Context, Callable>::call_optional(
+                 ctx, callable, argc, accessor);
+             if (result) {
+-                return *result;
++                return std::move_if_noexcept(*result);
+             }
+             PORTAL_RAISE(bad_conversion("portal export overload has no matching signature"));
+         }
+@@ -891,7 +891,9 @@ namespace portal {
+
+         template <typename... DynamicArgs>
+         optional<dynamic_value_t> call_optional(DynamicArgs... args) {
+-            auto tuple = std::make_tuple(args...);
++            // These arguments already belong to this invocation. Preserve the
++            // original copy fallback for custom values with throwing moves.
++            auto tuple = std::make_tuple(std::move_if_noexcept(args)...);
+             return export_overload_dispatch<
+                 Overloads,
+                 Context,
+@@ -904,7 +906,7 @@ namespace portal {
+
+         template <typename... DynamicArgs>
+         dynamic_value_t operator()(DynamicArgs... args) {
+-            auto tuple = std::make_tuple(args...);
++            auto tuple = std::make_tuple(std::move_if_noexcept(args)...);
+             return export_overload_required_dispatch<
+                 Overloads,
+                 Context,

@@ -22,6 +22,39 @@ async function main() {
     assert.strictEqual(addon.add(2147483647, 0), 2147483647);
     assert.strictEqual(addon.add(-2147483648, 0), -2147483648);
     assert.strictEqual(addon.add(-0, 0), 0);
+    for (const value of [-2147483648, -1, -0, 0, 1, 2147483647]) {
+        assert.strictEqual(addon.identityInt(value), value === 0 ? 0 : value);
+    }
+    for (const value of [-0, 0, 1, 2147483648, 4294967295]) {
+        assert.strictEqual(addon.identityUnsigned(value), value === 0 ? 0 : value);
+    }
+    for (const value of [
+        Number.MIN_VALUE, -Number.MIN_VALUE, 0.5, -0.5, 2147483646.5,
+        -2147483647.5, NaN, Infinity, -Infinity, 4294967296,
+        null, undefined, true, "1", {}, [], new Number(1), 1n, Symbol("1"),
+    ]) {
+        assert.throws(() => addon.identityInt(value));
+        assert.throws(() => addon.identityUnsigned(value));
+    }
+    for (const value of [-1, -2147483648, 4294967294.5]) {
+        assert.throws(() => addon.identityUnsigned(value));
+    }
+    for (const value of [-2147483649, 2147483648, 4294967295]) {
+        assert.throws(() => addon.identityInt(value));
+    }
+    for (const text of ["", "\0", "x".repeat(65536) + "\0😀", "😀中é"]) {
+        assert.strictEqual(addon.echo(text), "<" + text + ">");
+    }
+    // Keep Node's existing UTF-8 replacement behavior for unpaired surrogates.
+    assert.strictEqual(addon.echo("\ud800"), "<\ufffd>");
+    for (const invoke of [
+        () => addon.add(), () => addon.add(1), () => addon.add(1, 2, 3),
+        () => addon.calc(), () => addon.calc(1, 2, 3),
+        () => addon.stored(1), () => new addon.counter(),
+        () => new addon.counter(1, 2),
+    ]) {
+        assert.throws(invoke);
+    }
 
     addon.store(77);
     assert.strictEqual(addon.stored(), 77);
@@ -38,11 +71,29 @@ async function main() {
     assert.throws(() => addon.consume_counter(7, 1));
     assert.throws(() => addon.use_callback(7, 1));
 
-    const consumer = new addon.consumer(counter, (value) => value * 3);
+    const consumer = new addon.consumer(counter, (value) => {
+        // Constructor argument storage must survive a callback re-entering a
+        // constructor of the same class before the outer native object exists.
+        const nested = new addon.consumer(counter, (inner) => inner * 2);
+        assert.strictEqual(nested.apply((inner) => inner + 1, 0), 27);
+        return value * 3;
+    });
     assert.strictEqual(consumer.combine(counter, 11), 63);
     assert.strictEqual(consumer.apply((value) => value * 3, 7), 60);
     assert.throws(() => addon.consume_counter(consumer, 1));
     assert.throws(() => counter.add.call(consumer, 1));
+    assert.throws(() => counter.value(1));
+    assert.throws(() => counter.add());
+    assert.throws(() => counter.add(1, 2));
+    assert.throws(() => new addon.consumer(counter));
+    assert.throws(() => new addon.consumer(counter, (value) => value, 1));
+    const callbackError = new Error("callback identity");
+    assert.throws(
+        () => addon.use_callback(() => { throw callbackError; }, 1),
+        (error) => error === callbackError);
+    assert.throws(
+        () => new addon.consumer(counter, () => { throw callbackError; }),
+        (error) => error === callbackError);
 
     let calcArgs = null;
     assert.strictEqual(

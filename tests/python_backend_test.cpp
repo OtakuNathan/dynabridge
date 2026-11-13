@@ -96,6 +96,115 @@ namespace {
 
     int stored_value = 0;
 
+    struct reset_probe_state {
+        int destroyed = 0;
+        portal::py_backend::object_ref* observer = nullptr;
+        PyObject* expected = nullptr;
+        portal::py_backend::object_ref* release_source = nullptr;
+        PyObject* reentrant_owned = nullptr;
+        bool saw_replacement = false;
+    };
+
+    struct reset_probe_object {
+        PyObject_HEAD
+        reset_probe_state* state;
+    };
+
+    void reset_probe_dealloc(PyObject* self) {
+        auto& state = *reinterpret_cast<reset_probe_object*>(self)->state;
+        ++state.destroyed;
+        if (state.observer != nullptr) {
+            state.saw_replacement = state.observer->get() == state.expected;
+        }
+        if (state.release_source != nullptr) {
+            state.release_source->reset();
+        }
+        if (state.reentrant_owned != nullptr) {
+            state.observer->reset(state.reentrant_owned, portal::py_backend::ref_policy::owned);
+        }
+        Py_TYPE(self)->tp_free(self);
+    }
+
+    PyObject* make_reset_probe(reset_probe_state& state) {
+        static PyTypeObject type = {PyVarObject_HEAD_INIT(nullptr, 0)};
+        if ((type.tp_flags & Py_TPFLAGS_READY) == 0) {
+            type.tp_name = "portal.ResetProbe";
+            type.tp_basicsize = sizeof(reset_probe_object);
+            type.tp_flags = Py_TPFLAGS_DEFAULT;
+            type.tp_dealloc = reset_probe_dealloc;
+            if (PyType_Ready(&type) != 0) throw std::runtime_error("reset probe type failed");
+        }
+        auto* object = PyObject_New(reset_probe_object, &type);
+        if (object == nullptr) throw std::runtime_error("reset probe allocation failed");
+        object->state = &state;
+        return reinterpret_cast<PyObject*>(object);
+    }
+
+    void check_object_ref_reset() {
+        using backend = portal::py_backend;
+        {
+            reset_probe_state state;
+            backend::object_ref owner(make_reset_probe(state), backend::ref_policy::owned);
+            owner.reset(owner.get());
+            if (state.destroyed != 0 || Py_REFCNT(owner.get()) != 1) {
+                throw std::runtime_error("borrowed self-reset released its only owner");
+            }
+            // Adopting the same pointer is valid only with a separate owned ref.
+            Py_INCREF(owner.get());
+            owner.reset(owner.get(), backend::ref_policy::owned);
+            if (state.destroyed != 0 || Py_REFCNT(owner.get()) != 1) {
+                throw std::runtime_error("owned self-reset lost its transferred reference");
+            }
+            owner.reset();
+            if (state.destroyed != 1) throw std::runtime_error("self-reset leaked a reference");
+        }
+        {
+            reset_probe_state old_state, replacement_state;
+            backend::object_ref owner(make_reset_probe(old_state), backend::ref_policy::owned);
+            backend::object_ref replacement(
+                make_reset_probe(replacement_state), backend::ref_policy::owned);
+            PyObject* const incoming = replacement.get();
+            old_state.observer = &owner;
+            old_state.expected = incoming;
+            old_state.release_source = &replacement;
+            // Releasing the old object removes the replacement's last external
+            // owner. reset() must have already retained and published it.
+            owner.reset(incoming);
+            if (!old_state.saw_replacement || old_state.destroyed != 1 || replacement
+                    || owner.get() != incoming || replacement_state.destroyed != 0
+                    || Py_REFCNT(owner.get()) != 1) {
+                throw std::runtime_error("reset did not retain/publish before old finalizer");
+            }
+            owner.reset();
+            if (replacement_state.destroyed != 1) {
+                throw std::runtime_error("borrowed replacement leaked a reference");
+            }
+        }
+        {
+            reset_probe_state old_state, replacement_state, reentrant_state;
+            backend::object_ref owner(make_reset_probe(old_state), backend::ref_policy::owned);
+            backend::object_ref replacement(
+                make_reset_probe(replacement_state), backend::ref_policy::owned);
+            backend::object_ref reentrant(
+                make_reset_probe(reentrant_state), backend::ref_policy::owned);
+            PyObject* const incoming = replacement.get();
+            PyObject* const final_value = reentrant.get();
+            old_state.observer = &owner;
+            old_state.expected = incoming;
+            old_state.reentrant_owned = reentrant.release();
+            owner.reset(replacement.release(), backend::ref_policy::owned);
+            if (!old_state.saw_replacement || owner.get() != final_value
+                    || old_state.destroyed != 1 || replacement_state.destroyed != 1
+                    || reentrant_state.destroyed != 0 || Py_REFCNT(owner.get()) != 1) {
+                throw std::runtime_error("outer reset overwrote a reentrant replacement");
+            }
+            owner.reset();
+            if (reentrant_state.destroyed != 1) {
+                throw std::runtime_error("reentrant replacement leaked a reference");
+            }
+        }
+    }
+
     int add_function(int a, unsigned b) {
         return a + static_cast<int>(b);
     }
@@ -201,6 +310,7 @@ int main() {
     Py_Initialize();
 
     try {
+        check_object_ref_reset();
         {
             using backend = portal::py_backend;
             backend::object_ref tracked(PyList_New(0), backend::ref_policy::owned);

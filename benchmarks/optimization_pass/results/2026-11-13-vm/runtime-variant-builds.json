@@ -1,0 +1,205 @@
+{
+  "base_sha": "7a6f53bbc30d3b4159e36de138486bffe90f3e62",
+  "base_root": "/tmp/portal-opt-pass/baseline",
+  "harness_root": "/workspace/scratch/650ce06b9036/portal",
+  "command_source": "/tmp/portal-opt-pass/measurements-final/manifest.json",
+  "flags": [
+    "-std=c++14",
+    "-O3",
+    "-DNDEBUG",
+    "-pthread",
+    "-Wall",
+    "-Wextra"
+  ],
+  "timed": false,
+  "harness_sha256": {
+    "benchmarks/python_call_benchmark.cpp": "16ba3fbed9a36d24d3acad09cec975c9dc452290999b8852434d134b53e47df9",
+    "benchmarks/node_call_benchmark_addon.cpp": "4c2e46fffa3f10e9b2231a12cc7ef4ecb2ac7aded17696a19f02156b95d7e816",
+    "benchmarks/node_call_benchmark.js": "d0c469f9d6722660e022897fc95953b1b96ecce0c881bb52affbbe846066a4f5",
+    "benchmarks/node_constructor_benchmark.js": "947592ec3da28e0a3a709ef0e5a5b662899cc7196904509009c8fc966d04bca1"
+  },
+  "variants": {
+    "python-reset": {
+      "family": "python",
+      "root": "/tmp/portal-opt-pass/runtime-variants/python-reset",
+      "changed_headers": [
+        "portal/backends/python.h"
+      ],
+      "header_sha256": {
+        "portal/backends/python.h": "791d3b3dd71a613754d83e9b11c6dc56ef54e09867e525440facc967aad237d9"
+      },
+      "patch": "/tmp/portal-opt-pass/runtime-variants/python-reset.patch",
+      "build_command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12",
+        "-I/tmp/portal-opt-pass/runtime-variants/python-reset",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/python_call_benchmark.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/libpython3.12.so",
+        "-Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib",
+        "-lpthread",
+        "-ldl",
+        "-lutil",
+        "-lm"
+      ],
+      "returncode": 0,
+      "build_log": "/tmp/portal-opt-pass/runtime-variants/python-reset-build.log",
+      "binary": "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset",
+      "binary_sha256": "d8fab0bb667fb0da712a1b98bb5ed555c418f781330cb73995b47aa56a8fc22c",
+      "binary_bytes": 100760,
+      "size_output": "   text\t   data\t    bss\t    dec\t    hex\tfilename\n  61660\t   1896\t   1064\t  64620\t   fc6c\t/tmp/portal-opt-pass/runtime-variants/binaries/python-reset\n"
+    },
+    "python-reset-offset": {
+      "family": "python",
+      "root": "/tmp/portal-opt-pass/runtime-variants/python-reset-offset",
+      "changed_headers": [
+        "portal/backends/python.h"
+      ],
+      "header_sha256": {
+        "portal/backends/python.h": "99407b215d0ed3f545887eeb510c58c2fbd75853583660f581c870dda0589a88"
+      },
+      "patch": "/tmp/portal-opt-pass/runtime-variants/python-reset-offset.patch",
+      "build_command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12",
+        "-I/tmp/portal-opt-pass/runtime-variants/python-reset-offset",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/python_call_benchmark.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset-offset",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/libpython3.12.so",
+        "-Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib",
+        "-lpthread",
+        "-ldl",
+        "-lutil",
+        "-lm"
+      ],
+      "returncode": 0,
+      "build_log": "/tmp/portal-opt-pass/runtime-variants/python-reset-offset-build.log",
+      "binary": "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset-offset",
+      "binary_sha256": "a13383e6bd353fff6b18a2d5405617b205276d41ef4c79968d853ed89414ede1",
+      "binary_bytes": 100760,
+      "size_output": "   text\t   data\t    bss\t    dec\t    hex\tfilename\n  61852\t   1896\t   1064\t  64812\t   fd2c\t/tmp/portal-opt-pass/runtime-variants/binaries/python-reset-offset\n"
+    },
+    "python-reset-typed": {
+      "family": "python",
+      "root": "/tmp/portal-opt-pass/runtime-variants/python-reset-typed",
+      "changed_headers": [
+        "portal/backends/python.h"
+      ],
+      "header_sha256": {
+        "portal/backends/python.h": "ff8f8870ac307af0687b33876393027f614850f860158e3fe269804651d2e84a"
+      },
+      "patch": "/tmp/portal-opt-pass/runtime-variants/python-reset-typed.patch",
+      "build_command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12",
+        "-I/tmp/portal-opt-pass/runtime-variants/python-reset-typed",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/python_call_benchmark.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset-typed",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/libpython3.12.so",
+        "-Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib",
+        "-lpthread",
+        "-ldl",
+        "-lutil",
+        "-lm"
+      ],
+      "returncode": 0,
+      "build_log": "/tmp/portal-opt-pass/runtime-variants/python-reset-typed-build.log",
+      "binary": "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset-typed",
+      "binary_sha256": "b7bd8781172f138631c2bc78fda6b04ad98db73a5e1fbb01496744ecb98a1802",
+      "binary_bytes": 108968,
+      "size_output": "   text\t   data\t    bss\t    dec\t    hex\tfilename\n  69076\t   1896\t   1064\t  72036\t  11964\t/tmp/portal-opt-pass/runtime-variants/binaries/python-reset-typed\n"
+    },
+    "node-constructor": {
+      "family": "node",
+      "root": "/tmp/portal-opt-pass/runtime-variants/node-constructor",
+      "changed_headers": [
+        "portal/backends/napi.h"
+      ],
+      "header_sha256": {
+        "portal/backends/napi.h": "492606e8bd5371125f9af9d255db89bee62c2cce2c75927fd03a621aa889812e"
+      },
+      "patch": "/tmp/portal-opt-pass/runtime-variants/node-constructor.patch",
+      "build_command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-fPIC",
+        "-shared",
+        "-I/tmp/portal-opt-pass/deps/node-v24.22.1/include/node",
+        "-I/tmp/portal-opt-pass/runtime-variants/node-constructor",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark_addon.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/runtime-variants/binaries/node-constructor.node"
+      ],
+      "returncode": 0,
+      "build_log": "/tmp/portal-opt-pass/runtime-variants/node-constructor-build.log",
+      "binary": "/tmp/portal-opt-pass/runtime-variants/binaries/node-constructor.node",
+      "binary_sha256": "d292a5cd35da4aaebd1ddbbecb120ae2aec069ab5861a1a8a3e254f27b3ab6a4",
+      "binary_bytes": 129992,
+      "size_output": "   text\t   data\t    bss\t    dec\t    hex\tfilename\n  85274\t   1488\t    232\t  86994\t  153d2\t/tmp/portal-opt-pass/runtime-variants/binaries/node-constructor.node\n"
+    },
+    "node-converters": {
+      "family": "node",
+      "root": "/tmp/portal-opt-pass/runtime-variants/node-converters",
+      "changed_headers": [
+        "portal/backends/napi_converters.h"
+      ],
+      "header_sha256": {
+        "portal/backends/napi_converters.h": "4e83d755933e8ee398596b3c039f73dc5ac73fe20deeb8aa5470825ec091acff"
+      },
+      "patch": "/tmp/portal-opt-pass/runtime-variants/node-converters.patch",
+      "build_command": [
+        "c++",
+        "-std=c++14",
+        "-O3",
+        "-DNDEBUG",
+        "-pthread",
+        "-Wall",
+        "-Wextra",
+        "-fPIC",
+        "-shared",
+        "-I/tmp/portal-opt-pass/deps/node-v24.22.1/include/node",
+        "-I/tmp/portal-opt-pass/runtime-variants/node-converters",
+        "-I/workspace/scratch/650ce06b9036/portal",
+        "/workspace/scratch/650ce06b9036/portal/benchmarks/node_call_benchmark_addon.cpp",
+        "-o",
+        "/tmp/portal-opt-pass/runtime-variants/binaries/node-converters.node"
+      ],
+      "returncode": 0,
+      "build_log": "/tmp/portal-opt-pass/runtime-variants/node-converters-build.log",
+      "binary": "/tmp/portal-opt-pass/runtime-variants/binaries/node-converters.node",
+      "binary_sha256": "8bff6cf9573ef6194da67fbf4478180bd5b804c4adce5b17d57e391e1bf2b574",
+      "binary_bytes": 125968,
+      "size_output": "   text\t   data\t    bss\t    dec\t    hex\tfilename\n  82832\t   1488\t    232\t  84552\t  14a48\t/tmp/portal-opt-pass/runtime-variants/binaries/node-converters.node\n"
+    }
+  }
+}

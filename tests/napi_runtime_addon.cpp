@@ -287,6 +287,10 @@ namespace {
             portal::export_free_callable(ctx, module, "stored", stored_function);
             portal::export_free_callable(ctx, module, "ownedCounterConstructed", owned_counter_constructed);
             portal::export_free_callable(ctx, module, "ownedCounterDestroyed", owned_counter_destroyed);
+            portal::export_free_callable<int(int)>(
+                ctx, module, "identityInt", [](int value) { return value; });
+            portal::export_free_callable<unsigned(unsigned)>(
+                ctx, module, "identityUnsigned", [](unsigned value) { return value; });
             portal::export_free_callable<int(int, unsigned)>(
                 ctx,
                 module,

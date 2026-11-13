@@ -1,0 +1,73 @@
+{
+  "source_manifest": "/tmp/portal-opt-pass/measurements-final/manifest.json",
+  "base_sha": "7a6f53bbc30d3b4159e36de138486bffe90f3e62",
+  "reconstructed_headers": {
+    "portal/backends/python.h": {
+      "sha256": "f0d127fafb6de7d3bc3633c6a77c83b35c551d5f8290563f0751f23a9dad0fb0",
+      "matches_measured_manifest": true,
+      "snapshot": "/tmp/portal-opt-pass/runtime-variants/full-runtime-candidate/portal/backends/python.h"
+    },
+    "portal/backends/napi.h": {
+      "sha256": "492606e8bd5371125f9af9d255db89bee62c2cce2c75927fd03a621aa889812e",
+      "matches_measured_manifest": true,
+      "snapshot": "/tmp/portal-opt-pass/runtime-variants/full-runtime-candidate/portal/backends/napi.h"
+    },
+    "portal/backends/napi_converters.h": {
+      "sha256": "4e83d755933e8ee398596b3c039f73dc5ac73fe20deeb8aa5470825ec091acff",
+      "matches_measured_manifest": true,
+      "snapshot": "/tmp/portal-opt-pass/runtime-variants/full-runtime-candidate/portal/backends/napi_converters.h"
+    }
+  },
+  "baseline_apply_checks": [
+    {
+      "patch": "napi-runtime-full.patch",
+      "returncode": 0,
+      "sha256": "a70a75eeda6d0a064a021d9d1a05ba56a3a13bc4b7e840ad202111b8b1032b98"
+    },
+    {
+      "patch": "node-constructor.patch",
+      "returncode": 0,
+      "sha256": "7b3b1b0defc854d4dd2abb8248872ea9b12986572b58eda91bda8717daaaba29"
+    },
+    {
+      "patch": "node-converters.patch",
+      "returncode": 0,
+      "sha256": "68c26d1fc7636549fca98e0c77c4c26bab8f154b3f70d72f0ea6ffaf58868c8e"
+    },
+    {
+      "patch": "python-offset-only.patch",
+      "returncode": 0,
+      "sha256": "dca9247bb8a33a1ac6f84ad8812f0d3ccac14bd4351ce4ad36d4d7ae368302f3"
+    },
+    {
+      "patch": "python-reset-offset.patch",
+      "returncode": 0,
+      "sha256": "47c73192b41724b8e5e375f7c8fed55f351388cad4f98db2eeffca4eaebcf0e7"
+    },
+    {
+      "patch": "python-reset-typed.patch",
+      "returncode": 0,
+      "sha256": "66e040b2976c7160254bc360c077f43661802123ddfe68ea3d166523b721fd6d"
+    },
+    {
+      "patch": "python-reset.patch",
+      "returncode": 0,
+      "sha256": "083d4efecdedd96b457a3df31e62d580d289829cc5ba17c87a4c2d7fc2f020aa"
+    },
+    {
+      "patch": "python-runtime-full.patch",
+      "returncode": 0,
+      "sha256": "04f3ff0dce8d625d2daef8be050a10dda963afa1feb0c8a6462e970da1dc04fd"
+    },
+    {
+      "patch": "python-typed-only.patch",
+      "returncode": 0,
+      "sha256": "1348a9228c7fbddf4e1ed21f481d2963752b3c54958a9abbd1be31205fd7e049"
+    },
+    {
+      "patch": "runtime-candidate-probes.patch",
+      "returncode": 0,
+      "sha256": "e3d4b7ad7dc306b709e38bedd4ebd32d3754c3ae128fbc744393df879613308c"
+    }
+  ]
+}

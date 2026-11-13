@@ -52,11 +52,15 @@ namespace portal {
             }
 
             void reset(PyObject* object = nullptr, ref_policy policy = ref_policy::borrowed) noexcept {
-                Py_XDECREF(object_);
-                object_ = object;
-                if (object_ != nullptr && policy == ref_policy::borrowed) {
-                    Py_INCREF(object_);
+                // Retain a borrowed replacement before releasing the old ref,
+                // including self-reset. Publish it before DECREF can re-enter
+                // through a finalizer. Owned policy still transfers a distinct
+                // owned reference, even when its pointer equals object_.
+                if (object != nullptr && policy == ref_policy::borrowed) {
+                    Py_INCREF(object);
                 }
+                PyObject* const previous = std::exchange(object_, object);
+                Py_XDECREF(previous);
             }
 
             explicit operator bool() const noexcept { return object_ != nullptr; }

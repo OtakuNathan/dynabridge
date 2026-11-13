@@ -1,0 +1,59 @@
+Final selected production RPC sanitizer validation. No timing runs or production edits.
+RPC implementation: wider-integer grouped append plus 1-byte push_back; baseline owning vector decoding.
+LeakSanitizer disabled because the previous explicit attempt established that this ptrace environment does not support it. ASAN/UBSAN remain enabled with halt_on_error=1.
+c++ (Debian 14.2.0-19) 14.2.0
+4ca9fbe288a5c62045e4d1e66d6a599aeac9dee628483f9ee644a3e44306188b  portal/argument.h
+128eec2e3e1708d03892ebd3c52dbba8f9e7490e17c420ae4a33509808da4efc  portal/async.h
+10f2f30fe20a1f45d034ca433a09ed5973f5fdc056a71d0ca27328cb25b3af6d  portal/async_generate.h
+f0dee4d84e6417d83ee750cb51a6d4df1b4d58283e3c62e6767a8e4603e89655  portal/async_import.h
+c016f0ba9873e1084ca2fd47ff57b5e681344948378dbe9e4d8abb10b72a20eb  portal/backend_base.h
+ec8fcd5f4be8abfa5e506ad3f494d48483ebf83d5b8d32e0efda5761d5fc1b14  portal/backends/napi.h
+694d4ed071db610945b9ddb04e702480c5600f74cef0009859dbc0877464ad13  portal/backends/napi_converters.h
+791d3b3dd71a613754d83e9b11c6dc56ef54e09867e525440facc967aad237d9  portal/backends/python.h
+0a7eff31d762d4efc8bd050d0a15e3bd38d160f47a1b66679f94894efe0d1db5  portal/backends/python_api.h
+5f0790fdd9bcc33e2f5d0794654c14d02f34487e710ede1d7ffdf6cff9dda701  portal/backends/python_converters.h
+1acbd94803d71040f23d9fdd515f65100120241da41737ffb7e67919881ce93c  portal/backends/rpc.h
+57b2d42d4ba14295ccab3df2e32696ddf57247f7af896ec182db4f9914ca2210  portal/callable.h
+e3dfe7c339ceca7ce434381efa97b9548ca954245e0662884d7f7a721de43cd0  portal/config.h
+0df8ac3caba4d4dba5801ebe9710d4dacbd07864acb34df33e754b8e88e40504  portal/error_policy.h
+d0c009f39b0f1db6fdfc1cc88942de02b787586e4491eb2215ac3e916f6aa234  portal/export.h
+25c3056b41477e5c34055e3543aaabb75a671b87184e9a57602231dca88a6a7f  portal/export_callable.h
+6b16ff334daf541ffbae29c531df03849e5c64b5d73cda00ee6e6a30ee642229  portal/export_core.h
+ed2c6af14a051ffc750d1bc968fd66eccf07a83e8e33e3e33ad5665d41aa36bb  portal/export_generate.h
+8bd9699ce2fe545b79bf5f8a9738fa3ae701c4676381a3e6e0ea745fdec46c3d  portal/extensions/flux_foundry/async.h
+65da945b841e08fcb2ec2a2b37a7ca513e339e9af38a53af8099430c6930bd3b  portal/extensions/flux_foundry/python_interpreter_executor.h
+332ef748ad1f51030c31792b156a9e0eee46889421aad4234d0773ee2b666450  portal/import.h
+e9e2cee7d8e4353febfd928092950ed2721e43d92b2cfa6e23ac2cca8fe68724  portal/import_callable.h
+5d60419403498f205318b8885a2d0671a6f6f0329ce1a804f5c529b41747a372  portal/import_core.h
+4d4dba1966d1e82b29f8a7ea2ec549bb6d07b08377ec64a347e084b5779147b9  portal/import_generate.h
+68ecb34f0ffe3981e8dfdda81bb12dab16fb4687e76a764f936aa874076bf178  portal/inplace.h
+770dde7c0de947e6a1d4b52a831db87deccf0e9a9d771743277a8ea0e1361016  portal/interface.h
+fca2cc9abb21eb37063e21bf3461dbfa1e60cf64b97d6bb2666e360ada6e5536  portal/optional.h
+14b4fe94439446d02eaad39b7db5382bef03a901b9b7579d1cdfa392890ecfff  portal/portal.h
+11eed05b2234f0c0e6690d15fff77707c89b724aaae9c33030c3d24601243365  portal/traits.h
+e7edd9e7c6132402a53261dbf81cd7b2d0f1bf0e29fdfacb95221f69e4b4c655  portal/type_list.h
+7c393debba7446763906646ec7676482243367839334dd5c2891693d5358ef01  tests/rpc_checked_test.cpp
+7e296c4ff1fb2d0a41d2ce6d3ac62043af70b221e2a14155816189a89e9bc9c4  tests/rpc_storage_test.cpp
+
+Build: c++ -std=c++14 -O1 -g -pthread -fno-omit-frame-pointer -fsanitize=address,undefined -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/tests/rpc_checked_test.cpp -o /tmp/portal-opt-pass/rpc-selected-sanitizers/rpc_checked_test-asan-ubsan
+Build exit status: 0
+Binary SHA-256: 4d2301dabac93738afc018d1bf3191393a5dd136294dead02e608db206cf600e
+Run: /tmp/portal-opt-pass/rpc-selected-sanitizers/rpc_checked_test-asan-ubsan
+Environment: {'ASAN_OPTIONS': 'detect_leaks=0:halt_on_error=1', 'UBSAN_OPTIONS': 'halt_on_error=1'}
+Run exit status: 0
+
+Build: c++ -std=c++14 -O1 -g -pthread -fno-omit-frame-pointer -fsanitize=address,undefined -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp -o /tmp/portal-opt-pass/rpc-selected-sanitizers/rpc_storage_test-asan-ubsan
+Build exit status: 0
+Binary SHA-256: 032864c7a72c6f642a284c9af4b39f67641bed96872e113909810501d1af6138
+Run: /tmp/portal-opt-pass/rpc-selected-sanitizers/rpc_storage_test-asan-ubsan
+Environment: {'ASAN_OPTIONS': 'detect_leaks=0:halt_on_error=1', 'UBSAN_OPTIONS': 'halt_on_error=1'}
+RPC owning argument, legacy, nested and concurrent tests passed
+Run exit status: 0
+
+Build: c++ -std=c++14 -O1 -g -pthread -fno-omit-frame-pointer -fsanitize=thread -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp -o /tmp/portal-opt-pass/rpc-selected-sanitizers/rpc_storage_test-tsan
+Build exit status: 0
+Binary SHA-256: 5eb14cb62fb80ae99e4aacac638c64ff9433cfbf8517cbaa96c04109f07b0ed0
+Run: /tmp/portal-opt-pass/rpc-selected-sanitizers/rpc_storage_test-tsan
+Environment: {'TSAN_OPTIONS': 'halt_on_error=1'}
+RPC owning argument, legacy, nested and concurrent tests passed
+Run exit status: 0

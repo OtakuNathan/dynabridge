@@ -234,6 +234,22 @@ namespace {
         Py_DECREF(arg);
         return to_int(result);
     }
+
+    int raw_vectorcall_offset(PyObject* callable) {
+        PyObject* args[] = {
+            nullptr, PyLong_FromLong(1), PyLong_FromUnsignedLong(2)
+        };
+        if (args[1] == nullptr || args[2] == nullptr) {
+            Py_XDECREF(args[1]);
+            Py_XDECREF(args[2]);
+            throw_python_error("Python argument allocation failed");
+        }
+        PyObject* result = PyObject_Vectorcall(
+            callable, args + 1, 2 | PY_VECTORCALL_ARGUMENTS_OFFSET, nullptr);
+        Py_DECREF(args[1]);
+        Py_DECREF(args[2]);
+        return to_int(result);
+    }
 #endif
 
     int call_int_argument(PyObject* callable, long value) {
@@ -357,13 +373,16 @@ int main() {
                 "class ForeignCounter:\n"
                 "    def __init__(self, value):\n"
                 "        self.value = value\n"
+                "    def add_pair(self, a, b):\n"
+                "        return a + b\n"
                 "def pass_counter(obj, value):\n"
                 "    return value + 2\n"
                 "def pass_transform(fn, value):\n"
                 "    return fn(value)\n"
                 "def callback(value):\n"
                 "    return value + 2\n"
-                "foreign_counter = ForeignCounter(2)\n") != 0) {
+                "foreign_counter = ForeignCounter(2)\n"
+                "bound_calc = foreign_counter.add_pair\n") != 0) {
             throw_python_error("failed to define Python benchmark function");
         }
 
@@ -393,6 +412,11 @@ int main() {
         }
 
         portal::py_backend::context_t ctx(calc, portal::py_backend::ref_policy::borrowed);
+        PyObject* bound_calc = PyDict_GetItemString(globals, "bound_calc");
+        if (bound_calc == nullptr || !PyCallable_Check(bound_calc)) {
+            throw_python_error("missing Python bound method");
+        }
+        portal::py_backend::context_t bound_ctx(bound_calc);
         portal::py_backend::module_t import_module(main);
         auto object_ctx = portal::import_from<
             portal::import_symbols::pass_counter,
@@ -491,6 +515,9 @@ int main() {
         results.push_back(run_benchmark("portal import", iterations, 3, [&ctx]() {
             return portal::call_calc(ctx, 1, 2u);
         }));
+        results.push_back(run_benchmark("portal import bound method", iterations, 3, [&bound_ctx]() {
+            return portal::call_calc(bound_ctx, 1, 2u);
+        }));
         results.push_back(run_benchmark("portal import object", iterations, 3,
             [&object_ctx, &imported_counter]() {
                 return portal::call_pass_counter(object_ctx, imported_counter, 1);
@@ -516,6 +543,12 @@ int main() {
 #if PY_VERSION_HEX >= 0x03080000
         results.push_back(run_benchmark("raw C API vectorcall", iterations, 3, [calc]() {
             return raw_vectorcall(calc);
+        }));
+        results.push_back(run_benchmark("raw C API bound method", iterations, 3, [bound_calc]() {
+            return raw_vectorcall(bound_calc);
+        }));
+        results.push_back(run_benchmark("raw C API bound method offset", iterations, 3, [bound_calc]() {
+            return raw_vectorcall_offset(bound_calc);
         }));
 #endif
 

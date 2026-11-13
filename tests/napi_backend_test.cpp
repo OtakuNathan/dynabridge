@@ -61,6 +61,11 @@ namespace {
 
     int stored_value = 0;
 
+    struct noarg_receiver {
+        using native_t = noarg_receiver;
+        int value = 37;
+    };
+
     int add_function(int a, unsigned b) {
         return a + static_cast<int>(b);
     }
@@ -421,6 +426,23 @@ int run_test(napi_env env) {
     portal::napi_backend::module_t module{env, module_value};
     napi_export_context_t export_ctx(env);
 
+    {
+        using backend = portal::napi_backend;
+        auto target = backend::define_class_impl<noarg_receiver>(
+            export_ctx, module, "noarg");
+        backend::define_constructor_impl<noarg_receiver, void()>(export_ctx, target);
+        export_ctx.store_export_class<noarg_receiver>(std::move(target));
+        napi_value noarg = get_property(env, module_value, "noarg");
+        napi_value instance = nullptr;
+        napi_new_instance(env, noarg, 0, nullptr, &instance);
+        void* native = nullptr;
+        if (napi_unwrap(env, instance, &native) != napi_ok
+                || static_cast<noarg_receiver*>(native)->value != 37) return 79;
+        auto exported = backend::make_export_object_impl<noarg_receiver>(export_ctx);
+        if (exported.native(export_ctx)->value != 37) return 80;
+        if (call1(env, noarg, int_value(env, 1)) != nullptr) return 81;
+    }
+
     napi_value bad_int = nullptr;
     napi_create_object(env, &bad_int);
     auto maybe_int = portal::from_optional<int>(export_ctx, bad_int);
@@ -453,6 +475,23 @@ int run_test(napi_env env) {
     if (!caught_string_api_failure) {
         return 65;
     }
+
+    // API failures must not become overload misses, whether the size probe or
+    // the subsequent copy fails. A later conversion must still succeed.
+    napi_value string_probe = string_value(env, embedded_probe);
+    for (std::size_t failed_read : {1u, 2u}) {
+        env->string_read_failure_at = env->string_reads + failed_read;
+        bool caught_failure = false;
+        try {
+            (void)portal::from_optional<std::string>(export_ctx, string_probe);
+        } catch (const std::runtime_error&) {
+            caught_failure = true;
+        }
+        env->string_read_failure_at = 0;
+        if (!caught_failure) return 75;
+    }
+    const auto recovered_string = portal::from_optional<std::string>(export_ctx, string_probe);
+    if (!recovered_string || *recovered_string != embedded_probe) return 76;
 
     bool caught_bad_conversion = false;
     try {

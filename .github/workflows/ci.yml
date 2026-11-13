@@ -57,7 +57,7 @@ jobs:
           -DPython3_ROOT_DIR="${{ env.pythonLocation }}"
 
       - name: Build
-        run: cmake --build build --config ${{ matrix.build-type }} --parallel
+        run: cmake --build build --config ${{ matrix.build-type }} --parallel 2
 
       - name: Test
         run: ctest --test-dir build -C ${{ matrix.build-type }} --output-on-failure
@@ -74,7 +74,7 @@ jobs:
           -DCMAKE_PREFIX_PATH="${{ runner.temp }}/portal-install"
 
       - name: Build package consumer
-        run: cmake --build consumer-build --config ${{ matrix.build-type }} --parallel
+        run: cmake --build consumer-build --config ${{ matrix.build-type }} --parallel 2
 
   valgrind:
     name: ubuntu-latest / valgrind
@@ -99,7 +99,7 @@ jobs:
           -DPython3_ROOT_DIR="${{ env.pythonLocation }}"
 
       - name: Build
-        run: cmake --build build --parallel
+        run: cmake --build build --parallel 2
 
       # ctest has no built-in valgrind mode; discover native test executables
       # from the ctest registry (test commands ending in _test) and run each

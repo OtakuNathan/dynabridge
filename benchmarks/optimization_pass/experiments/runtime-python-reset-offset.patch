@@ -1,0 +1,39 @@
+--- a/portal/backends/python.h
++++ b/portal/backends/python.h
+@@ -52,11 +52,15 @@
+             }
+
+             void reset(PyObject* object = nullptr, ref_policy policy = ref_policy::borrowed) noexcept {
+-                Py_XDECREF(object_);
+-                object_ = object;
+-                if (object_ != nullptr && policy == ref_policy::borrowed) {
+-                    Py_INCREF(object_);
+-                }
++                // Retain a borrowed replacement before releasing the old ref,
++                // including self-reset. Publish it before DECREF can re-enter
++                // through a finalizer. Owned policy still transfers a distinct
++                // owned reference, even when its pointer equals object_.
++                if (object != nullptr && policy == ref_policy::borrowed) {
++                    Py_INCREF(object);
++                }
++                PyObject* const previous = std::exchange(object_, object);
++                Py_XDECREF(previous);
+             }
+
+             explicit operator bool() const noexcept { return object_ != nullptr; }
+@@ -1014,8 +1018,13 @@
+                 return nullptr;
+             }
+
+-            PyObject* argv[sizeof...(Args) == 0 ? 1 : sizeof...(Args)] = { call_arg_value(args)... };
+-            PyObject* result = PyObject_Vectorcall(callable, argv, sizeof...(Args), nullptr);
++            // A spare leading slot lets bound methods prepend their receiver
++            // without copying the argument vector. Each invocation owns its
++            // slot, including when the Python call re-enters the bridge.
++            PyObject* argv[sizeof...(Args) + 1] = { nullptr, call_arg_value(args)... };
++            PyObject* result = PyObject_Vectorcall(
++                callable, argv + 1,
++                sizeof...(Args) | PY_VECTORCALL_ARGUMENTS_OFFSET, nullptr);
+             if (result == nullptr) {
+                 // Capture before releasing arguments: their finalizers may call
+                 // Python again while the C++ stack unwinds.

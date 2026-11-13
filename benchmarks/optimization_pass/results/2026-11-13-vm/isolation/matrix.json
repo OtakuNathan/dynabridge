@@ -1,0 +1,1187 @@
+{
+  "config": [
+    {
+      "name": "async_pin_control",
+      "format": "core",
+      "reference": "pin_only",
+      "variants": {
+        "pin_only": {
+          "command": [
+            "/tmp/portal-opt-pass/core_pin_only",
+            "2000000",
+            "--threaded-process"
+          ],
+          "env": {}
+        },
+        "full": {
+          "command": [
+            "/tmp/portal-opt-pass/core_full_current",
+            "2000000",
+            "--threaded-process"
+          ],
+          "env": {}
+        }
+      }
+    },
+    {
+      "name": "rpc_factors",
+      "format": "rpc",
+      "reference": "baseline",
+      "variants": {
+        "baseline": {
+          "command": [
+            "/tmp/portal-opt-pass/rpc-variants/binaries/baseline",
+            "1000000"
+          ],
+          "env": {}
+        },
+        "writer-only": {
+          "command": [
+            "/tmp/portal-opt-pass/rpc-variants/binaries/writer-only",
+            "1000000"
+          ],
+          "env": {}
+        },
+        "storage-only": {
+          "command": [
+            "/tmp/portal-opt-pass/rpc-variants/binaries/storage-only",
+            "1000000"
+          ],
+          "env": {}
+        },
+        "full": {
+          "command": [
+            "/tmp/portal-opt-pass/rpc-variants/binaries/full",
+            "1000000"
+          ],
+          "env": {}
+        },
+        "full-byte-fastpath": {
+          "command": [
+            "/tmp/portal-opt-pass/rpc-variants/binaries/full-byte-fastpath",
+            "1000000"
+          ],
+          "env": {}
+        }
+      }
+    },
+    {
+      "name": "python_factors",
+      "format": "python",
+      "reference": "reset",
+      "variants": {
+        "reset": {
+          "command": [
+            "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset"
+          ],
+          "env": {
+            "PORTAL_BENCH_ITERS": "2000000"
+          }
+        },
+        "offset": {
+          "command": [
+            "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset-offset"
+          ],
+          "env": {
+            "PORTAL_BENCH_ITERS": "2000000"
+          }
+        },
+        "typed": {
+          "command": [
+            "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset-typed"
+          ],
+          "env": {
+            "PORTAL_BENCH_ITERS": "2000000"
+          }
+        },
+        "full": {
+          "command": [
+            "/tmp/portal-opt-pass/measurements-final/binaries/python-after"
+          ],
+          "env": {
+            "PORTAL_BENCH_ITERS": "2000000"
+          }
+        }
+      }
+    },
+    {
+      "name": "node_factors",
+      "format": "json",
+      "reference": "baseline",
+      "variants": {
+        "baseline": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "--expose-gc",
+            "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/node_focus.js",
+            "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+          ],
+          "env": {
+            "PORTAL_BENCH_ITERS": "1000000"
+          }
+        },
+        "constructor": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "--expose-gc",
+            "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/node_focus.js",
+            "/tmp/portal-opt-pass/runtime-variants/binaries/node-constructor.node"
+          ],
+          "env": {
+            "PORTAL_BENCH_ITERS": "1000000"
+          }
+        },
+        "converters": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "--expose-gc",
+            "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/node_focus.js",
+            "/tmp/portal-opt-pass/runtime-variants/binaries/node-converters.node"
+          ],
+          "env": {
+            "PORTAL_BENCH_ITERS": "1000000"
+          }
+        },
+        "full": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "--expose-gc",
+            "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/node_focus.js",
+            "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+          ],
+          "env": {
+            "PORTAL_BENCH_ITERS": "1000000"
+          }
+        }
+      }
+    },
+    {
+      "name": "node_constructor_factors",
+      "format": "json",
+      "reference": "baseline",
+      "variants": {
+        "baseline": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "--expose-gc",
+            "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+            "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node"
+          ],
+          "env": {
+            "PORTAL_BENCH_ITERS": "100000"
+          }
+        },
+        "constructor": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "--expose-gc",
+            "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+            "/tmp/portal-opt-pass/runtime-variants/binaries/node-constructor.node"
+          ],
+          "env": {
+            "PORTAL_BENCH_ITERS": "100000"
+          }
+        },
+        "converters": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "--expose-gc",
+            "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+            "/tmp/portal-opt-pass/runtime-variants/binaries/node-converters.node"
+          ],
+          "env": {
+            "PORTAL_BENCH_ITERS": "100000"
+          }
+        },
+        "full": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+            "--expose-gc",
+            "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js",
+            "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node"
+          ],
+          "env": {
+            "PORTAL_BENCH_ITERS": "100000"
+          }
+        }
+      }
+    }
+  ],
+  "cpu": 0,
+  "rounds": 5,
+  "runs": [
+    {
+      "study": "async_pin_control",
+      "round": 1,
+      "variant": "pin_only",
+      "start_epoch": 1794584261.1749754,
+      "stop_epoch": 1794584266.4912302,
+      "returncode": 0,
+      "stdout": "scenario,iterations,ns_per_call,new_calls_per_call,dynamic_copies_per_call,checksum\nstatic_inline,2000000,170.960,1.000,0.000,84000000\nstatic_deferred,2000000,120.070,1.000,0.000,84000000\nerased_inline,2000000,209.062,2.000,0.000,84000000\nerased_deferred,2000000,177.017,2.000,0.000,84000000\ndirect_overload_64k,62500,53692.757,3.000,3.000,4096000000\noptional_overload_64k,62500,7392.717,2.000,2.000,4096000000\n",
+      "stderr": ""
+    },
+    {
+      "study": "async_pin_control",
+      "round": 1,
+      "variant": "full",
+      "start_epoch": 1794584266.5242074,
+      "stop_epoch": 1794584268.5378752,
+      "returncode": 0,
+      "stdout": "scenario,iterations,ns_per_call,new_calls_per_call,dynamic_copies_per_call,checksum\nstatic_inline,2000000,216.563,1.000,0.000,84000000\nstatic_deferred,2000000,117.129,1.000,0.000,84000000\nerased_inline,2000000,200.035,2.000,0.000,84000000\nerased_deferred,2000000,158.356,2.000,0.000,84000000\ndirect_overload_64k,62500,4993.953,1.000,1.000,4096000000\noptional_overload_64k,62500,4115.737,1.000,1.000,4096000000\n",
+      "stderr": ""
+    },
+    {
+      "study": "async_pin_control",
+      "round": 2,
+      "variant": "pin_only",
+      "start_epoch": 1794584268.5608296,
+      "stop_epoch": 1794584273.0178118,
+      "returncode": 0,
+      "stdout": "scenario,iterations,ns_per_call,new_calls_per_call,dynamic_copies_per_call,checksum\nstatic_inline,2000000,97.989,1.000,0.000,84000000\nstatic_deferred,2000000,123.364,1.000,0.000,84000000\nerased_inline,2000000,194.396,2.000,0.000,84000000\nerased_deferred,2000000,212.984,2.000,0.000,84000000\ndirect_overload_64k,62500,43328.647,3.000,3.000,4096000000\noptional_overload_64k,62500,5855.878,2.000,2.000,4096000000\n",
+      "stderr": ""
+    },
+    {
+      "study": "async_pin_control",
+      "round": 2,
+      "variant": "full",
+      "start_epoch": 1794584273.032055,
+      "stop_epoch": 1794584274.4922354,
+      "returncode": 0,
+      "stdout": "scenario,iterations,ns_per_call,new_calls_per_call,dynamic_copies_per_call,checksum\nstatic_inline,2000000,91.999,1.000,0.000,84000000\nstatic_deferred,2000000,89.824,1.000,0.000,84000000\nerased_inline,2000000,132.246,2.000,0.000,84000000\nerased_deferred,2000000,140.747,2.000,0.000,84000000\ndirect_overload_64k,62500,4490.485,1.000,1.000,4096000000\noptional_overload_64k,62500,3683.288,1.000,1.000,4096000000\n",
+      "stderr": ""
+    },
+    {
+      "study": "async_pin_control",
+      "round": 3,
+      "variant": "pin_only",
+      "start_epoch": 1794584274.5059733,
+      "stop_epoch": 1794584278.8210585,
+      "returncode": 0,
+      "stdout": "scenario,iterations,ns_per_call,new_calls_per_call,dynamic_copies_per_call,checksum\nstatic_inline,2000000,99.211,1.000,0.000,84000000\nstatic_deferred,2000000,81.764,1.000,0.000,84000000\nerased_inline,2000000,126.491,2.000,0.000,84000000\nerased_deferred,2000000,135.961,2.000,0.000,84000000\ndirect_overload_64k,62500,46605.993,3.000,3.000,4096000000\noptional_overload_64k,62500,6318.702,2.000,2.000,4096000000\n",
+      "stderr": ""
+    },
+    {
+      "study": "async_pin_control",
+      "round": 3,
+      "variant": "full",
+      "start_epoch": 1794584278.845282,
+      "stop_epoch": 1794584280.5205958,
+      "returncode": 0,
+      "stdout": "scenario,iterations,ns_per_call,new_calls_per_call,dynamic_copies_per_call,checksum\nstatic_inline,2000000,90.987,1.000,0.000,84000000\nstatic_deferred,2000000,110.961,1.000,0.000,84000000\nerased_inline,2000000,127.665,2.000,0.000,84000000\nerased_deferred,2000000,150.835,2.000,0.000,84000000\ndirect_overload_64k,62500,4365.050,1.000,1.000,4096000000\noptional_overload_64k,62500,6185.999,1.000,1.000,4096000000\n",
+      "stderr": ""
+    },
+    {
+      "study": "async_pin_control",
+      "round": 4,
+      "variant": "pin_only",
+      "start_epoch": 1794584280.54051,
+      "stop_epoch": 1794584284.7614408,
+      "returncode": 0,
+      "stdout": "scenario,iterations,ns_per_call,new_calls_per_call,dynamic_copies_per_call,checksum\nstatic_inline,2000000,102.559,1.000,0.000,84000000\nstatic_deferred,2000000,106.093,1.000,0.000,84000000\nerased_inline,2000000,167.435,2.000,0.000,84000000\nerased_deferred,2000000,132.969,2.000,0.000,84000000\ndirect_overload_64k,62500,41837.460,3.000,3.000,4096000000\noptional_overload_64k,62500,6818.213,2.000,2.000,4096000000\n",
+      "stderr": ""
+    },
+    {
+      "study": "async_pin_control",
+      "round": 4,
+      "variant": "full",
+      "start_epoch": 1794584284.7775009,
+      "stop_epoch": 1794584286.1240144,
+      "returncode": 0,
+      "stdout": "scenario,iterations,ns_per_call,new_calls_per_call,dynamic_copies_per_call,checksum\nstatic_inline,2000000,89.037,1.000,0.000,84000000\nstatic_deferred,2000000,82.120,1.000,0.000,84000000\nerased_inline,2000000,115.516,2.000,0.000,84000000\nerased_deferred,2000000,112.352,2.000,0.000,84000000\ndirect_overload_64k,62500,3767.015,1.000,1.000,4096000000\noptional_overload_64k,62500,4369.095,1.000,1.000,4096000000\n",
+      "stderr": ""
+    },
+    {
+      "study": "async_pin_control",
+      "round": 5,
+      "variant": "pin_only",
+      "start_epoch": 1794584286.130587,
+      "stop_epoch": 1794584290.108935,
+      "returncode": 0,
+      "stdout": "scenario,iterations,ns_per_call,new_calls_per_call,dynamic_copies_per_call,checksum\nstatic_inline,2000000,124.703,1.000,0.000,84000000\nstatic_deferred,2000000,99.806,1.000,0.000,84000000\nerased_inline,2000000,176.478,2.000,0.000,84000000\nerased_deferred,2000000,136.650,2.000,0.000,84000000\ndirect_overload_64k,62500,38048.281,3.000,3.000,4096000000\noptional_overload_64k,62500,6282.523,2.000,2.000,4096000000\n",
+      "stderr": ""
+    },
+    {
+      "study": "async_pin_control",
+      "round": 5,
+      "variant": "full",
+      "start_epoch": 1794584290.1285508,
+      "stop_epoch": 1794584291.5213785,
+      "returncode": 0,
+      "stdout": "scenario,iterations,ns_per_call,new_calls_per_call,dynamic_copies_per_call,checksum\nstatic_inline,2000000,79.748,1.000,0.000,84000000\nstatic_deferred,2000000,90.251,1.000,0.000,84000000\nerased_inline,2000000,133.203,2.000,0.000,84000000\nerased_deferred,2000000,134.652,2.000,0.000,84000000\ndirect_overload_64k,62500,4205.016,1.000,1.000,4096000000\noptional_overload_64k,62500,3380.654,1.000,1.000,4096000000\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 1,
+      "variant": "baseline",
+      "start_epoch": 1794584291.53616,
+      "stop_epoch": 1794584297.2210553,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,161.276,2.00,33.00,0,0,0\nscalar_1,1000000,260.469,3.00,114.00,127493856,4950,261120\nscalar_2,1000000,366.826,3.00,195.00,255987712,10000,524288\nscalar_4,1000000,503.486,3.00,357.00,515975424,20400,1056768\nscalar_5,1000000,612.901,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,935.875,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,390.532,5.00,172.00,235000000,23500,481280\nstring_1024,500000,1056.094,5.00,4204.00,621500000,124300,2545664\nstring_65536,31250,56231.913,5.00,262252.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 1,
+      "variant": "writer-only",
+      "start_epoch": 1794584297.2315824,
+      "stop_epoch": 1794584302.084332,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,210.977,2.00,33.00,0,0,0\nscalar_1,1000000,264.067,3.00,114.00,127493856,4950,261120\nscalar_2,1000000,339.741,3.00,195.00,255987712,10000,524288\nscalar_4,1000000,410.731,3.00,357.00,515975424,20400,1056768\nscalar_5,1000000,392.673,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,641.237,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,436.235,5.00,172.00,235000000,23500,481280\nstring_1024,500000,551.590,5.00,4204.00,621500000,124300,2545664\nstring_65536,31250,56025.891,5.00,262252.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 1,
+      "variant": "storage-only",
+      "start_epoch": 1794584302.0852063,
+      "stop_epoch": 1794584308.5627587,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,322.439,2.00,33.00,0,0,0\nscalar_1,1000000,373.612,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,612.152,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,654.508,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,752.086,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,977.238,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,476.109,4.00,100.00,235000000,23500,481280\nstring_1024,500000,714.306,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,57404.945,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 1,
+      "variant": "full",
+      "start_epoch": 1794584308.5675848,
+      "stop_epoch": 1794584313.2538862,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,168.335,2.00,33.00,0,0,0\nscalar_1,1000000,194.159,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,332.676,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,472.549,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,550.744,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,760.000,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,410.278,4.00,100.00,235000000,23500,481280\nstring_1024,500000,597.874,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,45015.212,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 1,
+      "variant": "full-byte-fastpath",
+      "start_epoch": 1794584313.2572696,
+      "stop_epoch": 1794584317.2828524,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,175.663,2.00,33.00,0,0,0\nscalar_1,1000000,233.656,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,264.573,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,398.072,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,379.437,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,488.379,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,340.640,4.00,100.00,235000000,23500,481280\nstring_1024,500000,488.417,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,43745.662,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 2,
+      "variant": "baseline",
+      "start_epoch": 1794584317.2959168,
+      "stop_epoch": 1794584322.421927,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,182.960,2.00,33.00,0,0,0\nscalar_1,1000000,291.726,3.00,114.00,127493856,4950,261120\nscalar_2,1000000,392.974,3.00,195.00,255987712,10000,524288\nscalar_4,1000000,570.753,3.00,357.00,515975424,20400,1056768\nscalar_5,1000000,640.632,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,734.635,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,405.167,5.00,172.00,235000000,23500,481280\nstring_1024,500000,575.074,5.00,4204.00,621500000,124300,2545664\nstring_65536,31250,47993.878,5.00,262252.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 2,
+      "variant": "full-byte-fastpath",
+      "start_epoch": 1794584322.4231958,
+      "stop_epoch": 1794584327.2472572,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,221.156,2.00,33.00,0,0,0\nscalar_1,1000000,273.033,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,372.902,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,441.917,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,401.490,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,526.073,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,373.663,4.00,100.00,235000000,23500,481280\nstring_1024,500000,734.189,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,56279.238,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 2,
+      "variant": "full",
+      "start_epoch": 1794584327.2489023,
+      "stop_epoch": 1794584332.3390183,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,225.254,2.00,33.00,0,0,0\nscalar_1,1000000,246.925,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,280.157,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,402.920,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,449.127,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,700.639,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,506.850,4.00,100.00,235000000,23500,481280\nstring_1024,500000,711.024,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,56525.387,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 2,
+      "variant": "storage-only",
+      "start_epoch": 1794584332.3403263,
+      "stop_epoch": 1794584338.368212,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,254.956,2.00,33.00,0,0,0\nscalar_1,1000000,323.703,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,453.932,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,626.683,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,982.485,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,872.217,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,409.546,4.00,100.00,235000000,23500,481280\nstring_1024,500000,557.860,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,54788.693,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 2,
+      "variant": "writer-only",
+      "start_epoch": 1794584338.3694851,
+      "stop_epoch": 1794584342.5868413,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,183.069,2.00,33.00,0,0,0\nscalar_1,1000000,299.250,3.00,114.00,127493856,4950,261120\nscalar_2,1000000,295.055,3.00,195.00,255987712,10000,524288\nscalar_4,1000000,443.828,3.00,357.00,515975424,20400,1056768\nscalar_5,1000000,430.663,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,530.716,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,371.352,5.00,172.00,235000000,23500,481280\nstring_1024,500000,527.253,5.00,4204.00,621500000,124300,2545664\nstring_65536,31250,40979.764,5.00,262252.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 3,
+      "variant": "storage-only",
+      "start_epoch": 1794584342.5880902,
+      "stop_epoch": 1794584347.7774944,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,179.309,2.00,33.00,0,0,0\nscalar_1,1000000,249.250,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,353.672,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,458.240,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,658.523,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,812.485,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,392.962,4.00,100.00,235000000,23500,481280\nstring_1024,500000,525.458,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,54001.235,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 3,
+      "variant": "full",
+      "start_epoch": 1794584347.7792704,
+      "stop_epoch": 1794584352.2250822,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,220.586,2.00,33.00,0,0,0\nscalar_1,1000000,303.987,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,276.782,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,394.860,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,384.677,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,532.101,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,462.924,4.00,100.00,235000000,23500,481280\nstring_1024,500000,548.094,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,47643.208,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 3,
+      "variant": "full-byte-fastpath",
+      "start_epoch": 1794584352.2263167,
+      "stop_epoch": 1794584356.5745301,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,165.007,2.00,33.00,0,0,0\nscalar_1,1000000,208.484,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,239.067,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,301.172,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,378.369,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,482.980,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,361.047,4.00,100.00,235000000,23500,481280\nstring_1024,500000,550.782,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,58839.925,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 3,
+      "variant": "baseline",
+      "start_epoch": 1794584356.5760128,
+      "stop_epoch": 1794584361.6118023,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,197.589,2.00,33.00,0,0,0\nscalar_1,1000000,311.873,3.00,114.00,127493856,4950,261120\nscalar_2,1000000,443.474,3.00,195.00,255987712,10000,524288\nscalar_4,1000000,481.693,3.00,357.00,515975424,20400,1056768\nscalar_5,1000000,584.000,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,725.222,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,476.648,5.00,172.00,235000000,23500,481280\nstring_1024,500000,539.681,5.00,4204.00,621500000,124300,2545664\nstring_65536,31250,46194.334,5.00,262252.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 3,
+      "variant": "writer-only",
+      "start_epoch": 1794584361.6127121,
+      "stop_epoch": 1794584366.2344542,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,195.101,2.00,33.00,0,0,0\nscalar_1,1000000,283.730,3.00,114.00,127493856,4950,261120\nscalar_2,1000000,244.743,3.00,195.00,255987712,10000,524288\nscalar_4,1000000,435.441,3.00,357.00,515975424,20400,1056768\nscalar_5,1000000,419.653,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,514.384,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,451.054,5.00,172.00,235000000,23500,481280\nstring_1024,500000,726.047,5.00,4204.00,621500000,124300,2545664\nstring_65536,31250,49932.475,5.00,262252.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 4,
+      "variant": "storage-only",
+      "start_epoch": 1794584366.2362547,
+      "stop_epoch": 1794584372.9110785,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,209.943,2.00,33.00,0,0,0\nscalar_1,1000000,306.260,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,470.096,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,551.878,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,687.407,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,820.143,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,836.140,4.00,100.00,235000000,23500,481280\nstring_1024,500000,890.853,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,67886.128,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 4,
+      "variant": "writer-only",
+      "start_epoch": 1794584372.9175606,
+      "stop_epoch": 1794584378.9558132,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,268.110,2.00,33.00,0,0,0\nscalar_1,1000000,311.444,3.00,114.00,127493856,4950,261120\nscalar_2,1000000,486.370,3.00,195.00,255987712,10000,524288\nscalar_4,1000000,499.827,3.00,357.00,515975424,20400,1056768\nscalar_5,1000000,566.313,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,1043.234,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,489.867,5.00,172.00,235000000,23500,481280\nstring_1024,500000,770.847,5.00,4204.00,621500000,124300,2545664\nstring_65536,31250,59194.557,5.00,262252.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 4,
+      "variant": "baseline",
+      "start_epoch": 1794584378.9569676,
+      "stop_epoch": 1794584384.3294249,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,208.516,2.00,33.00,0,0,0\nscalar_1,1000000,324.117,3.00,114.00,127493856,4950,261120\nscalar_2,1000000,542.436,3.00,195.00,255987712,10000,524288\nscalar_4,1000000,529.822,3.00,357.00,515975424,20400,1056768\nscalar_5,1000000,576.490,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,795.571,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,446.906,5.00,172.00,235000000,23500,481280\nstring_1024,500000,611.938,5.00,4204.00,621500000,124300,2545664\nstring_65536,31250,48783.892,5.00,262252.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 4,
+      "variant": "full-byte-fastpath",
+      "start_epoch": 1794584384.3312037,
+      "stop_epoch": 1794584389.260118,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,168.488,2.00,33.00,0,0,0\nscalar_1,1000000,230.033,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,358.464,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,454.413,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,470.897,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,586.169,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,577.473,4.00,100.00,235000000,23500,481280\nstring_1024,500000,667.954,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,52213.005,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 4,
+      "variant": "full",
+      "start_epoch": 1794584389.2618473,
+      "stop_epoch": 1794584395.3258417,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,199.686,2.00,33.00,0,0,0\nscalar_1,1000000,284.538,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,395.705,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,525.235,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,576.723,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,734.436,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,402.316,4.00,100.00,235000000,23500,481280\nstring_1024,500000,878.251,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,74430.936,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 5,
+      "variant": "full-byte-fastpath",
+      "start_epoch": 1794584395.3273134,
+      "stop_epoch": 1794584399.9821548,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,193.685,2.00,33.00,0,0,0\nscalar_1,1000000,247.836,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,297.339,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,423.388,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,433.958,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,561.576,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,410.809,4.00,100.00,235000000,23500,481280\nstring_1024,500000,626.205,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,53244.662,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 5,
+      "variant": "baseline",
+      "start_epoch": 1794584399.9832356,
+      "stop_epoch": 1794584405.3202093,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,212.914,2.00,33.00,0,0,0\nscalar_1,1000000,342.609,3.00,114.00,127493856,4950,261120\nscalar_2,1000000,500.154,3.00,195.00,255987712,10000,524288\nscalar_4,1000000,642.746,3.00,357.00,515975424,20400,1056768\nscalar_5,1000000,666.497,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,778.460,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,388.208,5.00,172.00,235000000,23500,481280\nstring_1024,500000,611.178,5.00,4204.00,621500000,124300,2545664\nstring_65536,31250,44752.611,5.00,262252.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 5,
+      "variant": "writer-only",
+      "start_epoch": 1794584405.3219392,
+      "stop_epoch": 1794584409.5374823,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,145.198,2.00,33.00,0,0,0\nscalar_1,1000000,213.784,3.00,114.00,127493856,4950,261120\nscalar_2,1000000,256.643,3.00,195.00,255987712,10000,524288\nscalar_4,1000000,354.942,3.00,357.00,515975424,20400,1056768\nscalar_5,1000000,399.322,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,541.881,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,445.732,5.00,172.00,235000000,23500,481280\nstring_1024,500000,596.536,5.00,4204.00,621500000,124300,2545664\nstring_65536,31250,46444.152,5.00,262252.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 5,
+      "variant": "storage-only",
+      "start_epoch": 1794584409.5387685,
+      "stop_epoch": 1794584414.6130602,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,164.021,2.00,33.00,0,0,0\nscalar_1,1000000,254.185,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,425.536,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,552.161,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,675.238,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,845.552,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,389.509,4.00,100.00,235000000,23500,481280\nstring_1024,500000,636.719,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,42859.504,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "rpc_factors",
+      "round": 5,
+      "variant": "full",
+      "start_epoch": 1794584414.6147277,
+      "stop_epoch": 1794584419.605929,
+      "returncode": 0,
+      "stdout": "case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum\nscalar_0,1000000,167.448,2.00,33.00,0,0,0\nscalar_1,1000000,247.575,2.00,42.00,127493856,4950,261120\nscalar_2,1000000,359.148,2.00,51.00,255987712,10000,524288\nscalar_4,1000000,486.230,2.00,69.00,515975424,20400,1056768\nscalar_5,1000000,517.339,3.00,438.00,647469280,25750,1326080\nscalar_8,1000000,745.165,3.00,681.00,1047950848,42400,2146304\nstring_16,1000000,552.247,4.00,100.00,235000000,23500,481280\nstring_1024,500000,592.582,4.00,4132.00,621500000,124300,2545664\nstring_65536,31250,48413.305,4.00,262180.00,2054843750,6575500,134666240\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 1,
+      "variant": "reset",
+      "start_epoch": 1794584419.607153,
+      "stop_epoch": 1794584423.7120588,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     86.1      11613511       6003000\nportal import bound method                        94.4      10594178       6003000\nportal import object                              83.7      11953877       6003000\nportal import callback                           178.5       5603617       6003000\nraw C API import object                           70.0      14276923       6003000\nraw C API import callback                        148.1       6754334       6003000\nraw C API tuple                                  109.4       9137659       6003000\nraw C API vectorcall                              82.9      12065806       6003000\nraw C API bound method                            81.3      12305783       6003000\nraw C API bound method offset                     84.5      11828558       6003000\nportal export tuple                               70.0      14292429       6003000\nportal export class argument                      45.9      21804081       6003000\nportal export class member                        43.5      22981978       6003000\nportal export callback                           107.9       9264287       6003000\nportal export construct                          145.5       6873950       6003000\nportal overload tuple 1                           66.0      15146862      20010000\nportal overload tuple 2                          104.6       9556312       6003000\nportal overload fallback tuple                   109.2       9157863     -20010000\nportal export vectorcall                          49.8      20061984       6003000\nportal overload vectorcall 1                      67.6      14794834      20010000\nportal overload vectorcall 2                      55.1      18137116       6003000\nportal overload fallback vc                      104.3       9588436     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 1,
+      "variant": "offset",
+      "start_epoch": 1794584423.7271714,
+      "stop_epoch": 1794584427.9011884,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     87.5      11434425       6003000\nportal import bound method                       104.8       9537530       6003000\nportal import object                              97.0      10304555       6003000\nportal import callback                           179.2       5579564       6003000\nraw C API import object                           77.0      12983594       6003000\nraw C API import callback                        151.1       6620127       6003000\nraw C API tuple                                  129.5       7723539       6003000\nraw C API vectorcall                              84.3      11866347       6003000\nraw C API bound method                           103.7       9646115       6003000\nraw C API bound method offset                     87.1      11482125       6003000\nportal export tuple                               87.2      11468303       6003000\nportal export class argument                      54.9      18219690       6003000\nportal export class member                        42.3      23667902       6003000\nportal export callback                           130.4       7667903       6003000\nportal export construct                          182.2       5489223       6003000\nportal overload tuple 1                           71.4      14002285      20010000\nportal overload tuple 2                           75.6      13228432       6003000\nportal overload fallback tuple                    97.1      10295087     -20010000\nportal export vectorcall                          46.0      21723678       6003000\nportal overload vectorcall 1                      45.7      21878212      20010000\nportal overload vectorcall 2                      52.2      19153726       6003000\nportal overload fallback vc                       74.6      13398436     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 1,
+      "variant": "typed",
+      "start_epoch": 1794584427.906435,
+      "stop_epoch": 1794584432.347452,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     82.3      12153308       6003000\nportal import bound method                        94.2      10616969       6003000\nportal import object                              76.3      13103741       6003000\nportal import callback                           154.8       6461824       6003000\nraw C API import object                           87.2      11465159       6003000\nraw C API import callback                        190.5       5249543       6003000\nraw C API tuple                                  129.5       7722622       6003000\nraw C API vectorcall                             124.8       8012126       6003000\nraw C API bound method                           129.0       7750310       6003000\nraw C API bound method offset                    104.7       9550368       6003000\nportal export tuple                               71.6      13960382       6003000\nportal export class argument                      55.8      17911684       6003000\nportal export class member                        43.0      23235082       6003000\nportal export callback                           115.4       8665046       6003000\nportal export construct                          160.9       6215212       6003000\nportal overload tuple 1                           69.9      14302353      20010000\nportal overload tuple 2                           78.6      12717016       6003000\nportal overload fallback tuple                   114.2       8753747     -20010000\nportal export vectorcall                          53.7      18629174       6003000\nportal overload vectorcall 1                      66.1      15134537      20010000\nportal overload vectorcall 2                      99.2      10076944       6003000\nportal overload fallback vc                       99.9      10005930     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 1,
+      "variant": "full",
+      "start_epoch": 1794584432.3511417,
+      "stop_epoch": 1794584437.0829635,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     93.4      10711299       6003000\nportal import bound method                       149.2       6703778       6003000\nportal import object                             107.6       9296464       6003000\nportal import callback                           217.8       4591814       6003000\nraw C API import object                          113.1       8845193       6003000\nraw C API import callback                        193.6       5165845       6003000\nraw C API tuple                                  162.5       6154503       6003000\nraw C API vectorcall                              95.1      10515516       6003000\nraw C API bound method                            96.9      10320717       6003000\nraw C API bound method offset                    132.3       7558868       6003000\nportal export tuple                               75.7      13205029       6003000\nportal export class argument                      50.2      19916009       6003000\nportal export class member                        50.7      19706693       6003000\nportal export callback                           147.2       6795005       6003000\nportal export construct                          176.9       5653854       6003000\nportal overload tuple 1                           55.0      18182481      20010000\nportal overload tuple 2                           81.1      12326045       6003000\nportal overload fallback tuple                   123.2       8115347     -20010000\nportal export vectorcall                          46.8      21369188       6003000\nportal overload vectorcall 1                      43.2      23150009      20010000\nportal overload vectorcall 2                      58.5      17108014       6003000\nportal overload fallback vc                       69.7      14340895     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 2,
+      "variant": "reset",
+      "start_epoch": 1794584437.084087,
+      "stop_epoch": 1794584443.143494,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                    104.5       9570491       6003000\nportal import bound method                       118.8       8418715       6003000\nportal import object                             118.0       8472075       6003000\nportal import callback                           197.8       5056484       6003000\nraw C API import object                          106.3       9411193       6003000\nraw C API import callback                        192.3       5200604       6003000\nraw C API tuple                                  129.3       7736149       6003000\nraw C API vectorcall                             120.1       8327627       6003000\nraw C API bound method                           182.9       5467080       6003000\nraw C API bound method offset                    112.2       8915858       6003000\nportal export tuple                               84.3      11856307       6003000\nportal export class argument                      61.1      16360563       6003000\nportal export class member                        78.3      12775411       6003000\nportal export callback                           148.7       6724968       6003000\nportal export construct                          332.1       3011121       6003000\nportal overload tuple 1                           94.4      10595644      20010000\nportal overload tuple 2                          150.5       6644329       6003000\nportal overload fallback tuple                   399.2       2505047     -20010000\nportal export vectorcall                          49.9      20041236       6003000\nportal overload vectorcall 1                      54.8      18240416      20010000\nportal overload vectorcall 2                      67.9      14733213       6003000\nportal overload fallback vc                      108.9       9185255     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 2,
+      "variant": "full",
+      "start_epoch": 1794584443.1451018,
+      "stop_epoch": 1794584449.2246578,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     91.6      10921855       6003000\nportal import bound method                       132.0       7576187       6003000\nportal import object                             145.6       6866544       6003000\nportal import callback                           244.2       4095633       6003000\nraw C API import object                          106.3       9410678       6003000\nraw C API import callback                        267.1       3743658       6003000\nraw C API tuple                                  194.9       5130022       6003000\nraw C API vectorcall                              98.5      10152823       6003000\nraw C API bound method                           136.9       7303947       6003000\nraw C API bound method offset                     94.6      10573932       6003000\nportal export tuple                               73.1      13674286       6003000\nportal export class argument                      65.3      15302549       6003000\nportal export class member                        50.6      19769804       6003000\nportal export callback                           229.3       4361884       6003000\nportal export construct                          238.6       4190242       6003000\nportal overload tuple 1                           90.0      11110831      20010000\nportal overload tuple 2                          143.2       6983352       6003000\nportal overload fallback tuple                   165.2       6053767     -20010000\nportal export vectorcall                          86.8      11523245       6003000\nportal overload vectorcall 1                     115.3       8670397      20010000\nportal overload vectorcall 2                      88.6      11286065       6003000\nportal overload fallback vc                      113.1       8837997     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 2,
+      "variant": "typed",
+      "start_epoch": 1794584449.2328255,
+      "stop_epoch": 1794584453.5798972,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                    185.6       5386657       6003000\nportal import bound method                       126.9       7879310       6003000\nportal import object                              93.6      10685962       6003000\nportal import callback                           166.6       6001289       6003000\nraw C API import object                           80.2      12475234       6003000\nraw C API import callback                        166.3       6013127       6003000\nraw C API tuple                                  107.0       9346142       6003000\nraw C API vectorcall                              71.5      13980032       6003000\nraw C API bound method                            85.2      11731030       6003000\nraw C API bound method offset                     73.9      13531035       6003000\nportal export tuple                               68.9      14503853       6003000\nportal export class argument                      66.8      14980166       6003000\nportal export class member                        40.2      24846395       6003000\nportal export callback                           111.0       9007747       6003000\nportal export construct                          146.1       6843642       6003000\nportal overload tuple 1                           65.1      15364626      20010000\nportal overload tuple 2                           81.5      12269939       6003000\nportal overload fallback tuple                   111.7       8952449     -20010000\nportal export vectorcall                          44.8      22302693       6003000\nportal overload vectorcall 1                      41.7      23961144      20010000\nportal overload vectorcall 2                      52.7      18967751       6003000\nportal overload fallback vc                       81.3      12304103     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 2,
+      "variant": "offset",
+      "start_epoch": 1794584453.5850835,
+      "stop_epoch": 1794584457.4674425,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     96.2      10399621       6003000\nportal import bound method                       108.5       9215242       6003000\nportal import object                              77.9      12840673       6003000\nportal import callback                           173.2       5772965       6003000\nraw C API import object                           96.7      10340226       6003000\nraw C API import callback                        157.2       6362294       6003000\nraw C API tuple                                  115.3       8670420       6003000\nraw C API vectorcall                              71.5      13994383       6003000\nraw C API bound method                            80.5      12427628       6003000\nraw C API bound method offset                     77.5      12896619       6003000\nportal export tuple                               69.9      14311215       6003000\nportal export class argument                      38.9      25689308       6003000\nportal export class member                        38.7      25857672       6003000\nportal export callback                            95.2      10502915       6003000\nportal export construct                          146.1       6846733       6003000\nportal overload tuple 1                           61.0      16391983      20010000\nportal overload tuple 2                           65.3      15317580       6003000\nportal overload fallback tuple                   100.8       9924731     -20010000\nportal export vectorcall                          43.5      23005676       6003000\nportal overload vectorcall 1                      59.5      16798433      20010000\nportal overload vectorcall 2                      71.4      14002611       6003000\nportal overload fallback vc                       68.4      14613251     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 3,
+      "variant": "typed",
+      "start_epoch": 1794584457.4711812,
+      "stop_epoch": 1794584461.4303136,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     76.6      13049220       6003000\nportal import bound method                        76.3      13099344       6003000\nportal import object                              68.6      14568730       6003000\nportal import callback                           149.9       6670733       6003000\nraw C API import object                          102.3       9775821       6003000\nraw C API import callback                        152.3       6564118       6003000\nraw C API tuple                                  151.4       6605915       6003000\nraw C API vectorcall                             105.7       9462054       6003000\nraw C API bound method                            99.1      10088823       6003000\nraw C API bound method offset                     91.8      10893013       6003000\nportal export tuple                               82.4      12138604       6003000\nportal export class argument                      52.9      18895532       6003000\nportal export class member                        43.4      23034270       6003000\nportal export callback                            99.1      10091131       6003000\nportal export construct                          154.1       6490305       6003000\nportal overload tuple 1                           75.8      13194798      20010000\nportal overload tuple 2                           77.0      12994843       6003000\nportal overload fallback tuple                    96.0      10412970     -20010000\nportal export vectorcall                          42.2      23718327       6003000\nportal overload vectorcall 1                      44.0      22718200      20010000\nportal overload vectorcall 2                      48.7      20529592       6003000\nportal overload fallback vc                       70.0      14283894     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 3,
+      "variant": "full",
+      "start_epoch": 1794584461.4316819,
+      "stop_epoch": 1794584465.936444,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     86.0      11626116       6003000\nportal import bound method                        85.9      11645679       6003000\nportal import object                              89.0      11241228       6003000\nportal import callback                           155.2       6442297       6003000\nraw C API import object                           73.2      13656423       6003000\nraw C API import callback                        152.2       6571374       6003000\nraw C API tuple                                  123.5       8096137       6003000\nraw C API vectorcall                              83.5      11980775       6003000\nraw C API bound method                            99.3      10074574       6003000\nraw C API bound method offset                     94.2      10612913       6003000\nportal export tuple                               88.5      11300055       6003000\nportal export class argument                      68.6      14567591       6003000\nportal export class member                        53.1      18829746       6003000\nportal export callback                           114.1       8767743       6003000\nportal export construct                          211.0       4739924       6003000\nportal overload tuple 1                           91.6      10915858      20010000\nportal overload tuple 2                          100.5       9949867       6003000\nportal overload fallback tuple                   182.4       5481864     -20010000\nportal export vectorcall                          53.1      18827821       6003000\nportal overload vectorcall 1                      48.3      20705088      20010000\nportal overload vectorcall 2                      72.6      13783331       6003000\nportal overload fallback vc                       97.5      10254788     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 3,
+      "variant": "reset",
+      "start_epoch": 1794584465.9398758,
+      "stop_epoch": 1794584470.1427748,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                    119.2       8389030       6003000\nportal import bound method                       124.8       8010832       6003000\nportal import object                              82.7      12095587       6003000\nportal import callback                           171.1       5845025       6003000\nraw C API import object                           79.7      12550294       6003000\nraw C API import callback                        153.1       6530164       6003000\nraw C API tuple                                  114.3       8749062       6003000\nraw C API vectorcall                              95.2      10500114       6003000\nraw C API bound method                           103.2       9690883       6003000\nraw C API bound method offset                     97.5      10253262       6003000\nportal export tuple                               75.7      13201788       6003000\nportal export class argument                      48.8      20474030       6003000\nportal export class member                        43.6      22910353       6003000\nportal export callback                           112.2       8909918       6003000\nportal export construct                          163.8       6106384       6003000\nportal overload tuple 1                           66.1      15125728      20010000\nportal overload tuple 2                           84.5      11838970       6003000\nportal overload fallback tuple                   108.5       9212771     -20010000\nportal export vectorcall                          44.9      22283929       6003000\nportal overload vectorcall 1                      43.0      23277976      20010000\nportal overload vectorcall 2                      57.2      17470976       6003000\nportal overload fallback vc                       83.5      11975103     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 3,
+      "variant": "offset",
+      "start_epoch": 1794584470.1465893,
+      "stop_epoch": 1794584474.2387507,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     78.1      12810159       6003000\nportal import bound method                        86.8      11517535       6003000\nportal import object                              78.9      12680316       6003000\nportal import callback                           146.0       6847917       6003000\nraw C API import object                           75.3      13278697       6003000\nraw C API import callback                        178.5       5601534       6003000\nraw C API tuple                                  109.0       9170292       6003000\nraw C API vectorcall                              95.1      10510882       6003000\nraw C API bound method                           100.8       9919902       6003000\nraw C API bound method offset                     83.3      12010687       6003000\nportal export tuple                               71.4      14009490       6003000\nportal export class argument                      46.7      21407260       6003000\nportal export class member                        40.7      24559234       6003000\nportal export callback                           104.3       9584728       6003000\nportal export construct                          211.4       4730324       6003000\nportal overload tuple 1                           91.3      10958869      20010000\nportal overload tuple 2                          138.7       7208842       6003000\nportal overload fallback tuple                    90.4      11056826     -20010000\nportal export vectorcall                          47.8      20902567       6003000\nportal overload vectorcall 1                      35.5      28169574      20010000\nportal overload vectorcall 2                      47.7      20948167       6003000\nportal overload fallback vc                       70.7      14152797     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 4,
+      "variant": "typed",
+      "start_epoch": 1794584474.2404416,
+      "stop_epoch": 1794584478.0414562,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     71.4      14012999       6003000\nportal import bound method                        84.6      11814651       6003000\nportal import object                              69.8      14329076       6003000\nportal import callback                           150.1       6662883       6003000\nraw C API import object                           82.8      12074496       6003000\nraw C API import callback                        133.2       7506937       6003000\nraw C API tuple                                  102.8       9728297       6003000\nraw C API vectorcall                              87.9      11380825       6003000\nraw C API bound method                            85.9      11640222       6003000\nraw C API bound method offset                     88.8      11264314       6003000\nportal export tuple                               60.8      16436540       6003000\nportal export class argument                      54.9      18224114       6003000\nportal export class member                        44.4      22516280       6003000\nportal export callback                           113.7       8796138       6003000\nportal export construct                          159.0       6291051       6003000\nportal overload tuple 1                           62.3      16053940      20010000\nportal overload tuple 2                           78.8      12696746       6003000\nportal overload fallback tuple                   117.0       8543772     -20010000\nportal export vectorcall                          41.0      24400649       6003000\nportal overload vectorcall 1                      47.9      20891819      20010000\nportal overload vectorcall 2                      68.5      14607988       6003000\nportal overload fallback vc                       74.2      13477009     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 4,
+      "variant": "offset",
+      "start_epoch": 1794584478.0448813,
+      "stop_epoch": 1794584481.9137182,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     95.0      10524234       6003000\nportal import bound method                        87.6      11419693       6003000\nportal import object                              71.3      14025786       6003000\nportal import callback                           154.2       6486507       6003000\nraw C API import object                           81.5      12268968       6003000\nraw C API import callback                        150.3       6655143       6003000\nraw C API tuple                                  109.9       9101297       6003000\nraw C API vectorcall                              88.7      11278252       6003000\nraw C API bound method                            92.3      10829587       6003000\nraw C API bound method offset                    119.5       8368233       6003000\nportal export tuple                               75.6      13224691       6003000\nportal export class argument                      44.0      22723673       6003000\nportal export class member                        40.3      24820653       6003000\nportal export callback                            96.6      10351209       6003000\nportal export construct                          138.2       7233972       6003000\nportal overload tuple 1                           56.0      17860741      20010000\nportal overload tuple 2                           76.6      13046364       6003000\nportal overload fallback tuple                    93.0      10747494     -20010000\nportal export vectorcall                          48.4      20658642       6003000\nportal overload vectorcall 1                      46.1      21708575      20010000\nportal overload vectorcall 2                      52.8      18928472       6003000\nportal overload fallback vc                       95.0      10522155     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 4,
+      "variant": "reset",
+      "start_epoch": 1794584481.9182053,
+      "stop_epoch": 1794584485.8056731,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     79.9      12510677       6003000\nportal import bound method                        77.5      12896949       6003000\nportal import object                              81.9      12214255       6003000\nportal import callback                           162.8       6140639       6003000\nraw C API import object                           68.8      14539712       6003000\nraw C API import callback                        134.5       7434956       6003000\nraw C API tuple                                  119.8       8349227       6003000\nraw C API vectorcall                              89.4      11189250       6003000\nraw C API bound method                           100.3       9967968       6003000\nraw C API bound method offset                     90.4      11060080       6003000\nportal export tuple                               72.1      13875341       6003000\nportal export class argument                      54.3      18422840       6003000\nportal export class member                        47.5      21041599       6003000\nportal export callback                           122.7       8147501       6003000\nportal export construct                          148.3       6741524       6003000\nportal overload tuple 1                           71.7      13950287      20010000\nportal overload tuple 2                           78.9      12671922       6003000\nportal overload fallback tuple                    98.3      10174289     -20010000\nportal export vectorcall                          54.3      18431972       6003000\nportal overload vectorcall 1                      41.5      24088833      20010000\nportal overload vectorcall 2                      53.5      18681203       6003000\nportal overload fallback vc                       73.7      13567675     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 4,
+      "variant": "full",
+      "start_epoch": 1794584485.8094885,
+      "stop_epoch": 1794584489.5869932,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     85.4      11707985       6003000\nportal import bound method                        93.6      10685247       6003000\nportal import object                             107.5       9305119       6003000\nportal import callback                           152.4       6562241       6003000\nraw C API import object                           73.2      13660102       6003000\nraw C API import callback                        157.0       6369433       6003000\nraw C API tuple                                   95.3      10494849       6003000\nraw C API vectorcall                              67.4      14834882       6003000\nraw C API bound method                           104.7       9549355       6003000\nraw C API bound method offset                     83.7      11943447       6003000\nportal export tuple                               65.9      15181439       6003000\nportal export class argument                      48.8      20487642       6003000\nportal export class member                        39.5      25343908       6003000\nportal export callback                            91.4      10941898       6003000\nportal export construct                          148.3       6743013       6003000\nportal overload tuple 1                           54.6      18303508      20010000\nportal overload tuple 2                           68.0      14708150       6003000\nportal overload fallback tuple                   102.6       9748126     -20010000\nportal export vectorcall                          44.1      22683896       6003000\nportal overload vectorcall 1                      39.8      25121656      20010000\nportal overload vectorcall 2                      57.3      17448565       6003000\nportal overload fallback vc                       81.7      12235463     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 5,
+      "variant": "reset",
+      "start_epoch": 1794584489.5938013,
+      "stop_epoch": 1794584493.7797694,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     79.3      12618091       6003000\nportal import bound method                        97.9      10211434       6003000\nportal import object                              75.1      13316396       6003000\nportal import callback                           155.9       6413931       6003000\nraw C API import object                           78.8      12682857       6003000\nraw C API import callback                        144.4       6926431       6003000\nraw C API tuple                                  126.8       7888124       6003000\nraw C API vectorcall                              75.6      13221596       6003000\nraw C API bound method                            96.6      10353489       6003000\nraw C API bound method offset                     93.0      10752236       6003000\nportal export tuple                               88.0      11362299       6003000\nportal export class argument                      40.7      24544121       6003000\nportal export class member                        46.0      21731323       6003000\nportal export callback                           114.8       8707930       6003000\nportal export construct                          136.3       7334473       6003000\nportal overload tuple 1                           64.5      15512347      20010000\nportal overload tuple 2                           79.0      12659715       6003000\nportal overload fallback tuple                   106.4       9394225     -20010000\nportal export vectorcall                          74.7      13379281       6003000\nportal overload vectorcall 1                      55.7      17951827      20010000\nportal overload vectorcall 2                      83.2      12023308       6003000\nportal overload fallback vc                      143.9       6949970     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 5,
+      "variant": "offset",
+      "start_epoch": 1794584493.7844253,
+      "stop_epoch": 1794584498.5246449,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                    104.3       9587092       6003000\nportal import bound method                       125.4       7972147       6003000\nportal import object                             101.1       9888116       6003000\nportal import callback                           221.1       4522736       6003000\nraw C API import object                          112.9       8860603       6003000\nraw C API import callback                        169.0       5915990       6003000\nraw C API tuple                                  127.7       7829400       6003000\nraw C API vectorcall                              78.8      12684174       6003000\nraw C API bound method                            93.8      10664424       6003000\nraw C API bound method offset                    104.2       9596812       6003000\nportal export tuple                               89.8      11131032       6003000\nportal export class argument                      59.2      16884099       6003000\nportal export class member                        52.4      19066233       6003000\nportal export callback                           115.8       8636352       6003000\nportal export construct                          196.7       5082996       6003000\nportal overload tuple 1                           86.0      11632186      20010000\nportal overload tuple 2                          114.5       8732004       6003000\nportal overload fallback tuple                   120.1       8327577     -20010000\nportal export vectorcall                          49.6      20179705       6003000\nportal overload vectorcall 1                      47.7      20954755      20010000\nportal overload vectorcall 2                      74.9      13353758       6003000\nportal overload fallback vc                      103.0       9712254     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 5,
+      "variant": "typed",
+      "start_epoch": 1794584498.527017,
+      "stop_epoch": 1794584502.6856284,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     78.8      12698075       6003000\nportal import bound method                       105.5       9476662       6003000\nportal import object                              76.5      13080342       6003000\nportal import callback                           163.6       6111138       6003000\nraw C API import object                           80.0      12506078       6003000\nraw C API import callback                        185.5       5391217       6003000\nraw C API tuple                                  116.5       8585519       6003000\nraw C API vectorcall                             104.6       9558803       6003000\nraw C API bound method                            97.4      10265821       6003000\nraw C API bound method offset                    102.1       9793919       6003000\nportal export tuple                               82.2      12162612       6003000\nportal export class argument                      47.5      21069010       6003000\nportal export class member                        43.8      22809492       6003000\nportal export callback                           125.6       7961911       6003000\nportal export construct                          168.8       5922597       6003000\nportal overload tuple 1                           80.5      12421400      20010000\nportal overload tuple 2                           78.7      12704717       6003000\nportal overload fallback tuple                   122.0       8198072     -20010000\nportal export vectorcall                          48.8      20482083       6003000\nportal overload vectorcall 1                      35.0      28606835      20010000\nportal overload vectorcall 2                      47.4      21116319       6003000\nportal overload fallback vc                       72.4      13810456     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "python_factors",
+      "round": 5,
+      "variant": "full",
+      "start_epoch": 1794584502.6875746,
+      "stop_epoch": 1794584507.1144624,
+      "returncode": 0,
+      "stdout": "iterations: 2000000\npybind11: not found at configure time\nnanobind: not found at configure time\n\ncase                                           ns/call     calls/sec      checksum\nportal import                                     82.2      12169195       6003000\nportal import bound method                        80.3      12450341       6003000\nportal import object                              80.5      12417200       6003000\nportal import callback                           159.5       6268783       6003000\nraw C API import object                           71.0      14084986       6003000\nraw C API import callback                        159.3       6279330       6003000\nraw C API tuple                                  119.2       8390516       6003000\nraw C API vectorcall                              90.1      11098752       6003000\nraw C API bound method                           101.7       9833108       6003000\nraw C API bound method offset                    100.2       9982735       6003000\nportal export tuple                              131.7       7594574       6003000\nportal export class argument                      66.8      14974371       6003000\nportal export class member                        52.2      19142128       6003000\nportal export callback                           130.9       7638628       6003000\nportal export construct                          217.4       4600258       6003000\nportal overload tuple 1                           94.5      10577529      20010000\nportal overload tuple 2                          113.0       8852610       6003000\nportal overload fallback tuple                   122.2       8185775     -20010000\nportal export vectorcall                          41.5      24080199       6003000\nportal overload vectorcall 1                      49.5      20213312      20010000\nportal overload vectorcall 2                      58.4      17122794       6003000\nportal overload fallback vc                       72.5      13789363     -20010000\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 1,
+      "variant": "baseline",
+      "start_epoch": 1794584507.1215158,
+      "stop_epoch": 1794584512.0587559,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":84.341459,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":259.326123,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":86.437608,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":275.527823,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":206.120188,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":118.779929,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":136.240919,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":104.170322,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":185.467227,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":311.057521,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":1329.232902,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":58098.24672,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 1,
+      "variant": "constructor",
+      "start_epoch": 1794584512.0611339,
+      "stop_epoch": 1794584516.1398487,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":63.834205,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":158.737313,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":75.884664,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":325.820306,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":296.477102,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":112.710197,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":100.870728,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":121.148445,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":185.165456,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":354.128418,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":843.093378,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":50704.933312,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 1,
+      "variant": "converters",
+      "start_epoch": 1794584516.1413703,
+      "stop_epoch": 1794584520.228104,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":64.01841,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":154.266013,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":68.844381,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":279.911468,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":253.87372,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":87.489491,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":104.409866,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":106.563305,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":150.680354,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":251.407692,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":885.639332,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":64572.035968,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 1,
+      "variant": "full",
+      "start_epoch": 1794584520.2406619,
+      "stop_epoch": 1794584524.0898256,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":92.209014,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":232.875515,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":150.389361,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":242.586059,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":194.13423,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":76.02569,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":86.532639,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":86.747608,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":157.949544,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":234.180695,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":797.245486,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":46568.203584,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 2,
+      "variant": "baseline",
+      "start_epoch": 1794584524.0921898,
+      "stop_epoch": 1794584527.7290866,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":55.126079,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":192.921849,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":84.592699,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":245.283628,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":226.250482,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":82.891399,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":82.871535,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":101.574888,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":193.301457,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":287.02793,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":800.278845,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":44911.665152,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 2,
+      "variant": "full",
+      "start_epoch": 1794584527.730338,
+      "stop_epoch": 1794584531.9230812,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":47.75966,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":122.093765,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":58.598692,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":269.246963,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":229.292897,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":106.326427,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":116.40452,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":96.226485,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":248.224534,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":273.682826,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":968.638497,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":64256.418752,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 2,
+      "variant": "converters",
+      "start_epoch": 1794584531.9266987,
+      "stop_epoch": 1794584536.3170855,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":68.939389,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":195.582593,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":80.906223,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":312.349505,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":225.309595,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":102.008125,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":96.50666,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":113.269478,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":178.341439,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":266.371784,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":1065.277777,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":59294.146496,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 2,
+      "variant": "constructor",
+      "start_epoch": 1794584536.31983,
+      "stop_epoch": 1794584541.3486512,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":59.303215,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":165.691993,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":87.935922,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":355.086356,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":218.394907,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":108.031316,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":105.312588,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":102.464832,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":228.634112,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":305.295601,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":1057.009985,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":91524.07168,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 3,
+      "variant": "converters",
+      "start_epoch": 1794584541.349906,
+      "stop_epoch": 1794584545.9275448,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":72.580141,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":145.517154,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":95.65609,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":328.197665,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":398.040905,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":93.083185,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":115.141348,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":99.047533,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":197.580667,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":323.668134,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":929.089551,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":68902.2912,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 3,
+      "variant": "full",
+      "start_epoch": 1794584545.9298618,
+      "stop_epoch": 1794584550.3080504,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":51.560144,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":143.858508,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":79.563953,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":269.28526,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":282.504474,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":81.100811,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":97.785997,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":85.28329,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":180.393777,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":360.58941,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":1074.901186,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":66617.125824,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 3,
+      "variant": "baseline",
+      "start_epoch": 1794584550.3098598,
+      "stop_epoch": 1794584554.6313457,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":50.388166,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":137.177353,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":68.150226,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":302.60918,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":226.109352,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":86.951189,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":97.554353,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":105.282806,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":182.709738,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":265.912602,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":960.4153,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":80092.376128,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 3,
+      "variant": "constructor",
+      "start_epoch": 1794584554.6359973,
+      "stop_epoch": 1794584559.2306664,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":65.749829,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":170.705357,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":101.657705,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":462.046261,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":255.144175,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":100.438589,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":100.292012,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":111.113272,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":191.075563,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":316.099312,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":1038.728993,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":55962.497344,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 4,
+      "variant": "converters",
+      "start_epoch": 1794584559.236709,
+      "stop_epoch": 1794584563.9133856,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":132.224544,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":187.432174,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":122.003592,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":347.601351,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":279.640862,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":70.542049,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":86.415243,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":90.649036,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":318.158422,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":309.2134,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":1080.414175,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":54589.70976,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 4,
+      "variant": "constructor",
+      "start_epoch": 1794584563.9179108,
+      "stop_epoch": 1794584568.7460246,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":63.282417,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":173.655951,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":68.339896,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":313.579062,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":367.211339,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":119.557128,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":202.260892,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":104.256517,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":234.190948,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":341.870443,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":1154.422008,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":62174.09504,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 4,
+      "variant": "baseline",
+      "start_epoch": 1794584568.7488797,
+      "stop_epoch": 1794584573.2960086,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":78.154221,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":172.927701,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":75.77053,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":341.081111,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":273.361264,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":107.535583,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":133.005342,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":114.788846,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":212.111289,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":348.815853,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":957.828696,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":60593.10752,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 4,
+      "variant": "full",
+      "start_epoch": 1794584573.3004372,
+      "stop_epoch": 1794584578.543457,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":103.229898,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":194.648351,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":116.182328,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":359.566644,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":435.7855,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":89.971959,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":118.180407,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":171.569392,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":206.656659,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":314.669937,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":1124.194623,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":77650.711936,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 5,
+      "variant": "baseline",
+      "start_epoch": 1794584578.5467148,
+      "stop_epoch": 1794584582.8567984,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":91.359024,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":166.150775,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":72.685509,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":320.361259,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":250.931657,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":89.887261,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":98.686455,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":114.646943,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":208.133341,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":360.675117,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":1001.454264,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":53606.87904,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 5,
+      "variant": "constructor",
+      "start_epoch": 1794584582.8595402,
+      "stop_epoch": 1794584587.432673,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":82.911722,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":170.76532,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":75.286242,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":372.765752,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":259.069494,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":140.769643,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":124.46339,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":209.338637,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":231.119195,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":298.693271,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":1061.862974,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":55630.484736,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 5,
+      "variant": "converters",
+      "start_epoch": 1794584587.434098,
+      "stop_epoch": 1794584591.568346,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":54.534797,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":144.789405,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":73.473005,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":234.502979,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":279.379665,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":86.291762,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":103.954593,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":95.544185,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":223.531987,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":387.46518,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":992.193991,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":56813.642752,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_factors",
+      "round": 5,
+      "variant": "full",
+      "start_epoch": 1794584591.5726843,
+      "stop_epoch": 1794584596.5979044,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw export\",\"iterations\":1000000,\"ns\":58.077011,\"checksum\":3300000}\n{\"name\":\"raw member\",\"iterations\":1000000,\"ns\":184.617103,\"checksum\":3300000}\n{\"name\":\"portal export\",\"iterations\":1000000,\"ns\":70.957281,\"checksum\":3300000}\n{\"name\":\"portal member\",\"iterations\":1000000,\"ns\":300.625298,\"checksum\":3300000}\n{\"name\":\"portal callback\",\"iterations\":1000000,\"ns\":259.19156,\"checksum\":3300000}\n{\"name\":\"portal strict unsigned wide\",\"iterations\":1000000,\"ns\":103.557014,\"checksum\":4724464024500000}\n{\"name\":\"portal overload string miss\",\"iterations\":1000000,\"ns\":146.610118,\"checksum\":1100000}\n{\"name\":\"portal UTF-8 empty\",\"iterations\":1000000,\"ns\":100.046208,\"checksum\":0}\n{\"name\":\"portal UTF-8 16 B\",\"iterations\":1000000,\"ns\":205.213374,\"checksum\":17600000}\n{\"name\":\"portal UTF-8 Unicode + NUL\",\"iterations\":1000000,\"ns\":448.574864,\"checksum\":9900000}\n{\"name\":\"portal UTF-8 1 KiB\",\"iterations\":1000000,\"ns\":1038.517912,\"checksum\":1126400000}\n{\"name\":\"portal UTF-8 64 KiB\",\"iterations\":15625,\"ns\":90751.524544,\"checksum\":1126367232}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 1,
+      "variant": "baseline",
+      "start_epoch": 1794584596.602748,
+      "stop_epoch": 1794584598.8079832,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":3731.02078,\"startMs\":1794584597142,\"endMs\":1794584597515}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1725.99596,\"startMs\":1794584598092,\"endMs\":1794584598265}\n{\"name\":\"export control\",\"ns\":87.625942,\"startMs\":1794584598589,\"endMs\":1794584598764}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 1,
+      "variant": "constructor",
+      "start_epoch": 1794584598.8129046,
+      "stop_epoch": 1794584600.3802392,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1560.33879,\"startMs\":1794584599198,\"endMs\":1794584599354}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":2220.59001,\"startMs\":1794584599804,\"endMs\":1794584600026}\n{\"name\":\"export control\",\"ns\":54.3462765,\"startMs\":1794584600260,\"endMs\":1794584600369}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 1,
+      "variant": "converters",
+      "start_epoch": 1794584600.381876,
+      "stop_epoch": 1794584601.8863351,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1701.01507,\"startMs\":1794584600733,\"endMs\":1794584600903}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1965.54788,\"startMs\":1794584601212,\"endMs\":1794584601409}\n{\"name\":\"export control\",\"ns\":74.8751755,\"startMs\":1794584601699,\"endMs\":1794584601849}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 1,
+      "variant": "full",
+      "start_epoch": 1794584601.8908339,
+      "stop_epoch": 1794584603.8987405,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1365.01913,\"startMs\":1794584602389,\"endMs\":1794584602526}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1763.45801,\"startMs\":1794584603087,\"endMs\":1794584603263}\n{\"name\":\"export control\",\"ns\":103.7719245,\"startMs\":1794584603653,\"endMs\":1794584603861}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 2,
+      "variant": "baseline",
+      "start_epoch": 1794584603.9031818,
+      "stop_epoch": 1794584605.842506,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1270.69582,\"startMs\":1794584604437,\"endMs\":1794584604564}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":2456.18139,\"startMs\":1794584605140,\"endMs\":1794584605385}\n{\"name\":\"export control\",\"ns\":78.0368635,\"startMs\":1794584605666,\"endMs\":1794584605822}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 2,
+      "variant": "full",
+      "start_epoch": 1794584605.844634,
+      "stop_epoch": 1794584607.9369977,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1744.78099,\"startMs\":1794584606263,\"endMs\":1794584606437}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":3255.52917,\"startMs\":1794584606904,\"endMs\":1794584607229}\n{\"name\":\"export control\",\"ns\":116.97951,\"startMs\":1794584607682,\"endMs\":1794584607916}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 2,
+      "variant": "converters",
+      "start_epoch": 1794584607.9397378,
+      "stop_epoch": 1794584609.790518,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1593.76585,\"startMs\":1794584608395,\"endMs\":1794584608555}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1358.48358,\"startMs\":1794584608914,\"endMs\":1794584609050}\n{\"name\":\"export control\",\"ns\":176.09117,\"startMs\":1794584609377,\"endMs\":1794584609729}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 2,
+      "variant": "constructor",
+      "start_epoch": 1794584609.7953496,
+      "stop_epoch": 1794584611.6775696,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1606.36779,\"startMs\":1794584610287,\"endMs\":1794584610447}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1952.80233,\"startMs\":1794584610985,\"endMs\":1794584611181}\n{\"name\":\"export control\",\"ns\":92.553586,\"startMs\":1794584611465,\"endMs\":1794584611650}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 3,
+      "variant": "converters",
+      "start_epoch": 1794584611.6810627,
+      "stop_epoch": 1794584613.689805,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1141.38084,\"startMs\":1794584612203,\"endMs\":1794584612317}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":2250.61213,\"startMs\":1794584612746,\"endMs\":1794584612971}\n{\"name\":\"export control\",\"ns\":126.8048555,\"startMs\":1794584613415,\"endMs\":1794584613669}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 3,
+      "variant": "full",
+      "start_epoch": 1794584613.6937802,
+      "stop_epoch": 1794584615.6066444,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1321.29395,\"startMs\":1794584614310,\"endMs\":1794584614442}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1354.49928,\"startMs\":1794584614953,\"endMs\":1794584615088}\n{\"name\":\"export control\",\"ns\":75.2999445,\"startMs\":1794584615443,\"endMs\":1794584615594}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 3,
+      "variant": "baseline",
+      "start_epoch": 1794584615.6086812,
+      "stop_epoch": 1794584617.9494991,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":2158.84728,\"startMs\":1794584616218,\"endMs\":1794584616434}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1675.95151,\"startMs\":1794584617031,\"endMs\":1794584617199}\n{\"name\":\"export control\",\"ns\":107.1069615,\"startMs\":1794584617704,\"endMs\":1794584617918}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 3,
+      "variant": "constructor",
+      "start_epoch": 1794584617.9524956,
+      "stop_epoch": 1794584619.790703,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1246.94229,\"startMs\":1794584618597,\"endMs\":1794584618721}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1483.83524,\"startMs\":1794584619076,\"endMs\":1794584619225}\n{\"name\":\"export control\",\"ns\":100.313481,\"startMs\":1794584619554,\"endMs\":1794584619754}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 4,
+      "variant": "converters",
+      "start_epoch": 1794584619.7980375,
+      "stop_epoch": 1794584621.407323,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1362.46232,\"startMs\":1794584620323,\"endMs\":1794584620459}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1559.39708,\"startMs\":1794584620843,\"endMs\":1794584620999}\n{\"name\":\"export control\",\"ns\":77.965727,\"startMs\":1794584621239,\"endMs\":1794584621395}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 4,
+      "variant": "constructor",
+      "start_epoch": 1794584621.4098394,
+      "stop_epoch": 1794584623.5847592,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1378.33563,\"startMs\":1794584621857,\"endMs\":1794584621994}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":2222.83022,\"startMs\":1794584622598,\"endMs\":1794584622820}\n{\"name\":\"export control\",\"ns\":102.8793565,\"startMs\":1794584623346,\"endMs\":1794584623552}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 4,
+      "variant": "baseline",
+      "start_epoch": 1794584623.5862563,
+      "stop_epoch": 1794584626.0449555,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":4046.80398,\"startMs\":1794584624237,\"endMs\":1794584624642}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1984.3736,\"startMs\":1794584625334,\"endMs\":1794584625533}\n{\"name\":\"export control\",\"ns\":99.712745,\"startMs\":1794584625821,\"endMs\":1794584626020}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 4,
+      "variant": "full",
+      "start_epoch": 1794584626.0486722,
+      "stop_epoch": 1794584628.1003158,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1631.45564,\"startMs\":1794584626686,\"endMs\":1794584626849}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":2348.02384,\"startMs\":1794584627382,\"endMs\":1794584627617}\n{\"name\":\"export control\",\"ns\":102.526647,\"startMs\":1794584627866,\"endMs\":1794584628071}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 5,
+      "variant": "baseline",
+      "start_epoch": 1794584628.10398,
+      "stop_epoch": 1794584629.9321804,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1687.47238,\"startMs\":1794584628808,\"endMs\":1794584628977}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1438.93855,\"startMs\":1794584629333,\"endMs\":1794584629476}\n{\"name\":\"export control\",\"ns\":103.3518715,\"startMs\":1794584629705,\"endMs\":1794584629911}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 5,
+      "variant": "constructor",
+      "start_epoch": 1794584629.934989,
+      "stop_epoch": 1794584631.6121483,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1484.19364,\"startMs\":1794584630310,\"endMs\":1794584630459}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1347.59523,\"startMs\":1794584631043,\"endMs\":1794584631178}\n{\"name\":\"export control\",\"ns\":81.208168,\"startMs\":1794584631432,\"endMs\":1794584631595}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 5,
+      "variant": "converters",
+      "start_epoch": 1794584631.6142762,
+      "stop_epoch": 1794584633.406087,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1298.83396,\"startMs\":1794584632071,\"endMs\":1794584632200}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1647.80831,\"startMs\":1794584632769,\"endMs\":1794584632934}\n{\"name\":\"export control\",\"ns\":83.7697545,\"startMs\":1794584633221,\"endMs\":1794584633389}\n",
+      "stderr": ""
+    },
+    {
+      "study": "node_constructor_factors",
+      "round": 5,
+      "variant": "full",
+      "start_epoch": 1794584633.4082987,
+      "stop_epoch": 1794584634.8367274,
+      "returncode": 0,
+      "stdout": "{\"name\":\"raw\",\"iterations\":100000,\"ns\":1468.20089,\"startMs\":1794584633789,\"endMs\":1794584633936}\n{\"name\":\"portal\",\"iterations\":100000,\"ns\":1141.69561,\"startMs\":1794584634336,\"endMs\":1794584634450}\n{\"name\":\"export control\",\"ns\":81.9349675,\"startMs\":1794584634658,\"endMs\":1794584634822}\n",
+      "stderr": ""
+    }
+  ],
+  "started_utc": "2026-11-13T15:37:36Z",
+  "runner_sha256": "d491f0f94fac9fcff4491643b0af0008fedbc2e4c55b68f93f9f1b07fd05ea2f",
+  "input_sha256": {
+    "/tmp/portal-opt-pass/core_pin_only": "f0f4509143ea42a46c6bf414e6c437562aefeaffa5a5f2869600882cc03fc4da",
+    "/tmp/portal-opt-pass/core_full_current": "866e5ec15b9d94f6be8c2cd2bbe112d683a3abd671b91fa7992b735ea3dc9c95",
+    "/tmp/portal-opt-pass/rpc-variants/binaries/baseline": "a607cfe01aac4801598fad06538eda37321db5e61b5267a4224eea287478c34a",
+    "/tmp/portal-opt-pass/rpc-variants/binaries/writer-only": "a0f6509178344b9b49cddce00d8b41af7449d5d7fcf1c12ec3d703fd3c218c4c",
+    "/tmp/portal-opt-pass/rpc-variants/binaries/storage-only": "4f1d38a052829df8a1a91ca18fdef07d429d7c61ec1da6f1b88e249bbfffaac3",
+    "/tmp/portal-opt-pass/rpc-variants/binaries/full": "e4e0a733f9460fad24729736b1fd0b230358436f8c970c904e4c94cbb98bc34a",
+    "/tmp/portal-opt-pass/rpc-variants/binaries/full-byte-fastpath": "afbbe5385cc3ee76d9af60dc9699ae04f00940cd8c84c5f2cde22dedcf0a8f8a",
+    "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset": "d8fab0bb667fb0da712a1b98bb5ed555c418f781330cb73995b47aa56a8fc22c",
+    "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset-offset": "a13383e6bd353fff6b18a2d5405617b205276d41ef4c79968d853ed89414ede1",
+    "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset-typed": "b7bd8781172f138631c2bc78fda6b04ad98db73a5e1fbb01496744ecb98a1802",
+    "/tmp/portal-opt-pass/measurements-final/binaries/python-after": "ed7908c882a06852608f69ef0429cca592a54976e664b563fbabcec173730d55",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node": "61ab14cd750fc24d5db53490ec5fc40f756e4b6e136b78cf7004265471d9bd1d",
+    "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/node_focus.js": "f1ccb61d7b2392bf0c4436376429ec06a75f12dd9b09c8a75b9986de6725d11c",
+    "/tmp/portal-opt-pass/measurements-final/binaries/addon-before.node": "222a7e79e6e156f0fe2b4f5babdcf30a1bbfe66d940cc97bf0c164935d180407",
+    "/tmp/portal-opt-pass/runtime-variants/binaries/node-constructor.node": "d292a5cd35da4aaebd1ddbbecb120ae2aec069ab5861a1a8a3e254f27b3ab6a4",
+    "/tmp/portal-opt-pass/runtime-variants/binaries/node-converters.node": "8bff6cf9573ef6194da67fbf4478180bd5b804c4adce5b17d57e391e1bf2b574",
+    "/tmp/portal-opt-pass/measurements-final/binaries/addon-after.node": "5e5f66fbc6cc742c962102a66db597c7e6b1dc5b73f08fab98739e6dffa07bb4",
+    "/workspace/scratch/650ce06b9036/portal/benchmarks/node_constructor_benchmark.js": "947592ec3da28e0a3a709ef0e5a5b662899cc7196904509009c8fc966d04bca1"
+  },
+  "finished_utc": "2026-11-13T15:43:54Z"
+}

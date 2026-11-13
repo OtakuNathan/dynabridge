@@ -58,8 +58,16 @@ public:
     using result_type = typename State::result_type;
     explicit completion(std::shared_ptr<State> s) noexcept : state_(std::move(s)) {}
     // A copied token owns its control state. Raw pointers are not completion tokens.
-    void finish(result_type r) const noexcept { state_->finish(std::move(r)); }
-    void detach(async_error e) const noexcept { state_->detach(std::move(e)); }
+    void finish(result_type r) const noexcept {
+        // A continuation may destroy the callback holding this very token.
+        // Keep the state alive until delivery and retirement have both returned.
+        auto state = state_;
+        state->finish(std::move(r));
+    }
+    void detach(async_error e) const noexcept {
+        auto state = state_;
+        state->detach(std::move(e));
+    }
 };
 template<class R, class Context, class Op, class Handler>
 struct operation_state {
@@ -76,7 +84,7 @@ struct operation_state {
           handler(in_place, std::move(h)) {}
     void deliver(result_type r, bool retire) noexcept {
         optional<Handler> callback;
-        bool consume_handler=false;
+        bool consume_handler=false, clean=false;
         std::shared_ptr<void> release_access;
         {
             std::lock_guard<std::mutex> lock(mutex);
@@ -93,6 +101,7 @@ struct operation_state {
                 delivered = true;
                 consume_handler=true;
             }
+            clean = claim_cleanup_locked();
         }
         // The delivered flag grants exclusive access to the slot. Even moved-from
         // user callable destructors must run outside the mutex.
@@ -109,16 +118,20 @@ struct operation_state {
             (*callback)(std::move(r));
 #endif
         }
-        cleanup();
+        cleanup(clean);
     }
     void finish(result_type r) noexcept { deliver(std::move(r), true); }
     void detach(async_error e) noexcept { deliver(result_type(async_error_tag,std::move(e)), false); }
-    void cleanup() noexcept {
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-            if (!retired || submitting || cleaned) return;
-            cleaned=true;
-        }
+    // Called only while the transition mutex is held. Claiming cleanup here
+    // avoids reacquiring it after every submission and completion, including
+    // transitions that cannot yet retire anything.
+    bool claim_cleanup_locked() noexcept {
+        if (!retired || submitting || cleaned) return false;
+        cleaned=true;
+        return true;
+    }
+    void cleanup(bool claimed) noexcept {
+        if (!claimed) return;
         // Only the cleanup claimant touches these slots after submit returns.
         operation.reset();
         context.reset();
@@ -129,10 +142,12 @@ struct operation_state {
     }
     void submitted() noexcept {
         optional<async_error> deferred;
+        bool clean;
         { std::lock_guard<std::mutex> lock(mutex); submitting = false;
-          if (pending_detach) { deferred.emplace(std::move(*pending_detach)); pending_detach.reset(); } }
+          if (pending_detach) { deferred.emplace(std::move(*pending_detach)); pending_detach.reset(); }
+          clean = claim_cleanup_locked(); }
         if (deferred) detach(std::move(*deferred));
-        cleanup();
+        cleanup(clean);
     }
 };
 }

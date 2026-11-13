@@ -1,0 +1,60 @@
+=================================================================
+==6==ERROR: AddressSanitizer: heap-use-after-free on address 0x502000002070 at pc 0x55dc724e15cf bp 0x7ffdb97f6520 sp 0x7ffdb97f6518
+READ of size 4 at 0x502000002070 thread T0
+    #0 0x55dc724e15ce in Py_INCREF /opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12/object.h:641
+    #1 0x55dc724e15ce in portal::py_backend::object_ref::reset(_object*, portal::py_backend::ref_policy) /tmp/portal-opt-pass/baseline/portal/backends/python.h:58
+    #2 0x55dc724e15ce in main /tmp/portal-opt-pass/runtime-review/python_reset_repro.cpp:49
+    #3 0x7f68e8747ca7  (/lib/x86_64-linux-gnu/libc.so.6+0x29ca7) (BuildId: 5e5b51f4c39af9ac589408c1dc432ba390a273cc)
+    #4 0x7f68e8747d64 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29d64) (BuildId: 5e5b51f4c39af9ac589408c1dc432ba390a273cc)
+    #5 0x55dc724e1170 in _start (/tmp/portal-opt-pass/runtime-review/python_reset_baseline_asan+0x2170) (BuildId: 76588f94e34723e90fa9379b60fbf91f8a69a4f4)
+
+0x502000002070 is located 0 bytes inside of 16-byte region [0x502000002070,0x502000002080)
+freed by thread T0 here:
+    #0 0x7f68ea14b8f8 in free ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:52
+    #1 0x55dc724e12a5 in destroy_probe /tmp/portal-opt-pass/runtime-review/python_reset_repro.cpp:17
+    #2 0x55dc724e15bc in Py_DECREF /opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12/object.h:705
+    #3 0x55dc724e15bc in Py_XDECREF /opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12/object.h:798
+    #4 0x55dc724e15bc in portal::py_backend::object_ref::reset(_object*, portal::py_backend::ref_policy) /tmp/portal-opt-pass/baseline/portal/backends/python.h:55
+    #5 0x55dc724e15bc in main /tmp/portal-opt-pass/runtime-review/python_reset_repro.cpp:49
+    #6 0x7f68e8747ca7  (/lib/x86_64-linux-gnu/libc.so.6+0x29ca7) (BuildId: 5e5b51f4c39af9ac589408c1dc432ba390a273cc)
+
+previously allocated by thread T0 here:
+    #0 0x7f68ea14cc57 in malloc ../../../../src/libsanitizer/asan/asan_malloc_linux.cpp:69
+    #1 0x7f68e8ff01a7 in _PyObject_New (/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/libpython3.12.so.1.0+0x3591a7) (BuildId: 183cb5532ee29329b05bdafab76a9fb193686f08)
+    #2 0x55dc724e13fc in make_probe /tmp/portal-opt-pass/runtime-review/python_reset_repro.cpp:29
+    #3 0x55dc724e13fc in main /tmp/portal-opt-pass/runtime-review/python_reset_repro.cpp:38
+    #4 0x7f68e8747ca7  (/lib/x86_64-linux-gnu/libc.so.6+0x29ca7) (BuildId: 5e5b51f4c39af9ac589408c1dc432ba390a273cc)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12/object.h:641 in Py_INCREF
+Shadow bytes around the buggy address:
+  0x502000001d80: fa fa fd fd fa fa fd fa fa fa fd fd fa fa fd fd
+  0x502000001e00: fa fa fd fd fa fa fd fa fa fa fd fa fa fa fd fa
+  0x502000001e80: fa fa fd fa fa fa fd fa fa fa 00 fa fa fa fd fd
+  0x502000001f00: fa fa 00 fa fa fa fd fd fa fa fd fd fa fa fd fd
+  0x502000001f80: fa fa fd fd fa fa fd fd fa fa fd fd fa fa fd fd
+=>0x502000002000: fa fa fd fd fa fa fd fd fa fa fd fd fa fa[fd]fd
+  0x502000002080: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x502000002100: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x502000002180: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x502000002200: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x502000002280: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==6==ABORTING

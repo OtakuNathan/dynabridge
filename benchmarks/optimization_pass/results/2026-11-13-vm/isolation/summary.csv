@@ -1,0 +1,206 @@
+study,case,variant,median,minimum,maximum,change_percent,faster_rounds,rounds
+async_pin_control,static_inline,pin_only,102.559,97.989,170.96,0.0,0,5
+async_pin_control,static_inline,full,90.987,79.748,216.563,-11.283261342251782,4,5
+async_pin_control,static_deferred,pin_only,106.093,81.764,123.364,0.0,0,5
+async_pin_control,static_deferred,full,90.251,82.12,117.129,-14.932182142082883,4,5
+async_pin_control,erased_inline,pin_only,176.478,126.491,209.062,0.0,0,5
+async_pin_control,erased_inline,full,132.246,115.516,200.035,-25.06374732261245,4,5
+async_pin_control,erased_deferred,pin_only,136.65,132.969,212.984,0.0,0,5
+async_pin_control,erased_deferred,full,140.747,112.352,158.356,2.9981705085986077,4,5
+async_pin_control,direct_overload_64k,pin_only,43328.647,38048.281,53692.757,0.0,0,5
+async_pin_control,direct_overload_64k,full,4365.05,3767.015,4993.953,-89.92571819747799,5,5
+async_pin_control,optional_overload_64k,pin_only,6318.702,5855.878,7392.717,0.0,0,5
+async_pin_control,optional_overload_64k,full,4115.737,3380.654,6185.999,-34.86420154012644,5,5
+rpc_factors,scalar_0,baseline,197.589,161.276,212.914,0.0,0,5
+rpc_factors,scalar_0,writer-only,195.101,145.198,268.11,-1.2591794077605578,2,5
+rpc_factors,scalar_0,storage-only,209.943,164.021,322.439,6.252372348663138,2,5
+rpc_factors,scalar_0,full,199.686,167.448,225.254,1.0612938979396747,2,5
+rpc_factors,scalar_0,full-byte-fastpath,175.663,165.007,221.156,-11.096771581413945,3,5
+rpc_factors,scalar_1,baseline,311.873,260.469,342.609,0.0,0,5
+rpc_factors,scalar_1,writer-only,283.73,213.784,311.444,-9.023865483706494,3,5
+rpc_factors,scalar_1,storage-only,306.26,249.25,373.612,-1.7997710606560968,3,5
+rpc_factors,scalar_1,full,247.575,194.159,303.987,-20.61672539783822,5,5
+rpc_factors,scalar_1,full-byte-fastpath,233.656,208.484,273.033,-25.079760030525243,5,5
+rpc_factors,scalar_2,baseline,443.474,366.826,542.436,0.0,0,5
+rpc_factors,scalar_2,writer-only,295.055,244.743,486.37,-33.46735096082295,5,5
+rpc_factors,scalar_2,storage-only,453.932,353.672,612.152,2.358199127795557,3,5
+rpc_factors,scalar_2,full,332.676,276.782,395.705,-24.984102788438555,5,5
+rpc_factors,scalar_2,full-byte-fastpath,297.339,239.067,372.902,-32.95232640470467,5,5
+rpc_factors,scalar_4,baseline,529.822,481.693,642.746,0.0,0,5
+rpc_factors,scalar_4,writer-only,435.441,354.942,499.827,-17.81371856963283,5,5
+rpc_factors,scalar_4,storage-only,552.161,458.24,654.508,4.216321708045334,2,5
+rpc_factors,scalar_4,full,472.549,394.86,525.235,-10.809856895334669,5,5
+rpc_factors,scalar_4,full-byte-fastpath,423.388,301.172,454.413,-20.088633541076064,5,5
+rpc_factors,scalar_5,baseline,612.901,576.49,666.497,0.0,0,5
+rpc_factors,scalar_5,writer-only,419.653,392.673,566.313,-31.530051345975927,5,5
+rpc_factors,scalar_5,storage-only,687.407,658.523,982.485,12.156286251776404,0,5
+rpc_factors,scalar_5,full,517.339,384.677,576.723,-15.59175135951808,4,5
+rpc_factors,scalar_5,full-byte-fastpath,401.49,378.369,470.897,-34.49349895007513,5,5
+rpc_factors,scalar_8,baseline,778.46,725.222,935.875,0.0,0,5
+rpc_factors,scalar_8,writer-only,541.881,514.384,1043.234,-30.39064306451199,4,5
+rpc_factors,scalar_8,storage-only,845.552,812.485,977.238,8.618554582123682,0,5
+rpc_factors,scalar_8,full,734.436,532.101,760.0,-5.6552680934152,5,5
+rpc_factors,scalar_8,full-byte-fastpath,526.073,482.98,586.169,-32.42131901446446,5,5
+rpc_factors,string_16,baseline,405.167,388.208,476.648,0.0,0,5
+rpc_factors,string_16,writer-only,445.732,371.352,489.867,10.011921010348823,2,5
+rpc_factors,string_16,storage-only,409.546,389.509,836.14,1.080788909264574,1,5
+rpc_factors,string_16,full,462.924,402.316,552.247,14.255109621464722,2,5
+rpc_factors,string_16,full-byte-fastpath,373.663,340.64,577.473,-7.775559213855021,3,5
+rpc_factors,string_1024,baseline,611.178,539.681,1056.094,0.0,0,5
+rpc_factors,string_1024,writer-only,596.536,527.253,770.847,-2.3957014159541212,3,5
+rpc_factors,string_1024,storage-only,636.719,525.458,890.853,4.178978955394341,3,5
+rpc_factors,string_1024,full,597.874,548.094,878.251,-2.1767799233611163,2,5
+rpc_factors,string_1024,full-byte-fastpath,626.205,488.417,734.189,2.4586945210724354,1,5
+rpc_factors,string_65536,baseline,47993.878,44752.611,56231.913,0.0,0,5
+rpc_factors,string_65536,writer-only,49932.475,40979.764,59194.557,4.039258923815248,2,5
+rpc_factors,string_65536,storage-only,54788.693,42859.504,67886.128,14.157670276196477,1,5
+rpc_factors,string_65536,full,48413.305,45015.212,74430.936,0.8739177109213792,1,5
+rpc_factors,string_65536,full-byte-fastpath,53244.662,43745.662,58839.925,10.940528706598784,1,5
+python_factors,portal import,reset,86.1,79.3,119.2,0.0,0,5
+python_factors,portal import,offset,95.0,78.1,104.3,10.33681765389083,2,5
+python_factors,portal import,typed,78.8,71.4,185.6,-8.478513356562134,4,5
+python_factors,portal import,full,86.0,82.2,93.4,-0.11614401858303092,2,5
+python_factors,portal import bound method,reset,97.9,77.5,124.8,0.0,0,5
+python_factors,portal import bound method,offset,104.8,86.8,125.4,7.04800817160367,2,5
+python_factors,portal import bound method,typed,94.2,76.3,126.9,-3.7793667007150145,2,5
+python_factors,portal import bound method,full,93.6,80.3,149.2,-4.392236976506647,2,5
+python_factors,portal import object,reset,82.7,75.1,118.0,0.0,0,5
+python_factors,portal import object,offset,78.9,71.3,101.1,-4.594921402660212,3,5
+python_factors,portal import object,typed,76.3,68.6,93.6,-7.738814993954057,4,5
+python_factors,portal import object,full,107.5,80.5,145.6,29.987908101571946,0,5
+python_factors,portal import callback,reset,171.1,155.9,197.8,0.0,0,5
+python_factors,portal import callback,offset,173.2,146.0,221.1,1.2273524254821755,3,5
+python_factors,portal import callback,typed,154.8,149.9,166.6,-9.526592635885434,4,5
+python_factors,portal import callback,full,159.5,152.4,244.2,-6.779661016949145,2,5
+python_factors,raw C API import object,reset,78.8,68.8,106.3,0.0,0,5
+python_factors,raw C API import object,offset,81.5,75.3,112.9,3.426395939086291,2,5
+python_factors,raw C API import object,typed,82.8,80.0,102.3,5.076142131979688,1,5
+python_factors,raw C API import object,full,73.2,71.0,113.1,-7.106598984771562,2,5
+python_factors,raw C API import callback,reset,148.1,134.5,192.3,0.0,0,5
+python_factors,raw C API import callback,offset,157.2,150.3,178.5,6.144496961512491,1,5
+python_factors,raw C API import callback,typed,166.3,133.2,190.5,12.288993923025004,3,5
+python_factors,raw C API import callback,full,159.3,152.2,267.1,7.562457798784616,1,5
+python_factors,raw C API tuple,reset,119.8,109.4,129.3,0.0,0,5
+python_factors,raw C API tuple,offset,115.3,109.0,129.5,-3.7562604340567574,3,5
+python_factors,raw C API tuple,typed,116.5,102.8,151.4,-2.7545909849749584,3,5
+python_factors,raw C API tuple,full,123.5,95.3,194.9,3.088480801335569,2,5
+python_factors,raw C API vectorcall,reset,89.4,75.6,120.1,0.0,0,5
+python_factors,raw C API vectorcall,offset,84.3,71.5,95.1,-5.704697986577189,3,5
+python_factors,raw C API vectorcall,typed,104.6,71.5,124.8,17.002237136465315,2,5
+python_factors,raw C API vectorcall,full,90.1,67.4,98.5,0.7829977628635243,3,5
+python_factors,raw C API bound method,reset,100.3,81.3,182.9,0.0,0,5
+python_factors,raw C API bound method,offset,93.8,80.5,103.7,-6.480558325024921,4,5
+python_factors,raw C API bound method,typed,97.4,85.2,129.0,-2.891326021934193,3,5
+python_factors,raw C API bound method,full,101.7,96.9,136.9,1.3958125623130702,2,5
+python_factors,raw C API bound method offset,reset,93.0,84.5,112.2,0.0,0,5
+python_factors,raw C API bound method offset,offset,87.1,77.5,119.5,-6.34408602150538,2,5
+python_factors,raw C API bound method offset,typed,91.8,73.9,104.7,-1.2903225806451646,3,5
+python_factors,raw C API bound method offset,full,94.6,83.7,132.3,1.7204301075268713,3,5
+python_factors,portal export tuple,reset,75.7,70.0,88.0,0.0,0,5
+python_factors,portal export tuple,offset,75.6,69.9,89.8,-0.13210039630120463,2,5
+python_factors,portal export tuple,typed,71.6,60.8,82.4,-5.416116248348757,3,5
+python_factors,portal export tuple,full,75.7,65.9,131.7,0.0,2,5
+python_factors,portal export class argument,reset,48.8,40.7,61.1,0.0,0,5
+python_factors,portal export class argument,offset,46.7,38.9,59.2,-4.303278688524581,3,5
+python_factors,portal export class argument,typed,54.9,47.5,66.8,12.5,0,5
+python_factors,portal export class argument,full,65.3,48.8,68.6,33.81147540983606,1,5
+python_factors,portal export class member,reset,46.0,43.5,78.3,0.0,0,5
+python_factors,portal export class member,offset,40.7,38.7,52.4,-11.52173913043477,4,5
+python_factors,portal export class member,typed,43.4,40.2,44.4,-5.6521739130434785,5,5
+python_factors,portal export class member,full,50.7,39.5,53.1,10.217391304347823,2,5
+python_factors,portal export callback,reset,114.8,107.9,148.7,0.0,0,5
+python_factors,portal export callback,offset,104.3,95.2,130.4,-9.14634146341463,3,5
+python_factors,portal export callback,typed,113.7,99.1,125.6,-0.9581881533101022,3,5
+python_factors,portal export callback,full,130.9,91.4,229.3,14.024390243902452,1,5
+python_factors,portal export construct,reset,148.3,136.3,332.1,0.0,0,5
+python_factors,portal export construct,offset,182.2,138.2,211.4,22.859069453809823,2,5
+python_factors,portal export construct,typed,159.0,146.1,168.8,7.215104517869175,2,5
+python_factors,portal export construct,full,211.0,148.3,238.6,42.27916385704651,1,5
+python_factors,portal overload tuple 1,reset,66.1,64.5,94.4,0.0,0,5
+python_factors,portal overload tuple 1,offset,71.4,56.0,91.3,8.018154311649027,2,5
+python_factors,portal overload tuple 1,typed,69.9,62.3,80.5,5.748865355521948,2,5
+python_factors,portal overload tuple 1,full,90.0,54.6,94.5,36.157337367624834,3,5
+python_factors,portal overload tuple 2,reset,84.5,78.9,150.5,0.0,0,5
+python_factors,portal overload tuple 2,offset,76.6,65.3,138.7,-9.34911242603551,3,5
+python_factors,portal overload tuple 2,typed,78.7,77.0,81.5,-6.8639053254437865,5,5
+python_factors,portal overload tuple 2,full,100.5,68.0,143.2,18.934911242603558,3,5
+python_factors,portal overload fallback tuple,reset,108.5,98.3,399.2,0.0,0,5
+python_factors,portal overload fallback tuple,offset,97.1,90.4,120.1,-10.50691244239632,4,5
+python_factors,portal overload fallback tuple,typed,114.2,96.0,122.0,5.2534562211981495,2,5
+python_factors,portal overload fallback tuple,full,123.2,102.6,182.4,13.548387096774196,1,5
+python_factors,portal export vectorcall,reset,49.9,44.9,74.7,0.0,0,5
+python_factors,portal export vectorcall,offset,47.8,43.5,49.6,-4.208416833667339,4,5
+python_factors,portal export vectorcall,typed,44.8,41.0,53.7,-10.220440881763526,4,5
+python_factors,portal export vectorcall,full,46.8,41.5,86.8,-6.212424849699405,3,5
+python_factors,portal overload vectorcall 1,reset,54.8,41.5,67.6,0.0,0,5
+python_factors,portal overload vectorcall 1,offset,46.1,35.5,59.5,-15.875912408759119,3,5
+python_factors,portal overload vectorcall 1,typed,44.0,35.0,66.1,-19.70802919708029,3,5
+python_factors,portal overload vectorcall 1,full,48.3,39.8,115.3,-11.861313868613143,3,5
+python_factors,portal overload vectorcall 2,reset,57.2,53.5,83.2,0.0,0,5
+python_factors,portal overload vectorcall 2,offset,52.8,47.7,74.9,-7.692307692307699,4,5
+python_factors,portal overload vectorcall 2,typed,52.7,47.4,99.2,-7.867132867132865,3,5
+python_factors,portal overload vectorcall 2,full,58.5,57.3,88.6,2.2727272727272707,1,5
+python_factors,portal overload fallback vc,reset,104.3,73.7,143.9,0.0,0,5
+python_factors,portal overload fallback vc,offset,74.6,68.4,103.0,-28.475551294343248,4,5
+python_factors,portal overload fallback vc,typed,74.2,70.0,99.9,-28.859060402684555,4,5
+python_factors,portal overload fallback vc,full,81.7,69.7,113.1,-21.66826462128475,2,5
+node_factors,raw export,baseline,78.154221,50.388166,91.359024,0.0,0,5
+node_factors,raw export,constructor,63.834205,59.303215,82.911722,-18.32276723735754,3,5
+node_factors,raw export,converters,68.939389,54.534797,132.224544,-11.790574945401866,2,5
+node_factors,raw export,full,58.077011,47.75966,103.229898,-25.68922029176135,2,5
+node_factors,raw member,baseline,172.927701,137.177353,259.326123,0.0,0,5
+node_factors,raw member,constructor,170.705357,158.737313,173.655951,-1.2851289800007382,2,5
+node_factors,raw member,converters,154.266013,144.789405,195.582593,-10.791612848655186,2,5
+node_factors,raw member,full,184.617103,122.093765,232.875515,6.7597047392655485,2,5
+node_factors,portal export,baseline,75.77053,68.150226,86.437608,0.0,0,5
+node_factors,portal export,constructor,75.884664,68.339896,101.657705,0.15063112268054457,2,5
+node_factors,portal export,converters,80.906223,68.844381,122.003592,6.777955756677434,2,5
+node_factors,portal export,full,79.563953,58.598692,150.389361,5.006462274976831,2,5
+node_factors,portal member,baseline,302.60918,245.283628,341.081111,0.0,0,5
+node_factors,portal member,constructor,355.086356,313.579062,462.046261,17.341567760766562,1,5
+node_factors,portal member,converters,312.349505,234.502979,347.601351,3.21878040844632,1,5
+node_factors,portal member,full,269.28526,242.586059,359.566644,-11.01219731668418,3,5
+node_factors,portal callback,baseline,226.250482,206.120188,273.361264,0.0,0,5
+node_factors,portal callback,constructor,259.069494,218.394907,367.211339,14.505609760424743,1,5
+node_factors,portal callback,converters,279.379665,225.309595,398.040905,23.48246179647917,1,5
+node_factors,portal callback,full,259.19156,194.13423,435.7855,14.559561468691129,1,5
+node_factors,portal strict unsigned wide,baseline,89.887261,82.891399,118.779929,0.0,0,5
+node_factors,portal strict unsigned wide,constructor,112.710197,100.438589,140.769643,25.390623483343198,1,5
+node_factors,portal strict unsigned wide,converters,87.489491,70.542049,102.008125,-2.6675303856460775,3,5
+node_factors,portal strict unsigned wide,full,89.971959,76.02569,106.326427,0.09422692276717104,3,5
+node_factors,portal overload string miss,baseline,98.686455,82.871535,136.240919,0.0,0,5
+node_factors,portal overload string miss,constructor,105.312588,100.292012,202.260892,6.714328729307395,1,5
+node_factors,portal overload string miss,converters,103.954593,86.415243,115.141348,5.338258426650344,2,5
+node_factors,portal overload string miss,full,116.40452,86.532639,146.610118,17.953897523221407,2,5
+node_factors,portal UTF-8 empty,baseline,105.282806,101.574888,114.788846,0.0,0,5
+node_factors,portal UTF-8 empty,constructor,111.113272,102.464832,209.338637,5.5379090105178275,1,5
+node_factors,portal UTF-8 empty,converters,99.047533,90.649036,113.269478,-5.922403891856753,3,5
+node_factors,portal UTF-8 empty,full,96.226485,85.28329,171.569392,-8.60189934527391,4,5
+node_factors,portal UTF-8 16 B,baseline,193.301457,182.709738,212.111289,0.0,0,5
+node_factors,portal UTF-8 16 B,constructor,228.634112,185.165456,234.190948,18.278524925965755,1,5
+node_factors,portal UTF-8 16 B,converters,197.580667,150.680354,318.158422,2.2137494804294278,2,5
+node_factors,portal UTF-8 16 B,full,205.213374,157.949544,248.224534,6.162352413101568,4,5
+node_factors,portal UTF-8 Unicode + NUL,baseline,311.057521,265.912602,360.675117,0.0,0,5
+node_factors,portal UTF-8 Unicode + NUL,constructor,316.099312,298.693271,354.128418,1.6208548771916576,2,5
+node_factors,portal UTF-8 Unicode + NUL,converters,309.2134,251.407692,387.46518,-0.5928553002259807,3,5
+node_factors,portal UTF-8 Unicode + NUL,full,314.669937,234.180695,448.574864,1.1613337585880235,3,5
+node_factors,portal UTF-8 1 KiB,baseline,960.4153,800.278845,1329.232902,0.0,0,5
+node_factors,portal UTF-8 1 KiB,constructor,1057.009985,843.093378,1154.422008,10.057595396491493,1,5
+node_factors,portal UTF-8 1 KiB,converters,992.193991,885.639332,1080.414175,3.308848890683014,3,5
+node_factors,portal UTF-8 1 KiB,full,1038.517912,797.245486,1124.194623,8.132170739054235,1,5
+node_factors,portal UTF-8 64 KiB,baseline,58098.24672,44911.665152,80092.376128,0.0,0,5
+node_factors,portal UTF-8 64 KiB,constructor,55962.497344,50704.933312,91524.07168,-3.676099532388777,2,5
+node_factors,portal UTF-8 64 KiB,converters,59294.146496,54589.70976,68902.2912,2.0584094073673898,2,5
+node_factors,portal UTF-8 64 KiB,full,66617.125824,46568.203584,90751.524544,14.662885000740356,2,5
+node_constructor_factors,raw,baseline,2158.84728,1270.69582,4046.80398,0.0,0,5
+node_constructor_factors,raw,constructor,1484.19364,1246.94229,1606.36779,-31.250642240890702,4,5
+node_constructor_factors,raw,converters,1362.46232,1141.38084,1701.01507,-36.88936069623229,4,5
+node_constructor_factors,raw,full,1468.20089,1321.29395,1744.78099,-31.991442673981084,4,5
+node_constructor_factors,portal,baseline,1725.99596,1438.93855,2456.18139,0.0,0,5
+node_constructor_factors,portal,constructor,1952.80233,1347.59523,2222.83022,13.140608394008058,3,5
+node_constructor_factors,portal,converters,1647.80831,1358.48358,2250.61213,-4.53000191263484,2,5
+node_constructor_factors,portal,full,1763.45801,1141.69561,3255.52917,2.170459889141352,2,5
+node_constructor_factors,export control,baseline,99.712745,78.0368635,107.1069615,0.0,0,5
+node_constructor_factors,export control,constructor,92.553586,54.3462765,102.8793565,-7.17978328647958,3,5
+node_constructor_factors,export control,converters,83.7697545,74.8751755,176.09117,-15.98891947062534,3,5
+node_constructor_factors,export control,full,102.526647,75.2999445,116.97951,2.822008360114836,2,5

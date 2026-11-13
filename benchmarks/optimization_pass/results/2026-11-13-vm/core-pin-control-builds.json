@@ -1,0 +1,38 @@
+{
+  "baseline_commit": "7a6f53bbc30d3b4159e36de138486bffe90f3e62",
+  "corrected_baseline_changes": [
+    "portal/async.h"
+  ],
+  "patch": "/tmp/portal-opt-pass/pin-only-control.patch",
+  "patch_sha256": "ddf85797d28512430f3f2b429612e711a6640996c3dffcf8d4f448ff507a7203",
+  "source": "/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/core_probe.cpp",
+  "source_sha256": "7d43b1279afe000846990f1d9bfeffb9cffa7bc0cc71442bd3b8ca3c611f3c42",
+  "compiler": "g++ (Debian 14.2.0-19) 14.2.0",
+  "target": "x86_64-linux-gnu",
+  "builds": [
+    {
+      "include_tree": "/tmp/portal-opt-pass/pin-only-baseline",
+      "command": "g++ -std=c++14 -O3 -DNDEBUG -pthread -I /tmp/portal-opt-pass/pin-only-baseline /workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/core_probe.cpp -o /tmp/portal-opt-pass/core_pin_only",
+      "binary": "/tmp/portal-opt-pass/core_pin_only",
+      "binary_sha256": "f0f4509143ea42a46c6bf414e6c437562aefeaffa5a5f2869600882cc03fc4da",
+      "async_h_sha256": "59e9f2ba65c2da88cdcafa85f08ad6f6f9594be0a6fde953b3bc229c21cb0d18",
+      "export_callable_h_sha256": "fca65566edc030b088c3af3ad64d5b1495193d03625bb49b011d32276623226e",
+      "run_default": "/tmp/portal-opt-pass/core_pin_only 1000000",
+      "run_multithreaded_process": "/tmp/portal-opt-pass/core_pin_only 1000000 --threaded-process",
+      "compile_exit_code": 0
+    },
+    {
+      "include_tree": "/workspace/scratch/650ce06b9036/portal",
+      "command": "g++ -std=c++14 -O3 -DNDEBUG -pthread -I /workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/core_probe.cpp -o /tmp/portal-opt-pass/core_full_current",
+      "binary": "/tmp/portal-opt-pass/core_full_current",
+      "binary_sha256": "866e5ec15b9d94f6be8c2cd2bbe112d683a3abd671b91fa7992b735ea3dc9c95",
+      "async_h_sha256": "128eec2e3e1708d03892ebd3c52dbba8f9e7490e17c420ae4a33509808da4efc",
+      "export_callable_h_sha256": "25c3056b41477e5c34055e3543aaabb75a671b87184e9a57602231dca88a6a7f",
+      "run_default": "/tmp/portal-opt-pass/core_full_current 1000000",
+      "run_multithreaded_process": "/tmp/portal-opt-pass/core_full_current 1000000 --threaded-process",
+      "compile_exit_code": 0
+    }
+  ],
+  "timings_run_by_core_agent": false,
+  "note": "Pin-only tree differs from frozen baseline only by local shared_ptr copies in completion::finish and detach. Original four-lock cleanup remains. Threaded-process option creates and joins one thread before warmup; timed calls remain on the calling thread."
+}

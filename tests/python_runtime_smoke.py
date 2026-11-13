@@ -26,6 +26,20 @@ def main():
     assert addon.echo("a\0b") == "<a\0b>"
     assert addon.echo(21) == 42
 
+    for invoke in (
+        lambda: addon.add(), lambda: addon.add(1), lambda: addon.add(1, 2, 3),
+        lambda: addon.add(1, b=2), lambda: addon.calc(),
+        lambda: addon.calc(1, 2, 3), lambda: addon.calc(a=1),
+        lambda: addon.counter(), lambda: addon.counter(1, 2),
+        lambda: addon.counter(value=1),
+    ):
+        try:
+            invoke()
+        except TypeError:
+            pass
+        else:
+            raise AssertionError("export accepted wrong arity or keyword arguments")
+
     addon.store(77)
     assert addon.stored() == 77
 
@@ -46,6 +60,14 @@ def main():
 
     assert addon.callImportedCalc(calc, 3, 4) == 7
     assert calc_args == [3, 4]
+
+    class BoundCalls:
+        def calc(self, a, b):
+            # Re-enter the export boundary while an imported bound method has
+            # temporarily prepended its receiver to the argument vector.
+            return addon.add(a, b)
+
+    assert addon.callImportedCalc(BoundCalls().calc, 3, 4) == 7
 
     foo_args = None
 

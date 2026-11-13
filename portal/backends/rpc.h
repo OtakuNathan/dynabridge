@@ -145,9 +145,15 @@ namespace portal {
                 template <typename UInt>
                 void integer(UInt number) {
                     static_assert(std::is_unsigned<UInt>::value, "wire integers must be unsigned");
-                    for (std::size_t i = 0; i < sizeof(UInt); ++i) {
-                        data_.push_back(static_cast<std::uint8_t>(number >> (i * 8)));
+                    if (sizeof(UInt) == 1) {
+                        data_.push_back(static_cast<std::uint8_t>(number));
+                        return;
                     }
+                    std::uint8_t encoded[sizeof(UInt)];
+                    for (std::size_t i = 0; i < sizeof(UInt); ++i) {
+                        encoded[i] = static_cast<std::uint8_t>(number >> (i * 8));
+                    }
+                    data_.insert(data_.end(), encoded, encoded + sizeof(UInt));
                 }
 
                 void raw(const char* data, std::size_t size) {

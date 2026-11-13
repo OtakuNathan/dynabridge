@@ -234,6 +234,9 @@ not a production transport stack.
 Published timings are microbenchmarks, not whole-application forecasts. See
 the [reference and benchmark notes](docs/reference.md#benchmarks) for scenarios,
 environments, and comparison caveats.
+The [November boundary-cost report](benchmarks/optimization_pass/results/2026-11-13-vm/report.md)
+includes the selected core/RPC changes, lifetime fixes, rejected experiments,
+and complete paired measurement data.
 
 ## Documentation
 

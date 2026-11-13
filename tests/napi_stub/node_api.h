@@ -15,7 +15,9 @@
 
 typedef enum napi_status {
     napi_ok = 0,
-    napi_generic_failure = 1
+    napi_invalid_arg = 1,
+    napi_string_expected = 3,
+    napi_generic_failure = 9
 } napi_status;
 
 typedef enum napi_valuetype {
@@ -84,6 +86,8 @@ struct napi_env__ {
     napi_value global = nullptr;
     napi_value undefined = nullptr;
     std::size_t type_tag_checks = 0;
+    std::size_t string_reads = 0;
+    std::size_t string_read_failure_at = 0;
     std::vector<std::pair<void (*)(void*), void*>> cleanup_hooks;
 };
 
@@ -220,14 +224,21 @@ inline napi_status napi_create_string_utf8(
 }
 
 inline napi_status napi_get_value_string_utf8(
-    napi_env,
+    napi_env env,
     napi_value value,
     char* buf,
     std::size_t bufsize,
     std::size_t* result)
 {
-    if (value == nullptr || value->kind != napi_value__::kind_t::string) {
+    ++env->string_reads;
+    if (env->string_reads == env->string_read_failure_at) {
         return napi_generic_failure;
+    }
+    if (value == nullptr) {
+        return napi_invalid_arg;
+    }
+    if (value->kind != napi_value__::kind_t::string) {
+        return napi_string_expected;
     }
     const std::string& text = value->text;
     if (buf != nullptr && bufsize != 0) {
@@ -419,7 +430,7 @@ inline napi_status napi_create_function(
 }
 
 inline napi_status napi_get_cb_info(
-    napi_env,
+    napi_env env,
     napi_callback_info info,
     std::size_t* argc,
     napi_value* argv,
@@ -433,6 +444,9 @@ inline napi_status napi_get_cb_info(
             const std::size_t count = requested < available ? requested : available;
             for (std::size_t i = 0; i < count; ++i) {
                 argv[i] = info->args[i];
+            }
+            for (std::size_t i = count; i < requested; ++i) {
+                argv[i] = env->undefined;
             }
         }
         *argc = available;

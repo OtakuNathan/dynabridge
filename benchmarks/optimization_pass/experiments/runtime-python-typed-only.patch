@@ -1,0 +1,40 @@
+--- a/portal/backends/python.h
++++ b/portal/backends/python.h
+@@ -1082,7 +1082,8 @@
+             decref_args(tail...);
+         }
+
+-        static PyObject* make_callable_object(callable_holder* holder) {
++        template <typename Holder>
++        static PyObject* make_callable_object(Holder* holder) {
+             PyTypeObject* type = callable_type();
+             if (type == nullptr) {
+                 holder->destroy();
+@@ -1097,7 +1098,7 @@
+
+             object->holder = holder;
+ #if PY_VERSION_HEX >= 0x03080000
+-            object->vectorcall = callable_vectorcall;
++            object->vectorcall = callable_vectorcall<Holder>;
+ #endif
+             return reinterpret_cast<PyObject*>(object);
+         }
+@@ -1135,12 +1136,17 @@
+         }
+
+ #if PY_VERSION_HEX >= 0x03080000
++        template <typename Holder>
+         static PyObject* callable_vectorcall(
+             PyObject* self,
+             PyObject* const* args,
+             std::size_t nargsf,
+             PyObject* kwnames) {
+-            return reinterpret_cast<callable_object*>(self)->holder->invoke_vector(
++            // The object is created together with its concrete holder. Keep
++            // destruction erased, but let the per-object vectorcall entry
++            // dispatch directly to that holder's argument/exception handling.
++            return Holder::vector_call_entry(
++                reinterpret_cast<callable_object*>(self)->holder,
+                 args, nargsf, kwnames);
+         }
+ #endif

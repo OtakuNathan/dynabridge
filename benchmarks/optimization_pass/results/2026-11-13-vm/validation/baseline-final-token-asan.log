@@ -1,0 +1,92 @@
+=================================================================
+==5==ERROR: AddressSanitizer: heap-use-after-free on address 0x50e000000079 at pc 0x55a611de1c39 bp 0x7ffdf6a76860 sp 0x7ffdf6a76858
+READ of size 1 at 0x50e000000079 thread T0
+    #0 0x55a611de1c38 in cleanup /tmp/portal-opt-pass/baseline/portal/async.h:119
+    #1 0x55a611de1c38 in deliver /tmp/portal-opt-pass/baseline/portal/async.h:112
+    #2 0x55a611de232c in finish /tmp/portal-opt-pass/baseline/portal/async.h:114
+    #3 0x55a611de232c in finish /tmp/portal-opt-pass/baseline/portal/async.h:61
+    #4 0x55a611de232c in operator() /tmp/portal-core-probes/final_token.cpp:9
+    #5 0x55a611de232c in __invoke_impl<void, main()::<lambda(int&, auto:1)>::<lambda()>&> /usr/include/c++/14/bits/invoke.h:61
+    #6 0x55a611de232c in __invoke_r<void, main()::<lambda(int&, auto:1)>::<lambda()>&> /usr/include/c++/14/bits/invoke.h:150
+    #7 0x55a611de232c in _M_invoke /usr/include/c++/14/bits/std_function.h:290
+    #8 0x55a611de406f in std::function<void ()>::operator()() const /usr/include/c++/14/bits/std_function.h:591
+    #9 0x55a611de406f in main /tmp/portal-core-probes/final_token.cpp:13
+    #10 0x7f55a1418ca7  (/lib/x86_64-linux-gnu/libc.so.6+0x29ca7) (BuildId: 5e5b51f4c39af9ac589408c1dc432ba390a273cc)
+    #11 0x7f55a1418d64 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x29d64) (BuildId: 5e5b51f4c39af9ac589408c1dc432ba390a273cc)
+    #12 0x55a611de0250 in _start (/tmp/portal-core-probes/final_token_baseline+0x2250) (BuildId: 1f236b85e1eb672c5b19ad210cbc125441c6b544)
+
+0x50e000000079 is located 57 bytes inside of 160-byte region [0x50e000000040,0x50e0000000e0)
+freed by thread T0 here:
+    #0 0x7f55a1a5e678 in operator delete(void*, unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:164
+    #1 0x55a611de03ce in deallocate /usr/include/c++/14/bits/new_allocator.h:172
+    #2 0x55a611de03ce in deallocate /usr/include/c++/14/bits/alloc_traits.h:550
+    #3 0x55a611de03ce in ~__allocated_ptr /usr/include/c++/14/bits/allocated_ptr.h:74
+    #4 0x55a611de03ce in _M_destroy /usr/include/c++/14/bits/shared_ptr_base.h:626
+    #5 0x55a611de0ca6 in std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release() /usr/include/c++/14/bits/shared_ptr_base.h:347
+    #6 0x55a611de0ca6 in std::__shared_count<(__gnu_cxx::_Lock_policy)2>::~__shared_count() /usr/include/c++/14/bits/shared_ptr_base.h:1069
+    #7 0x55a611de0ca6 in ~__shared_ptr /usr/include/c++/14/bits/shared_ptr_base.h:1525
+    #8 0x55a611de0ca6 in ~shared_ptr /usr/include/c++/14/bits/shared_ptr.h:175
+    #9 0x55a611de0ca6 in ~completion /tmp/portal-opt-pass/baseline/portal/async.h:55
+    #10 0x55a611de0ca6 in ~<lambda> /tmp/portal-core-probes/final_token.cpp:9
+    #11 0x55a611de0ca6 in _M_destroy /usr/include/c++/14/bits/std_function.h:175
+    #12 0x55a611de0ca6 in _M_manager /usr/include/c++/14/bits/std_function.h:203
+    #13 0x55a611de0ca6 in _M_manager /usr/include/c++/14/bits/std_function.h:282
+    #14 0x55a611de1b64 in std::function<void ()>::operator=(decltype(nullptr)) /usr/include/c++/14/bits/std_function.h:505
+    #15 0x55a611de1b64 in operator() /tmp/portal-core-probes/final_token.cpp:12
+    #16 0x55a611de1b64 in deliver /tmp/portal-opt-pass/baseline/portal/async.h:107
+    #17 0x55a611de232c in finish /tmp/portal-opt-pass/baseline/portal/async.h:114
+    #18 0x55a611de232c in finish /tmp/portal-opt-pass/baseline/portal/async.h:61
+    #19 0x55a611de232c in operator() /tmp/portal-core-probes/final_token.cpp:9
+    #20 0x55a611de232c in __invoke_impl<void, main()::<lambda(int&, auto:1)>::<lambda()>&> /usr/include/c++/14/bits/invoke.h:61
+    #21 0x55a611de232c in __invoke_r<void, main()::<lambda(int&, auto:1)>::<lambda()>&> /usr/include/c++/14/bits/invoke.h:150
+    #22 0x55a611de232c in _M_invoke /usr/include/c++/14/bits/std_function.h:290
+    #23 0x55a611de406f in std::function<void ()>::operator()() const /usr/include/c++/14/bits/std_function.h:591
+    #24 0x55a611de406f in main /tmp/portal-core-probes/final_token.cpp:13
+    #25 0x7f55a1418ca7  (/lib/x86_64-linux-gnu/libc.so.6+0x29ca7) (BuildId: 5e5b51f4c39af9ac589408c1dc432ba390a273cc)
+
+previously allocated by thread T0 here:
+    #0 0x7f55a1a5d778 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:95
+    #1 0x55a611de2e08 in allocate /usr/include/c++/14/bits/new_allocator.h:151
+    #2 0x55a611de2e08 in allocate /usr/include/c++/14/bits/alloc_traits.h:515
+    #3 0x55a611de2e08 in __allocate_guarded<std::allocator<std::_Sp_counted_ptr_inplace<portal::async_detail::operation_state<int, int, main()::<lambda(int&, auto:1)>, main()::<lambda(portal::async_result<int>)> >, std::allocator<void>, (__gnu_cxx::_Lock_policy)2> > > /usr/include/c++/14/bits/allocated_ptr.h:98
+    #4 0x55a611de2e08 in __shared_count<portal::async_detail::operation_state<int, int, main()::<lambda(int&, auto:1)>, main()::<lambda(portal::async_result<int>)> >, std::allocator<void>, std::shared_ptr<int>, main()::<lambda(int&, auto:1)>, main()::<lambda(portal::async_result<int>)>, std::shared_ptr<void> > /usr/include/c++/14/bits/shared_ptr_base.h:967
+    #5 0x55a611de2e08 in __shared_ptr<std::allocator<void>, std::shared_ptr<int>, main()::<lambda(int&, auto:1)>, main()::<lambda(portal::async_result<int>)>, std::shared_ptr<void> > /usr/include/c++/14/bits/shared_ptr_base.h:1713
+    #6 0x55a611de2e08 in shared_ptr<std::allocator<void>, std::shared_ptr<int>, main()::<lambda(int&, auto:1)>, main()::<lambda(portal::async_result<int>)>, std::shared_ptr<void> > /usr/include/c++/14/bits/shared_ptr.h:463
+    #7 0x55a611de2e08 in make_shared<portal::async_detail::operation_state<int, int, main()::<lambda(int&, auto:1)>, main()::<lambda(portal::async_result<int>)> >, std::shared_ptr<int>, main()::<lambda(int&, auto:1)>, main()::<lambda(portal::async_result<int>)>, std::shared_ptr<void> > /usr/include/c++/14/bits/shared_ptr.h:1008
+    #8 0x55a611de2e08 in start<main()::<lambda(portal::async_result<int>)> > /tmp/portal-opt-pass/baseline/portal/async.h:171
+    #9 0x55a611de2e08 in main /tmp/portal-core-probes/final_token.cpp:12
+    #10 0x7f55a1418ca7  (/lib/x86_64-linux-gnu/libc.so.6+0x29ca7) (BuildId: 5e5b51f4c39af9ac589408c1dc432ba390a273cc)
+
+SUMMARY: AddressSanitizer: heap-use-after-free /tmp/portal-opt-pass/baseline/portal/async.h:119 in cleanup
+Shadow bytes around the buggy address:
+  0x50dffffffd80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x50dffffffe00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x50dffffffe80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x50dfffffff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x50dfffffff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+=>0x50e000000000: fa fa fa fa fa fa fa fa fd fd fd fd fd fd fd[fd]
+  0x50e000000080: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x50e000000100: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x50e000000180: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x50e000000200: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x50e000000280: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==5==ABORTING

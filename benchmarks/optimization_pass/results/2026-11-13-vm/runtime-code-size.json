@@ -1,0 +1,858 @@
+{
+  "python-baseline": {
+    "binary": "/tmp/portal-opt-pass/measurements-final/binaries/python-before",
+    "binary_sha256": "d2293b92b71c7e1f03dadda651185565c4ad539e5d50c8c13774a3a4f293f5b6",
+    "file_bytes": 100760,
+    "sections": {
+      ".note.gnu.property": 32,
+      ".note.gnu.build-id": 36,
+      ".interp": 28,
+      ".gnu.hash": 72,
+      ".dynsym": 2040,
+      ".dynstr": 2040,
+      ".gnu.version": 170,
+      ".gnu.version_r": 240,
+      ".rela.dyn": 1128,
+      ".rela.plt": 1536,
+      ".init": 23,
+      ".plt": 1040,
+      ".plt.got": 16,
+      ".text": 40582,
+      ".fini": 9,
+      ".rodata": 3312,
+      ".eh_frame_hdr": 844,
+      ".eh_frame": 4580,
+      ".gcc_except_table": 3872,
+      ".note.ABI-tag": 32,
+      ".init_array": 8,
+      ".fini_array": 8,
+      ".data.rel.ro": 224,
+      ".dynamic": 544,
+      ".got": 64,
+      ".got.plt": 536,
+      ".data": 512,
+      ".bss": 1064,
+      ".comment": 31
+    },
+    "vectorcall_symbols": [
+      {
+        "address": "00000000000096c0",
+        "size": 7,
+        "symbol": "portal::py_backend::callable_vectorcall(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000009120",
+        "size": 601,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "00000000000030c1",
+        "size": 457,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000009030",
+        "size": 127,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002f2b",
+        "size": 203,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "000000000000a8c0",
+        "size": 769,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (int, unsigned int), portal::py_backend::export_context_t, int (*)(int, unsigned int)> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000a290",
+        "size": 799,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (int), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_addable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::add_member, int (int)> > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000009e00",
+        "size": 603,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_readable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::value_member, int ()> > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000009860",
+        "size": 897,
+        "symbol": "portal::py_backend::export_type_vectorcall(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000aee0",
+        "size": 908,
+        "symbol": "portal::py_backend::class_constructor_holder<portal::exports::counter_proxy<portal::native::counter>, void (unsigned int), portal::py_backend::export_context_t>::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "00000000000095d0",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000003453",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000008e50",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002bff",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000008f40",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002d95",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      }
+    ]
+  },
+  "python-full-candidate": {
+    "binary": "/tmp/portal-opt-pass/measurements-final/binaries/python-after",
+    "binary_sha256": "ed7908c882a06852608f69ef0429cca592a54976e664b563fbabcec173730d55",
+    "file_bytes": 108968,
+    "sections": {
+      ".note.gnu.property": 32,
+      ".note.gnu.build-id": 36,
+      ".interp": 28,
+      ".gnu.hash": 72,
+      ".dynsym": 2040,
+      ".dynstr": 2040,
+      ".gnu.version": 170,
+      ".gnu.version_r": 240,
+      ".rela.dyn": 1128,
+      ".rela.plt": 1536,
+      ".init": 23,
+      ".plt": 1040,
+      ".plt.got": 16,
+      ".text": 46598,
+      ".fini": 9,
+      ".rodata": 3312,
+      ".eh_frame_hdr": 948,
+      ".eh_frame": 5128,
+      ".gcc_except_table": 4808,
+      ".note.ABI-tag": 32,
+      ".init_array": 8,
+      ".fini_array": 8,
+      ".data.rel.ro": 224,
+      ".dynamic": 544,
+      ".got": 64,
+      ".got.plt": 536,
+      ".data": 512,
+      ".bss": 1064,
+      ".comment": 31
+    },
+    "vectorcall_symbols": [
+      {
+        "address": "0000000000009830",
+        "size": 582,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "00000000000030c1",
+        "size": 457,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> > >(_object*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000009740",
+        "size": 127,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002f2b",
+        "size": 203,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> > >(_object*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "000000000000b420",
+        "size": 785,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (int, unsigned int), portal::py_backend::export_context_t, int (*)(int, unsigned int)> > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000adf0",
+        "size": 799,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (int), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_addable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::add_member, int (int)> > > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000a960",
+        "size": 603,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_readable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::value_member, int ()> > > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000c670",
+        "size": 909,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::class_constructor_holder<portal::exports::counter_proxy<portal::native::counter>, void (unsigned int), portal::py_backend::export_context_t> >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000009cd0",
+        "size": 119,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000003453",
+        "size": 203,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > > >(_object*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000009560",
+        "size": 119,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002bff",
+        "size": 203,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> > >(_object*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000009650",
+        "size": 119,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002d95",
+        "size": 203,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> > >(_object*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000009e40",
+        "size": 601,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "00000000000036b4",
+        "size": 457,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000009dc0",
+        "size": 127,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "00000000000035e9",
+        "size": 203,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "000000000000bcb0",
+        "size": 769,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (int, unsigned int), portal::py_backend::export_context_t, int (*)(int, unsigned int)> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000bfc0",
+        "size": 799,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (int), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_addable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::add_member, int (int)> > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000ba50",
+        "size": 603,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_readable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::value_member, int ()> > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000a500",
+        "size": 897,
+        "symbol": "portal::py_backend::export_type_vectorcall(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000c2e0",
+        "size": 908,
+        "symbol": "portal::py_backend::class_constructor_holder<portal::exports::counter_proxy<portal::native::counter>, void (unsigned int), portal::py_backend::export_context_t>::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000a0a0",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000387d",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "000000000000a1a0",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000003a13",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "000000000000a120",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000003948",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      }
+    ]
+  },
+  "node-baseline": {
+    "binary": "/tmp/portal-opt-pass/measurements-final/binaries/node.node-before",
+    "binary_sha256": "222a7e79e6e156f0fe2b4f5babdcf30a1bbfe66d940cc97bf0c164935d180407",
+    "file_bytes": 130064,
+    "sections": {
+      ".note.gnu.build-id": 36,
+      ".gnu.hash": 384,
+      ".dynsym": 2664,
+      ".dynstr": 10994,
+      ".gnu.version": 222,
+      ".gnu.version_r": 144,
+      ".rela.dyn": 1560,
+      ".rela.plt": 1296,
+      ".init": 23,
+      ".plt": 880,
+      ".plt.got": 8,
+      ".text": 52704,
+      ".fini": 9,
+      ".rodata": 3208,
+      ".eh_frame_hdr": 924,
+      ".eh_frame": 5724,
+      ".gcc_except_table": 4796,
+      ".init_array": 8,
+      ".fini_array": 8,
+      ".data.rel.ro": 128,
+      ".dynamic": 480,
+      ".got": 352,
+      ".got.plt": 456,
+      ".data": 56,
+      ".bss": 232,
+      ".comment": 31
+    },
+    "vectorcall_symbols": []
+  },
+  "node-full-candidate": {
+    "binary": "/tmp/portal-opt-pass/measurements-final/binaries/node.node-after",
+    "binary_sha256": "5e5f66fbc6cc742c962102a66db597c7e6b1dc5b73f08fab98739e6dffa07bb4",
+    "file_bytes": 125896,
+    "sections": {
+      ".note.gnu.build-id": 36,
+      ".gnu.hash": 384,
+      ".dynsym": 2664,
+      ".dynstr": 10924,
+      ".gnu.version": 222,
+      ".gnu.version_r": 144,
+      ".rela.dyn": 1560,
+      ".rela.plt": 1296,
+      ".init": 23,
+      ".plt": 880,
+      ".plt.got": 8,
+      ".text": 49888,
+      ".fini": 9,
+      ".rodata": 3128,
+      ".eh_frame_hdr": 924,
+      ".eh_frame": 5688,
+      ".gcc_except_table": 4752,
+      ".init_array": 8,
+      ".fini_array": 8,
+      ".data.rel.ro": 128,
+      ".dynamic": 480,
+      ".got": 352,
+      ".got.plt": 456,
+      ".data": 56,
+      ".bss": 232,
+      ".comment": 31
+    },
+    "vectorcall_symbols": []
+  },
+  "python-reset": {
+    "binary": "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset",
+    "binary_sha256": "d8fab0bb667fb0da712a1b98bb5ed555c418f781330cb73995b47aa56a8fc22c",
+    "file_bytes": 100760,
+    "sections": {
+      ".note.gnu.property": 32,
+      ".note.gnu.build-id": 36,
+      ".interp": 28,
+      ".gnu.hash": 72,
+      ".dynsym": 2040,
+      ".dynstr": 2040,
+      ".gnu.version": 170,
+      ".gnu.version_r": 240,
+      ".rela.dyn": 1128,
+      ".rela.plt": 1536,
+      ".init": 23,
+      ".plt": 1040,
+      ".plt.got": 16,
+      ".text": 40614,
+      ".fini": 9,
+      ".rodata": 3312,
+      ".eh_frame_hdr": 844,
+      ".eh_frame": 4580,
+      ".gcc_except_table": 3868,
+      ".note.ABI-tag": 32,
+      ".init_array": 8,
+      ".fini_array": 8,
+      ".data.rel.ro": 224,
+      ".dynamic": 544,
+      ".got": 64,
+      ".got.plt": 536,
+      ".data": 512,
+      ".bss": 1064,
+      ".comment": 31
+    },
+    "vectorcall_symbols": [
+      {
+        "address": "00000000000096c0",
+        "size": 7,
+        "symbol": "portal::py_backend::callable_vectorcall(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000009120",
+        "size": 601,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "00000000000030c1",
+        "size": 457,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000009030",
+        "size": 127,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002f2b",
+        "size": 203,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "000000000000a8c0",
+        "size": 769,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (int, unsigned int), portal::py_backend::export_context_t, int (*)(int, unsigned int)> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000a290",
+        "size": 799,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (int), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_addable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::add_member, int (int)> > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000009e00",
+        "size": 603,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_readable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::value_member, int ()> > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000009860",
+        "size": 897,
+        "symbol": "portal::py_backend::export_type_vectorcall(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000aee0",
+        "size": 908,
+        "symbol": "portal::py_backend::class_constructor_holder<portal::exports::counter_proxy<portal::native::counter>, void (unsigned int), portal::py_backend::export_context_t>::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "00000000000095d0",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000003453",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000008e50",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002bff",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000008f40",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002d95",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      }
+    ]
+  },
+  "python-reset-offset": {
+    "binary": "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset-offset",
+    "binary_sha256": "a13383e6bd353fff6b18a2d5405617b205276d41ef4c79968d853ed89414ede1",
+    "file_bytes": 100760,
+    "sections": {
+      ".note.gnu.property": 32,
+      ".note.gnu.build-id": 36,
+      ".interp": 28,
+      ".gnu.hash": 72,
+      ".dynsym": 2040,
+      ".dynstr": 2040,
+      ".gnu.version": 170,
+      ".gnu.version_r": 240,
+      ".rela.dyn": 1128,
+      ".rela.plt": 1536,
+      ".init": 23,
+      ".plt": 1040,
+      ".plt.got": 16,
+      ".text": 40806,
+      ".fini": 9,
+      ".rodata": 3312,
+      ".eh_frame_hdr": 844,
+      ".eh_frame": 4580,
+      ".gcc_except_table": 3868,
+      ".note.ABI-tag": 32,
+      ".init_array": 8,
+      ".fini_array": 8,
+      ".data.rel.ro": 224,
+      ".dynamic": 544,
+      ".got": 64,
+      ".got.plt": 536,
+      ".data": 512,
+      ".bss": 1064,
+      ".comment": 31
+    },
+    "vectorcall_symbols": [
+      {
+        "address": "0000000000009780",
+        "size": 7,
+        "symbol": "portal::py_backend::callable_vectorcall(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "00000000000091e0",
+        "size": 601,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "00000000000030c1",
+        "size": 457,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "00000000000090f0",
+        "size": 127,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002f2b",
+        "size": 203,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "000000000000a980",
+        "size": 769,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (int, unsigned int), portal::py_backend::export_context_t, int (*)(int, unsigned int)> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000a350",
+        "size": 799,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (int), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_addable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::add_member, int (int)> > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000009ec0",
+        "size": 603,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_readable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::value_member, int ()> > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000009920",
+        "size": 897,
+        "symbol": "portal::py_backend::export_type_vectorcall(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000afa0",
+        "size": 908,
+        "symbol": "portal::py_backend::class_constructor_holder<portal::exports::counter_proxy<portal::native::counter>, void (unsigned int), portal::py_backend::export_context_t>::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000009690",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000003453",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000008f10",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002bff",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000009000",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002d95",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      }
+    ]
+  },
+  "python-reset-typed": {
+    "binary": "/tmp/portal-opt-pass/runtime-variants/binaries/python-reset-typed",
+    "binary_sha256": "b7bd8781172f138631c2bc78fda6b04ad98db73a5e1fbb01496744ecb98a1802",
+    "file_bytes": 108968,
+    "sections": {
+      ".note.gnu.property": 32,
+      ".note.gnu.build-id": 36,
+      ".interp": 28,
+      ".gnu.hash": 72,
+      ".dynsym": 2040,
+      ".dynstr": 2040,
+      ".gnu.version": 170,
+      ".gnu.version_r": 240,
+      ".rela.dyn": 1128,
+      ".rela.plt": 1536,
+      ".init": 23,
+      ".plt": 1040,
+      ".plt.got": 16,
+      ".text": 46438,
+      ".fini": 9,
+      ".rodata": 3312,
+      ".eh_frame_hdr": 948,
+      ".eh_frame": 5128,
+      ".gcc_except_table": 4808,
+      ".note.ABI-tag": 32,
+      ".init_array": 8,
+      ".fini_array": 8,
+      ".data.rel.ro": 224,
+      ".dynamic": 544,
+      ".got": 64,
+      ".got.plt": 536,
+      ".data": 512,
+      ".bss": 1064,
+      ".comment": 31
+    },
+    "vectorcall_symbols": [
+      {
+        "address": "00000000000097a0",
+        "size": 582,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "00000000000030c1",
+        "size": 457,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> > >(_object*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "00000000000096b0",
+        "size": 127,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002f2b",
+        "size": 203,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> > >(_object*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "000000000000b380",
+        "size": 785,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (int, unsigned int), portal::py_backend::export_context_t, int (*)(int, unsigned int)> > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000ad50",
+        "size": 799,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (int), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_addable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::add_member, int (int)> > > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000a8c0",
+        "size": 603,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_readable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::value_member, int ()> > > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000c5d0",
+        "size": 909,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::class_constructor_holder<portal::exports::counter_proxy<portal::native::counter>, void (unsigned int), portal::py_backend::export_context_t> >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000009c40",
+        "size": 119,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000003453",
+        "size": 203,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > > >(_object*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "00000000000094d0",
+        "size": 119,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002bff",
+        "size": 203,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> > >(_object*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "00000000000095c0",
+        "size": 119,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> > >(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000002d95",
+        "size": 203,
+        "symbol": "_object* portal::py_backend::callable_vectorcall<portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> > >(_object*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000009db0",
+        "size": 601,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "00000000000036b4",
+        "size": 457,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::object_param<portal::export_classes::counter, portal::export_t>, int), portal::py_backend::export_context_t, main::{lambda(portal::native::counter&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "0000000000009d30",
+        "size": 127,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "00000000000035e9",
+        "size": 203,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (portal::callable_param<portal::import_symbols::callback, portal::import_t>, int), portal::py_backend::export_context_t, main::{lambda(auto:1&, int)#1}> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "000000000000bc10",
+        "size": 769,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_callable_binder<int (int, unsigned int), portal::py_backend::export_context_t, int (*)(int, unsigned int)> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000bf20",
+        "size": 799,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (int), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_addable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::add_member, int (int)> > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000b9b0",
+        "size": 603,
+        "symbol": "portal::py_backend::typed_callable_holder<portal::export_member_callable_binder<portal::exports::counter_proxy<portal::native::counter>, int (), portal::py_backend::export_context_t, portal::export_member_forwarder<portal::interfaces::counter_readable<portal::exports::counter_proxy<portal::native::counter>, portal::export_t>::value_member, int ()> > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000a460",
+        "size": 897,
+        "symbol": "portal::py_backend::export_type_vectorcall(_object*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000c240",
+        "size": 908,
+        "symbol": "portal::py_backend::class_constructor_holder<portal::exports::counter_proxy<portal::native::counter>, void (unsigned int), portal::py_backend::export_context_t>::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000a010",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "000000000000387d",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, portal::export_bound_overload_set<portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int)>, main::{lambda(int)#1}>, portal::bound_export_overload_slot<portal::callable<portal::no_receiver_t, int (int, unsigned int)>, main::{lambda(int, unsigned int)#1}> > > >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "000000000000a110",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000003a13",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, int (int, unsigned int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::context_t, (anonymous namespace)::transform_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      },
+      {
+        "address": "000000000000a090",
+        "size": 119,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*)"
+      },
+      {
+        "address": "0000000000003948",
+        "size": 203,
+        "symbol": "portal::py_backend::overload_callable_holder<portal::export_overload_binder<portal::type_list<portal::callable<portal::no_receiver_t, int (unsigned int)>, portal::callable<portal::no_receiver_t, int (int)>, portal::callable<portal::no_receiver_t, portal::unmatched_callable_t (portal::unmatched_callable_t)> >, portal::py_backend::export_context_t, (anonymous namespace)::select_overload_function> >::vector_call_entry(portal::py_backend::callable_holder*, _object* const*, unsigned long, _object*) [clone .cold]"
+      }
+    ]
+  },
+  "node-constructor": {
+    "binary": "/tmp/portal-opt-pass/runtime-variants/binaries/node-constructor.node",
+    "binary_sha256": "d292a5cd35da4aaebd1ddbbecb120ae2aec069ab5861a1a8a3e254f27b3ab6a4",
+    "file_bytes": 129992,
+    "sections": {
+      ".note.gnu.build-id": 36,
+      ".gnu.hash": 384,
+      ".dynsym": 2664,
+      ".dynstr": 10924,
+      ".gnu.version": 222,
+      ".gnu.version_r": 144,
+      ".rela.dyn": 1560,
+      ".rela.plt": 1296,
+      ".init": 23,
+      ".plt": 880,
+      ".plt.got": 8,
+      ".text": 52512,
+      ".fini": 9,
+      ".rodata": 3208,
+      ".eh_frame_hdr": 924,
+      ".eh_frame": 5688,
+      ".gcc_except_table": 4792,
+      ".init_array": 8,
+      ".fini_array": 8,
+      ".data.rel.ro": 128,
+      ".dynamic": 480,
+      ".got": 352,
+      ".got.plt": 456,
+      ".data": 56,
+      ".bss": 232,
+      ".comment": 31
+    },
+    "vectorcall_symbols": []
+  },
+  "node-converters": {
+    "binary": "/tmp/portal-opt-pass/runtime-variants/binaries/node-converters.node",
+    "binary_sha256": "8bff6cf9573ef6194da67fbf4478180bd5b804c4adce5b17d57e391e1bf2b574",
+    "file_bytes": 125968,
+    "sections": {
+      ".note.gnu.build-id": 36,
+      ".gnu.hash": 384,
+      ".dynsym": 2664,
+      ".dynstr": 10994,
+      ".gnu.version": 222,
+      ".gnu.version_r": 144,
+      ".rela.dyn": 1560,
+      ".rela.plt": 1296,
+      ".init": 23,
+      ".plt": 880,
+      ".plt.got": 8,
+      ".text": 50080,
+      ".fini": 9,
+      ".rodata": 3128,
+      ".eh_frame_hdr": 924,
+      ".eh_frame": 5724,
+      ".gcc_except_table": 4756,
+      ".init_array": 8,
+      ".fini_array": 8,
+      ".data.rel.ro": 128,
+      ".dynamic": 480,
+      ".got": 352,
+      ".got.plt": 456,
+      ".data": 56,
+      ".bss": 232,
+      ".comment": 31
+    },
+    "vectorcall_symbols": []
+  }
+}

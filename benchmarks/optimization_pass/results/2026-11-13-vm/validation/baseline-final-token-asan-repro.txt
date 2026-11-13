@@ -1,0 +1,7 @@
+Baseline: 7a6f53bbc30d3b4159e36de138486bffe90f3e62
+Source: /tmp/portal-core-probes/final_token.cpp
+Compile:
+g++ -std=c++14 -O1 -g -fsanitize=address -fno-omit-frame-pointer -pthread -I /tmp/portal-opt-pass/baseline /tmp/portal-core-probes/final_token.cpp -o /tmp/portal-core-probes/final_token_baseline
+Run:
+/tmp/portal-core-probes/final_token_baseline > /tmp/portal-opt-pass/baseline-final-token-asan.log 2>&1
+No suppressions or sanitizer environment overrides were used.

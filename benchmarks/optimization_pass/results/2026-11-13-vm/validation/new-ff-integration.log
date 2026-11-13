@@ -1,0 +1,8 @@
+['c++', '-O2', '-pthread', '-I.', '-I/workspace/scratch/650ce06b9036/flux_foundry', '-std=c++14', 'tests/ff_async.cpp', '-o', '/tmp/portal-opt-pass/ff_async_newff']
+exit=0
+['c++', '-O2', '-pthread', '-I.', '-I/workspace/scratch/650ce06b9036/flux_foundry', '-std=c++17', '-I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12', 'examples/flux_foundry/python_executor.cpp', '/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/libpython3.12.so', '-Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib', '-o', '/tmp/portal-opt-pass/ff_python_newff']
+Python executor: portal + FF result=42, 102.0 ns/task
+exit=0
+['c++', '-O2', '-pthread', '-I.', '-I/workspace/scratch/650ce06b9036/flux_foundry', '-std=c++17', '-I/tmp/ff-opt-deps/install/include', 'examples/flux_foundry/uv_executor.cpp', '-L/tmp/ff-opt-deps/install/lib', '-luv', '-Wl,-rpath,/tmp/ff-opt-deps/install/lib', '-o', '/tmp/portal-opt-pass/ff_uv_newff']
+uv executor: portal + FF result=42, 27115.1 ns/task
+exit=0

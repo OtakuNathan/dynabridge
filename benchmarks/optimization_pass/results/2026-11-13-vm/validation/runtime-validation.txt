@@ -1,0 +1,175 @@
+Portal runtime candidate validation (no timing runs)
+Repository: /workspace/scratch/650ce06b9036/portal
+Base: 7a6f53bbc30d3b4159e36de138486bffe90f3e62
+
+Every command below completed with exit code 0. Runtime commands produced no
+failure output. The two test executables were built after the final unit test
+edits (including zero-argument/external constructor and vectorcall re-entry).
+Runtime headers/tests are frozen; benchmark-only scenario additions followed.
+
+Build commands (cwd = repository):
+g++ -std=c++14 -O1 -g0 -Wall -Wextra -I. -Itests/napi_stub tests/napi_backend_test.cpp -o /tmp/portal-opt-pass/runtime-review/napi_backend_test
+g++ -std=c++14 -O1 -g0 -I. -I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12 tests/python_backend_test.cpp -L/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib -Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib -lpython3.12 -o /tmp/portal-opt-pass/runtime-review/python_backend_test
+g++ -std=c++14 -O1 -g0 -fPIC -shared -I. -I/tmp/portal-opt-pass/deps/node-v24.22.1/include/node tests/napi_runtime_addon.cpp -o /tmp/portal-opt-pass/runtime-review/napi_runtime_addon.node
+g++ -std=c++14 -O1 -g0 -fPIC -shared -I. -I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12 tests/python_runtime_addon.cpp -L/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib -Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib -lpython3.12 -o /tmp/portal-opt-pass/runtime-review/portal_python_runtime_addon.so
+
+Test commands (cwd = repository):
+/tmp/portal-opt-pass/runtime-review/napi_backend_test
+/tmp/portal-opt-pass/runtime-review/python_backend_test
+node --expose-gc tests/napi_runtime_smoke.js /tmp/portal-opt-pass/runtime-review/napi_runtime_addon.node
+python3 tests/python_runtime_smoke.py /tmp/portal-opt-pass/runtime-review/portal_python_runtime_addon.so
+node tests/napi_worker_smoke.js /tmp/portal-opt-pass/runtime-review/napi_runtime_addon.node
+
+Focused coverage:
+- Constructor napi_get_cb_info counts: 0/1 ordinary arguments and native external
+  proxy handoff use one read; two-argument consumer uses two reads, plus its user
+  callback's own read. No references, type tags, native wrapping or finalizers
+  were removed.
+- UTF-8 mismatch uses napi_string_expected; invalid handles and forced failure
+  of either size probe or copy still throw; subsequent successful conversion
+  remains usable. No separate typeof call on the string path.
+- Integer/unsigned exact limits, negative zero, subnormal and large fractional
+  values, NaN/infinities, out-of-range values, boxed numbers and nonnumber types.
+- Empty/embedded-NUL/Unicode/64 KiB strings; Node's unpaired-surrogate replacement
+  behavior remains unchanged.
+- Exact callback/member/constructor arity and Python keyword rejection.
+- Same-class constructor re-entry through callback; original JS exception object
+  identity across imported/exported callback and constructor boundaries.
+- Python caller reserves a vectorcall offset slot for zero and multiple args;
+  recursive import calls preserve the outer slot. Imported bound methods can
+  re-enter an export.
+- Real Node retained native objects, exact GC destruction counts, concurrent
+  Workers, addon reloads, natural shutdown and forced termination.
+
+Benchmark harness (not timed by this agent):
+Existing python_call_benchmark.cpp now includes bound-method import and two raw
+bound-method controls (with and without PY_VECTORCALL_ARGUMENTS_OFFSET).
+Existing Node addon/script include strict int small/wide, unsigned wide, string
+overload miss, and UTF-8 empty/16 B/Unicode+NUL/1 KiB/64 KiB scenarios. The 64 KiB
+case uses max(1, floor(PORTAL_BENCH_ITERS / 64)) measured calls and reports that
+count. Its ns/call is divided by that count. Wide integer checksum sums remain
+exact when the global count is at most 2,000,000. Build identical benchmark
+sources against base and candidate headers for paired performance comparison.
+
+Primary API references checked:
+https://docs.python.org/3.12/c-api/call.html#c.PY_VECTORCALL_ARGUMENTS_OFFSET
+https://nodejs.org/api/n-api.html#napi_get_cb_info
+https://nodejs.org/api/n-api.html#napi_get_value_string_utf8
+
+Deferred: N-API destruction-only callback holder header; remove redundant argv
+zeroing before napi_get_cb_info. Not implemented. Rejected historical constructor
+no-reference shortcut remains absent. No global runtime-handle caches added.
+
+Confirmed Python reference reset defect and fix (final update)
+===========================================================
+Source freeze:
+portal/backends/python.h: 2026-11-13T15:24:53.047273Z
+tests/python_backend_test.cpp: 2026-11-13T15:24:54.379282Z
+No code or test edits followed these timestamps.
+
+The baseline decremented the old pointer before retaining a borrowed replacement
+or publishing it. Two independently checkable failures were reproduced:
+1. reset(ref.get()) with the only owning ref: AddressSanitizer heap-use-after-free
+   in Py_INCREF, baseline python.h:58, after Py_XDECREF at line 55 freed the object.
+2. The old object's custom deallocator read owner.get() while replacing it with
+   Py_None: it observed the old pointer, not the new one (deterministic exit 2).
+
+The corrected implementation retains borrowed input first, publishes it with
+std::exchange, and only then decrements the previous pointer. The adopted/owned
+policy still requires an independently owned incoming reference, even when the
+pointer equals the old pointer. A finalizer's reentrant reset remains published
+after the outer reset returns.
+
+Reproduction source:
+/tmp/portal-opt-pass/runtime-review/python_reset_repro.cpp
+Baseline compile (cwd = repository):
+g++ -std=c++14 -O1 -g -fsanitize=address -fno-omit-frame-pointer -I/tmp/portal-opt-pass/baseline -I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12 /tmp/portal-opt-pass/runtime-review/python_reset_repro.cpp -L/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib -Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib -lpython3.12 -o /tmp/portal-opt-pass/runtime-review/python_reset_baseline_asan
+Candidate compile uses the identical command with -I. instead of the baseline
+include and output python_reset_candidate_asan.
+Runs:
+PYTHONMALLOC=malloc ASAN_OPTIONS=detect_leaks=0 /tmp/portal-opt-pass/runtime-review/python_reset_baseline_asan same
+  Expected failing exit 1, heap-use-after-free; saved python_reset_baseline_same.log.
+PYTHONMALLOC=malloc ASAN_OPTIONS=detect_leaks=0 /tmp/portal-opt-pass/runtime-review/python_reset_baseline_asan observe
+  Expected failing exit 2, destructor saw replacement: no; saved python_reset_baseline_observe.log.
+PYTHONMALLOC=malloc ASAN_OPTIONS=detect_leaks=0 /tmp/portal-opt-pass/runtime-review/python_reset_candidate_asan same
+  Exit 0, destroyed during same-pointer borrowed reset: 0; saved python_reset_candidate_same.log.
+PYTHONMALLOC=malloc ASAN_OPTIONS=detect_leaks=0 /tmp/portal-opt-pass/runtime-review/python_reset_candidate_asan observe
+  Exit 0, destructor saw replacement: yes; destroyed: 1; saved python_reset_candidate_observe.log.
+All reproduction logs are in /tmp/portal-opt-pass/runtime-review/.
+
+Persistent regressions in tests/python_backend_test.cpp cover:
+- Sole-owner borrowed self-reset with exactly one final destruction.
+- Same-pointer adopted reset with a separately owned transferred reference.
+- Old-object finalizer observes new pointer and releases the replacement's last
+  external owner; the new owning ref must already be retained.
+- Old-object finalizer performs another reset; outer reset must not overwrite it,
+  leak either intermediate object, or destroy either object twice.
+
+Final sanitized validation commands (cwd = repository):
+g++ -std=c++14 -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -I. -I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12 tests/python_backend_test.cpp -L/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib -Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib -lpython3.12 -o /tmp/portal-opt-pass/runtime-review/python_backend_test_asan_ubsan
+g++ -std=c++14 -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -I. -I/opt/codex/runtimes/codex-primary-runtime/dependencies/python/include/python3.12 tests/python_exception_test.cpp -L/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib -Wl,-rpath,/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib -lpython3.12 -o /tmp/portal-opt-pass/runtime-review/python_exception_test_asan_ubsan
+PYTHONMALLOC=malloc ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 /tmp/portal-opt-pass/runtime-review/python_backend_test_asan_ubsan
+PYTHONMALLOC=malloc ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 /tmp/portal-opt-pass/runtime-review/python_exception_test_asan_ubsan
+Both builds and both executions exited 0; no sanitizer diagnostics. The execution
+logs are python_backend_test_asan_ubsan.log and python_exception_test_asan_ubsan.log
+in the same runtime-review directory. Leak detection was disabled for the embedded
+CPython runtime; address/undefined-behavior checks remained enabled.
+
+Final shipping default after runtime performance candidate rejection
+===================================================================
+This section supersedes the earlier candidate/freeze descriptions above.
+
+Based on the root's initial paired measurements and isolated follow-ups, both
+Python performance candidates and all N-API performance candidates were removed
+from the default. Their gains did not remain dependable against unchanged controls,
+and repeated call-path regressions prevented accepting the combined trade-off.
+The confirmed Python reference reset correctness fix remains.
+
+Current production verification:
+- portal/backends/python.h is byte-identical to the isolated python-reset header.
+  SHA256 791d3b3dd71a613754d83e9b11c6dc56ef54e09867e525440facc967aad237d9
+- portal/backends/napi.h is byte-identical to the frozen baseline.
+  SHA256 ec8fcd5f4be8abfa5e506ad3f494d48483ebf83d5b8d32e0efda5761d5fc1b14
+- portal/backends/napi_converters.h is byte-identical to the frozen baseline.
+  SHA256 694d4ed071db610945b9ddb04e702480c5600f74cef0009859dbc0877464ad13
+
+Removed optimization-specific tests/counters: mandatory vectorcall offset slot
+probe, constructor callback-info budgets, typeof budgets and string API-count
+assertions. Retained: ownership/reset regressions, exact arity/keywords, bound
+method re-entry, numeric/UTF-8 boundaries, JS exception identity, zero-argument
+and external constructors, Worker lifetime checks, and actual string API failure
+injection/recovery. The string read counter only schedules those injected failures;
+it asserts no optimized call budget. Accurate N-API string status and undefined
+argument-slot fill behavior also remain in the stub.
+
+Final source edit times:
+portal/backends/python.h: 2026-11-13T15:47:23.691152Z
+portal/backends/napi.h: 2026-11-13T15:47:23.691909Z
+portal/backends/napi_converters.h: 2026-11-13T15:47:23.699133Z
+tests/python_backend_test.cpp: 2026-11-13T15:47:42.532694Z
+tests/napi_backend_test.cpp: 2026-11-13T15:47:43.968703Z
+tests/napi_stub/node_api.h: 2026-11-13T15:47:45.228710Z
+
+All five focused default regressions were rebuilt after the above edits and pass:
+1. napi_backend_default (C++14 -O1 -Wall -Wextra, stub).
+2. napi_runtime_smoke.js with rebuilt napi_runtime_default.node, --expose-gc.
+3. python_runtime_smoke.py with rebuilt portal_python_runtime_addon_default.so.
+4. napi_worker_smoke.js with rebuilt napi_runtime_default.node.
+5. python_backend_default_asan_ubsan, C++14 -O1, ASan+UBSan,
+   PYTHONMALLOC=malloc, ASAN_OPTIONS=detect_leaks=0,
+   UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1; no diagnostics.
+Exact run records/log paths:
+/tmp/portal-opt-pass/runtime-review/post-rejection-validation.json
+No timing runs were performed by this agent.
+
+All experimental runtime patches are preserved under:
+/tmp/portal-opt-pass/runtime-variants/patches
+All 10 patches pass git apply --check against the frozen baseline. This includes
+python-runtime-full.patch (reset+offset+typed) and napi-runtime-full.patch
+(constructor+converters), plus isolated candidate and test probe patches.
+Full reconstructed headers exactly match the first measured combination in
+/tmp/portal-opt-pass/measurements-final/manifest.json:
+Python f0d127fafb6de7d3bc3633c6a77c83b35c551d5f8290563f0751f23a9dad0fb0
+N-API 492606e8bd5371125f9af9d255db89bee62c2cce2c75927fd03a621aa889812e
+N-API converters 4e83d755933e8ee398596b3c039f73dc5ac73fe20deeb8aa5470825ec091acff
+patches/manifest.json records these matches, snapshots, patch hashes and checks.

@@ -1,0 +1,49 @@
+Core validation (all compile/run commands from /workspace/scratch/650ce06b9036/portal)
+
+Baseline final-token bug:
+g++ -std=c++14 -O1 -g -fsanitize=address -fno-omit-frame-pointer -pthread -I /tmp/portal-opt-pass/baseline /tmp/portal-core-probes/final_token.cpp -o /tmp/portal-core-probes/final_token_baseline
+/tmp/portal-core-probes/final_token_baseline > /tmp/portal-opt-pass/baseline-final-token-asan.log 2>&1
+Compile PASS; run exit 1, AddressSanitizer heap-use-after-free in baseline async.h:119 cleanup, after handler destroys the final stored completion token. No sanitizer environment overrides or suppressions.
+
+New lifetime/concurrency regression:
+g++ -std=c++14 -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -pthread -I . tests/async_cleanup.cpp -o /tmp/portal-core-probes/async_cleanup_asan
+/tmp/portal-core-probes/async_cleanup_asan
+Compile PASS. Initial run exits 1 at LeakSanitizer startup/exit because this container uses ptrace; diagnostic: LeakSanitizer does not work under ptrace. No address/UB defect reported before that infrastructure failure.
+ASAN_OPTIONS=detect_leaks=0 /tmp/portal-core-probes/async_cleanup_asan
+PASS (exit 0, async cleanup contracts passed); address and UB sanitizers remain enabled, no address/UB suppressions. This is not a leak-validation claim.
+
+g++ -std=c++14 -O1 -g -fsanitize=thread -fno-omit-frame-pointer -pthread -I . tests/async_cleanup.cpp -o /tmp/portal-core-probes/async_cleanup_tsan
+/tmp/portal-core-probes/async_cleanup_tsan
+PASS (exit 0, async cleanup contracts passed); no suppressions/environment overrides.
+
+Existing async contracts:
+g++ -std=c++14 -O2 -pthread -I . tests/async_contract.cpp -o /tmp/portal-core-probes/async_contract
+/tmp/portal-core-probes/async_contract
+PASS (exit 0, async contracts passed).
+
+New direct export ownership tests:
+g++ -std=c++14 -O2 -I . tests/export_ownership.cpp -o /tmp/portal-core-probes/export_ownership
+/tmp/portal-core-probes/export_ownership
+PASS (exit 0, export ownership contracts passed).
+
+Release no-exception matrix (CHECK remains active despite NDEBUG):
+g++ -std=c++14 -O2 -DNDEBUG -pthread -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=0 -I . tests/async_cleanup.cpp -o /tmp/portal-core-probes/async_cleanup_noexceptions_0
+/tmp/portal-core-probes/async_cleanup_noexceptions_0
+PASS (exit 0, async cleanup contracts passed).
+
+g++ -std=c++14 -O2 -DNDEBUG -pthread -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=1 -I . tests/async_cleanup.cpp -o /tmp/portal-core-probes/async_cleanup_noexceptions_1
+/tmp/portal-core-probes/async_cleanup_noexceptions_1
+PASS (exit 0, async cleanup contracts passed).
+
+g++ -std=c++14 -O2 -DNDEBUG -pthread -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=0 -I . tests/export_ownership.cpp -o /tmp/portal-core-probes/export_ownership_noexceptions_0
+/tmp/portal-core-probes/export_ownership_noexceptions_0
+PASS (exit 0, export ownership contracts passed).
+
+g++ -std=c++14 -O2 -DNDEBUG -pthread -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=1 -I . tests/export_ownership.cpp -o /tmp/portal-core-probes/export_ownership_noexceptions_1
+/tmp/portal-core-probes/export_ownership_noexceptions_1
+PASS (exit 0, export ownership contracts passed).
+
+Matched probe compile check (no timing runs by core agent):
+g++ -std=c++14 -O3 -DNDEBUG -pthread -I . benchmarks/optimization_pass/core_probe.cpp -o /tmp/portal-core-probes/core_candidate
+g++ -std=c++14 -O3 -DNDEBUG -pthread -I /tmp/portal-opt-pass/baseline benchmarks/optimization_pass/core_probe.cpp -o /tmp/portal-core-probes/core_baseline
+Both PASS before separate-counter-sampling amendment. Root rebuilds final same source for serialized timing. Final source measures allocations/copies on 100 untimed calls and disables all counter writes for timing.

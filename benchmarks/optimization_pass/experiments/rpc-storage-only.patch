@@ -1,0 +1,195 @@
+diff --git a/portal/backends/rpc.h b/portal/backends/rpc.h
+--- a/portal/backends/rpc.h
++++ b/portal/backends/rpc.h
+@@ -7,6 +7,7 @@
+ #include <cstdint>
+ #include <cstring>
+ #include <limits>
++#include <new>
+ #include <stdexcept>
+ #include <string>
+ #include <type_traits>
+@@ -315,6 +316,72 @@
+             struct request {
+                 std::uint64_t method = 0;
+                 std::vector<value> args;
++            };
++
++            // Each dispatch owns its arguments, including recursive dispatches.
++            // Construct only the occupied inline slots; uncommon large calls use
++            // the same owning vector as the public decoder.
++            class request_arguments {
++            public:
++                request_arguments() noexcept = default;
++                request_arguments(const request_arguments&) = delete;
++                request_arguments& operator=(const request_arguments&) = delete;
++
++                ~request_arguments() {
++                    for (std::size_t i = 0; i < inline_size_; ++i) {
++                        inline_value(i).~value();
++                    }
++                }
++
++                void reserve(std::size_t count) {
++                    if (count > inline_capacity) {
++                        heap_.reserve(count);
++                        use_heap_ = true;
++                    }
++                }
++
++                void emplace_back(value&& input) {
++                    if (use_heap_) {
++                        heap_.emplace_back(std::move(input));
++                    } else {
++                        new (&inline_[inline_size_]) value(std::move(input));
++                        ++inline_size_;
++                    }
++                }
++
++                std::size_t size() const noexcept {
++                    return use_heap_ ? heap_.size() : inline_size_;
++                }
++
++                value& operator[](std::size_t index) noexcept {
++                    return use_heap_ ? heap_[index] : inline_value(index);
++                }
++
++                // Custom binders retain their exact vector/accessor API and
++                // owning inputs. Only library binders use inline storage.
++                std::vector<value>& legacy_vector() {
++                    if (!use_heap_) {
++                        heap_.reserve(inline_size_);
++                        for (std::size_t i = 0; i < inline_size_; ++i) {
++                            heap_.emplace_back(std::move(inline_value(i)));
++                        }
++                        use_heap_ = true;
++                    }
++                    return heap_;
++                }
++
++            private:
++                static constexpr std::size_t inline_capacity = 4;
++                using slot = typename std::aligned_storage<sizeof(value), alignof(value)>::type;
++
++                value& inline_value(std::size_t index) noexcept {
++                    return *reinterpret_cast<value*>(&inline_[index]);
++                }
++
++                slot inline_[inline_capacity];
++                std::vector<value> heap_;
++                std::size_t inline_size_ = 0;
++                bool use_heap_ = false;
+             };
+
+             inline bytes encode_request(std::uint64_t method, const std::vector<value>& args) {
+@@ -354,21 +421,25 @@
+
+             // Malformed input is an ordinary result, independent of C++ exceptions.
+             // General allocation failure follows the program's allocator policy.
+-            inline bool try_decode_request(const bytes& frame, request& result) {
++            template <typename Arguments>
++            bool decode_request_into(const bytes& frame, std::uint64_t& method, Arguments& args) {
+                 reader input(frame);
+                 if (input.integer<std::uint32_t>() != request_magic
+                     || input.integer<std::uint8_t>() != protocol_version) return false;
+-                request staged;
+-                staged.method = input.integer<std::uint64_t>();
++                method = input.integer<std::uint64_t>();
+                 const auto argc = input.integer<std::uint32_t>();
+                 if (!input.valid() || argc > input.remaining()) return false;
+-                staged.args.reserve(argc);
++                args.reserve(argc);
+                 for (std::uint32_t i = 0; i < argc; ++i) {
+                     auto item = decode_value(input);
+                     if (!input.valid()) return false;
+-                    staged.args.emplace_back(std::move(item));
+-                }
+-                if (!input.valid() || !input.empty()) return false;
++                    args.emplace_back(std::move(item));
++                }
++                return input.valid() && input.empty();
++            }
++            inline bool try_decode_request(const bytes& frame, request& result) {
++                request staged;
++                if (!decode_request_into(frame, staged.method, staged.args)) return false;
+                 result = std::move(staged);
+                 return true;
+             }
+@@ -464,6 +535,14 @@
+                 template <std::size_t I>
+                 value& get() const { return (*args)[I]; }
+             };
++
++            struct consuming_request_accessor {
++                constexpr static std::size_t static_arity = dynamic_arity;
++                request_arguments* args = nullptr;
++
++                template <std::size_t I>
++                value& get() const { return (*args)[I]; }
++            };
+         }
+
+         // CONTRACT (thread safety): the router is not synchronized.
+@@ -513,28 +592,28 @@
+                 std::uint64_t id() const noexcept { return id_; }
+                 const std::string& name() const noexcept { return name_; }
+
+-                optional<value> invoke(std::vector<value>& args) {
++                optional<value> invoke(detail::request_arguments& args) {
+                     return invoke_(state_, args);
+                 }
+
+             private:
+                 template <typename Binder>
+-                static optional<value> invoke_binder(void* state, std::vector<value>& args) {
++                static optional<value> invoke_binder(void* state, detail::request_arguments& args) {
+                     return invoke_binder_impl(
+                         *static_cast<Binder*>(state), args,
+                         is_transactional_export_binder<Binder>{});
+                 }
+
+                 template <typename Binder>
+-                static optional<value> invoke_binder_impl(Binder& binder, std::vector<value>& args,
++                static optional<value> invoke_binder_impl(Binder& binder, detail::request_arguments& args,
+                     std::true_type) {
+-                    return binder.dispatch_optional(args.size(), detail::consuming_vector_accessor{&args});
++                    return binder.dispatch_optional(args.size(), detail::consuming_request_accessor{&args});
+                 }
+
+                 template <typename Binder>
+-                static optional<value> invoke_binder_impl(Binder& binder, std::vector<value>& args,
++                static optional<value> invoke_binder_impl(Binder& binder, detail::request_arguments& args,
+                     std::false_type) {
+-                    return invoke_legacy_binder(binder, args, is_export_overload_binder<Binder>{});
++                    return invoke_legacy_binder(binder, args.legacy_vector(), is_export_overload_binder<Binder>{});
+                 }
+
+                 template <typename Binder>
+@@ -575,7 +654,7 @@
+                 std::uint64_t id_ = 0;
+                 std::string name_;
+                 void* state_ = nullptr;
+-                optional<value> (*invoke_)(void*, std::vector<value>&) = nullptr;
++                optional<value> (*invoke_)(void*, detail::request_arguments&) = nullptr;
+                 void (*destroy_)(void*) = nullptr;
+             };
+
+@@ -602,12 +681,13 @@
+ #if PORTAL_HAS_EXCEPTIONS
+                 try {
+ #endif
+-                    detail::request request;
+-                    if(!detail::try_decode_request(frame,request)) return detail::encode_error("invalid RPC request frame");
+-                    const auto candidate=std::lower_bound(routes_.begin(),routes_.end(),request.method,
++                    std::uint64_t method = 0;
++                    detail::request_arguments args;
++                    if(!detail::decode_request_into(frame,method,args)) return detail::encode_error("invalid RPC request frame");
++                    const auto candidate=std::lower_bound(routes_.begin(),routes_.end(),method,
+                         [](const route& entry,std::uint64_t value) {return entry.id()<value;});
+-                    if(candidate==routes_.end() || candidate->id()!=request.method) return detail::encode_error("unknown RPC method");
+-                    auto result=candidate->invoke(request.args);
++                    if(candidate==routes_.end() || candidate->id()!=method) return detail::encode_error("unknown RPC method");
++                    auto result=candidate->invoke(args);
+                     if(!result) return detail::encode_error("RPC argument conversion or arity mismatch");
+                     return detail::encode_response(*result);
+ #if PORTAL_HAS_EXCEPTIONS

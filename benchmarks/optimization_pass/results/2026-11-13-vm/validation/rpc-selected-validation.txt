@@ -1,0 +1,397 @@
+Selected final RPC implementation: wider-integer batching plus 1-byte push_back; all inline argument-storage experiments removed.
+No timed runs.
+c++ -std=c++14 -O3 -DNDEBUG -pthread -Wall -Wextra -I/tmp/portal-opt-pass/rpc-variants/writer-byte-only -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/rpc_probe.cpp -o /tmp/portal-opt-pass/rpc-variants/binaries/writer-byte-only
+In file included from /tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/export_core.h:9,
+                 from /tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/export_generate.h:2,
+                 from /tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/export.h:1,
+                 from /tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/portal.h:2,
+                 from /workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/rpc_probe.cpp:3:
+/tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/export_callable.h: In instantiation of ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_candidate<portal::callable<portal::no_receiver_t, R(Args ...)>, Context, Callable>::call_impl(Context&, Callable&, Accessor, portal::export_arguments_plan<Context, Args ...>&, std::index_sequence<Indices ...>) [with R_ = int; Accessor = portal::rpc::detail::consuming_vector_accessor; std::enable_if_t<((bool)(! is_void_v<R_>))>* <anonymous> = 0; long unsigned int ...Indices = {}; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); R = int; Args = {}; typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; portal::export_arguments_plan<Context, Args ...> = portal::selected_export_arguments_plan<portal::rpc_backend::export_context_t, portal::type_list<>, true>; std::index_sequence<Indices ...> = std::integer_sequence<long unsigned int>]’:
+/tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/export_callable.h:704:32:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_candidate<portal::callable<portal::no_receiver_t, R(Args ...)>, Context, Callable>::call_optional(Context&, Callable&, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); R = int; Args = {}; typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend]’
+  704 |             return call_impl<R>(ctx, callable, accessor, plan, std::index_sequence_for<Args...>{});
+      |                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/export_callable.h:799:96:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_dispatch<portal::type_list<T, Ts ...>, Context, Callable>::call_impl(Context&, Callable&, std::size_t, Accessor, std::false_type, std::true_type) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Head = portal::callable<portal::no_receiver_t, int()>; Tail = {}; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int; std::false_type = std::false_type; std::true_type = std::true_type]’
+  799 |                 auto result = export_overload_candidate<Head, Context, Callable>::call_optional(
+      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+  800 |                     ctx, callable, accessor);
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/export_callable.h:776:29:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_dispatch<portal::type_list<T, Ts ...>, Context, Callable>::call_optional(Context&, Callable&, std::size_t, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Head = portal::callable<portal::no_receiver_t, int()>; Tail = {}; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int]’
+  776 |             return call_impl(
+      |                    ~~~~~~~~~^
+  777 |                 ctx,
+      |                 ~~~~
+  778 |                 callable,
+      |                 ~~~~~~~~~
+  779 |                 argc,
+      |                 ~~~~~
+  780 |                 accessor,
+      |                 ~~~~~~~~~
+  781 |                 typename is_unmatched_free_callable<Head>::type{},
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  782 |                 std::integral_constant<
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~
+  783 |                     bool,
+      |                     ~~~~~
+  784 |                     Accessor::static_arity == dynamic_arity
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  785 |                         || Accessor::static_arity >= callable_arity<Head>::value>{});
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/export_callable.h:1181:116:   required from ‘portal::optional<typename Context::backend_t::dynamic_value_t> portal::export_callable_binder<R(Args ...), Context, Callable>::dispatch_optional(std::size_t, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); R = int; Args = {}; typename Context::backend_t::dynamic_value_t = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int]’
+ 1181 |             return export_overload_dispatch<type_list<free_callable<R(Args...)>>, Context, Callable>::call_optional(
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+ 1182 |                 *ctx_, callable_, argc, accessor);
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/backends/rpc.h:537:52:   required from ‘static portal::optional<portal::rpc::value> portal::rpc::router::route::invoke_binder_impl(Binder&, std::vector<portal::rpc::value>&, std::true_type) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>; std::true_type = std::true_type]’
+  537 |                     return binder.dispatch_optional(args.size(), detail::consuming_vector_accessor{&args});
+      |                            ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/backends/rpc.h:529:46:   required from ‘static portal::optional<portal::rpc::value> portal::rpc::router::route::invoke_binder(void*, std::vector<portal::rpc::value>&) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>]’
+  529 |                     return invoke_binder_impl(
+      |                            ~~~~~~~~~~~~~~~~~~^
+  530 |                         *static_cast<Binder*>(state), args,
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  531 |                         is_transactional_export_binder<Binder>{});
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/backends/rpc.h:514:38:   required from ‘static portal::rpc::router::route portal::rpc::router::route::make(uint64_t, std::string, Binder) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>; uint64_t = long unsigned int; std::string = std::__cxx11::basic_string<char>]’
+  514 |                     result.invoke_ = &invoke_binder<Binder>;
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~
+/tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/backends/rpc.h:601:44:   required from ‘void portal::rpc::router::define(const char*, Binder) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>]’
+  601 |                     *existing = route::make(id, name, std::move(binder));
+      |                                 ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/rpc_probe.cpp:106:18:   required from ‘void {anonymous}::measure_scalar(std::size_t, bool) [with long unsigned int Count = 0; std::size_t = long unsigned int]’
+  106 |     router.define("sum", portal::create_export_callable_binder<typename test::signature>(export_context, &test::sum));
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/benchmarks/optimization_pass/rpc_probe.cpp:146:22:   required from here
+  146 |     measure_scalar<0>(iterations, timings);
+      |     ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+/tmp/portal-opt-pass/rpc-variants/writer-byte-only/portal/export_callable.h:713:22: warning: parameter ‘accessor’ set but not used [-Wunused-but-set-parameter]
+  713 |             Accessor accessor,
+      |             ~~~~~~~~~^~~~~~~~
+Exit status: 0
+
+/tmp/portal-opt-pass/rpc-variants/binaries/writer-byte-only --allocations-only
+case,iterations,ns_per_call,allocations_per_call,allocated_bytes_per_call,checksum,allocation_checksum,warmup_checksum
+scalar_0,0,0.000,2.00,33.00,0,0,0
+scalar_1,0,0.000,3.00,114.00,0,4950,261120
+scalar_2,0,0.000,3.00,195.00,0,10000,524288
+scalar_4,0,0.000,3.00,357.00,0,20400,1056768
+scalar_5,0,0.000,3.00,438.00,0,25750,1326080
+scalar_8,0,0.000,3.00,681.00,0,42400,2146304
+string_16,0,0.000,5.00,172.00,0,23500,481280
+string_1024,0,0.000,5.00,4204.00,0,124300,2545664
+string_65536,0,0.000,5.00,262252.00,0,6575500,134666240
+Exit status: 0
+
+c++ -std=c++14 -O3 -DNDEBUG -pthread -Wall -Wextra -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/tests/rpc_backend_test.cpp -o /tmp/portal-opt-pass/rpc-variants/binaries/rpc_backend_test-selected-normal
+Exit status: 0
+/tmp/portal-opt-pass/rpc-variants/binaries/rpc_backend_test-selected-normal
+Exit status: 0
+
+c++ -std=c++14 -O3 -DNDEBUG -pthread -Wall -Wextra -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/tests/rpc_checked_test.cpp -o /tmp/portal-opt-pass/rpc-variants/binaries/rpc_checked_test-selected-normal
+In file included from /workspace/scratch/650ce06b9036/portal/portal/export_core.h:9,
+                 from /workspace/scratch/650ce06b9036/portal/portal/export_generate.h:2,
+                 from /workspace/scratch/650ce06b9036/portal/portal/export.h:1,
+                 from /workspace/scratch/650ce06b9036/portal/portal/portal.h:2,
+                 from /workspace/scratch/650ce06b9036/portal/tests/rpc_checked_test.cpp:1:
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h: In instantiation of ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_candidate<portal::callable<portal::no_receiver_t, R(Args ...)>, Context, Callable>::call_impl(Context&, Callable&, Accessor, portal::export_arguments_plan<Context, Args ...>&, std::index_sequence<Indices ...>) [with R_ = int; Accessor = portal::rpc::detail::consuming_vector_accessor; std::enable_if_t<((bool)(! is_void_v<R_>))>* <anonymous> = 0; long unsigned int ...Indices = {}; Context = portal::rpc_backend::export_context_t; Callable = main()::<lambda()>; R = int; Args = {}; typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; portal::export_arguments_plan<Context, Args ...> = portal::selected_export_arguments_plan<portal::rpc_backend::export_context_t, portal::type_list<>, true>; std::index_sequence<Indices ...> = std::integer_sequence<long unsigned int>]’:
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:704:32:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_candidate<portal::callable<portal::no_receiver_t, R(Args ...)>, Context, Callable>::call_optional(Context&, Callable&, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Context = portal::rpc_backend::export_context_t; Callable = main()::<lambda()>; R = int; Args = {}; typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend]’
+  704 |             return call_impl<R>(ctx, callable, accessor, plan, std::index_sequence_for<Args...>{});
+      |                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:799:96:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_dispatch<portal::type_list<T, Ts ...>, Context, Callable>::call_impl(Context&, Callable&, std::size_t, Accessor, std::false_type, std::true_type) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Head = portal::callable<portal::no_receiver_t, int()>; Tail = {}; Context = portal::rpc_backend::export_context_t; Callable = main()::<lambda()>; typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int; std::false_type = std::false_type; std::true_type = std::true_type]’
+  799 |                 auto result = export_overload_candidate<Head, Context, Callable>::call_optional(
+      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+  800 |                     ctx, callable, accessor);
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:776:29:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_dispatch<portal::type_list<T, Ts ...>, Context, Callable>::call_optional(Context&, Callable&, std::size_t, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Head = portal::callable<portal::no_receiver_t, int()>; Tail = {}; Context = portal::rpc_backend::export_context_t; Callable = main()::<lambda()>; typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int]’
+  776 |             return call_impl(
+      |                    ~~~~~~~~~^
+  777 |                 ctx,
+      |                 ~~~~
+  778 |                 callable,
+      |                 ~~~~~~~~~
+  779 |                 argc,
+      |                 ~~~~~
+  780 |                 accessor,
+      |                 ~~~~~~~~~
+  781 |                 typename is_unmatched_free_callable<Head>::type{},
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  782 |                 std::integral_constant<
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~
+  783 |                     bool,
+      |                     ~~~~~
+  784 |                     Accessor::static_arity == dynamic_arity
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  785 |                         || Accessor::static_arity >= callable_arity<Head>::value>{});
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:1181:116:   required from ‘portal::optional<typename Context::backend_t::dynamic_value_t> portal::export_callable_binder<R(Args ...), Context, Callable>::dispatch_optional(std::size_t, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Context = portal::rpc_backend::export_context_t; Callable = main()::<lambda()>; R = int; Args = {}; typename Context::backend_t::dynamic_value_t = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int]’
+ 1181 |             return export_overload_dispatch<type_list<free_callable<R(Args...)>>, Context, Callable>::call_optional(
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+ 1182 |                 *ctx_, callable_, argc, accessor);
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:537:52:   required from ‘static portal::optional<portal::rpc::value> portal::rpc::router::route::invoke_binder_impl(Binder&, std::vector<portal::rpc::value>&, std::true_type) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, main()::<lambda()> >; std::true_type = std::true_type]’
+  537 |                     return binder.dispatch_optional(args.size(), detail::consuming_vector_accessor{&args});
+      |                            ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:529:46:   required from ‘static portal::optional<portal::rpc::value> portal::rpc::router::route::invoke_binder(void*, std::vector<portal::rpc::value>&) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, main()::<lambda()> >]’
+  529 |                     return invoke_binder_impl(
+      |                            ~~~~~~~~~~~~~~~~~~^
+  530 |                         *static_cast<Binder*>(state), args,
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  531 |                         is_transactional_export_binder<Binder>{});
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:514:38:   required from ‘static portal::rpc::router::route portal::rpc::router::route::make(uint64_t, std::string, Binder) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, main()::<lambda()> >; uint64_t = long unsigned int; std::string = std::__cxx11::basic_string<char>]’
+  514 |                     result.invoke_ = &invoke_binder<Binder>;
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:601:44:   required from ‘void portal::rpc::router::define(const char*, Binder) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, main()::<lambda()> >]’
+  601 |                     *existing = route::make(id, name, std::move(binder));
+      |                                 ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/tests/rpc_checked_test.cpp:127:18:   required from here
+  127 |     router.define("runtime_failure",portal::create_export_callable_binder<int()>(context,
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  128 |         []() -> int { throw std::runtime_error("runtime failure, not a conversion mismatch"); }));
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:713:22: warning: parameter ‘accessor’ set but not used [-Wunused-but-set-parameter]
+  713 |             Accessor accessor,
+      |             ~~~~~~~~~^~~~~~~~
+Exit status: 0
+/tmp/portal-opt-pass/rpc-variants/binaries/rpc_checked_test-selected-normal
+Exit status: 0
+
+c++ -std=c++14 -O3 -DNDEBUG -pthread -Wall -Wextra -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/tests/rpc_probe_test.cpp -o /tmp/portal-opt-pass/rpc-variants/binaries/rpc_probe_test-selected-normal
+Exit status: 0
+/tmp/portal-opt-pass/rpc-variants/binaries/rpc_probe_test-selected-normal
+RPC-only probe contract tests passed
+Exit status: 0
+
+c++ -std=c++14 -O3 -DNDEBUG -pthread -Wall -Wextra -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp -o /tmp/portal-opt-pass/rpc-variants/binaries/rpc_storage_test-selected-normal
+In file included from /workspace/scratch/650ce06b9036/portal/portal/export_core.h:9,
+                 from /workspace/scratch/650ce06b9036/portal/portal/export_generate.h:2,
+                 from /workspace/scratch/650ce06b9036/portal/portal/export.h:1,
+                 from /workspace/scratch/650ce06b9036/portal/portal/portal.h:2,
+                 from /workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp:1:
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h: In instantiation of ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_candidate<portal::callable<portal::no_receiver_t, R(Args ...)>, Context, Callable>::call_impl(Context&, Callable&, Accessor, portal::export_arguments_plan<Context, Args ...>&, std::index_sequence<Indices ...>) [with R_ = int; Accessor = portal::rpc::detail::consuming_vector_accessor; std::enable_if_t<((bool)(! is_void_v<R_>))>* <anonymous> = 0; long unsigned int ...Indices = {}; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); R = int; Args = {}; typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; portal::export_arguments_plan<Context, Args ...> = portal::selected_export_arguments_plan<portal::rpc_backend::export_context_t, portal::type_list<>, true>; std::index_sequence<Indices ...> = std::integer_sequence<long unsigned int>]’:
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:704:32:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_candidate<portal::callable<portal::no_receiver_t, R(Args ...)>, Context, Callable>::call_optional(Context&, Callable&, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); R = int; Args = {}; typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend]’
+  704 |             return call_impl<R>(ctx, callable, accessor, plan, std::index_sequence_for<Args...>{});
+      |                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:799:96:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_dispatch<portal::type_list<T, Ts ...>, Context, Callable>::call_impl(Context&, Callable&, std::size_t, Accessor, std::false_type, std::true_type) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Head = portal::callable<portal::no_receiver_t, int()>; Tail = {}; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int; std::false_type = std::false_type; std::true_type = std::true_type]’
+  799 |                 auto result = export_overload_candidate<Head, Context, Callable>::call_optional(
+      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+  800 |                     ctx, callable, accessor);
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:776:29:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_dispatch<portal::type_list<T, Ts ...>, Context, Callable>::call_optional(Context&, Callable&, std::size_t, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Head = portal::callable<portal::no_receiver_t, int()>; Tail = {}; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int]’
+  776 |             return call_impl(
+      |                    ~~~~~~~~~^
+  777 |                 ctx,
+      |                 ~~~~
+  778 |                 callable,
+      |                 ~~~~~~~~~
+  779 |                 argc,
+      |                 ~~~~~
+  780 |                 accessor,
+      |                 ~~~~~~~~~
+  781 |                 typename is_unmatched_free_callable<Head>::type{},
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  782 |                 std::integral_constant<
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~
+  783 |                     bool,
+      |                     ~~~~~
+  784 |                     Accessor::static_arity == dynamic_arity
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  785 |                         || Accessor::static_arity >= callable_arity<Head>::value>{});
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:1181:116:   required from ‘portal::optional<typename Context::backend_t::dynamic_value_t> portal::export_callable_binder<R(Args ...), Context, Callable>::dispatch_optional(std::size_t, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); R = int; Args = {}; typename Context::backend_t::dynamic_value_t = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int]’
+ 1181 |             return export_overload_dispatch<type_list<free_callable<R(Args...)>>, Context, Callable>::call_optional(
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+ 1182 |                 *ctx_, callable_, argc, accessor);
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:537:52:   required from ‘static portal::optional<portal::rpc::value> portal::rpc::router::route::invoke_binder_impl(Binder&, std::vector<portal::rpc::value>&, std::true_type) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>; std::true_type = std::true_type]’
+  537 |                     return binder.dispatch_optional(args.size(), detail::consuming_vector_accessor{&args});
+      |                            ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:529:46:   required from ‘static portal::optional<portal::rpc::value> portal::rpc::router::route::invoke_binder(void*, std::vector<portal::rpc::value>&) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>]’
+  529 |                     return invoke_binder_impl(
+      |                            ~~~~~~~~~~~~~~~~~~^
+  530 |                         *static_cast<Binder*>(state), args,
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  531 |                         is_transactional_export_binder<Binder>{});
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:514:38:   required from ‘static portal::rpc::router::route portal::rpc::router::route::make(uint64_t, std::string, Binder) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>; uint64_t = long unsigned int; std::string = std::__cxx11::basic_string<char>]’
+  514 |                     result.invoke_ = &invoke_binder<Binder>;
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:601:44:   required from ‘void portal::rpc::router::define(const char*, Binder) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>]’
+  601 |                     *existing = route::make(id, name, std::move(binder));
+      |                                 ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp:37:18:   required from ‘void {anonymous}::define_sum(portal::rpc::router&, context&) [with long unsigned int Count = 0; context = portal::rpc_backend::export_context_t]’
+   37 |     router.define(name.c_str(), portal::create_export_callable_binder<typename sum::signature>(ctx, &sum::call));
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp:78:18:   required from here
+   78 |     define_sum<0>(router, ctx);
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:713:22: warning: parameter ‘accessor’ set but not used [-Wunused-but-set-parameter]
+  713 |             Accessor accessor,
+      |             ~~~~~~~~~^~~~~~~~
+Exit status: 0
+/tmp/portal-opt-pass/rpc-variants/binaries/rpc_storage_test-selected-normal
+RPC owning argument, legacy, nested and concurrent tests passed
+Exit status: 0
+
+c++ -std=c++14 -O3 -DNDEBUG -pthread -Wall -Wextra -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=0 -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/tests/rpc_checked_test.cpp -o /tmp/portal-opt-pass/rpc-variants/binaries/rpc_checked_test-selected-strict0
+Exit status: 0
+/tmp/portal-opt-pass/rpc-variants/binaries/rpc_checked_test-selected-strict0
+Exit status: 0
+
+c++ -std=c++14 -O3 -DNDEBUG -pthread -Wall -Wextra -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=0 -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/tests/rpc_probe_test.cpp -o /tmp/portal-opt-pass/rpc-variants/binaries/rpc_probe_test-selected-strict0
+Exit status: 0
+/tmp/portal-opt-pass/rpc-variants/binaries/rpc_probe_test-selected-strict0
+RPC-only probe contract tests passed
+Exit status: 0
+
+c++ -std=c++14 -O3 -DNDEBUG -pthread -Wall -Wextra -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=0 -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp -o /tmp/portal-opt-pass/rpc-variants/binaries/rpc_storage_test-selected-strict0
+In file included from /workspace/scratch/650ce06b9036/portal/portal/export_core.h:9,
+                 from /workspace/scratch/650ce06b9036/portal/portal/export_generate.h:2,
+                 from /workspace/scratch/650ce06b9036/portal/portal/export.h:1,
+                 from /workspace/scratch/650ce06b9036/portal/portal/portal.h:2,
+                 from /workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp:1:
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h: In instantiation of ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_candidate<portal::callable<portal::no_receiver_t, R(Args ...)>, Context, Callable>::call_impl(Context&, Callable&, Accessor, portal::export_arguments_plan<Context, Args ...>&, std::index_sequence<Indices ...>) [with R_ = int; Accessor = portal::rpc::detail::consuming_vector_accessor; std::enable_if_t<((bool)(! is_void_v<R_>))>* <anonymous> = 0; long unsigned int ...Indices = {}; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); R = int; Args = {}; typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; portal::export_arguments_plan<Context, Args ...> = portal::selected_export_arguments_plan<portal::rpc_backend::export_context_t, portal::type_list<>, true>; std::index_sequence<Indices ...> = std::integer_sequence<long unsigned int>]’:
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:704:32:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_candidate<portal::callable<portal::no_receiver_t, R(Args ...)>, Context, Callable>::call_optional(Context&, Callable&, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); R = int; Args = {}; typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend]’
+  704 |             return call_impl<R>(ctx, callable, accessor, plan, std::index_sequence_for<Args...>{});
+      |                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:799:96:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_dispatch<portal::type_list<T, Ts ...>, Context, Callable>::call_impl(Context&, Callable&, std::size_t, Accessor, std::false_type, std::true_type) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Head = portal::callable<portal::no_receiver_t, int()>; Tail = {}; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int; std::false_type = std::false_type; std::true_type = std::true_type]’
+  799 |                 auto result = export_overload_candidate<Head, Context, Callable>::call_optional(
+      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+  800 |                     ctx, callable, accessor);
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:776:29:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_dispatch<portal::type_list<T, Ts ...>, Context, Callable>::call_optional(Context&, Callable&, std::size_t, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Head = portal::callable<portal::no_receiver_t, int()>; Tail = {}; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int]’
+  776 |             return call_impl(
+      |                    ~~~~~~~~~^
+  777 |                 ctx,
+      |                 ~~~~
+  778 |                 callable,
+      |                 ~~~~~~~~~
+  779 |                 argc,
+      |                 ~~~~~
+  780 |                 accessor,
+      |                 ~~~~~~~~~
+  781 |                 typename is_unmatched_free_callable<Head>::type{},
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  782 |                 std::integral_constant<
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~
+  783 |                     bool,
+      |                     ~~~~~
+  784 |                     Accessor::static_arity == dynamic_arity
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  785 |                         || Accessor::static_arity >= callable_arity<Head>::value>{});
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:1181:116:   required from ‘portal::optional<typename Context::backend_t::dynamic_value_t> portal::export_callable_binder<R(Args ...), Context, Callable>::dispatch_optional(std::size_t, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); R = int; Args = {}; typename Context::backend_t::dynamic_value_t = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int]’
+ 1181 |             return export_overload_dispatch<type_list<free_callable<R(Args...)>>, Context, Callable>::call_optional(
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+ 1182 |                 *ctx_, callable_, argc, accessor);
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:537:52:   required from ‘static portal::optional<portal::rpc::value> portal::rpc::router::route::invoke_binder_impl(Binder&, std::vector<portal::rpc::value>&, std::true_type) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>; std::true_type = std::true_type]’
+  537 |                     return binder.dispatch_optional(args.size(), detail::consuming_vector_accessor{&args});
+      |                            ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:529:46:   required from ‘static portal::optional<portal::rpc::value> portal::rpc::router::route::invoke_binder(void*, std::vector<portal::rpc::value>&) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>]’
+  529 |                     return invoke_binder_impl(
+      |                            ~~~~~~~~~~~~~~~~~~^
+  530 |                         *static_cast<Binder*>(state), args,
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  531 |                         is_transactional_export_binder<Binder>{});
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:514:38:   required from ‘static portal::rpc::router::route portal::rpc::router::route::make(uint64_t, std::string, Binder) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>; uint64_t = long unsigned int; std::string = std::__cxx11::basic_string<char>]’
+  514 |                     result.invoke_ = &invoke_binder<Binder>;
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:601:44:   required from ‘void portal::rpc::router::define(const char*, Binder) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>]’
+  601 |                     *existing = route::make(id, name, std::move(binder));
+      |                                 ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp:37:18:   required from ‘void {anonymous}::define_sum(portal::rpc::router&, context&) [with long unsigned int Count = 0; context = portal::rpc_backend::export_context_t]’
+   37 |     router.define(name.c_str(), portal::create_export_callable_binder<typename sum::signature>(ctx, &sum::call));
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp:78:18:   required from here
+   78 |     define_sum<0>(router, ctx);
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:713:22: warning: parameter ‘accessor’ set but not used [-Wunused-but-set-parameter]
+  713 |             Accessor accessor,
+      |             ~~~~~~~~~^~~~~~~~
+Exit status: 0
+/tmp/portal-opt-pass/rpc-variants/binaries/rpc_storage_test-selected-strict0
+RPC owning argument, legacy, nested and concurrent tests passed
+Exit status: 0
+
+c++ -std=c++14 -O3 -DNDEBUG -pthread -Wall -Wextra -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=1 -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/tests/rpc_checked_test.cpp -o /tmp/portal-opt-pass/rpc-variants/binaries/rpc_checked_test-selected-strict1
+Exit status: 0
+/tmp/portal-opt-pass/rpc-variants/binaries/rpc_checked_test-selected-strict1
+Exit status: 0
+
+c++ -std=c++14 -O3 -DNDEBUG -pthread -Wall -Wextra -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=1 -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/tests/rpc_probe_test.cpp -o /tmp/portal-opt-pass/rpc-variants/binaries/rpc_probe_test-selected-strict1
+Exit status: 0
+/tmp/portal-opt-pass/rpc-variants/binaries/rpc_probe_test-selected-strict1
+RPC-only probe contract tests passed
+Exit status: 0
+
+c++ -std=c++14 -O3 -DNDEBUG -pthread -Wall -Wextra -fno-exceptions -DPORTAL_NO_EXCEPTION_STRICT=1 -I/workspace/scratch/650ce06b9036/portal /workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp -o /tmp/portal-opt-pass/rpc-variants/binaries/rpc_storage_test-selected-strict1
+In file included from /workspace/scratch/650ce06b9036/portal/portal/export_core.h:9,
+                 from /workspace/scratch/650ce06b9036/portal/portal/export_generate.h:2,
+                 from /workspace/scratch/650ce06b9036/portal/portal/export.h:1,
+                 from /workspace/scratch/650ce06b9036/portal/portal/portal.h:2,
+                 from /workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp:1:
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h: In instantiation of ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_candidate<portal::callable<portal::no_receiver_t, R(Args ...)>, Context, Callable>::call_impl(Context&, Callable&, Accessor, portal::export_arguments_plan<Context, Args ...>&, std::index_sequence<Indices ...>) [with R_ = int; Accessor = portal::rpc::detail::consuming_vector_accessor; std::enable_if_t<((bool)(! is_void_v<R_>))>* <anonymous> = 0; long unsigned int ...Indices = {}; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); R = int; Args = {}; typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; portal::export_arguments_plan<Context, Args ...> = portal::selected_export_arguments_plan<portal::rpc_backend::export_context_t, portal::type_list<>, true>; std::index_sequence<Indices ...> = std::integer_sequence<long unsigned int>]’:
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:704:32:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_candidate<portal::callable<portal::no_receiver_t, R(Args ...)>, Context, Callable>::call_optional(Context&, Callable&, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); R = int; Args = {}; typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend]’
+  704 |             return call_impl<R>(ctx, callable, accessor, plan, std::index_sequence_for<Args...>{});
+      |                    ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:799:96:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_dispatch<portal::type_list<T, Ts ...>, Context, Callable>::call_impl(Context&, Callable&, std::size_t, Accessor, std::false_type, std::true_type) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Head = portal::callable<portal::no_receiver_t, int()>; Tail = {}; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int; std::false_type = std::false_type; std::true_type = std::true_type]’
+  799 |                 auto result = export_overload_candidate<Head, Context, Callable>::call_optional(
+      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+  800 |                     ctx, callable, accessor);
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:776:29:   required from ‘static portal::optional<typename portal::backend_dynamic_value<typename Context::backend_t, void>::type> portal::export_overload_dispatch<portal::type_list<T, Ts ...>, Context, Callable>::call_optional(Context&, Callable&, std::size_t, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Head = portal::callable<portal::no_receiver_t, int()>; Tail = {}; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); typename portal::backend_dynamic_value<typename Context::backend_t, void>::type = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int]’
+  776 |             return call_impl(
+      |                    ~~~~~~~~~^
+  777 |                 ctx,
+      |                 ~~~~
+  778 |                 callable,
+      |                 ~~~~~~~~~
+  779 |                 argc,
+      |                 ~~~~~
+  780 |                 accessor,
+      |                 ~~~~~~~~~
+  781 |                 typename is_unmatched_free_callable<Head>::type{},
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  782 |                 std::integral_constant<
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~
+  783 |                     bool,
+      |                     ~~~~~
+  784 |                     Accessor::static_arity == dynamic_arity
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  785 |                         || Accessor::static_arity >= callable_arity<Head>::value>{});
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:1181:116:   required from ‘portal::optional<typename Context::backend_t::dynamic_value_t> portal::export_callable_binder<R(Args ...), Context, Callable>::dispatch_optional(std::size_t, Accessor) [with Accessor = portal::rpc::detail::consuming_vector_accessor; Context = portal::rpc_backend::export_context_t; Callable = int (*)(); R = int; Args = {}; typename Context::backend_t::dynamic_value_t = portal::rpc::value; typename Context::backend_t = portal::rpc_backend; std::size_t = long unsigned int]’
+ 1181 |             return export_overload_dispatch<type_list<free_callable<R(Args...)>>, Context, Callable>::call_optional(
+      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+ 1182 |                 *ctx_, callable_, argc, accessor);
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:537:52:   required from ‘static portal::optional<portal::rpc::value> portal::rpc::router::route::invoke_binder_impl(Binder&, std::vector<portal::rpc::value>&, std::true_type) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>; std::true_type = std::true_type]’
+  537 |                     return binder.dispatch_optional(args.size(), detail::consuming_vector_accessor{&args});
+      |                            ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:529:46:   required from ‘static portal::optional<portal::rpc::value> portal::rpc::router::route::invoke_binder(void*, std::vector<portal::rpc::value>&) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>]’
+  529 |                     return invoke_binder_impl(
+      |                            ~~~~~~~~~~~~~~~~~~^
+  530 |                         *static_cast<Binder*>(state), args,
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  531 |                         is_transactional_export_binder<Binder>{});
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:514:38:   required from ‘static portal::rpc::router::route portal::rpc::router::route::make(uint64_t, std::string, Binder) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>; uint64_t = long unsigned int; std::string = std::__cxx11::basic_string<char>]’
+  514 |                     result.invoke_ = &invoke_binder<Binder>;
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/backends/rpc.h:601:44:   required from ‘void portal::rpc::router::define(const char*, Binder) [with Binder = portal::export_callable_binder<int(), portal::rpc_backend::export_context_t, int (*)()>]’
+  601 |                     *existing = route::make(id, name, std::move(binder));
+      |                                 ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp:37:18:   required from ‘void {anonymous}::define_sum(portal::rpc::router&, context&) [with long unsigned int Count = 0; context = portal::rpc_backend::export_context_t]’
+   37 |     router.define(name.c_str(), portal::create_export_callable_binder<typename sum::signature>(ctx, &sum::call));
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/tests/rpc_storage_test.cpp:78:18:   required from here
+   78 |     define_sum<0>(router, ctx);
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~
+/workspace/scratch/650ce06b9036/portal/portal/export_callable.h:713:22: warning: parameter ‘accessor’ set but not used [-Wunused-but-set-parameter]
+  713 |             Accessor accessor,
+      |             ~~~~~~~~~^~~~~~~~
+Exit status: 0
+/tmp/portal-opt-pass/rpc-variants/binaries/rpc_storage_test-selected-strict1
+RPC owning argument, legacy, nested and concurrent tests passed
+Exit status: 0

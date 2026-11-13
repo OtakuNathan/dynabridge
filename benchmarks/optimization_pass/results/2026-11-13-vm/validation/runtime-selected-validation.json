@@ -1,0 +1,54 @@
+[
+  {
+    "name": "napi_backend_default",
+    "command": [
+      "/tmp/portal-opt-pass/runtime-review/napi_backend_default"
+    ],
+    "returncode": 0,
+    "log": "/tmp/portal-opt-pass/runtime-review/napi_backend_default.log"
+  },
+  {
+    "name": "napi_runtime_default",
+    "command": [
+      "node",
+      "--expose-gc",
+      "tests/napi_runtime_smoke.js",
+      "/tmp/portal-opt-pass/runtime-review/napi_runtime_default.node"
+    ],
+    "returncode": 0,
+    "log": "/tmp/portal-opt-pass/runtime-review/napi_runtime_default.log"
+  },
+  {
+    "name": "python_runtime_default",
+    "command": [
+      "python3",
+      "tests/python_runtime_smoke.py",
+      "/tmp/portal-opt-pass/runtime-review/portal_python_runtime_addon_default.so"
+    ],
+    "returncode": 0,
+    "log": "/tmp/portal-opt-pass/runtime-review/python_runtime_default.log"
+  },
+  {
+    "name": "napi_workers_default",
+    "command": [
+      "node",
+      "tests/napi_worker_smoke.js",
+      "/tmp/portal-opt-pass/runtime-review/napi_runtime_default.node"
+    ],
+    "returncode": 0,
+    "log": "/tmp/portal-opt-pass/runtime-review/napi_workers_default.log"
+  },
+  {
+    "name": "python_backend_default_asan_ubsan",
+    "command": [
+      "/tmp/portal-opt-pass/runtime-review/python_backend_default_asan_ubsan"
+    ],
+    "environment": {
+      "PYTHONMALLOC": "malloc",
+      "ASAN_OPTIONS": "detect_leaks=0",
+      "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+    },
+    "returncode": 0,
+    "log": "/tmp/portal-opt-pass/runtime-review/python_backend_default_asan_ubsan.log"
+  }
+]
