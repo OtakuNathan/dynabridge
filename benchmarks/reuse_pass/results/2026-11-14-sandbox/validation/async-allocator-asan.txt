@@ -1,0 +1,1 @@
+PASS: allocator lifetime, callback self-destruction, delayed tokens, cross-thread release, concurrent pool, reject/allocation failure

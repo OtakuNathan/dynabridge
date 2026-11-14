@@ -1,0 +1,47 @@
+[
+  {
+    "measured_binary": "rpc-base",
+    "driver_binary": "rpc-before",
+    "text_hashes": [
+      "47423cae5e11067d4c83adfb79359b576895893467453b10aa302dbed1e34a3d",
+      "47423cae5e11067d4c83adfb79359b576895893467453b10aa302dbed1e34a3d"
+    ],
+    "match": true
+  },
+  {
+    "measured_binary": "rpc-new",
+    "driver_binary": "rpc-after",
+    "text_hashes": [
+      "a0b79a5f05ec1bd04d46ff6f86e45e2315d7aa9c22720ceb565c813db13d3d7d",
+      "a0b79a5f05ec1bd04d46ff6f86e45e2315d7aa9c22720ceb565c813db13d3d7d"
+    ],
+    "match": true
+  },
+  {
+    "measured_binary": "async-base",
+    "driver_binary": "async-before",
+    "text_hashes": [
+      "ed67d86a6590defc50f90ed435bba10e114cbbb3f4253a3eb5d57f528462578b",
+      "ed67d86a6590defc50f90ed435bba10e114cbbb3f4253a3eb5d57f528462578b"
+    ],
+    "match": true
+  },
+  {
+    "measured_binary": "async-new",
+    "driver_binary": "async-experiment",
+    "text_hashes": [
+      "4e37c8f9bd18a0073c1f8594f3fa8698dfd3c147501b28438a12d496d493d880",
+      "4e37c8f9bd18a0073c1f8594f3fa8698dfd3c147501b28438a12d496d493d880"
+    ],
+    "match": true
+  },
+  {
+    "measured_binary": "borrowed-bench",
+    "driver_binary": "borrowed",
+    "text_hashes": [
+      "d400ea15d8422cc28223175ff73756020003c471949655cd864842bd39fd6b95",
+      "d400ea15d8422cc28223175ff73756020003c471949655cd864842bd39fd6b95"
+    ],
+    "match": true
+  }
+]

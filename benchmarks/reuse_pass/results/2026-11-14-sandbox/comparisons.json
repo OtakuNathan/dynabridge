@@ -1,0 +1,90 @@
+[
+  {
+    "family": "rpc",
+    "case": "-1",
+    "control": "before",
+    "candidate": "reuse",
+    "control_median": 111.052544,
+    "candidate_median": 101.130871,
+    "change_percent": -8.93421496044251,
+    "faster_pairs": 7,
+    "repeats": 7
+  },
+  {
+    "family": "rpc",
+    "case": "16",
+    "control": "before",
+    "candidate": "reuse",
+    "control_median": 141.302232,
+    "candidate_median": 115.496609,
+    "change_percent": -18.26271434976342,
+    "faster_pairs": 7,
+    "repeats": 7
+  },
+  {
+    "family": "rpc",
+    "case": "1024",
+    "control": "before",
+    "candidate": "reuse",
+    "control_median": 237.890893,
+    "candidate_median": 201.518943,
+    "change_percent": -15.289341067797835,
+    "faster_pairs": 7,
+    "repeats": 7
+  },
+  {
+    "family": "rpc",
+    "case": "65536",
+    "control": "before",
+    "candidate": "reuse",
+    "control_median": 23725.3235,
+    "candidate_median": 6410.1838,
+    "change_percent": -72.98168010227553,
+    "faster_pairs": 7,
+    "repeats": 7
+  },
+  {
+    "family": "decode",
+    "case": "16",
+    "control": "owning",
+    "candidate": "borrow-owning",
+    "control_median": 28.270535,
+    "candidate_median": 25.152383,
+    "change_percent": -11.029688684702988,
+    "faster_pairs": 7,
+    "repeats": 7
+  },
+  {
+    "family": "decode",
+    "case": "1024",
+    "control": "owning",
+    "candidate": "borrow-owning",
+    "control_median": 49.880818,
+    "candidate_median": 35.933164,
+    "change_percent": -27.96195924453364,
+    "faster_pairs": 7,
+    "repeats": 7
+  },
+  {
+    "family": "decode",
+    "case": "65536",
+    "control": "owning",
+    "candidate": "borrow-owning",
+    "control_median": 1480.089825,
+    "candidate_median": 1410.784825,
+    "change_percent": -4.682486078167591,
+    "faster_pairs": 5,
+    "repeats": 7
+  },
+  {
+    "family": "async",
+    "case": "inline",
+    "control": "system",
+    "candidate": "pool",
+    "control_median": 46.034276,
+    "candidate_median": 99.046264,
+    "change_percent": 115.15764470804316,
+    "faster_pairs": 0,
+    "repeats": 7
+  }
+]

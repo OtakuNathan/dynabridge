@@ -1,0 +1,162 @@
+[
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "65536",
+      "20000"
+    ],
+    "extra_environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "stdout": "ordinary,65536,20000,6301.020750,1313120000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "65536",
+      "20000"
+    ],
+    "extra_environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "stdout": "reuse,65536,20000,5491.833700,1313120000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "65536",
+      "20000"
+    ],
+    "extra_environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "stdout": "reuse,65536,20000,5478.217600,1313120000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "65536",
+      "20000"
+    ],
+    "extra_environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "stdout": "ordinary,65536,20000,5559.880050,1313120000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "65536",
+      "20000"
+    ],
+    "extra_environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "stdout": "ordinary,65536,20000,5495.062100,1313120000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "65536",
+      "20000"
+    ],
+    "extra_environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "stdout": "reuse,65536,20000,5592.614600,1313120000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "65536",
+      "20000"
+    ],
+    "extra_environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "stdout": "reuse,65536,20000,5624.283500,1313120000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "65536",
+      "20000"
+    ],
+    "extra_environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "stdout": "ordinary,65536,20000,5531.110450,1313120000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "65536",
+      "20000"
+    ],
+    "extra_environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "stdout": "ordinary,65536,20000,5510.074300,1313120000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "65536",
+      "20000"
+    ],
+    "extra_environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "stdout": "reuse,65536,20000,5432.058650,1313120000,0\n",
+    "stderr": ""
+  }
+]

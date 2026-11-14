@@ -1,0 +1,2165 @@
+[
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,147.029777,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,145.247029,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "reuse,-1,1000000,109.724572,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,164.237732,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,145.757400,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "16",
+      "1000000"
+    ],
+    "stdout": "reuse,16,1000000,122.678127,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,242.946590,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,268.068033,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "1024",
+      "300000"
+    ],
+    "stdout": "reuse,1024,300000,209.278380,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,25313.573200,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,26209.061600,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "65536",
+      "10000"
+    ],
+    "stdout": "reuse,65536,10000,6685.493700,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "owning,16,1000000,34.087538,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-owning,16,1000000,23.769603,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-readonly,16,1000000,11.891316,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "owning,1024,500000,57.334046,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-owning,1024,500000,44.435626,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-readonly,1024,500000,16.690338,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "owning,65536,40000,1508.180300,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-owning,65536,40000,1320.083475,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-readonly,65536,40000,10.076925,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-base",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,49.347708,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,44.114309,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "pool",
+      "1000000"
+    ],
+    "stdout": "pool,1000000,97.066710,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,120.098580,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "reuse,-1,1000000,96.237280,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,121.759897,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,145.069884,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "16",
+      "1000000"
+    ],
+    "stdout": "reuse,16,1000000,115.496609,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,136.022093,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,247.272560,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "1024",
+      "300000"
+    ],
+    "stdout": "reuse,1024,300000,195.206583,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,215.403653,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,23557.215400,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "65536",
+      "10000"
+    ],
+    "stdout": "reuse,65536,10000,5978.477900,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,23258.157600,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-owning,16,1000000,26.205855,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-readonly,16,1000000,11.214624,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "owning,16,1000000,28.994369,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-owning,1024,500000,41.210668,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-readonly,1024,500000,12.287614,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "owning,1024,500000,53.915978,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-owning,65536,40000,1410.784825,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-readonly,65536,40000,10.086700,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "owning,65536,40000,1414.656700,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,44.439473,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "pool",
+      "1000000"
+    ],
+    "stdout": "pool,1000000,97.477191,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-base",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,60.433365,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "reuse,-1,1000000,101.130871,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,112.978498,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,115.790347,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "16",
+      "1000000"
+    ],
+    "stdout": "reuse,16,1000000,111.975863,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,135.922058,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,157.116458,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "1024",
+      "300000"
+    ],
+    "stdout": "reuse,1024,300000,183.487513,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,230.893757,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,263.936497,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "65536",
+      "10000"
+    ],
+    "stdout": "reuse,65536,10000,6124.955100,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,23458.402400,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,23980.747700,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-readonly,16,1000000,11.201784,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "owning,16,1000000,27.596847,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-owning,16,1000000,25.217650,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-readonly,1024,500000,11.218428,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "owning,1024,500000,45.619522,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-owning,1024,500000,31.637134,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-readonly,65536,40000,10.079700,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "owning,65536,40000,1577.203650,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-owning,65536,40000,1422.184875,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "pool",
+      "1000000"
+    ],
+    "stdout": "pool,1000000,97.262803,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-base",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,52.891921,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,48.110854,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,111.052544,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,120.498013,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "reuse,-1,1000000,102.105422,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,145.975403,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,157.971912,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "16",
+      "1000000"
+    ],
+    "stdout": "reuse,16,1000000,119.449200,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,237.890893,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,254.010537,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "1024",
+      "300000"
+    ],
+    "stdout": "reuse,1024,300000,207.953650,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,26208.767800,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,23228.319900,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "65536",
+      "10000"
+    ],
+    "stdout": "reuse,65536,10000,6356.961000,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "owning,16,1000000,32.203961,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-owning,16,1000000,25.152383,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-readonly,16,1000000,12.977276,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "owning,1024,500000,50.696386,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-owning,1024,500000,41.067074,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-readonly,1024,500000,12.009660,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "owning,65536,40000,1480.089825,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-owning,65536,40000,1391.731225,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-readonly,65536,40000,10.949725,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-base",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,55.504834,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,48.312133,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "pool",
+      "1000000"
+    ],
+    "stdout": "pool,1000000,103.407846,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,117.428333,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "reuse,-1,1000000,100.179701,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,107.106780,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,141.123438,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "16",
+      "1000000"
+    ],
+    "stdout": "reuse,16,1000000,114.660862,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,139.203988,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,260.187273,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "1024",
+      "300000"
+    ],
+    "stdout": "reuse,1024,300000,203.887290,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,237.925560,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,24352.490700,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "65536",
+      "10000"
+    ],
+    "stdout": "reuse,65536,10000,6410.183800,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,23725.323500,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-owning,16,1000000,24.659483,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-readonly,16,1000000,11.336033,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "owning,16,1000000,27.106490,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-owning,1024,500000,32.150936,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-readonly,1024,500000,12.099914,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "owning,1024,500000,44.313344,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-owning,65536,40000,1437.716600,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-readonly,65536,40000,10.547625,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "owning,65536,40000,1404.580750,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,45.816213,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "pool",
+      "1000000"
+    ],
+    "stdout": "pool,1000000,99.046264,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-base",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,50.790777,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "reuse,-1,1000000,98.705791,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,110.508025,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,117.497266,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "16",
+      "1000000"
+    ],
+    "stdout": "reuse,16,1000000,114.894758,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,141.302232,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,146.505104,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "1024",
+      "300000"
+    ],
+    "stdout": "reuse,1024,300000,194.126783,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,268.787370,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,250.448370,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "65536",
+      "10000"
+    ],
+    "stdout": "reuse,65536,10000,6701.302300,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,23874.529100,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,23502.232300,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-readonly,16,1000000,11.537611,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "owning,16,1000000,28.270535,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-owning,16,1000000,23.564489,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-readonly,1024,500000,12.382716,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "owning,1024,500000,49.880818,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-owning,1024,500000,35.933164,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-readonly,65536,40000,10.114725,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "owning,65536,40000,1514.001700,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-owning,65536,40000,1377.073975,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "pool",
+      "1000000"
+    ],
+    "stdout": "pool,1000000,99.731602,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-base",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,54.108565,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,49.071188,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,109.377730,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "ordinary,-1,1000000,114.173448,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "-1",
+      "1000000"
+    ],
+    "stdout": "reuse,-1,1000000,102.722900,514370976,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,234.280316,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "16",
+      "1000000"
+    ],
+    "stdout": "ordinary,16,1000000,141.061595,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "16",
+      "1000000"
+    ],
+    "stdout": "reuse,16,1000000,121.870750,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,230.789967,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "1024",
+      "300000"
+    ],
+    "stdout": "ordinary,1024,300000,248.649543,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "1024",
+      "300000"
+    ],
+    "stdout": "reuse,1024,300000,201.518943,343200000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-base",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,23210.792300,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "ordinary",
+      "65536",
+      "10000"
+    ],
+    "stdout": "ordinary,65536,10000,24126.910600,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/rpc-new",
+      "reuse",
+      "65536",
+      "10000"
+    ],
+    "stdout": "reuse,65536,10000,6532.136600,656560000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "owning,16,1000000,27.613291,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-owning,16,1000000,26.918180,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "16",
+      "1000000"
+    ],
+    "stdout": "borrow-readonly,16,1000000,12.077232,136000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "owning,1024,500000,46.296084,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-owning,1024,500000,34.598946,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "1024",
+      "500000"
+    ],
+    "stdout": "borrow-readonly,1024,500000,11.263594,572000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "owning,65536,40000,1417.991100,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-owning",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-owning,65536,40000,1441.502475,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/borrowed-bench",
+      "borrow-readonly",
+      "65536",
+      "40000"
+    ],
+    "stdout": "borrow-readonly,65536,40000,11.519825,2626240000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-base",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,50.967188,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "system",
+      "1000000"
+    ],
+    "stdout": "system,1000000,46.034276,17000000,0\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "taskset",
+      "-c",
+      "0",
+      "/mnt/data/portal-pass2/async-new",
+      "pool",
+      "1000000"
+    ],
+    "stdout": "pool,1000000,99.787836,17000000,0\n",
+    "stderr": ""
+  }
+]

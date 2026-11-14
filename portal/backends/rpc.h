@@ -142,6 +142,13 @@ namespace portal {
                     data_.reserve(capacity);
                 }
 
+                // An explicit reuse path. The original owning writer is unchanged.
+                writer(bytes&& storage, std::size_t capacity)
+                    : data_(std::move(storage)) {
+                    data_.clear();
+                    data_.reserve(capacity);
+                }
+
                 template <typename UInt>
                 void integer(UInt number) {
                     static_assert(std::is_unsigned<UInt>::value, "wire integers must be unsigned");
@@ -358,6 +365,67 @@ namespace portal {
                 return out.finish();
             }
 
+            // Output storage must not contain any borrowed string input. On an
+            // allocation exception output remains valid, but its old bytes/capacity
+            // are not preserved. No bytes are written beyond vector::size().
+            template <typename... Values>
+            void encode_request_values_into(bytes& output, std::uint64_t method,
+                                             const Values&... args) {
+                static_assert(sizeof...(Values) <= std::numeric_limits<std::uint32_t>::max(),
+                    "too many RPC arguments");
+                std::size_t frame_size = 17;
+                using swallow = int[];
+                (void)swallow{0, (frame_size = checked_add(frame_size, encoded_size(args)), 0)...};
+                writer out(std::move(output), frame_size);
+                out.integer<std::uint32_t>(request_magic);
+                out.integer<std::uint8_t>(protocol_version);
+                out.integer<std::uint64_t>(method);
+                out.integer<std::uint32_t>(static_cast<std::uint32_t>(sizeof...(Values)));
+                (void)swallow{0, (encode_value(out, args), 0)...};
+                output = out.finish();
+            }
+
+            inline void encode_response_into(bytes& output, const value& result) {
+                const auto size = checked_add(7, encoded_size(result));
+                writer out(std::move(output), size);
+                out.integer<std::uint32_t>(response_magic);
+                out.integer<std::uint8_t>(protocol_version);
+                out.integer<std::uint8_t>(0);
+                encode_value(out, result);
+                output = out.finish();
+            }
+
+            inline void encode_error_into(bytes& output, const std::string& message) {
+                if (message.size() > std::numeric_limits<std::uint32_t>::max())
+                    PORTAL_RAISE(protocol_error("RPC error message is too large"));
+                const auto size = checked_add(10, message.size());
+                writer out(std::move(output), size);
+                out.integer<std::uint32_t>(response_magic);
+                out.integer<std::uint8_t>(protocol_version);
+                out.integer<std::uint8_t>(1);
+                out.raw(message);
+                output = out.finish();
+            }
+
+            // Private scratch decoder: unlike try_decode_request, a failed parse
+            // may leave partial scratch. The enclosing workspace lease destroys
+            // it before return; no binder is called before full frame validation.
+            inline bool decode_request_scratch(const bytes& frame, request& scratch) {
+                reader input(frame);
+                if (input.integer<std::uint32_t>() != request_magic
+                    || input.integer<std::uint8_t>() != protocol_version) return false;
+                scratch.method = input.integer<std::uint64_t>();
+                const auto argc = input.integer<std::uint32_t>();
+                if (!input.valid() || argc > input.remaining()) return false;
+                scratch.args.reserve(argc);
+                for (std::uint32_t i = 0; i < argc; ++i) {
+                    auto item = decode_value(input);
+                    if (!input.valid()) return false;
+                    scratch.args.emplace_back(std::move(item));
+                }
+                return input.valid() && input.empty();
+            }
+
             // Malformed input is an ordinary result, independent of C++ exceptions.
             // General allocation failure follows the program's allocator policy.
             inline bool try_decode_request(const bytes& frame, request& result) {
@@ -471,6 +539,43 @@ namespace portal {
                 value& get() const { return (*args)[I]; }
             };
         }
+
+        // A worker-confined cache of EMPTY argument storage. Never share one
+        // workspace concurrently. A nested synchronous dispatch is supported:
+        // each active call takes ownership of its vector, leaving an empty cache
+        // for a nested call. All strings remain owning, as in dispatch().
+        class dispatch_workspace {
+            friend class router;
+            std::vector<value> cache_;
+            const std::size_t max_retained_args_;
+
+            class lease {
+                dispatch_workspace& owner_;
+            public:
+                detail::request request;
+                explicit lease(dispatch_workspace& owner) noexcept : owner_(owner) {
+                    request.args.swap(owner_.cache_);
+                }
+                lease(const lease&) = delete;
+                lease& operator=(const lease&) = delete;
+                ~lease() noexcept {
+                    request.args.clear(); // Do not retain payload allocations.
+                    if (request.args.capacity() <= owner_.max_retained_args_
+                        && request.args.capacity() > owner_.cache_.capacity()) {
+                        request.args.swap(owner_.cache_);
+                    }
+                }
+            };
+
+        public:
+            explicit dispatch_workspace(std::size_t max_retained_args = 64) noexcept
+                : max_retained_args_(max_retained_args) {}
+            dispatch_workspace(const dispatch_workspace&) = delete;
+            dispatch_workspace& operator=(const dispatch_workspace&) = delete;
+            // The workspace itself must outlive all dispatches using it.
+            std::size_t cached_argument_capacity() const noexcept { return cache_.capacity(); }
+            void release_cached_storage() noexcept { std::vector<value>().swap(cache_); }
+        };
 
         // CONTRACT (thread safety): the router is not synchronized.
         // All define() calls must complete (single thread or externally
@@ -619,6 +724,38 @@ namespace portal {
 #if PORTAL_HAS_EXCEPTIONS
                 } catch(const std::exception& error) {return detail::encode_error(error.what());}
                   catch(...) {return detail::encode_error("unknown RPC server failure");}
+#endif
+            }
+
+            // Synchronous, owning decode with reusable storage. The router's
+            // registration and callable concurrency contracts are unchanged.
+            // frame and output may be the same vector: parsing finishes before
+            // output is modified, and decoded strings do not borrow frame bytes.
+            void dispatch_into(const bytes& frame, bytes& output, dispatch_workspace& workspace) {
+                dispatch_workspace::lease active(workspace);
+#if PORTAL_HAS_EXCEPTIONS
+                try {
+#endif
+                    auto& request = active.request;
+                    if (!detail::decode_request_scratch(frame, request)) {
+                        detail::encode_error_into(output, "invalid RPC request frame");
+                        return;
+                    }
+                    const auto candidate = std::lower_bound(routes_.begin(), routes_.end(), request.method,
+                        [](const route& entry, std::uint64_t id) { return entry.id() < id; });
+                    if (candidate == routes_.end() || candidate->id() != request.method) {
+                        detail::encode_error_into(output, "unknown RPC method");
+                        return;
+                    }
+                    auto result = candidate->invoke(request.args);
+                    if (!result) {
+                        detail::encode_error_into(output, "RPC argument conversion or arity mismatch");
+                        return;
+                    }
+                    detail::encode_response_into(output, *result);
+#if PORTAL_HAS_EXCEPTIONS
+                } catch (const std::exception& error) { detail::encode_error_into(output, error.what()); }
+                  catch (...) { detail::encode_error_into(output, "unknown RPC server failure"); }
 #endif
             }
 

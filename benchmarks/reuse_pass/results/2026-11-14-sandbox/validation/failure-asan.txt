@@ -1,0 +1,2 @@
+PASS: 5 allocation-failure points, throwing/malformed transports, subsequent reuse
+exit=0

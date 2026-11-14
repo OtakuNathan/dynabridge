@@ -1,0 +1,3 @@
+47423cae5e11067d4c83adfb79359b576895893467453b10aa302dbed1e34a3d  ../before-text.bin
+47423cae5e11067d4c83adfb79359b576895893467453b10aa302dbed1e34a3d  ../after-text.bin
+MATCH: legacy-only .text under matched flags

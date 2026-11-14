@@ -1,0 +1,2 @@
+PASS: wire parity, malformed frames, side effects, aliasing, recursion, ownership, bounds, 4-thread independent workspaces
+exit=0

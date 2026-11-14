@@ -1,0 +1,55 @@
+diff --git a/portal/async.h b/portal/async.h
+index 8097f5b..0b97c80 100644
+--- a/portal/async.h
++++ b/portal/async.h
+@@ -151,6 +151,21 @@ struct operation_state {
+     }
+ };
+ }
++namespace async_detail {
++struct default_state_factory {
++    template<class State, class... Args>
++    std::shared_ptr<State> make(Args&&... args) const {
++        return std::make_shared<State>(std::forward<Args>(args)...);
++    }
++};
++template<class Allocator> struct allocator_state_factory {
++    const Allocator& allocator;
++    template<class State, class... Args>
++    std::shared_ptr<State> make(Args&&... args) const {
++        return std::allocate_shared<State>(allocator, std::forward<Args>(args)...);
++    }
++};
++}
+ // Static performance path: Context, operation and continuation remain concrete types.
+ template<class R, class Context, class Op> class static_invocation {
+     static_assert(std::is_nothrow_move_constructible<Op>::value, "operation must move without throwing");
+@@ -170,6 +185,19 @@ public:
+     }
+     static_invocation(const static_invocation&) = delete;
+     template<class Handler> void start(Handler&& handler) && {
++        start_with_factory(std::forward<Handler>(handler), async_detail::default_state_factory{});
++    }
++    // The rebound allocator is retained by the shared control block, so its
++    // resource must remain valid until all completion-token owners are gone.
++    // No completion/detach or self-destruction lifetime guarantee is weakened.
++    template<class Allocator, class Handler>
++    void start(std::allocator_arg_t, const Allocator& allocator, Handler&& handler) && {
++        start_with_factory(std::forward<Handler>(handler),
++            async_detail::allocator_state_factory<Allocator>{allocator});
++    }
++private:
++    template<class Handler, class Factory>
++    void start_with_factory(Handler&& handler, const Factory& factory) {
+         using H = typename std::decay<Handler>::type;
+         using State = async_detail::operation_state<R, Context, Op, H>;
+         using Token = async_detail::completion<State>;
+@@ -183,7 +211,7 @@ public:
+ #endif
+         static_assert(std::is_nothrow_move_constructible<Op>::value, "operation must move without throwing");
+         static_assert(std::is_nothrow_move_constructible<H>::value, "completion must move without throwing");
+-        auto state = std::make_shared<State>(std::move(context_), std::move(*operation_),
++        auto state = factory.template make<State>(std::move(context_), std::move(*operation_),
+                                             std::forward<Handler>(handler), std::move(access_));
+         operation_.reset();
+ #if PORTAL_HAS_EXCEPTIONS

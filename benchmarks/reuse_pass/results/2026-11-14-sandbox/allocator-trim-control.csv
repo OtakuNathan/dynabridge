@@ -1,0 +1,11 @@
+variant,repeat,ns_per_op
+before,0,6301.02075
+reuse,0,5491.8337
+reuse,1,5478.2176
+before,1,5559.88005
+before,2,5495.0621
+reuse,2,5592.6146
+reuse,3,5624.2835
+before,3,5531.11045
+before,4,5510.0743
+reuse,4,5432.05865

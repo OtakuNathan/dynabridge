@@ -1,0 +1,59 @@
+-- The CXX compiler identification is GNU 14.2.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Found Python3: /opt/pyvenv/bin/python3 (found version "3.13.5") found components: Interpreter
+-- Found Git: /usr/bin/git (found version "2.47.3")
+-- Configuring done (10.6s)
+-- Generating done (0.1s)
+-- Build files have been written to: /mnt/data/portal-pass2/build-gcc
+[ 14%] Building CXX object CMakeFiles/portal_rpc_reuse_failure_contract.dir/allocation_failure_test.cpp.o
+[ 14%] Building CXX object CMakeFiles/portal_rpc_reuse_contract.dir/rpc_reuse_test.cpp.o
+[ 21%] Linking CXX executable portal_rpc_reuse_failure_contract
+[ 21%] Built target portal_rpc_reuse_failure_contract
+[ 28%] Building CXX object CMakeFiles/portal_borrowed_decode_experiment.dir/borrowed_decode_test.cpp.o
+[ 35%] Linking CXX executable portal_borrowed_decode_experiment
+[ 35%] Built target portal_borrowed_decode_experiment
+[ 42%] Building CXX object CMakeFiles/portal_async_cleanup_regression.dir/mnt/data/portal-pass2/work/tests/async_cleanup.cpp.o
+[ 50%] Linking CXX executable portal_rpc_reuse_contract
+[ 50%] Built target portal_rpc_reuse_contract
+[ 57%] Building CXX object CMakeFiles/portal_rpc_reuse_noexc_0.dir/rpc_reuse_test.cpp.o
+[ 64%] Linking CXX executable portal_async_cleanup_regression
+[ 64%] Built target portal_async_cleanup_regression
+[ 71%] Building CXX object CMakeFiles/portal_rpc_reuse_noexc_1.dir/rpc_reuse_test.cpp.o
+[ 78%] Linking CXX executable portal_rpc_reuse_noexc_0
+[ 78%] Built target portal_rpc_reuse_noexc_0
+[ 85%] Building CXX object CMakeFiles/portal_async_allocator_experiment.dir/async_allocator_test.cpp.o
+[ 92%] Linking CXX executable portal_rpc_reuse_noexc_1
+[100%] Linking CXX executable portal_async_allocator_experiment
+[100%] Built target portal_rpc_reuse_noexc_1
+[100%] Built target portal_async_allocator_experiment
+Internal ctest changing into directory: /mnt/data/portal-pass2/build-gcc
+Test project /mnt/data/portal-pass2/build-gcc
+    Start 1: portal_rpc_reuse_contract
+1/7 Test #1: portal_rpc_reuse_contract ...........   Passed    0.01 sec
+    Start 2: portal_rpc_reuse_failure_contract
+2/7 Test #2: portal_rpc_reuse_failure_contract ...   Passed    0.00 sec
+    Start 3: portal_borrowed_decode_experiment
+3/7 Test #3: portal_borrowed_decode_experiment ...   Passed    0.01 sec
+    Start 4: portal_async_cleanup_regression
+4/7 Test #4: portal_async_cleanup_regression .....   Passed    0.03 sec
+    Start 5: portal_rpc_reuse_noexc_0
+5/7 Test #5: portal_rpc_reuse_noexc_0 ............   Passed    0.01 sec
+    Start 6: portal_rpc_reuse_noexc_1
+6/7 Test #6: portal_rpc_reuse_noexc_1 ............   Passed    0.01 sec
+    Start 7: portal_async_allocator_experiment
+7/7 Test #7: portal_async_allocator_experiment ...   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 7
+
+Label Time Summary:
+contract    =   0.07 sec*proc (7 tests)
+reuse       =   0.07 sec*proc (7 tests)
+
+Total Test time (real) =   0.07 sec

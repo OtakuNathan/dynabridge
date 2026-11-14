@@ -1,0 +1,19 @@
+-- Configuring done (11.0s)
+-- Generating done (0.0s)
+-- Build files have been written to: /mnt/data/portal-pass2/build-gcc
+[ 14%] Building CXX object CMakeFiles/portal_rpc_reuse_failure_contract.dir/allocation_failure_test.cpp.o
+[ 14%] Building CXX object CMakeFiles/portal_rpc_reuse_contract.dir/rpc_reuse_test.cpp.o
+/mnt/data/portal-pass2/work/tests/reuse_pass/rpc_reuse_test.cpp: In function 'void recursive_and_ownership()':
+/mnt/data/portal-pass2/work/tests/reuse_pass/rpc_reuse_test.cpp:127:15: error: typedef 'using recursive_and_ownership()::retaining_binder::signature_t = int(std::string)' locally defined but not used [-Werror=unused-local-typedefs]
+  127 |         using signature_t = int(std::string);
+      |               ^~~~~~~~~~~
+[ 21%] Linking CXX executable portal_rpc_reuse_failure_contract
+[ 21%] Built target portal_rpc_reuse_failure_contract
+[ 28%] Building CXX object CMakeFiles/portal_borrowed_decode_experiment.dir/borrowed_decode_test.cpp.o
+[ 35%] Linking CXX executable portal_borrowed_decode_experiment
+cc1plus: all warnings being treated as errors
+gmake[2]: *** [CMakeFiles/portal_rpc_reuse_contract.dir/build.make:79: CMakeFiles/portal_rpc_reuse_contract.dir/rpc_reuse_test.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:105: CMakeFiles/portal_rpc_reuse_contract.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+[ 35%] Built target portal_borrowed_decode_experiment
+gmake: *** [Makefile:101: all] Error 2
