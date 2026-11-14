@@ -1,0 +1,9 @@
+{
+  "binary": "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+  "sha256": "eec5c282df3de2e1d38e7c7d78bca84b14990e4f9619c83f0398a1fe3600616c",
+  "selected_cpu": 0,
+  "repetitions": 5,
+  "seed": 20261114,
+  "inherited_allocator_settings_removed": true,
+  "diagnostic_only": true
+}

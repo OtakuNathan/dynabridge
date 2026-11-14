@@ -1,0 +1,9 @@
+allocator,lane,median_ns,min_ns,max_ns
+default,dynamic_fresh,7177.7387,6764.7054,7825.8503
+default,typed_fresh,22280.1783,21704.3513,23307.871
+default,dynamic_reuse,6708.5913,6612.6855,6927.0795
+default,typed_reuse,5981.61,5843.9443,6472.6653
+trim_disabled,dynamic_fresh,6857.5992,6702.4006,7047.3127
+trim_disabled,typed_fresh,7113.1366,7019.9774,7418.5454
+trim_disabled,dynamic_reuse,7022.8336,6635.4971,7258.025
+trim_disabled,typed_reuse,6299.0556,5870.6526,6356.2097

@@ -1,0 +1,30 @@
+[  5%] Building CXX object CMakeFiles/typed_codec.dir/codec_test.cpp.o
+[ 10%] Building CXX object CMakeFiles/typed_async.dir/async_test.cpp.o
+[ 15%] Linking CXX executable typed_codec
+[ 15%] Built target typed_codec
+[ 20%] Building CXX object CMakeFiles/typed_failures.dir/failure_test.cpp.o
+[ 25%] Linking CXX executable typed_async
+[ 25%] Built target typed_async
+[ 30%] Building CXX object CMakeFiles/typed_golden.dir/golden.cpp.o
+[ 35%] Linking CXX executable typed_golden
+[ 40%] Linking CXX executable typed_failures
+[ 40%] Built target typed_golden
+[ 45%] Building CXX object CMakeFiles/typed_codec_noexcept_0.dir/codec_test.cpp.o
+[ 45%] Built target typed_failures
+[ 50%] Building CXX object CMakeFiles/typed_async_noexcept_0.dir/async_test.cpp.o
+[ 55%] Linking CXX executable typed_codec_noexcept_0
+[ 55%] Built target typed_codec_noexcept_0
+[ 60%] Building CXX object CMakeFiles/typed_codec_noexcept_1.dir/codec_test.cpp.o
+[ 65%] Linking CXX executable typed_async_noexcept_0
+[ 65%] Built target typed_async_noexcept_0
+[ 70%] Building CXX object CMakeFiles/typed_async_noexcept_1.dir/async_test.cpp.o
+[ 75%] Linking CXX executable typed_codec_noexcept_1
+[ 75%] Built target typed_codec_noexcept_1
+[ 80%] Building CXX object CMakeFiles/typed_probe.dir/mnt/data/typed-rpc-work/portal/benchmarks/typed_rpc/probe.cpp.o
+[ 85%] Linking CXX executable typed_async_noexcept_1
+[ 85%] Built target typed_async_noexcept_1
+[ 90%] Building CXX object CMakeFiles/typed_allocations.dir/mnt/data/typed-rpc-work/portal/benchmarks/typed_rpc/probe.cpp.o
+[ 95%] Linking CXX executable typed_probe
+[ 95%] Built target typed_probe
+[100%] Linking CXX executable typed_allocations
+[100%] Built target typed_allocations

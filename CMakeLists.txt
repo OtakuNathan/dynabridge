@@ -141,6 +141,7 @@ endfunction()
 
 if(PORTAL_BUILD_TESTS)
     enable_testing()
+    add_subdirectory(tests/typed_rpc)
 
     if(TARGET portal_ff_python_executor_demo)
         add_test(NAME ff_python_executor COMMAND portal_ff_python_executor_demo)

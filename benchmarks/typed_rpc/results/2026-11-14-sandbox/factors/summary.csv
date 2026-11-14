@@ -1,0 +1,9 @@
+variant,lane,median_ns,min_ns,max_ns,processes
+resize_both,dynamic_reuse,6826.0591,6615.3783,7335.2917,5
+resize_both,typed_reuse,8695.3292,8266.5586,9256.9018,5
+assign_string,dynamic_reuse,6815.2291,6630.6007,6989.9904,5
+assign_string,typed_reuse,7316.4948,7045.0142,12944.1416,5
+retain_bytes,dynamic_reuse,7078.0579,7020.9836,11050.8209,5
+retain_bytes,typed_reuse,7673.121,7378.4672,8610.1847,5
+selected,dynamic_reuse,6814.0553,6698.6941,9164.6629,5
+selected,typed_reuse,6028.6681,5776.9531,8218.2894,5

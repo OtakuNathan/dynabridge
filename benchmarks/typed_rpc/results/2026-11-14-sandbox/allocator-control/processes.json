@@ -1,0 +1,602 @@
+[
+  {
+    "round": 0,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6726.399,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 0,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6764.7054,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 0,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6631.7566,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 0,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":5843.9443,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 0,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7031.0497,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 0,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6702.4006,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 0,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":5870.6526,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 0,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":23307.871,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 1,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6857.5992,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 1,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6635.4971,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 1,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6612.6855,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 1,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7019.9774,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 1,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":23234.5409,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 1,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6472.6653,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 1,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7177.7387,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 1,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6356.2097,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 2,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6290.522,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 2,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6708.5913,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 2,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":22133.282,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 2,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7336.095,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 2,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6929.6413,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 2,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6261.5063,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 2,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7022.8336,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 2,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7264.4545,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 3,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6927.0795,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 3,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7045.7684,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 3,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7418.5454,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 3,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7047.3127,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 3,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7258.025,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 3,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6299.0556,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 3,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":22280.1783,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 3,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":5981.61,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 4,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6784.111,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 4,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6323.2302,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 4,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7113.1366,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 4,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":21704.3513,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 4,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7825.8503,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 4,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6782.2763,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 4,
+    "environment": {},
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":5930.1452,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "round": 4,
+    "environment": {
+      "MALLOC_TRIM_THRESHOLD_": "-1"
+    },
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7102.8394,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  }
+]

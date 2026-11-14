@@ -1,0 +1,33 @@
+{
+  "resize_both": {
+    "files_sha256": {
+      "portal/experimental/wire_schema.h": "3850522abe4e5f17d6fad8c5ce424c2afdd51a48b3f66fd6635f989729d97c71",
+      "portal/experimental/typed_rpc.h": "262d462a4c791ff5b0cf5400febab403177674028ce1ddc4f536ef7e4f101fa7"
+    },
+    "binary_sha256": "205e67c1ca534b9a95a83f3376b6f0b6bdded737801e28faaf6d3ff898137f68",
+    "patch_direction": "selected -> factor control"
+  },
+  "assign_string": {
+    "files_sha256": {
+      "portal/experimental/wire_schema.h": "e1a29ab24eaab05dcb67e0aac20700a8d59c3ee120e73be4721234dc98596644",
+      "portal/experimental/typed_rpc.h": "262d462a4c791ff5b0cf5400febab403177674028ce1ddc4f536ef7e4f101fa7"
+    },
+    "binary_sha256": "7949968b3df5a5231256ab37a320e563baebed8a1ab5320cc199696eefa970c4",
+    "patch_direction": "selected -> factor control"
+  },
+  "retain_bytes": {
+    "files_sha256": {
+      "portal/experimental/wire_schema.h": "3850522abe4e5f17d6fad8c5ce424c2afdd51a48b3f66fd6635f989729d97c71",
+      "portal/experimental/typed_rpc.h": "3b9650070ef396db41d37c11c4a899d2b6729eb78d30643b53413482fed97273"
+    },
+    "binary_sha256": "02f5d8e8ec68c47c3d86e96ea155b18a0ef2ef09e943dadba594385cf425b5f7",
+    "patch_direction": "selected -> factor control"
+  },
+  "selected": {
+    "files_sha256": {
+      "portal/experimental/typed_rpc.h": "3b9650070ef396db41d37c11c4a899d2b6729eb78d30643b53413482fed97273",
+      "portal/experimental/wire_schema.h": "e1a29ab24eaab05dcb67e0aac20700a8d59c3ee120e73be4721234dc98596644"
+    },
+    "binary_sha256": "eec5c282df3de2e1d38e7c7d78bca84b14990e4f9619c83f0398a1fe3600616c"
+  }
+}

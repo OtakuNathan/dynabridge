@@ -822,6 +822,13 @@ those wrappers.
 
 ## RPC Backend
 
+Portal supports this dynamic backend and the public [typed RPC module](typed_rpc.md).
+Use the dynamic backend for existing `.def` declarations, converters and ordered
+overloads. Typed RPC uses explicit fixed method/value schemas and its own
+protocol-v1 frames. Both support owning values and explicit storage reuse, and
+both peers must select the same wire protocol. Link either API through the
+existing `portal::portal` CMake target.
+
 RPC is the same bridge contract with a serialized `dynamic_value_t`. The RPC
 backend hashes the generated static symbol name once, converts arguments to
 tagged wire values, and delegates I/O to a transport with one operation:

@@ -1,0 +1,2690 @@
+[
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.03972125053405762,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":176.465225,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.030672311782836914,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":135.779025,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.051311492919921875,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":237.46001,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.03160285949707031,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":140.67765,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.04378318786621094,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":199.872635,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.04546999931335449,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":207.996975,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.05395197868347168,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":102.62893,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.05771589279174805,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":110.593706,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.08313584327697754,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":158.140932,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.04540443420410156,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":83.291024,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.04584240913391113,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":84.893732,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.06662821769714355,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":125.761934,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.06922769546508789,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7057.217,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.06804847717285156,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7172.1826,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.06745076179504395,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7126.5292,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.06513619422912598,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":6577.577,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.058576107025146484,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":6173.1662,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.21561026573181152,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":23090.2472,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.12792086601257324,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":62.203388,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.18780040740966797,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":92.508381,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.26591992378234863,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":131.115488,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.0750272274017334,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":35.895525,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.05898618698120117,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":27.8364645,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 0,
+    "elapsed_s": 0.22063136100769043,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":108.507021,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.06524538993835449,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":6839.2452,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.05995917320251465,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":6212.0838,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.20262837409973145,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":21805.2114,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.06905245780944824,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7386.6112,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.0644533634185791,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":6761.3036,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.055173635482788086,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":5836.2936,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.07694792747497559,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":146.426818,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.04290175437927246,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":78.830486,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.042603492736816406,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":78.419876,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.06676435470581055,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":126.07546,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.05428719520568848,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":101.185332,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.06009316444396973,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":112.762,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.1195974349975586,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":58.629264,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.1593630313873291,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":78.432889,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.0733950138092041,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":34.95137,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.2556178569793701,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":125.8977845,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.23524165153503418,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":115.669395,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.06260490417480469,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":29.6172935,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.03269219398498535,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":149.517825,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.03559231758117676,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":160.478375,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.06484222412109375,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":306.4083,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.04491686820983887,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":204.92132,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.04067659378051758,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":185.43661,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 1,
+    "elapsed_s": 0.05412721633911133,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":244.52765,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.26848649978637695,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":132.43107,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.13282012939453125,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":64.653745,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.16318202018737793,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":80.098678,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.07534456253051758,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":36.025502,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.05853438377380371,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":27.6674595,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.22620797157287598,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":111.2188625,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.03947257995605469,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":177.065365,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.041784048080444336,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":194.501825,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.05672311782836914,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":262.03746,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.0516660213470459,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":237.29761,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.06477499008178711,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":294.35562,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.04577445983886719,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":207.782585,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.07470703125,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7005.2774,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.07035326957702637,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7224.282,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.06678104400634766,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7056.5278,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.24236345291137695,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":28790.0542,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.0634002685546875,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":6315.7106,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.0678091049194336,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":6632.327,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.10072612762451172,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":191.959492,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.05159926414489746,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":94.511596,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.050919294357299805,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":92.549314,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.058650970458984375,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":109.206988,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.08842754364013672,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":170.300692,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 2,
+    "elapsed_s": 0.06795573234558105,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":127.465864,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.0939178466796875,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":175.318382,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.07494044303894043,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":138.55832,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.07176518440246582,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":134.9004,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.08855271339416504,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":170.624712,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.06324934959411621,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":117.656062,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.06899809837341309,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":128.987372,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.21596145629882812,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":105.540835,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.25304484367370605,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":124.414524,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.07060050964355469,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":33.3305695,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.09997963905334473,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":48.8037285,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.1361227035522461,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":66.0166735,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.29668426513671875,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":146.714311,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.05856776237487793,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":5936.2338,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.09459543228149414,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":12501.4636,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.10669946670532227,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":13396.0062,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.07183980941772461,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":8169.2366,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.07625007629394531,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7917.1104,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.26395678520202637,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":25493.5334,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.03464508056640625,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":152.476205,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.05797696113586426,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":266.80064,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.04365658760070801,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":195.208195,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.05008077621459961,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":229.20619,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.04974818229675293,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":228.150175,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 3,
+    "elapsed_s": 0.03937244415283203,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":172.923645,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.06280183792114258,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":287.89874,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.06130838394165039,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":282.104585,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.05498170852661133,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":239.40169,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.06054067611694336,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":281.574555,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.03646421432495117,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":165.171555,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.04022336006164551,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":179.37752,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.2632784843444824,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":129.66804,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.09037327766418457,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":43.436753,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.35086631774902344,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":173.0725075,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.06515955924987793,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":31.42217,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.18973398208618164,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":92.9865305,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.14239192008972168,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":68.7626275,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.0492243766784668,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":91.795162,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.06699156761169434,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":127.485072,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.05941414833068848,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":110.615928,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.07784032821655273,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":144.700548,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.05062150955200195,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":92.829078,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.09093332290649414,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":172.896434,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.06944441795349121,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7371.1364,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.0622401237487793,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":6043.1718,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.07510805130004883,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":8016.0304,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.2267317771911621,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":24785.3398,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.07882881164550781,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":8275.155,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 4,
+    "elapsed_s": 0.08763670921325684,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7131.5848,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.12465620040893555,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":240.191364,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.08823728561401367,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":170.407442,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.052516937255859375,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":98.938236,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.06467652320861816,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":123.267786,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.07553267478942871,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":142.180808,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.04747462272644043,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":88.618592,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.0518183708190918,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":235.634935,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.048459529876708984,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":218.816455,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.03531694412231445,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":152.218475,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.046797752380371094,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":212.65866,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.05739331245422363,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":265.537535,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.03682279586791992,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":164.22025,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.07320642471313477,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":35.062508,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.1376817226409912,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":67.4457645,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.3023035526275635,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":149.2132745,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.09139275550842285,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":43.6614755,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.31526708602905273,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":155.6216005,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.21717357635498047,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":105.567687,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.2121732234954834,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":23033.7504,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.0633537769317627,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":6398.1022,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.06445074081420898,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":6222.6428,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.06727027893066406,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7096.7254,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.07032346725463867,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7483.3712,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 5,
+    "elapsed_s": 0.0803675651550293,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":8900.5846,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.2404193878173828,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":118.3045515,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.2745213508605957,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":135.343011,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.13173913955688477,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":64.0511585,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.17498040199279785,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":85.692424,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.08172726631164551,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":39.569276,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "0",
+      "2000000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.07035279273986816,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":0,\"iterations\":2000000,\"ns_per_call\":33.205394,\"checksum\":65501556224,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.06392812728881836,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":296.021735,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.04089093208312988,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":183.71258,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.046974897384643555,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":219.283395,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.04693889617919922,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":213.505715,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.04712224006652832,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":215.28554,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "1024",
+      "200000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.03392958641052246,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":1024,\"iterations\":200000,\"ns_per_call\":150.76428,\"checksum\":230293856,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.07155346870422363,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":135.57374,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.06111788749694824,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":114.664028,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.04404568672180176,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":83.116812,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.054964303970336914,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":102.303378,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.07979750633239746,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":154.115934,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "16",
+      "500000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.04284024238586426,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":16,\"iterations\":500000,\"ns_per_call\":78.50873,\"checksum\":71746416,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.060703277587890625,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":6115.9554,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.06737589836120605,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7041.3136,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "dynamic_reuse",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.06946682929992676,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7035.5832,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "legacy_static",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.06760525703430176,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":7020.1184,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "typed_fresh",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.21748018264770508,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":24004.772,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_probe",
+      "hand_reference",
+      "65536",
+      "5000",
+      "timing"
+    ],
+    "round": 6,
+    "elapsed_s": 0.06006956100463867,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":65536,\"iterations\":5000,\"ns_per_call\":6267.0386,\"checksum\":328309340,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "dynamic_fresh",
+      "0",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.0029633045196533203,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":0,\"iterations\":1000,\"ns_per_call\":163.362,\"checksum\":3996000,\"allocations\":3000,\"requested_bytes\":195000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "dynamic_reuse",
+      "0",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.0037271976470947266,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":0,\"iterations\":1000,\"ns_per_call\":98.565,\"checksum\":3996000,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "legacy_static",
+      "0",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.003134012222290039,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":0,\"iterations\":1000,\"ns_per_call\":76.223,\"checksum\":3996000,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "typed_reuse",
+      "0",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.0028526782989501953,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":0,\"iterations\":1000,\"ns_per_call\":33.108,\"checksum\":3996000,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "typed_fresh",
+      "0",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.0031380653381347656,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":0,\"iterations\":1000,\"ns_per_call\":114.379,\"checksum\":3996000,\"allocations\":2000,\"requested_bytes\":88000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "hand_reference",
+      "0",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.0027811527252197266,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":0,\"iterations\":1000,\"ns_per_call\":26.248,\"checksum\":3996000,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "dynamic_fresh",
+      "16",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.0032472610473632812,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":16,\"iterations\":1000,\"ns_per_call\":161.258,\"checksum\":140716,\"allocations\":5000,\"requested_bytes\":172000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "dynamic_reuse",
+      "16",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.003607034683227539,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":16,\"iterations\":1000,\"ns_per_call\":130.533,\"checksum\":140716,\"allocations\":2000,\"requested_bytes\":34000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "legacy_static",
+      "16",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.003064870834350586,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":16,\"iterations\":1000,\"ns_per_call\":99.016,\"checksum\":140716,\"allocations\":2000,\"requested_bytes\":48000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "typed_reuse",
+      "16",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.002961397171020508,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":16,\"iterations\":1000,\"ns_per_call\":74.24,\"checksum\":140716,\"allocations\":2000,\"requested_bytes\":62000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "typed_fresh",
+      "16",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.003158092498779297,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":16,\"iterations\":1000,\"ns_per_call\":101.96,\"checksum\":140716,\"allocations\":4000,\"requested_bytes\":166000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "hand_reference",
+      "16",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.0029418468475341797,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":16,\"iterations\":1000,\"ns_per_call\":72.097,\"checksum\":140716,\"allocations\":2000,\"requested_bytes\":62000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "dynamic_fresh",
+      "1024",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.0037131309509277344,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":1024,\"iterations\":1000,\"ns_per_call\":226.495,\"checksum\":1148716,\"allocations\":5000,\"requested_bytes\":4204000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "dynamic_reuse",
+      "1024",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.0035042762756347656,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":1024,\"iterations\":1000,\"ns_per_call\":196.38,\"checksum\":1148716,\"allocations\":2000,\"requested_bytes\":2050000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "legacy_static",
+      "1024",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.0033483505249023438,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":1024,\"iterations\":1000,\"ns_per_call\":185.674,\"checksum\":1148716,\"allocations\":2000,\"requested_bytes\":2050000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "typed_reuse",
+      "1024",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.003059864044189453,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":1024,\"iterations\":1000,\"ns_per_call\":147.958,\"checksum\":1148716,\"allocations\":2000,\"requested_bytes\":2050000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "typed_fresh",
+      "1024",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.003345966339111328,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":1024,\"iterations\":1000,\"ns_per_call\":183.561,\"checksum\":1148716,\"allocations\":4000,\"requested_bytes\":4170000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "hand_reference",
+      "1024",
+      "1000",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.0031905174255371094,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":1024,\"iterations\":1000,\"ns_per_call\":143.111,\"checksum\":1148716,\"allocations\":2000,\"requested_bytes\":2050000}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "dynamic_fresh",
+      "65536",
+      "100",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.03861808776855469,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_fresh\",\"payload\":65536,\"iterations\":100,\"ns_per_call\":6883.36,\"checksum\":6558550,\"allocations\":500,\"requested_bytes\":26225200}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "dynamic_reuse",
+      "65536",
+      "100",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.03495287895202637,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":100,\"ns_per_call\":6706.2,\"checksum\":6558550,\"allocations\":200,\"requested_bytes\":13107400}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "legacy_static",
+      "65536",
+      "100",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.03386116027832031,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"legacy_static\",\"payload\":65536,\"iterations\":100,\"ns_per_call\":6963.18,\"checksum\":6558550,\"allocations\":200,\"requested_bytes\":13107400}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "typed_reuse",
+      "65536",
+      "100",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.031019926071166992,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":100,\"ns_per_call\":5947.59,\"checksum\":6558550,\"allocations\":200,\"requested_bytes\":13107400}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "typed_fresh",
+      "65536",
+      "100",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.09723353385925293,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"typed_fresh\",\"payload\":65536,\"iterations\":100,\"ns_per_call\":21481.82,\"checksum\":6558550,\"allocations\":400,\"requested_bytes\":26221800}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/mnt/data/typed-rpc-work/build-gcc/typed_allocations",
+      "hand_reference",
+      "65536",
+      "100",
+      "allocation"
+    ],
+    "round": -1,
+    "elapsed_s": 0.02915215492248535,
+    "returncode": 0,
+    "stdout": "{\"lane\":\"hand_reference\",\"payload\":65536,\"iterations\":100,\"ns_per_call\":5886.29,\"checksum\":6558550,\"allocations\":200,\"requested_bytes\":13107400}\n",
+    "stderr": ""
+  }
+]

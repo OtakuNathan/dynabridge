@@ -12,7 +12,7 @@ C++ callable shape x backend runtime x converter set = usable boundary call
 ```
 
 The repository includes minimal CPython C API and Node-API backends, a framed
-RPC backend, and a fake backend used by the core tests.
+dynamic RPC backend, a typed RPC module, and a fake backend used by the core tests.
 
 Portal was previously named Dyna Bridge. The public API now uses
 `<portal/...>` headers, the `portal::` namespace and `PORTAL_*` macros.
@@ -180,6 +180,23 @@ complexity in exchange for broader compatibility; optional integrations and
 benchmarks may require newer standards. Consumers remain free to build the rest
 of their project with a newer standard.
 
+## Choose an RPC style
+
+Both RPC styles are supported C++14 APIs through `portal::portal`:
+
+| Your protocol | Public entry point |
+| --- | --- |
+| Existing Portal declarations, converters, ordered overloads or tagged-wire peers | `<portal/backends/rpc.h>`, with optional storage reuse in `<portal/backends/rpc_reuse.h>` |
+| Shared value schemas and fixed method contracts with owning records/sequences | `<portal/rpc/typed.h>`, with owned async calls in `<portal/rpc/typed_async.h>` |
+
+For new value-oriented protocols where both peers share the schema, start with
+typed RPC. The existing backend keeps its API and protocol. Each pair of peers
+must use the same protocol; the two wire formats are distinct. Both styles let
+the application supply its transport and explicitly reuse storage.
+
+See [Typed RPC](docs/typed_rpc.md) for the public codecs, examples, protocol-v1
+compatibility rules and FF composition, or the [dynamic RPC reference](docs/reference.md#rpc-backend).
+
 ## Use With CMake
 
 As a subdirectory:
@@ -213,7 +230,8 @@ target_link_libraries(my_addon PRIVATE portal::portal)
 | Core | C++14 header-only import/export contracts, overloads, classes, callbacks, and typed object channels |
 | Python | Minimal CPython C API backend with real runtime tests |
 | JavaScript | Minimal Node-API backend with real Node.js runtime tests |
-| RPC | Transport-agnostic framed demo backend |
+| Dynamic RPC | Transport-agnostic tagged frames with existing backend/converter and overload contracts |
+| Typed RPC | Public C++14 codecs, protocol-v1 typed frames, owning dispatch/results, storage reuse and async adapter |
 | Scheduling | Optional Python interpreter adapter; libuv loop dispatch uses Flux Foundry's executor directly |
 | Value types | Built-in Python/Node converters for `int`, `unsigned`, and UTF-8 text through `std::string`; embedded NUL is preserved, while arbitrary binary data needs its own converter |
 | Platforms | CI builds Debug and Release on Linux, macOS, and Windows |
@@ -244,6 +262,7 @@ and complete paired measurement data.
 - [Replay composition: Portal, FF, and lease](docs/replay_composition.md)
 - [Architecture and extension boundaries](docs/architecture.md)
 - [Full API reference and backend walkthrough](docs/reference.md)
+- [Typed RPC API, wire v1 and compatibility rules](docs/typed_rpc.md)
 - [Python example](examples/python/module.cpp)
 - [Node-API example](examples/napi/addon.cpp)
 

@@ -1,0 +1,802 @@
+[
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 7527.6484,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 0,
+    "variant": "retain_bytes",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/retain_bytes/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7527.6484,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 7020.9836,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 0,
+    "variant": "retain_bytes",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/retain_bytes/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7020.9836,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 6989.9904,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 0,
+    "variant": "assign_string",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/assign_string/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6989.9904,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 7158.1025,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 0,
+    "variant": "assign_string",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/assign_string/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7158.1025,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 6028.6681,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 0,
+    "variant": "selected",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/selected/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6028.6681,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 9164.6629,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 0,
+    "variant": "selected",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/selected/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":9164.6629,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 7335.2917,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 0,
+    "variant": "resize_both",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/resize_both/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7335.2917,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 9256.9018,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 0,
+    "variant": "resize_both",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/resize_both/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":9256.9018,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 8396.6246,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 1,
+    "variant": "retain_bytes",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/retain_bytes/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":8396.6246,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 7300.1528,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 1,
+    "variant": "retain_bytes",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/retain_bytes/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7300.1528,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 7034.4583,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 1,
+    "variant": "resize_both",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/resize_both/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7034.4583,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 9056.0685,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 1,
+    "variant": "resize_both",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/resize_both/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":9056.0685,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 6814.0553,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 1,
+    "variant": "selected",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/selected/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6814.0553,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 5977.2697,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 1,
+    "variant": "selected",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/selected/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":5977.2697,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 6630.6007,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 1,
+    "variant": "assign_string",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/assign_string/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6630.6007,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 7316.4948,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 1,
+    "variant": "assign_string",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/assign_string/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7316.4948,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 6925.8313,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 2,
+    "variant": "assign_string",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/assign_string/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6925.8313,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 12944.1416,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 2,
+    "variant": "assign_string",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/assign_string/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":12944.1416,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 5776.9531,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 2,
+    "variant": "selected",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/selected/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":5776.9531,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 6810.5732,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 2,
+    "variant": "selected",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/selected/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6810.5732,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 8291.6597,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 2,
+    "variant": "resize_both",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/resize_both/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":8291.6597,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 6671.0954,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 2,
+    "variant": "resize_both",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/resize_both/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6671.0954,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 7048.7858,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 2,
+    "variant": "retain_bytes",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/retain_bytes/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7048.7858,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 7673.121,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 2,
+    "variant": "retain_bytes",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/retain_bytes/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7673.121,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 6826.0591,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 3,
+    "variant": "resize_both",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/resize_both/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6826.0591,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 8695.3292,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 3,
+    "variant": "resize_both",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/resize_both/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":8695.3292,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 8610.1847,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 3,
+    "variant": "retain_bytes",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/retain_bytes/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":8610.1847,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 11050.8209,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 3,
+    "variant": "retain_bytes",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/retain_bytes/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":11050.8209,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 6051.384,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 3,
+    "variant": "selected",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/selected/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6051.384,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 6698.6941,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 3,
+    "variant": "selected",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/selected/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6698.6941,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 6655.5986,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 3,
+    "variant": "assign_string",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/assign_string/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6655.5986,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 7045.0142,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 3,
+    "variant": "assign_string",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/assign_string/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7045.0142,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 8266.5586,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 4,
+    "variant": "resize_both",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/resize_both/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":8266.5586,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 6615.3783,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 4,
+    "variant": "resize_both",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/resize_both/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6615.3783,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 7378.4672,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 4,
+    "variant": "retain_bytes",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/retain_bytes/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7378.4672,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 7078.0579,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 4,
+    "variant": "retain_bytes",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/retain_bytes/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7078.0579,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 8218.2894,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 4,
+    "variant": "selected",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/selected/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":8218.2894,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 7146.9506,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 4,
+    "variant": "selected",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/selected/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":7146.9506,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "typed_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 8090.3266,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 4,
+    "variant": "assign_string",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/assign_string/probe",
+      "typed_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"typed_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":8090.3266,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  },
+  {
+    "lane": "dynamic_reuse",
+    "payload": 65536,
+    "iterations": 10000,
+    "ns_per_call": 6815.2291,
+    "checksum": 656633080,
+    "allocations": 0,
+    "requested_bytes": 0,
+    "round": 4,
+    "variant": "assign_string",
+    "command": [
+      "/mnt/data/typed-rpc-work/variants/assign_string/probe",
+      "dynamic_reuse",
+      "65536",
+      "10000",
+      "timing"
+    ],
+    "stdout": "{\"lane\":\"dynamic_reuse\",\"payload\":65536,\"iterations\":10000,\"ns_per_call\":6815.2291,\"checksum\":656633080,\"allocations\":0,\"requested_bytes\":0}\n",
+    "stderr": ""
+  }
+]

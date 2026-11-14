@@ -1,0 +1,129 @@
+{
+  "portal_base": "19aa5491039f47db54a3b56d2ba26ee33a5a460f",
+  "ff_target_not_locally_available": "f6b32f7bc2443e9f2a9658430340a4119637b804",
+  "full_checkout": false,
+  "modified_existing_production_headers": [],
+  "sources": {
+    "portal/optional.h": {
+      "git_blob_sha1": "b5526fd45a9d38590022937c922930336064a962",
+      "sha256": "fca2cc9abb21eb37063e21bf3461dbfa1e60cf64b97d6bb2666e360ada6e5536",
+      "bytes": 17662,
+      "exact_connector_blob_verified": true
+    },
+    "portal/inplace.h": {
+      "git_blob_sha1": "7a9bf20624002de1c402e79b542dfaea401b42f0",
+      "sha256": "68ecb34f0ffe3981e8dfdda81bb12dab16fb4687e76a764f936aa874076bf178",
+      "bytes": 2764,
+      "exact_connector_blob_verified": true
+    },
+    "portal/error_policy.h": {
+      "git_blob_sha1": "1eaa3b2b017a665ddb7016f64c4b9bf48ccdd197",
+      "sha256": "0df8ac3caba4d4dba5801ebe9710d4dacbd07864acb34df33e754b8e88e40504",
+      "bytes": 691,
+      "exact_connector_blob_verified": true
+    },
+    "portal/async.h": {
+      "git_blob_sha1": "8097f5be327d77c0d191f4cfa242bc19703232bf",
+      "sha256": "128eec2e3e1708d03892ebd3c52dbba8f9e7490e17c420ae4a33509808da4efc",
+      "bytes": 11036,
+      "exact_connector_blob_verified": true
+    },
+    "portal/backends/rpc.h": {
+      "git_blob_sha1": "b4fefa780be1fec2193fc5a94f1bc66e6a0de3c5",
+      "sha256": "c2fbb39d1d8dce2d331cdc9baa64f4a85404bc3299479175b795a967dc7bf442",
+      "bytes": 42336,
+      "exact_connector_blob_verified": true
+    },
+    "portal/backends/rpc_reuse.h": {
+      "sha256": "506847e11b9daccc0dbc97246430a8957d4889d4bc64dd4663f8f3918edf4b1a",
+      "bytes": 3190,
+      "provenance": "extracted unchanged added file from previous user-accepted portal-reuse-pass.patch",
+      "git_blob_sha1": "e889cb6184e49e4121be164dba286e64b9d3c969",
+      "exact_connector_blob_verified": true
+    },
+    "benchmarks/reuse_pass/extract_wire.py": {
+      "sha256": "02a600fe0a15b6d869d7470341c148d122892fde16bd98257e1453a8c92f3b3b",
+      "bytes": 1336,
+      "provenance": "extracted unchanged added file from previous user-accepted portal-reuse-pass.patch"
+    },
+    "portal/experimental/typed_rpc.h": {
+      "sha256": "3b9650070ef396db41d37c11c4a899d2b6729eb78d30643b53413482fed97273",
+      "bytes": 14113,
+      "provenance": "this experiment"
+    },
+    "portal/experimental/typed_rpc_async.h": {
+      "sha256": "fb8fed68ec9f1db86b70e8a686ff31e3a14984eea766de402a06df040d9acac2",
+      "bytes": 3817,
+      "provenance": "this experiment"
+    },
+    "portal/experimental/wire_schema.h": {
+      "sha256": "e1a29ab24eaab05dcb67e0aac20700a8d59c3ee120e73be4721234dc98596644",
+      "bytes": 18785,
+      "provenance": "this experiment"
+    },
+    "tests/typed_rpc/CMakeLists.txt": {
+      "sha256": "aba5df073834e8eeba218b3bc8f6b8e6a0e1d224132420c63a78c7faae5586c0",
+      "bytes": 3729,
+      "provenance": "this experiment"
+    },
+    "tests/typed_rpc/async_test.cpp": {
+      "sha256": "d21b1aa7487f9b7fb870dccd65e8df62a483ac67ed25fcddb51874a757ca14b2",
+      "bytes": 5547,
+      "provenance": "this experiment"
+    },
+    "tests/typed_rpc/codec_test.cpp": {
+      "sha256": "a19d97cea6a7f0c84712bef5b4d785e2d721774a184e8df285529657dca21611",
+      "bytes": 8531,
+      "provenance": "this experiment"
+    },
+    "tests/typed_rpc/failure_test.cpp": {
+      "sha256": "8bf3c154815ac7caf5657a5cb8fe95c485986a9b0555190e8c1cd02e0698a630",
+      "bytes": 1696,
+      "provenance": "this experiment"
+    },
+    "tests/typed_rpc/ff_test.cpp": {
+      "sha256": "52e77f37c9dddc7009eaa14d960f1d037daf1187d9f81f279e4e965e92e1432c",
+      "bytes": 2414,
+      "provenance": "this experiment"
+    },
+    "tests/typed_rpc/fixture.h": {
+      "sha256": "ff4432da9a3f805b30150322b5862efb58035b60f7a48016698dd58d98a0d375",
+      "bytes": 2114,
+      "provenance": "this experiment"
+    },
+    "tests/typed_rpc/golden.cpp": {
+      "sha256": "4c1a7ea6ef640d27e37bcdc011cec2f9c9ee36f840123887e32da7e82a2cb281",
+      "bytes": 460,
+      "provenance": "this experiment"
+    },
+    "tests/typed_rpc/golden.py": {
+      "sha256": "f59b71bf0518b0f22e09a9a559825e5da5984a66d1931b56554e590722e70d3c",
+      "bytes": 1066,
+      "provenance": "this experiment"
+    },
+    "tests/typed_rpc/methods.def": {
+      "sha256": "df5c3e7ae3f21e6c6c2b5d95afc5fa7e6e6363f0664aa6e7687032c0c4f8307a",
+      "bytes": 419,
+      "provenance": "this experiment"
+    },
+    "tests/typed_rpc/negative.cpp": {
+      "sha256": "41e40551cb672a6a0d6746cfcc400e588010b6ab3719bfe6fd92b19c8e5d83be",
+      "bytes": 775,
+      "provenance": "this experiment"
+    },
+    "tests/typed_rpc/negative.py": {
+      "sha256": "6d15f3f4edaf84fffe14c6b42fb65c8606d65fa74c936076fc77670f7ed35d8f",
+      "bytes": 1059,
+      "provenance": "this experiment"
+    },
+    "benchmarks/typed_rpc/probe.cpp": {
+      "sha256": "30b445a4970c65fb1d5ae7499f909e30d9aa0c63fd3f4875117148070607a096",
+      "provenance": "this experiment"
+    }
+  },
+  "compilers": {
+    "g++": "g++ (Debian 14.2.0-19) 14.2.0",
+    "clang++": "clang version 17.0.0 (https://github.com/swiftlang/llvm-project.git 10999b6d034fe318f3d56c83bddb6572593a8bb0)"
+  },
+  "probe_flags": "# CMAKE generated file: DO NOT EDIT!\n# Generated by \"Unix Makefiles\" Generator, CMake Version 3.31\n\n# compile CXX with /usr/bin/c++\nCXX_DEFINES = -DPORTAL_TYPED_RPC_ISOLATED_LEGACY=1\n\nCXX_INCLUDES = -I/mnt/data/typed-rpc-work/portal -I/mnt/data/typed-rpc-work/build-gcc\n\nCXX_FLAGS = -O3 -DNDEBUG -std=c++14\n\n"
+}

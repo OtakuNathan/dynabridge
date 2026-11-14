@@ -51,8 +51,10 @@ jobs:
         run: >
           cmake -S . -B build
           -DCMAKE_BUILD_TYPE=${{ matrix.build-type }}
+          -DCMAKE_CXX_STANDARD=14
           -DPORTAL_BUILD_BENCHMARKS=ON
           -DPORTAL_BUILD_EXAMPLES=ON
+          -DPORTAL_TYPED_RPC_REQUIRE_FF=ON
           -DFLUX_FOUNDRY_INCLUDE_DIR="${{ github.workspace }}/build-deps/flux_foundry"
           -DPython3_ROOT_DIR="${{ env.pythonLocation }}"
 
@@ -60,7 +62,7 @@ jobs:
         run: cmake --build build --config ${{ matrix.build-type }} --parallel 2
 
       - name: Test
-        run: ctest --test-dir build -C ${{ matrix.build-type }} --output-on-failure
+        run: ctest --test-dir build -C ${{ matrix.build-type }} --output-on-failure --timeout 60
 
       - name: Install
         run: >
@@ -71,10 +73,14 @@ jobs:
       - name: Configure package consumer
         run: >
           cmake -S tests/package_consumer -B consumer-build
+          -DCMAKE_CXX_STANDARD=14
           -DCMAKE_PREFIX_PATH="${{ runner.temp }}/portal-install"
 
       - name: Build package consumer
         run: cmake --build consumer-build --config ${{ matrix.build-type }} --parallel 2
+
+      - name: Run package consumer
+        run: ctest --test-dir consumer-build -C ${{ matrix.build-type }} --output-on-failure --timeout 60
 
   valgrind:
     name: ubuntu-latest / valgrind
@@ -96,6 +102,7 @@ jobs:
         run: >
           cmake -S . -B build
           -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_CXX_STANDARD=14
           -DPython3_ROOT_DIR="${{ env.pythonLocation }}"
 
       - name: Build
@@ -121,7 +128,9 @@ jobs:
           echo "Valgrind targets: ${tests[*]}"
           for t in "${tests[@]}"; do
             echo "::group::valgrind $(basename "$t")"
-            valgrind --error-exitcode=99 --track-origins=yes --leak-check=full \
+            # Keep executable-defined operator new hooks active for fault injection.
+            valgrind --soname-synonyms=somalloc=nouserintercepts \
+              --error-exitcode=99 --track-origins=yes --leak-check=full \
               --show-leak-kinds=definite --errors-for-leak-kinds=definite "$t"
             echo "::endgroup::"
           done

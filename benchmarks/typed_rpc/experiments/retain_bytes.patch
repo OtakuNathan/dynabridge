@@ -1,0 +1,37 @@
+--- a/portal/wire/schema.h
++++ b/portal/wire/schema.h
+@@ -116,14 +116,6 @@
+     bool raw(void* p, std::size_t n) noexcept {
+         if (!require(n)) return false;
+         if (n) { std::memcpy(p, current_, n); current_ += n; remaining_ -= n; }
+-        return true;
+-    }
+-    bool string(std::string& out, std::size_t n) {
+-        if (!require(n)) return false;
+-        if (n) {
+-            out.assign(reinterpret_cast<const char*>(current_), n);
+-            current_ += n; remaining_ -= n;
+-        } else out.clear();
+         return true;
+     }
+     bool charge(std::size_t n) noexcept {
+@@ -212,9 +204,7 @@
+ };
+ struct f64 : detail::minimum_size<8> {
+     using value_type = double;
+-    static_assert(sizeof(double) == 8 && std::numeric_limits<double>::is_iec559
+-                  && std::numeric_limits<double>::radix == 2
+-                  && std::numeric_limits<double>::digits == 53,
++    static_assert(sizeof(double) == 8 && std::numeric_limits<double>::is_iec559,
+                   "wire f64 requires IEEE-754 binary64");
+     static constexpr std::uint64_t fingerprint() noexcept { return mix(hash_seed, 10); }
+     static bool size(measure& s, double) noexcept { return s.add(8); }
+@@ -250,7 +240,7 @@
+         std::uint32_t n = 0; if (!r.integer(n)) return false;
+         if (n > Maximum) return r.fail(errc::limit_exceeded);
+         if (!r.require(n) || !r.charge(n)) return false;
+-        return r.string(x, n);
++        x.resize(n); return r.raw(n ? &x[0] : nullptr, n);
+     }
+ };
+ template<class C, std::size_t N> struct array : detail::minimum_size<min_product(C::min_size, N)> {

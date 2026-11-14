@@ -1,0 +1,6 @@
+g++ C++14 standalone wire_schema: passed
+g++ C++14 standalone typed_rpc: passed
+g++ C++14 standalone typed_rpc_async: passed
+clang++ C++14 standalone wire_schema: passed
+clang++ C++14 standalone typed_rpc: passed
+clang++ C++14 standalone typed_rpc_async: passed

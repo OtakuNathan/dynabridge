@@ -1,0 +1,13 @@
+--- a/portal/rpc/typed.h
++++ b/portal/rpc/typed.h
+@@ -237,9 +237,7 @@
+     bytes request_, response_;
+     std::size_t max_retained_;
+     static void recycle(bytes& active, bytes& cache, std::size_t limit) noexcept {
+-        // Keep initialized byte elements so a same-size frame is overwritten
+-        // without zero-filling it first. Every encoder overwrites the entire
+-        // published size; this is not a borrowed payload or a secure wipe.
++        active.clear();
+         if (active.capacity() <= limit && active.capacity() > cache.capacity()) active.swap(cache);
+     }
+ public:

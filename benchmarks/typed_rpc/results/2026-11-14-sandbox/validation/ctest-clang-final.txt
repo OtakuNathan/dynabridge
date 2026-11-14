@@ -1,0 +1,34 @@
+Internal ctest changing into directory: /mnt/data/typed-rpc-work/build-clang
+Test project /mnt/data/typed-rpc-work/build-clang
+      Start  1: typed_codec
+ 1/14 Test  #1: typed_codec ......................   Passed    0.00 sec
+      Start  2: typed_async
+ 2/14 Test  #2: typed_async ......................   Passed    0.02 sec
+      Start  3: typed_failures
+ 3/14 Test  #3: typed_failures ...................   Passed    0.00 sec
+      Start  4: typed_python_golden
+ 4/14 Test  #4: typed_python_golden ..............   Passed    0.94 sec
+      Start  5: typed_negative_1
+ 5/14 Test  #5: typed_negative_1 .................   Passed    1.12 sec
+      Start  6: typed_negative_2
+ 6/14 Test  #6: typed_negative_2 .................   Passed    1.02 sec
+      Start  7: typed_negative_3
+ 7/14 Test  #7: typed_negative_3 .................   Passed    0.99 sec
+      Start  8: typed_negative_4
+ 8/14 Test  #8: typed_negative_4 .................   Passed    1.04 sec
+      Start  9: typed_negative_5
+ 9/14 Test  #9: typed_negative_5 .................   Passed    1.08 sec
+      Start 10: typed_negative_6
+10/14 Test #10: typed_negative_6 .................   Passed    1.00 sec
+      Start 11: typed_codec_noexcept_0
+11/14 Test #11: typed_codec_noexcept_0 ...........   Passed    0.01 sec
+      Start 12: typed_async_noexcept_0
+12/14 Test #12: typed_async_noexcept_0 ...........   Passed    0.01 sec
+      Start 13: typed_codec_noexcept_1
+13/14 Test #13: typed_codec_noexcept_1 ...........   Passed    0.01 sec
+      Start 14: typed_async_noexcept_1
+14/14 Test #14: typed_async_noexcept_1 ...........   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 14
+
+Total Test time (real) =   7.26 sec

@@ -1,0 +1,24 @@
+{
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "machine": "x86_64",
+  "libc": [
+    "glibc",
+    "2.41"
+  ],
+  "allowed_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "selected_cpu": 0,
+  "seed": 20261114,
+  "repetitions": 7,
+  "allocator_env": {},
+  "binaries": {
+    "/mnt/data/typed-rpc-work/build-gcc/typed_probe": "eec5c282df3de2e1d38e7c7d78bca84b14990e4f9619c83f0398a1fe3600616c",
+    "/mnt/data/typed-rpc-work/build-gcc/typed_allocations": "d844120aa707adb52c331b665ab8e68a7c252d0c551c32d462859facadd51798"
+  },
+  "cpu_model": "AMD EPYC 9V74 80-Core Processor"
+}

@@ -1,0 +1,24 @@
+[ 12%] Building CXX object CMakeFiles/typed_codec.dir/codec_test.cpp.o
+[ 12%] Building CXX object CMakeFiles/typed_async.dir/async_test.cpp.o
+[ 18%] Linking CXX executable typed_codec
+[ 18%] Built target typed_codec
+[ 25%] Building CXX object CMakeFiles/typed_failures.dir/failure_test.cpp.o
+[ 31%] Linking CXX executable typed_async
+[ 31%] Built target typed_async
+[ 37%] Building CXX object CMakeFiles/typed_golden.dir/golden.cpp.o
+[ 43%] Linking CXX executable typed_failures
+[ 43%] Built target typed_failures
+[ 50%] Building CXX object CMakeFiles/typed_codec_noexcept_0.dir/codec_test.cpp.o
+[ 56%] Linking CXX executable typed_golden
+[ 56%] Built target typed_golden
+[ 62%] Building CXX object CMakeFiles/typed_async_noexcept_0.dir/async_test.cpp.o
+[ 68%] Linking CXX executable typed_codec_noexcept_0
+[ 68%] Built target typed_codec_noexcept_0
+[ 75%] Building CXX object CMakeFiles/typed_codec_noexcept_1.dir/codec_test.cpp.o
+[ 81%] Linking CXX executable typed_async_noexcept_0
+[ 81%] Built target typed_async_noexcept_0
+[ 87%] Building CXX object CMakeFiles/typed_async_noexcept_1.dir/async_test.cpp.o
+[ 93%] Linking CXX executable typed_codec_noexcept_1
+[ 93%] Built target typed_codec_noexcept_1
+[100%] Linking CXX executable typed_async_noexcept_1
+[100%] Built target typed_async_noexcept_1

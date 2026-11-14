@@ -1,0 +1,6 @@
+// Replayed by declaration/documentation/registration code; no include guard.
+PORTAL_TYPED_METHOD(Add,        0x101, 1, w::i32, w::i32, w::i32)
+PORTAL_TYPED_METHOD(Add64,      0x102, 1, w::i64, w::i64, w::i64)
+PORTAL_TYPED_METHOD(Echo,       0x103, 1, w::blob<1048576>, w::blob<1048576>)
+PORTAL_TYPED_METHOD(EchoPacket, 0x104, 1, w::record<Packet>, w::record<Packet>)
+PORTAL_TYPED_METHOD(Ping,       0x105, 1, w::none)
