@@ -21,8 +21,13 @@ struct sum_arguments;
 
 template <std::size_t... Indices>
 struct sum_arguments<std::index_sequence<Indices...>> {
-    using signature = int(decltype(static_cast<void>(Indices), int{})...);
-    static int call(decltype(static_cast<void>(Indices), int{})... args) noexcept {
+    // Keep the parameter type dependent on each index: MSVC loses the pack
+    // in decltype((void(Indices), int{})), including for the zero-argument case.
+    template <std::size_t>
+    struct argument { using type = int; };
+
+    using signature = int(typename argument<Indices>::type...);
+    static int call(typename argument<Indices>::type... args) noexcept {
         int result = 0;
         using swallow = int[];
         (void)swallow{0, (result += args, 0)...};
